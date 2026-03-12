@@ -82,3 +82,8 @@ class UserModel extends Equatable {
   @override
   List<Object?> get props => [uid, displayName, email, photoUrl];
 }
+
+
+
+
+//final SubscriptionModel? subscription;

@@ -1,0 +1,1 @@
+//uuid, title, text, imageUrl 

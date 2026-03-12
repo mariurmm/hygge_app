@@ -1,0 +1,1 @@
+//uuid, title, price, startDate, finishDate, lessonsCount 
