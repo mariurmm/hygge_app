@@ -12,11 +12,12 @@ import 'route_names.dart';
 ///
 /// Структура маршрутов:
 /// ```
-/// /               → SplashScreen
-/// /login          → LoginScreen
-/// /home           → HomeShell (ShellRoute с BottomNavigationBar)
-///   /home/main    → MainTab
-///   /home/profile → ProfileTab
+/// /                → SplashScreen
+/// /login           → LoginScreen
+/// /home            → HomeShell (ShellRoute с BottomNavigationBar)
+///   /home/main     → MainTab
+///   /home/profile  → ProfileTab
+///   /home/schedule → Schedule screen
 /// ```
 ///
 /// **Redirect guard**: если пользователь попал на `/home/*`
@@ -59,6 +60,15 @@ class AppRouter {
               name: RouteNames.profileName,
               path: RouteNames.profile,
               builder: (context, state) => const ProfileTab(),
+            ),
+            GoRoute(
+              name: RouteNames.scheduleName,
+              path: RouteNames.schedule,
+              builder: (context, state) => const Scaffold(
+                body: Center(
+                  child: Text('Schedule screen'),
+                ),
+              ),
             ),
           ],
         ),

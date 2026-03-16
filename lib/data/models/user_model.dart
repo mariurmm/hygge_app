@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'subscription_model.dart';
+
 /// Модель пользователя.
 ///
 /// Используется в BLoC-состояниях и для передачи данных
@@ -24,11 +26,15 @@ class UserModel extends Equatable {
   /// URL аватара (может быть пустой строкой).
   final String photoUrl;
 
+  /// Активный абонемент пользователя.
+  final SubscriptionModel? subscription;
+
   const UserModel({
     required this.uid,
     required this.displayName,
     required this.email,
     required this.photoUrl,
+    this.subscription,
   });
 
   /// Пустой пользователь — используется как дефолтное значение
@@ -38,6 +44,7 @@ class UserModel extends Equatable {
     displayName: '',
     email: '',
     photoUrl: '',
+    subscription: null,
   );
 
   /// Пользователь пустой?
@@ -55,6 +62,9 @@ class UserModel extends Equatable {
       displayName: json['displayName'] as String? ?? '',
       email: json['email'] as String? ?? '',
       photoUrl: json['photoUrl'] as String? ?? '',
+      subscription: json['subscription'] is Map<String, dynamic>
+          ? SubscriptionModel.fromJson(json['subscription'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -65,6 +75,7 @@ class UserModel extends Equatable {
       displayName: user.displayName ?? '',
       email: user.email ?? '',
       photoUrl: user.photoURL ?? '',
+      subscription: null,
     );
   }
 
@@ -75,15 +86,11 @@ class UserModel extends Equatable {
       'displayName': displayName,
       'email': email,
       'photoUrl': photoUrl,
+      'subscription': subscription?.toJson(),
     };
   }
 
   /// Equatable — список полей для сравнения.
   @override
-  List<Object?> get props => [uid, displayName, email, photoUrl];
+  List<Object?> get props => [uid, displayName, email, photoUrl, subscription];
 }
-
-
-
-
-//final SubscriptionModel? subscription;

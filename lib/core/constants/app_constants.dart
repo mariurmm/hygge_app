@@ -6,18 +6,15 @@
 class AppConstants {
   // ── Общие ──────────────────────────────────────────────────────
   /// Название приложения (отображается в AppBar, заголовке и т.д.)
-  static const String appName = 'Kumbel';
+  static const String appName = 'Hy.gge';
 
   // ── Тайминги ───────────────────────────────────────────────────
   /// Сколько секунд показываем сплэш-экран перед переходом.
   static const int splashDelaySeconds = 2;
 
   // ── Навигация (индексы вкладок BottomNavigationBar) ────────────
-  /// Индекс вкладки «Главная».
-  static const int mainTabIndex = 0;
-
-  /// Индекс вкладки «Профиль».
-  static const int profileTabIndex = 1;
+  static const int mainTabIndex = 0; // Главная
+  static const int profileTabIndex = 1; // Профиль
 
   // ── Размеры ────────────────────────────────────────────────────
   /// Размер аватара пользователя (радиус CircleAvatar).

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Палитра цветов приложения.
-///
-/// Все цвета определены здесь — в виджетах используем
-/// только `AppColors.xxx`, никаких `Color(0xFF...)` в коде.
 class AppColors {
+  static const Color green = Color(0xFF737B4C); //bar 
+  static const Color lightBrown = Color(0xFFB78F6B); //concept 
+  static const Color beige = Color(0xFFEADDCA); //air
+  static const Color terracotta = Color(0xFF9E5135); //fire
+  static const Color darkBlue = Color(0xFF28374C); //water
+  static const Color darkBrown = Color(0xFF7C573D); //earth
+
+  // изменить цвета ниже на наши:
+
   // ── Основные ───────────────────────────────────────────────────
   /// Главный цвет бренда.
   static const Color primary = Color(0xFF6750A4);
