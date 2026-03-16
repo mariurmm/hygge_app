@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color green = Color(0xFF737B4C); //bar 
-  static const Color lightBrown = Color(0xFFB78F6B); //concept 
+  static const Color green = Color(0xFF737B4C); //bar
+  static const Color lightBrown = Color(0xFFB78F6B); //concept
   static const Color beige = Color(0xFFEADDCA); //air
   static const Color terracotta = Color(0xFF9E5135); //fire
   static const Color darkBlue = Color(0xFF28374C); //water
@@ -12,23 +12,24 @@ class AppColors {
 
   // ── Основные ───────────────────────────────────────────────────
   /// Главный цвет бренда.
-  static const Color primary = Color(0xFF6750A4);
+  static const Color primary = Color(0xFF737B4C);
 
   /// Цвет текста/иконок на primary-фоне.
   static const Color onPrimary = Colors.white;
 
   /// Вторичный акцентный цвет.
-  static const Color secondary = Color(0xFF625B71);
+  static const Color secondary = Color(0xFF9E5135);
 
   /// Цвет текста/иконок на secondary-фоне.
-  static const Color onSecondary = Colors.white;
+  static const Color onSecondary = Colors.black;
+
 
   // ── Фоны ───────────────────────────────────────────────────────
   /// Основной фон экранов.
-  static const Color background = Color(0xFFFFFBFE);
+  static const Color background = Color(0xFFEADDCA);
 
   /// Фон поверхностей (карточки, bottom sheet и т.д.).
-  static const Color surface = Color(0xFFFFFBFE);
+  static const Color surface = Color(0xFFB78F6B);
 
   /// Цвет ошибок.
   static const Color error = Color(0xFFB3261E);
@@ -42,7 +43,7 @@ class AppColors {
 
   // ── Прочие ─────────────────────────────────────────────────────
   /// Цвет разделителей.
-  static const Color divider = Color(0xFFCAC4D0);
+  static const Color divider = Color(0xFFB78F6B);
 
   /// Цвет неактивных иконок в навигации.
   static const Color inactive = Color(0xFF79747E);
