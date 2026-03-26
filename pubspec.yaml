@@ -78,6 +78,8 @@ flutter:
 
   # Ассеты — картинки, иконки, SVG и другие файлы.
   assets:
-    - assets/svg/
+    - assets/svg
+    - assets/png
+    - .env
 
 
