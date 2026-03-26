@@ -6,6 +6,9 @@ import '../../../core/router/route_names.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../ui_kit/ui_kit.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
 
 /// Сплэш-экран — первый экран при запуске приложения.
 ///
@@ -62,6 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -74,15 +78,23 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: AppConstants.largePadding),
 
+            SizedBox(
+              width: AppConstants.splashLogoSize,
+              height: AppConstants.splashLogoSize,
+              child: Image.asset(
+                AssetPaths.splashLogo,
+                fit: BoxFit.contain,
+              ),
+            ),
             // Индикатор загрузки.
-            const AppLoadingIndicator(),
-            const SizedBox(height: AppConstants.defaultPadding),
+            // const AppLoadingIndicator(),
+            // const SizedBox(height: AppConstants.defaultPadding),
 
             // Текст «Загрузка...».
-            Text(
-              loc.splashLoading,
-              style: textTheme.bodySmall,
-            ),
+            // Text(
+            //   loc.splashLoading,
+            //   style: textTheme.bodySmall,
+            // ),
           ],
         ),
       ),

@@ -11,6 +11,7 @@ class AppConstants {
   // ── Тайминги ───────────────────────────────────────────────────
   /// Сколько секунд показываем сплэш-экран перед переходом.
   static const int splashDelaySeconds = 2;
+  static const double splashLogoSize = 200; //size of splah screen icon
 
   // ── Навигация (индексы вкладок BottomNavigationBar) ────────────
   static const int mainTabIndex = 0; // Главная
