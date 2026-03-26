@@ -56,6 +56,18 @@ dev_dependencies:
   flutter_native_splash: ^2.4.7 # Экран загрузки при запуске приложения
   flutter_launcher_icons: ^0.14.4 # Генерация иконки приложения для Android и iOS
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+
+flutter_native_splash:
+  color: "#EADDCA"
+  image: assets/splash.png
+  android: true
+  ios: true
+  web: false
+
 flutter:
   # Включаем автоматическую генерацию локализации из .arb файлов.
   # При каждом `flutter pub get` или `flutter run` Flutter проверит .arb файлы
@@ -67,3 +79,5 @@ flutter:
   # Ассеты — картинки, иконки, SVG и другие файлы.
   assets:
     - assets/svg/
+
+
