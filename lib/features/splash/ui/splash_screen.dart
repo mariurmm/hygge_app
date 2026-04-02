@@ -86,10 +86,10 @@ class _SplashScreenState extends State<SplashScreen> {
             //     fit: BoxFit.contain,
             //   ),
             // ),
-            
+
             // Индикатор загрузки.
             const AppLoadingIndicator(),
-            const SizedBox(height: AppConstants.defaultPadding),
+            const SizedBox(height: AppPaddings.defaultPadding),
 
             // Текст «Загрузка...».
             Text(
