@@ -58,15 +58,22 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
-  ios: true
-  image_path: "assets/logo.png"
+  ios: false
+  image_path: "assets/png/icon_regular.png"
+  adaptive_icon_background: "#EADDCA"
+  adaptive_icon_foreground: "assets/png/icon_foreground.png"
 
 flutter_native_splash:
   color: "#EADDCA"
-  image: assets/splash.png
+  image: assets/png/splash_old_android.png
   android: true
   ios: true
   web: false
+
+  android_12:
+    color: "#EADDCA"
+    image: assets/png/splash_android12.png
+    icon_background_color: "#EADDCA"
 
 flutter:
   # Включаем автоматическую генерацию локализации из .arb файлов.
