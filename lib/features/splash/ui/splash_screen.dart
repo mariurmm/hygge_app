@@ -78,23 +78,24 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: AppPaddings.largePadding),
 
-            SizedBox(
-              width: AppConstants.splashLogoSize,
-              height: AppConstants.splashLogoSize,
-              child: Image.asset(
-                AssetPaths.splashLogo,
-                fit: BoxFit.contain,
-              ),
-            ),
+            // SizedBox(
+            //   width: AppConstants.splashLogoSize,
+            //   height: AppConstants.splashLogoSize,
+            //   child: Image.asset(
+            //     AssetPaths.splashLogo,
+            //     fit: BoxFit.contain,
+            //   ),
+            // ),
+            
             // Индикатор загрузки.
-            // const AppLoadingIndicator(),
-            // const SizedBox(height: AppConstants.defaultPadding),
+            const AppLoadingIndicator(),
+            const SizedBox(height: AppConstants.defaultPadding),
 
             // Текст «Загрузка...».
-            // Text(
-            //   loc.splashLoading,
-            //   style: textTheme.bodySmall,
-            // ),
+            Text(
+              loc.splashLoading,
+              style: textTheme.bodySmall,
+            ),
           ],
         ),
       ),
