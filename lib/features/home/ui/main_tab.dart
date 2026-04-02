@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:hygge_app/core/constants/app_paddings.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../features/app/bloc/app_bloc.dart';
 import '../../../l10n/generated/app_localizations.dart';
@@ -32,7 +32,7 @@ class MainTab extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppConstants.largePadding),
+          padding: const EdgeInsets.all(AppPaddings.largePadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -40,7 +40,7 @@ class MainTab extends StatelessWidget {
               // Раньше тут был дублированный код CircleAvatar,
               // теперь используем UserAvatar (lib/widgets/user_avatar.dart).
               UserAvatar(photoUrl: user.photoUrl),
-              const SizedBox(height: AppConstants.largePadding),
+              const SizedBox(height: AppPaddings.largePadding),
 
               // Приветствие с именем.
               // Раньше: loc.translateWithArgs('greeting', {'name': ...})

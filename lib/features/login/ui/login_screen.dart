@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:hygge_app/core/constants/app_paddings.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/utils/logger.dart';
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.largePadding,
+              horizontal: AppPaddings.largePadding,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -88,14 +88,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   loc.loginTitle,
                   style: textTheme.headlineLarge,
                 ),
-                const SizedBox(height: AppConstants.smallPadding),
+                const SizedBox(height: AppPaddings.smallPadding),
 
                 // Подзаголовок.
                 Text(
                   loc.loginSubtitle,
                   style: textTheme.bodySmall,
                 ),
-                const SizedBox(height: AppConstants.largePadding * 2),
+                const SizedBox(height: AppPaddings.largePadding * 2),
 
                 // Кнопка входа через Google.
                 GoogleSignInButton(

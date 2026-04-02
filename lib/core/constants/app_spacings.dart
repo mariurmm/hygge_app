@@ -1,4 +1,4 @@
-class AppSpacings.dart{
+class AppSpacings{
   //спейсинги, промежутки между элементами
   
 }

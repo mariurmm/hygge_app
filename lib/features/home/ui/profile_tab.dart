@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:hygge_app/core/constants/app_paddings.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/router/route_names.dart';
 import '../../../features/app/bloc/app_bloc.dart';
@@ -46,7 +46,7 @@ class ProfileTab extends StatelessWidget {
         ),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(AppConstants.largePadding),
+            padding: const EdgeInsets.all(AppPaddings.largePadding),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -54,21 +54,21 @@ class ProfileTab extends StatelessWidget {
                 // Вместо дублирования CircleAvatar на каждом экране
                 // используем единый компонент из lib/widgets/.
                 UserAvatar(photoUrl: user.photoUrl),
-                const SizedBox(height: AppConstants.largePadding),
+                const SizedBox(height: AppPaddings.largePadding),
 
                 // Имя.
                 Text(
                   user.displayName,
                   style: textTheme.headlineMedium,
                 ),
-                const SizedBox(height: AppConstants.smallPadding),
+                const SizedBox(height: AppPaddings.smallPadding),
 
                 // Email.
                 Text(
                   user.email,
                   style: textTheme.bodySmall,
                 ),
-                const SizedBox(height: AppConstants.largePadding * 2),
+                const SizedBox(height: AppPaddings.largePadding * 2),
 
                 // Кнопка «Выйти».
                 AppButton(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:hygge_app/core/constants/app_paddings.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/router/route_names.dart';
 import '../../../data/repositories/auth_repository.dart';
@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
               loc.appName,
               style: textTheme.headlineLarge,
             ),
-            const SizedBox(height: AppConstants.largePadding),
+            const SizedBox(height: AppPaddings.largePadding),
 
             SizedBox(
               width: AppConstants.splashLogoSize,
