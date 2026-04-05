@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -43,9 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       final loc = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.signInError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.signInError)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -126,10 +128,7 @@ class _LoginBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/png/login_background.png',
-      fit: BoxFit.cover,
-    );
+    return Image.asset('assets/png/login_background.png', fit: BoxFit.cover);
   }
 }
 
@@ -201,36 +200,44 @@ class _GoogleSignInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppPaddings.largePadding,
-      ),
-      child: GestureDetector(
-        onTap: isLoading ? null : onTap,
-        child: Container(
-          height: 52,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.25),
-            borderRadius: BorderRadius.circular(35),
-          ),
-          alignment: Alignment.center,
-          child: isLoading
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(
-                  label,
-                  style: const TextStyle(
-                    fontFamily: 'CeraPro',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+      padding: const EdgeInsets.symmetric(horizontal: AppPaddings.largePadding),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(35),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: GestureDetector(
+            onTap: isLoading ? null : onTap,
+            child: Container(
+              height: 56,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(255, 255, 255, 0.24),
+                borderRadius: BorderRadius.circular(35),
+                border: Border.all(
+                  color: const Color.fromRGBO(255, 255, 255, 0.35),
+                  width: 1,
                 ),
+              ),
+              alignment: Alignment.center,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                        fontFamily: 'CeraPro',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+          ),
         ),
       ),
     );

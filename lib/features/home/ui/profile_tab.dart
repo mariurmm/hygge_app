@@ -41,43 +41,36 @@ class ProfileTab extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(loc.profileTitle),
-        ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(AppPaddings.largePadding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Аватар — переиспользуемый виджет UserAvatar.
-                // Вместо дублирования CircleAvatar на каждом экране
-                // используем единый компонент из lib/widgets/.
-                UserAvatar(photoUrl: user.photoUrl),
-                const SizedBox(height: AppPaddings.largePadding),
+        appBar: AppBar(title: Text(loc.profileTitle)),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppPaddings.largePadding),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Аватар — переиспользуемый виджет UserAvatar.
+                  UserAvatar(photoUrl: user.photoUrl),
+                  const SizedBox(height: AppPaddings.largePadding),
 
-                // Имя.
-                Text(
-                  user.displayName,
-                  style: textTheme.headlineMedium,
-                ),
-                const SizedBox(height: AppPaddings.smallPadding),
+                  // Имя.
+                  Text(user.displayName, style: textTheme.headlineMedium),
+                  const SizedBox(height: AppPaddings.smallPadding),
 
-                // Email.
-                Text(
-                  user.email,
-                  style: textTheme.bodySmall,
-                ),
-                const SizedBox(height: AppPaddings.largePadding * 2),
+                  // Email.
+                  Text(user.email, style: textTheme.bodySmall),
+                  const SizedBox(height: AppPaddings.largePadding * 2),
 
-                // Кнопка «Выйти».
-                AppButton(
-                  text: loc.signOut,
-                  onPressed: () {
-                    context.read<AppBloc>().add(const AppSignOutRequested());
-                  },
-                ),
-              ],
+                  // Кнопка «Выйти».
+                  AppButton(
+                    text: loc.signOut,
+                    onPressed: () {
+                      context.read<AppBloc>().add(const AppSignOutRequested());
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -15,7 +15,9 @@ class AppConstants {
 
   // ── Навигация (индексы вкладок BottomNavigationBar) ────────────
   static const int mainTabIndex = 0; // Главная
-  static const int profileTabIndex = 1; // Профиль
+  static const int programsTabIndex = 1; // Программы
+  static const int scheduleTabIndex = 2; //Расписание
+  static const int profileTabIndex  = 3; //Профиль
 
   // ── Размеры ────────────────────────────────────────────────────
   /// Размер аватара пользователя (радиус CircleAvatar).
@@ -29,5 +31,7 @@ class AppConstants {
 
   /// Размер логотипа Google внутри кнопки.
   static const double googleLogoSize = 24;
+
+
 
 }

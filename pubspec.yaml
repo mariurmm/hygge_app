@@ -19,7 +19,7 @@ dependencies:
   flutter_animate: ^4.5.2 # Простые и красивые анимации для виджетов
   gap: ^3.0.1 # Виджет-отступ — замена SizedBox(height: 16) на Gap(16)
   logger: ^2.6.2
-
+  flutter_gen_runner: ^5.0.0 # Генерация кода для доступа к ассетам и локализациям
   # Управление состоянием
   bloc: ^9.2.0 # Бизнес-логика приложения (паттерн BLoC)
   flutter_bloc: ^9.1.1 # Виджеты для связи BLoC с интерфейсом
@@ -88,5 +88,15 @@ flutter:
     - assets/svg/
     - assets/png/
     - .env
+  fonts:
+    - family: CeraPro
+      fonts:
+        - asset: assets/fonts/CERA PRO MEDIUM.ttf
+          weight: 500
+        - asset: assets/fonts/CERA PRO LIGHT.ttf
+          weight: 300
+        - asset: assets/fonts/CERA PRO REGULAR ITALIC.ttf
+          style: italic
+  
 
 
