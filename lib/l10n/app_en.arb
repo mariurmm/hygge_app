@@ -65,5 +65,20 @@
   "signOut": "Sign Out",
   "@signOut": {
     "description": "Текст кнопки выхода из аккаунта"
+  },
+
+  "tabPrograms": "Programs",
+  "@tabPrograms": {
+    "description": "Название вкладки 'Программы' в нижней навигации"
+  },
+
+  "tabSchedule": "Schedule",
+  "@tabSchedule": {
+    "description": "Название вкладки 'Расписание' в нижней навигации"
+  },
+
+  "readOurNews": "Read our news",
+  "@readOurNews": {
+    "description": "Текст над баннером с новостями"
   }
 }

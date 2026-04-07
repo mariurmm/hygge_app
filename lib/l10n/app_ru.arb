@@ -12,5 +12,8 @@
   "greeting": "Привет, {name}!",
   "profileTitle": "Профиль",
   "email": "Почта",
-  "signOut": "Выйти"
+  "signOut": "Выйти",
+  "tabPrograms": "Программы",
+  "tabSchedule": "Расписание",
+  "readOurNews": "Читайте наши новости"
 }
