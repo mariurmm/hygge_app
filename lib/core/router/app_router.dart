@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/home/ui/home_shell.dart';
-import '../../features/home/ui/main_tab.dart';
-import '../../features/home/ui/profile_tab.dart';
+import '../../features/app_shelll/app_shell.dart';
+import '../../features/home/ui/home_tab.dart';
+import '../../features/programs/ui/programs_tab.dart';
+import '../../features/profile/ui/profile_tab.dart';
 import '../../features/login/ui/login_screen.dart';
-import '../../features/programs_list/presentation/ui/programs_screen.dart';
-import '../../features/schedule/presentation/ui/schedule_screen.dart';
+import '../../features/schedule/presentation/ui/schedule_tab.dart';
 import '../../features/splash/ui/splash_screen.dart';
 import 'route_names.dart';
 
@@ -33,7 +33,7 @@ class AppRouter {
         ShellRoute(
           pageBuilder: (context, state, child) => CustomTransitionPage(
             key: state.pageKey,
-            child: HomeShell(child: child),
+            child: AppShell(child: child),
             transitionsBuilder: (context, animation, _, child) =>
                 FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
@@ -56,7 +56,7 @@ class AppRouter {
               path: RouteNames.programs,
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
-                child: const ProgramsScreen(),
+                child: const ProgramsTab(),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) =>
                         FadeTransition(opacity: animation, child: child),
@@ -68,7 +68,7 @@ class AppRouter {
               path: RouteNames.schedule,
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
-                child: const ScheduleScreen(),
+                child: const ScheduleTab(),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) =>
                         FadeTransition(opacity: animation, child: child),

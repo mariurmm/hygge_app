@@ -47,4 +47,19 @@ class AppColors {
 
   /// Цвет неактивных иконок в навигации.
   static const Color inactive = Color(0xFF79747E);
+
+  // ── Programs tab ───────────────────────────────────────────────
+  static const Color programsFilterSelected = Color(0xFF3F2D1A);
+  static const Color programsFilterUnselected = Color(0xFFD9D9D9);
+  static const Color programsCard = Color(0xFF5E5F4D);
+  static const Color programsCardMedia = Color(0xFF6D6D64);
+
+  // ── Schedule tab ───────────────────────────────────────────────
+  static const Color scheduleCard = Color(0xFF5E5E4C);
+  static const Color progressStroke = Color(0xFF9E5135);
+  static const Color progressFillStart = Color(0xFF737B4C);
+  static const Color progressFillEnd = Color(0xFF9E5135);
+
+  /// Полупрозрачный фон карточки «Счёт & подписка» (#D9D9D9 @ 25%).
+  static const Color profileAccountCardFill = Color(0x40D9D9D9);
 }

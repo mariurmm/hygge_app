@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_constants.dart';
-import '../../../l10n/generated/app_localizations.dart';
+import '../../core/constants/app_constants.dart';
+import '../../l10n/generated/app_localizations.dart';
 
-class HomeShell extends StatelessWidget {
+class AppShell extends StatelessWidget {
   final Widget child;
 
-  const HomeShell({super.key, required this.child});
+  const AppShell({super.key, required this.child});
 
   int _currentIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;

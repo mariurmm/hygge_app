@@ -27,18 +27,32 @@ class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
     ProgrammsLoadEvent event,
     Emitter<ProgrammsState> emit,
   ) async {
+    final now = DateTime.now();
     final response = [
       LessonModel(
-        uuid: 'asdasdasd',
-        title: 'Test',
-        text: 'Description',
-        startDate: DateTime.now(),
-        finishDate: DateTime.now(),
+        uuid: 'program-1',
+        title: 'Утренняя медитация',
+        text: 'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
+        startDate: now,
+        finishDate: now.add(const Duration(minutes: 30)),
         price: 1000,
         master: MasterModel(
-          uuid: 'asdasd',
-          firstName: 'Test',
-          lastName: 'Testov',
+          uuid: 'master-1',
+          firstName: 'Анна',
+          lastName: 'Мирова',
+        ),
+      ),
+      LessonModel(
+        uuid: 'program-2',
+        title: 'Утренняя медитация',
+        text: 'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
+        startDate: now,
+        finishDate: now.add(const Duration(minutes: 30)),
+        price: 1200,
+        master: MasterModel(
+          uuid: 'master-2',
+          firstName: 'Елена',
+          lastName: 'Светлова',
         ),
       ),
     ].cast<LessonModel>();

@@ -18,5 +18,5 @@ class RouteNames {
   static const String profileName = 'profile';
   static const String scheduleName = 'schedule';
   static const String programsName = 'programs';
-  static const String homeShellName = 'homeShell';
+  static const String appShellName = 'appShell';
 }

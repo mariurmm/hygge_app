@@ -69,13 +69,11 @@ class _LoginScreenState extends State<LoginScreen> {
             // ── 1. Фоновое изображение листа ──────────────────────────────
             const _LoginBackground(),
 
-            // ── 2. Основной контент ───────────────────────────────────────
             SafeArea(
               child: Column(
                 children: [
                   const SizedBox(height: 32),
 
-                  // Логотип «hy.gge CONCEPT»
                   const _HyggeLogo(),
 
                   const Spacer(),
@@ -117,10 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Приватные виджеты
-// ─────────────────────────────────────────────────────────────────────────────
 
 /// Фоновая фотография листа, растянутая на весь экран.
 class _LoginBackground extends StatelessWidget {
