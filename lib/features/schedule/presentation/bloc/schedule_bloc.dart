@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/features/schedule/presentation/bloc/schedule_state.dart';
-import 'package:hygge_app/data/models/schedule_lesson_model.dart';
 
 class ScheduleBloc extends Cubit<ScheduleState> {
   ScheduleBloc()
@@ -44,32 +45,21 @@ class ScheduleBloc extends Cubit<ScheduleState> {
     return cells;
   }
 
-  String lessonTimeRange(ScheduleLessonModel lesson) {
-    final f = DateFormat('H:mm', 'ru');
-    return '${f.format(lesson.start)} - ${f.format(lesson.end)}';
-  }
-
-  String lessonDayLabel(ScheduleLessonModel lesson) {
-    final t = DateTime(state.today.year, state.today.month, state.today.day);
-    final d = DateTime(lesson.day.year, lesson.day.month, lesson.day.day);
-    if (d == t) return 'Сегодня';
-    if (d == t.add(const Duration(days: 1))) return 'Завтра';
-    return DateFormat('d MMM', 'ru').format(d);
-  }
-
-  static List<ScheduleLessonModel> _seedLessons(DateTime now) {
+  static List<LessonModel> _seedLessons(DateTime now) {
     final tomorrow = now.add(const Duration(days: 1));
     final start = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 8, 0);
     final end = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 30);
     return [
-      ScheduleLessonModel(
+      LessonModel(
+        uuid: 'schedule-seed-1',
         ritual: 'Утренний ритуал',
         title: 'Йога глубокого дыхания',
-        description:
+        text:
             'Согревающий поток, предназначенный для создания внутреннего тепла и снятия физического напряжения.',
-        start: start,
-        end: end,
-        day: DateTime(tomorrow.year, tomorrow.month, tomorrow.day),
+        startDate: start,
+        finishDate: end,
+        price: 0,
+        master: MasterModel.empty,
       ),
     ];
   }

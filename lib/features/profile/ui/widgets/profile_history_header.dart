@@ -27,11 +27,20 @@ class ProfileHistoryHeader extends StatelessWidget {
         Expanded(
           child: Align(
             alignment: Alignment.topRight,
-            child: InkWell(
-              onTap: onViewAll,
+            child: TextButton(
+              onPressed: onViewAll,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
               child: Text(
                 'Посмотреть все',
-                style: AppTextStyles.scheduleCardLabel,
+                style: AppTextStyles.scheduleCardLabel.copyWith(
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.white70,
+                ),
               ),
             ),
           ),

@@ -64,14 +64,41 @@ class AppConstants {
   static const double profileCardsBottomInset = 100;
   static const double profileCardWidth = 373;
   static const double profileAccountCardHeight = 114;
-  static const double profileMonthlyTravelCardHeight = 170;
   static const double profileAccountIconSize = 30;
   static const double profileRecentHistoryCardHeight = 200;
   static const double profileAccountDescMaxWidth = 214;
   static const double profileAccountDescMaxHeight = 40;
   static const double profileMonthlyLeftTextMaxWidth = 144;
-  static const double profileMonthlyLeftTextMaxHeight = 40;
   static const double profileHistoryTitleMaxWidth = 226;
   static const double profileHistoryTitleMaxHeight = 89;
   static const double profileAccountTextColumnRightInset = 56;
+
+  // ── Settings screen ────────────────────────────────────────────
+  static const double settingsHeaderTopSpacing = 43;
+  static const double settingsAvatarWidth = 200;
+  static const double settingsAvatarHeight = 170;
+  static const double settingsGlassRadius = 35;
+  static const double settingsAfterAvatarSpacing = 7;
+  static const double settingsAfterChangePhotoSpacing = 25;
+  static const double settingsLabelInputSpacing = 7;
+  static const double settingsAfterEmailSpacing = 25;
+  static const double settingsInputWidth = 364;
+  static const double settingsInputHeight = 62;
+  static const double settingsActionIconSize = 30;
+  static const double settingsActionIconTextGap = 12;
+
+  // ── Контакты «О нас» ───────────────────────────────────────────
+  static const String profileContactPhoneDisplay = '+7(777)-777-77-77';
+  static const String profileContactPhoneUri = 'tel:+77777777777';
+  static const String profileContactEmail = 'hy.gge_concept@gmail.com';
+  static const String profileContactEmailUri =
+      'mailto:hy.gge_concept@gmail.com';
+  static const String profileInstagramConceptUrl =
+      'https://www.instagram.com/hy.gge.concept/';
+  static const String profileInstagramBarUrl =
+      'https://www.instagram.com/hy.gge.specialty.bar/';
+  static const String profileMapAddress =
+      'Казахстан, Алматы, ул. Зенкова, 17';
+  static const String profileMapUrl =
+      'https://maps.app.goo.gl/4bk3WANmFhNcCwXF7';
 }

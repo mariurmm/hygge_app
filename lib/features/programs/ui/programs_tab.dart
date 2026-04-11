@@ -75,9 +75,13 @@ class ProgramsTab extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       return ProgramFilterButton(
                                         label: state.filters[index],
-                                        isSelected: state.selectedFilter.index == index,
+                                        isSelected:
+                                            state.selectedFilter.index == index,
+                                        isAllPrograms: index == 0,
                                         onTap: () {
-                                          context.read<ProgramsBloc>().selectFilter(index);
+                                          context
+                                              .read<ProgramsBloc>()
+                                              .selectFilter(index);
                                         },
                                       );
                                     },

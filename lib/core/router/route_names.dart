@@ -9,6 +9,8 @@ class RouteNames {
   static const String programs = '/home/programs'; // «Программы»
   static const String profile = '/home/profile'; // «Профиль»
   static const String schedule = '/home/schedule'; // «Расписание»
+  static const String history = '/home/history'; // История программ (с профиля)
+  static const String settings = '/home/settings'; // Настройки профиля
   static const String homeShell = '/homeShell'; // Роут для оболочки с BottomNavigationBar
 
   // ── Имена (names) — используем в GoRoute(name: ...) ──────────
@@ -18,5 +20,7 @@ class RouteNames {
   static const String profileName = 'profile';
   static const String scheduleName = 'schedule';
   static const String programsName = 'programs';
+  static const String historyName = 'history';
+  static const String settingsName = 'settings';
   static const String appShellName = 'appShell';
 }

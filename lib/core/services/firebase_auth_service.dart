@@ -94,6 +94,14 @@ class FirebaseAuthService {
     return completer.future;
   }
 
+  /// Удаление текущего пользователя из Firebase Auth.
+  Future<void> deleteCurrentUser() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    await user.delete();
+    AppLogger.info('FirebaseAuth: аккаунт удалён из Auth');
+  }
+
   Future<void> signOut() async {
     try {
       await Future.wait([

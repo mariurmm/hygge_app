@@ -11,7 +11,16 @@ import 'dart:ui';
 class ProgrammCard extends StatelessWidget {
   final ProgrammCardType type;
   final LessonModel lesson;
-  const ProgrammCard({super.key, required this.type, required this.lesson});
+
+  /// Подпись поверх превью (история / недавний сеанс), например «Вчера 8:00».
+  final String? timingOverlayLabel;
+
+  const ProgrammCard({
+    super.key,
+    required this.type,
+    required this.lesson,
+    this.timingOverlayLabel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +48,46 @@ class ProgrammCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: AppConstants.programsCardMediaHeight,
-                  decoration: BoxDecoration(
-                    color: AppColors.programsCardMedia.withValues(alpha: 0.95),
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(AppConstants.programsCardRadius),
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(AppConstants.programsCardRadius),
+                  ),
+                  child: SizedBox(
+                    height: AppConstants.programsCardMediaHeight,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color:
+                                AppColors.programsCardMedia.withValues(alpha: 0.95),
+                          ),
+                        ),
+                        if (timingOverlayLabel != null) ...[
+                          Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.black.withValues(alpha: 0.35),
+                                    Colors.black.withValues(alpha: 0.45),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: AppPaddings.profileRecentSessionTimeLeft,
+                            top: AppPaddings.profileRecentSessionTimeTop,
+                            child: Text(
+                              timingOverlayLabel!,
+                              style: AppTextStyles.scheduleCardLabel,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),

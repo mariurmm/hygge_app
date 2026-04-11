@@ -65,4 +65,19 @@ class FirestoreService {
       rethrow;
     }
   }
+
+  /// Удалить документ пользователя (при удалении аккаунта).
+  Future<void> deleteUserDocument(String uid) async {
+    try {
+      await _firestore.collection(CollectionNames.users).doc(uid).delete();
+      AppLogger.info('Firestore: пользователь $uid удалён');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Firestore: ошибка удаления пользователя $uid',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
 }

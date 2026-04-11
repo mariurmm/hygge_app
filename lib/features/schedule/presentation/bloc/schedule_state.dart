@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:hygge_app/data/models/schedule_lesson_model.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
 
 class ScheduleState extends Equatable {
   final DateTime visibleMonth;
   final DateTime today;
-  final List<ScheduleLessonModel> signedLessons;
+  final List<LessonModel> signedLessons;
   final int completedSessions;
   final int totalSessions;
 
@@ -21,7 +21,7 @@ class ScheduleState extends Equatable {
   ScheduleState copyWith({
     DateTime? visibleMonth,
     DateTime? today,
-    List<ScheduleLessonModel>? signedLessons,
+    List<LessonModel>? signedLessons,
     int? completedSessions,
     int? totalSessions,
   }) {

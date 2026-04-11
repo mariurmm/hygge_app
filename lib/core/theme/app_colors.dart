@@ -48,9 +48,15 @@ class AppColors {
   /// Цвет неактивных иконок в навигации.
   static const Color inactive = Color(0xFF79747E);
 
-  // ── Programs tab ───────────────────────────────────────────────
-  static const Color programsFilterSelected = Color(0xFF3F2D1A);
-  static const Color programsFilterUnselected = Color(0xFFD9D9D9);
+  // ── Programs tab (фильтры) ─────────────────────────────────────
+  /// «Все программы» — выбран.
+  static const Color programsFilterAllSelected = Color(0xFF2E1B17);
+
+  /// «Медитации» / «Йога» — выбран (#9E5135 @ 25%).
+  static const Color programsFilterCategorySelected = Color(0x409E5135);
+
+  /// Любая кнопка фильтра — не выбрана (#D9D9D9 @ 25%).
+  static const Color programsFilterUnselected = Color(0x40D9D9D9);
   static const Color programsCard = Color(0xFF5E5F4D);
   static const Color programsCardMedia = Color(0xFF6D6D64);
 
@@ -62,4 +68,7 @@ class AppColors {
 
   /// Полупрозрачный фон карточки «Счёт & подписка» (#D9D9D9 @ 25%).
   static const Color profileAccountCardFill = Color(0x40D9D9D9);
+
+  /// Текст «Удалить аккаунт».
+  static const Color settingsDeleteText = Color(0xFFDA4E4E);
 }

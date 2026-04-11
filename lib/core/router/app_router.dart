@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/app_shelll/app_shell.dart';
 import '../../features/home/ui/home_tab.dart';
 import '../../features/programs/ui/programs_tab.dart';
+import '../../features/history/ui/history_screen.dart';
 import '../../features/profile/ui/profile_tab.dart';
+import '../../features/settings/ui/settings_screen.dart';
 import '../../features/login/ui/login_screen.dart';
 import '../../features/schedule/presentation/ui/schedule_tab.dart';
 import '../../features/splash/ui/splash_screen.dart';
@@ -81,6 +83,30 @@ class AppRouter {
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
                 child: const ProfileTab(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
+                transitionDuration: const Duration(milliseconds: 200),
+              ),
+            ),
+            GoRoute(
+              name: RouteNames.historyName,
+              path: RouteNames.history,
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const HistoryScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
+                transitionDuration: const Duration(milliseconds: 200),
+              ),
+            ),
+            GoRoute(
+              name: RouteNames.settingsName,
+              path: RouteNames.settings,
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const SettingsScreen(),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) =>
                         FadeTransition(opacity: animation, child: child),

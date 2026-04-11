@@ -116,4 +116,36 @@ class AppTextStyles {
     letterSpacing: 0.4,
     color: Colors.white,
   );
+
+  // ── Settings screen ────────────────────────────────────────────
+  static final TextStyle settingsHeaderTitle = programsHeading.copyWith(
+    fontSize: 22,
+  );
+
+  static final TextStyle settingsLabel16Light = bodyLarge.copyWith(
+    fontSize: 16,
+    fontWeight: FontWeight.w300,
+    color: Colors.white,
+    fontFamily: 'CeraPro',
+  );
+
+  static final TextStyle settingsInput16Medium = programsFilter.copyWith(
+    fontSize: 16,
+  );
+
+  static final TextStyle settingsChangePhoto = settingsLabel16Light.copyWith(
+    decoration: TextDecoration.underline,
+    decorationColor: Colors.white70,
+  );
+
+  static const TextStyle settingsActionWhite = TextStyle(
+    fontFamily: 'CeraPro',
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
+    color: Colors.white,
+  );
+
+  static final TextStyle settingsActionDelete = settingsActionWhite.copyWith(
+    color: AppColors.settingsDeleteText,
+  );
 }

@@ -21,7 +21,9 @@ class AppShell extends StatelessWidget {
     if (location.startsWith('/home/schedule')) {
       return AppConstants.scheduleTabIndex;
     }
-    if (location.startsWith('/home/profile')) {
+    if (location.startsWith('/home/profile') ||
+        location.startsWith('/home/history') ||
+        location.startsWith('/home/settings')) {
       return AppConstants.profileTabIndex;
     }
     return AppConstants.mainTabIndex;

@@ -7,7 +7,13 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ProgramsHeader extends StatelessWidget {
-  const ProgramsHeader({super.key});
+  /// Например, кнопка «назад» на вложенных экранах.
+  final Widget? leading;
+
+  /// Справа; по умолчанию — иконка уведомлений.
+  final Widget? trailing;
+
+  const ProgramsHeader({super.key, this.leading, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +27,10 @@ class ProgramsHeader extends StatelessWidget {
         children: [
           Row(
             children: [
+              if (leading != null) ...[
+                leading!,
+                const SizedBox(width: AppSpacings.programsHeaderTitleGap),
+              ],
               SvgPicture.asset(
                 AssetPaths.hyggeLogo,
                 width: AppConstants.programsHeaderLogoSize,
@@ -30,11 +40,12 @@ class ProgramsHeader extends StatelessWidget {
               Text('hy.gge', style: AppTextStyles.programsLogo),
             ],
           ),
-          const Icon(
-            Icons.notifications_none_rounded,
-            color: Colors.white,
-            size: AppConstants.programsHeaderIconSize,
-          ),
+          trailing ??
+              const Icon(
+                Icons.notifications_none_rounded,
+                color: Colors.white,
+                size: AppConstants.programsHeaderIconSize,
+              ),
         ],
       ),
     );

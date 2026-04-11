@@ -1,11 +1,15 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 import 'master_model.dart';
 
-/// Модель занятия.
+/// Модель занятия (программа / расписание / история).
 class LessonModel extends Equatable {
   /// Уникальный идентификатор.
   final String uuid;
+
+  /// Подзаголовок ритуала (экран расписания).
+  final String ritual;
 
   /// Название занятия.
   final String title;
@@ -27,6 +31,7 @@ class LessonModel extends Equatable {
 
   const LessonModel({
     required this.uuid,
+    this.ritual = '',
     required this.title,
     required this.text,
     required this.startDate,
@@ -34,6 +39,36 @@ class LessonModel extends Equatable {
     required this.price,
     required this.master,
   });
+
+  /// Календарный день начала (для сетки расписания).
+  DateTime get calendarDay =>
+      DateTime(startDate.year, startDate.month, startDate.day);
+
+  /// Диапазон времени «8:00 – 9:30».
+  String scheduleTimeRange() {
+    final f = DateFormat('H:mm', 'ru');
+    return '${f.format(startDate)} - ${f.format(finishDate)}';
+  }
+
+  /// Подпись дня относительно [today]: «Сегодня», «Завтра», «12 апр.».
+  String scheduleDayLabel(DateTime today) {
+    final t = DateTime(today.year, today.month, today.day);
+    final d = calendarDay;
+    if (d == t) return 'Сегодня';
+    if (d == t.add(const Duration(days: 1))) return 'Завтра';
+    return DateFormat('d MMM', 'ru').format(d);
+  }
+
+  /// Подпись для истории: «Вчера 8:00», «Сегодня 10:00», …
+  String historyWhenLabel(DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final d = calendarDay;
+    final time = DateFormat('H:mm', 'ru').format(startDate);
+    if (d == yesterday) return 'Вчера $time';
+    if (d == today) return 'Сегодня $time';
+    return '${DateFormat('d MMM', 'ru').format(d)} $time';
+  }
 
   /// Пустая модель.
   static final LessonModel empty = LessonModel(
@@ -52,6 +87,7 @@ class LessonModel extends Equatable {
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
       uuid: json['uuid'] as String? ?? '',
+      ritual: json['ritual'] as String? ?? '',
       title: json['title'] as String? ?? '',
       text: json['text'] as String? ?? '',
       startDate: _parseDate(json['startDate']),
@@ -66,6 +102,7 @@ class LessonModel extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
+      'ritual': ritual,
       'title': title,
       'text': text,
       'startDate': startDate.toIso8601String(),
@@ -97,6 +134,7 @@ class LessonModel extends Equatable {
   @override
   List<Object?> get props => [
         uuid,
+        ritual,
         title,
         text,
         startDate,

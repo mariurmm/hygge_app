@@ -33,7 +33,6 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
         ),
         child: Container(
           width: AppConstants.profileCardWidth,
-          height: AppConstants.profileMonthlyTravelCardHeight,
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
             borderRadius:
@@ -75,7 +74,6 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: AppConstants.profileMonthlyLeftTextMaxWidth,
-                    height: AppConstants.profileMonthlyLeftTextMaxHeight,
                     child: Text(
                       leftSessionsLine,
                       style: AppTextStyles.scheduleCardLabel.copyWith(

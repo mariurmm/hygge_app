@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
 
 class ProfileState extends Equatable {
   final bool isPremium;
@@ -7,8 +8,7 @@ class ProfileState extends Equatable {
   final int sessionsCompletedThisMonth;
   final int sessionsLeftToNextStage;
   final int goalSessionsTotal;
-  final String recentSessionTimingLabel;
-  final String recentSessionImagePath;
+  final LessonModel recentSessionLesson;
 
   const ProfileState({
     required this.isPremium,
@@ -17,8 +17,7 @@ class ProfileState extends Equatable {
     required this.sessionsCompletedThisMonth,
     required this.sessionsLeftToNextStage,
     required this.goalSessionsTotal,
-    required this.recentSessionTimingLabel,
-    required this.recentSessionImagePath,
+    required this.recentSessionLesson,
   });
 
   String get statusLine =>
@@ -39,8 +38,7 @@ class ProfileState extends Equatable {
     int? sessionsCompletedThisMonth,
     int? sessionsLeftToNextStage,
     int? goalSessionsTotal,
-    String? recentSessionTimingLabel,
-    String? recentSessionImagePath,
+    LessonModel? recentSessionLesson,
   }) {
     return ProfileState(
       isPremium: isPremium ?? this.isPremium,
@@ -52,10 +50,8 @@ class ProfileState extends Equatable {
       sessionsLeftToNextStage:
           sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
       goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
-      recentSessionTimingLabel:
-          recentSessionTimingLabel ?? this.recentSessionTimingLabel,
-      recentSessionImagePath:
-          recentSessionImagePath ?? this.recentSessionImagePath,
+      recentSessionLesson:
+          recentSessionLesson ?? this.recentSessionLesson,
     );
   }
 
@@ -67,7 +63,6 @@ class ProfileState extends Equatable {
         sessionsCompletedThisMonth,
         sessionsLeftToNextStage,
         goalSessionsTotal,
-        recentSessionTimingLabel,
-        recentSessionImagePath,
+        recentSessionLesson,
       ];
 }

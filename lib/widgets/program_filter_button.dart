@@ -8,21 +8,26 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 class ProgramFilterButton extends StatelessWidget {
   final String label;
   final bool isSelected;
+  /// Индекс 0 — «Все программы» (другая палитра выбранного состояния).
+  final bool isAllPrograms;
   final VoidCallback onTap;
 
   const ProgramFilterButton({
     super.key,
     required this.label,
     required this.isSelected,
+    required this.isAllPrograms,
     required this.onTap,
   });
 
+  Color _backgroundColor() {
+    if (!isSelected) return AppColors.programsFilterUnselected;
+    if (isAllPrograms) return AppColors.programsFilterAllSelected;
+    return AppColors.programsFilterCategorySelected;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bg = isSelected
-        ? AppColors.programsFilterSelected
-        : AppColors.programsFilterUnselected;
-
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -37,7 +42,7 @@ class ProgramFilterButton extends StatelessWidget {
             height: AppConstants.programsFilterHeight,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: bg.withValues(alpha: isSelected ? 0.78 : 0.56),
+              color: _backgroundColor(),
               borderRadius: BorderRadius.circular(
                 AppConstants.programsFilterRadius,
               ),

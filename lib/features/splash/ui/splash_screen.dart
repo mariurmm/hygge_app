@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
 import '../../../core/router/route_names.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../ui_kit/ui_kit.dart';
-import 'package:hygge_app/core/theme/app_colors.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
-import 'package:hygge_app/core/constants/asset_paths.dart';
 
 /// Сплэш-экран — первый экран при запуске приложения.
 ///

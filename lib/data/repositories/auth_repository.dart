@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/services/firebase_auth_service.dart';
 import '../../core/services/firestore_service.dart';
@@ -75,7 +76,6 @@ class AuthRepository {
       AppLogger.info('AuthRepository: вход выполнен — ${user.email}');
       return user;
     } catch (error, stackTrace) {
-      print('e $error');
       AppLogger.error(
         'AuthRepository: ошибка входа через Google',
         error: error,
@@ -83,6 +83,45 @@ class AuthRepository {
       );
       rethrow;
     }
+  }
+
+  /// Сохранить имя и email в Firestore и обновить отображаемое имя в Auth.
+  Future<void> updateUserProfileFields({
+    required String displayName,
+    required String email,
+  }) async {
+    final User? fb = _authService.currentUser;
+    if (fb == null) return;
+    await _firestoreService.saveUser(fb.uid, {
+      'uid': fb.uid,
+      'displayName': displayName.trim(),
+      'email': email.trim(),
+    });
+    final trimmed = displayName.trim();
+    if (trimmed.isNotEmpty) {
+      await fb.updateDisplayName(trimmed);
+    }
+  }
+
+  /// Очистить локальные кэши (SharedPreferences).
+  Future<void> clearLocalCaches() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+  /// Удалить данные в Firestore, аккаунт Firebase Auth и локальные кэши.
+  Future<void> deleteAccount() async {
+    final User? fb = _authService.currentUser;
+    if (fb == null) {
+      throw Exception('Пользователь не авторизован');
+    }
+    final String uid = fb.uid;
+    await _firestoreService.deleteUserDocument(uid);
+    await _authService.deleteCurrentUser();
+    try {
+      await _authService.signOut();
+    } catch (_) {}
+    await clearLocalCaches();
   }
 
   /// Выход из аккаунта.

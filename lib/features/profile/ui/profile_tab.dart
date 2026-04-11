@@ -8,16 +8,16 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
-import 'package:hygge_app/features/app/bloc/app_event.dart';
-import 'package:hygge_app/features/app/bloc/app_state.dart';
+import 'package:hygge_app/features/app/bloc/app_state.dart'
+    show AppState, AppStatus;
 import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
+import 'package:hygge_app/features/profile/ui/widgets/profile_about_section.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_account_subscription_card.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_history_header.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_monthly_travel_card.dart';
-import 'package:hygge_app/features/profile/ui/widgets/profile_recent_session_card.dart';
-import 'package:hygge_app/l10n/generated/app_localizations.dart';
-import 'package:hygge_app/ui_kit/ui_kit.dart';
+import 'package:hygge_app/features/programs_list/presentation/ui/programm_card.dart';
+import 'package:hygge_app/features/programs_list/presentation/ui/programm_list.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 
 class ProfileTab extends StatelessWidget {
@@ -25,8 +25,6 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-
     return BlocProvider(
       create: (context) =>
           ProfileBloc(user: context.read<AppBloc>().state.user),
@@ -49,6 +47,7 @@ class ProfileTab extends StatelessWidget {
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
+            final now = DateTime.now();
             return Scaffold(
               backgroundColor: Colors.transparent,
               extendBody: true,
@@ -65,7 +64,27 @@ class ProfileTab extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const ProgramsHeader(),
+                        ProgramsHeader(
+                          trailing: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(
+                              minWidth: 44,
+                              minHeight: 44,
+                            ),
+                            onPressed: () =>
+                                context.push(RouteNames.settings),
+                            icon: Image.asset(
+                              AssetPaths.settingsIcon,
+                              width: AppConstants.programsHeaderIconSize,
+                              height: AppConstants.programsHeaderIconSize,
+                              errorBuilder: (_, __, ___) => const Icon(
+                                Icons.settings_outlined,
+                                color: Colors.white,
+                                size: AppConstants.programsHeaderIconSize,
+                              ),
+                            ),
+                          ),
+                        ),
                         Expanded(
                           child: SingleChildScrollView(
                             padding: const EdgeInsets.only(
@@ -104,33 +123,21 @@ class ProfileTab extends StatelessWidget {
                                   SizedBox(
                                       height: AppSpacings.profileHistorySectionTop),
                                   ProfileHistoryHeader(
-                                    onViewAll: () {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'История сеансов — скоро',
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                    onViewAll: () =>
+                                        context.push(RouteNames.history),
                                   ),
                                   SizedBox(
                                       height:
                                           AppSpacings.profileHistoryLinkCardGap),
-                                  ProfileRecentSessionCard(
-                                    timingLabel: state.recentSessionTimingLabel,
-                                    imageAssetPath: state.recentSessionImagePath,
+                                  ProgrammCard(
+                                    type: ProgrammCardType.big,
+                                    lesson: state.recentSessionLesson,
+                                    timingOverlayLabel: state.recentSessionLesson
+                                        .historyWhenLabel(now),
                                   ),
-                                  const SizedBox(height: AppPaddings.largePadding),
-                                  AppButton(
-                                    text: loc.signOut,
-                                    onPressed: () {
-                                      context
-                                          .read<AppBloc>()
-                                          .add(const AppSignOutRequested());
-                                    },
-                                  ),
+                                  SizedBox(
+                                      height: AppSpacings.profileCardsVerticalGap),
+                                  const ProfileAboutSection(),
                                 ],
                               ),
                             ),

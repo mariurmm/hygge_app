@@ -26,7 +26,13 @@ class ScheduleTab extends StatelessWidget {
           final monthLabel = bloc.monthLabel(state.visibleMonth);
           final percent = (state.progress * 100).round();
           final scheduledDates = state.signedLessons
-              .map((lesson) => DateTime(lesson.day.year, lesson.day.month, lesson.day.day))
+              .map(
+                (lesson) => DateTime(
+                  lesson.calendarDay.year,
+                  lesson.calendarDay.month,
+                  lesson.calendarDay.day,
+                ),
+              )
               .toSet();
 
           return Scaffold(
@@ -87,10 +93,13 @@ class ScheduleTab extends StatelessWidget {
                                       bottom: AppSpacings.programsCardsGap,
                                     ),
                                     child: ScheduleProgramCard(
-                                      ritual: lesson.ritual,
+                                      ritual: lesson.ritual.isNotEmpty
+                                          ? lesson.ritual
+                                          : 'Программа',
                                       title: lesson.title,
-                                      timeRange: bloc.lessonTimeRange(lesson),
-                                      whenLabel: bloc.lessonDayLabel(lesson),
+                                      timeRange: lesson.scheduleTimeRange(),
+                                      whenLabel:
+                                          lesson.scheduleDayLabel(state.today),
                                     ),
                                   ),
                                 ),
