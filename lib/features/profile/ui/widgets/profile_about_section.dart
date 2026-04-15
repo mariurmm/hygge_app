@@ -3,16 +3,18 @@ import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/core/utils/external_links.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class ProfileAboutSection extends StatelessWidget {
   const ProfileAboutSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('О нас', style: AppTextStyles.programsHeading),
+        Text(loc.profileAboutTitle, style: AppTextStyles.programsHeading),
         const SizedBox(height: AppSpacings.programsLeadGap),
         _LinkRow(
           icon: Icons.phone_outlined,
@@ -41,7 +43,7 @@ class ProfileAboutSection extends StatelessWidget {
         const SizedBox(height: AppSpacings.scheduleCardTextGapV),
         _LinkRow(
           icon: Icons.map_outlined,
-          label: AppConstants.profileMapAddress,
+          label: loc.profileMapAddress,
           onTap: () => launchExternalUrl(AppConstants.profileMapUrl),
         ),
       ],

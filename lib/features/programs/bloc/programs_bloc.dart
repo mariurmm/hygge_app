@@ -9,7 +9,7 @@ class ProgramsBloc extends Cubit<ProgramsState> {
   }
 
   void selectFilter(int index) {
-    if (index < 0 || index >= state.filters.length) return;
+    if (index < 0 || index >= ProgramsFilter.values.length) return;
     emit(
       state.copyWith(
         selectedFilter: ProgramsFilter.values[index],

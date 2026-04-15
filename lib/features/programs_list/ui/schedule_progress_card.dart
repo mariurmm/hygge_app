@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
@@ -18,6 +19,7 @@ class ScheduleProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
@@ -42,7 +44,7 @@ class ScheduleProgressCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text('Прогресс', style: AppTextStyles.scheduleCardTitle),
+                  Text(loc.progressLabel, style: AppTextStyles.scheduleCardTitle),
                   const Spacer(),
                   Text('$percent%', style: AppTextStyles.scheduleCardTitle),
                 ],

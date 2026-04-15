@@ -7,8 +7,9 @@ import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../features/programs/bloc/programs_bloc.dart';
 import '../../../features/programs/bloc/programs_state.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/program_filter_button.dart';
-import '../../../features/programs_list/presentation/ui/programm_list.dart';
+import '../../programs_list/ui/programm_list.dart';
 import '../../../widgets/tab_header.dart';
 
 class ProgramsTab extends StatelessWidget {
@@ -20,6 +21,17 @@ class ProgramsTab extends StatelessWidget {
       create: (_) => ProgramsBloc(),
       child: BlocBuilder<ProgramsBloc, ProgramsState>(
         builder: (context, state) {
+          final loc = AppLocalizations.of(context);
+          final filterLabels = [
+            loc.filterAll,
+            loc.filterMeditation,
+            loc.filterYoga,
+            loc.filterOutdoor,
+            loc.filterCeremony,
+            loc.filterMasterClass,
+            loc.filterLecture,
+            loc.filterAuthorTour,
+          ];
           return Scaffold(
             backgroundColor: Colors.transparent,
             extendBody: true,
@@ -50,14 +62,14 @@ class ProgramsTab extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Организованные мастерами программы',
+                                  loc.programsHeading,
                                   style: AppTextStyles.programsHeading,
                                 ),
                                 const SizedBox(
                                   height: AppSpacings.programsLeadGap,
                                 ),
                                 Text(
-                                  'Откройте для себя ритмические практики, призванные восстановить ваше естественное состояние. Расслабьтесь, дышите и найдите свое убежище.',
+                                  loc.programsDescription,
                                   style: AppTextStyles.programsSubtitle,
                                 ),
                                 const SizedBox(
@@ -67,14 +79,14 @@ class ProgramsTab extends StatelessWidget {
                                   height: AppConstants.programsFilterHeight,
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: state.filters.length,
+                                    itemCount: filterLabels.length,
                                     separatorBuilder: (_, __) =>
                                         const SizedBox(
                                           width: AppSpacings.programsFiltersGap,
                                         ),
                                     itemBuilder: (context, index) {
                                       return ProgramFilterButton(
-                                        label: state.filters[index],
+                                        label: filterLabels[index],
                                         isSelected:
                                             state.selectedFilter.index == index,
                                         isAllPrograms: index == 0,

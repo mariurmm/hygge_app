@@ -7,6 +7,7 @@ import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_travel_progress_bar.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class ProfileMonthlyTravelCard extends StatelessWidget {
   final int percent;
@@ -24,6 +25,7 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
@@ -51,7 +53,7 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      'Ежемесячное путешествие',
+                      loc.profileMonthlyTitle,
                       style: AppTextStyles.scheduleCardTitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
