@@ -8,7 +8,7 @@ import '../../features/history/ui/history_screen.dart';
 import '../../features/profile/ui/profile_tab.dart';
 import '../../features/settings/ui/settings_screen.dart';
 import '../../features/login/ui/login_screen.dart';
-import '../../features/schedule/presentation/ui/schedule_tab.dart';
+import '../../features/schedule/ui/schedule_tab.dart';
 import '../../features/splash/ui/splash_screen.dart';
 import 'route_names.dart';
 

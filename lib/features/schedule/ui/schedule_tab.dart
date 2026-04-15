@@ -5,12 +5,13 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/schedule_program_card.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/schedule_progress_card.dart';
-import 'package:hygge_app/features/schedule/presentation/bloc/schedule_bloc.dart';
-import 'package:hygge_app/features/schedule/presentation/bloc/schedule_state.dart';
-import 'package:hygge_app/features/schedule/presentation/ui/widgets/schedule_calendar.dart';
+import 'package:hygge_app/features/programs_list/ui/schedule_program_card.dart';
+import 'package:hygge_app/features/programs_list/ui/schedule_progress_card.dart';
+import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
+import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
+import 'package:hygge_app/features/schedule/ui/widgets/schedule_calendar.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class ScheduleTab extends StatelessWidget {
   const ScheduleTab({super.key});
@@ -21,9 +22,11 @@ class ScheduleTab extends StatelessWidget {
       create: (_) => ScheduleBloc(),
       child: BlocBuilder<ScheduleBloc, ScheduleState>(
         builder: (context, state) {
+          final loc = AppLocalizations.of(context);
           final bloc = context.read<ScheduleBloc>();
           final calendarCells = bloc.calendarCells(state.visibleMonth);
-          final monthLabel = bloc.monthLabel(state.visibleMonth);
+          final locale = Localizations.localeOf(context).languageCode;
+          final monthLabel = bloc.monthLabel(state.visibleMonth, locale);
           final percent = (state.progress * 100).round();
           final scheduledDates = state.signedLessons
               .map(
@@ -62,12 +65,12 @@ class ScheduleTab extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Время твоего уединения',
+                                  loc.scheduleTitle,
                                   style: AppTextStyles.scheduleSectionTitle,
                                 ),
                                 const SizedBox(height: AppSpacings.programsLeadGap),
                                 Text(
-                                  'Спокойные моменты запланированные на $monthLabel.',
+                                  loc.scheduleMonthlyDescription(monthLabel),
                                   style: AppTextStyles.scheduleDescription,
                                 ),
                                 const SizedBox(height: AppSpacings.scheduleCalendarGap),
@@ -81,7 +84,7 @@ class ScheduleTab extends StatelessWidget {
                                 ),
                                 const SizedBox(height: AppSpacings.scheduleCalendarGap),
                                 Text(
-                                  'Записанные',
+                                  loc.scheduleSignedTitle,
                                   style: AppTextStyles.scheduleCalendarTitle,
                                 ),
                                 const SizedBox(
@@ -95,7 +98,7 @@ class ScheduleTab extends StatelessWidget {
                                     child: ScheduleProgramCard(
                                       ritual: lesson.ritual.isNotEmpty
                                           ? lesson.ritual
-                                          : 'Программа',
+                                          : loc.scheduleProgramFallback,
                                       title: lesson.title,
                                       timeRange: lesson.scheduleTimeRange(),
                                       whenLabel:
@@ -105,8 +108,10 @@ class ScheduleTab extends StatelessWidget {
                                 ),
                                 ScheduleProgressCard(
                                   percent: percent,
-                                  description:
-                                      'В этом месяце вы завершили ${state.completedSessions} из ${state.totalSessions} сеансов. Придерживайтесь мягкого ритма.',
+                                  description: loc.scheduleProgressDescription(
+                                    state.completedSessions,
+                                    state.totalSessions,
+                                  ),
                                 ),
                               ],
                             ),

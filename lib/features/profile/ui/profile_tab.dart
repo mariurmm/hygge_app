@@ -16,9 +16,10 @@ import 'package:hygge_app/features/profile/ui/widgets/profile_about_section.dart
 import 'package:hygge_app/features/profile/ui/widgets/profile_account_subscription_card.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_history_header.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_monthly_travel_card.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/programm_card.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/programm_list.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -48,6 +49,7 @@ class ProfileTab extends StatelessWidget {
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
             final now = DateTime.now();
+            final loc = AppLocalizations.of(context);
             return Scaffold(
               backgroundColor: Colors.transparent,
               extendBody: true,
@@ -98,7 +100,9 @@ class ProfileTab extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    state.statusLine,
+                                    state.isPremium
+                                        ? loc.profileStatusPremium
+                                        : loc.profileStatusStandard,
                                     style: AppTextStyles.programsSubtitle,
                                   ),
                                   SizedBox(
@@ -116,9 +120,15 @@ class ProfileTab extends StatelessWidget {
                                       height: AppSpacings.profileCardsVerticalGap),
                                   ProfileMonthlyTravelCard(
                                     percent: state.travelProgressPercent,
-                                    description: state.monthlyTravelDescription,
-                                    leftSessionsLine: state.leftSessionsLine,
-                                    goalLine: state.goalLine,
+                                    description: loc.profileMonthlySessionsCompleted(
+                                      state.sessionsCompletedThisMonth,
+                                    ),
+                                    leftSessionsLine: loc.profileSessionsLeftToStage(
+                                      state.sessionsLeftToNextStage,
+                                    ),
+                                    goalLine: loc.profileGoalSessions(
+                                      state.goalSessionsTotal,
+                                    ),
                                   ),
                                   SizedBox(
                                       height: AppSpacings.profileHistorySectionTop),

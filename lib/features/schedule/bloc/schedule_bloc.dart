@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
-import 'package:hygge_app/features/schedule/presentation/bloc/schedule_state.dart';
+import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
 
 class ScheduleBloc extends Cubit<ScheduleState> {
   ScheduleBloc()
@@ -26,7 +26,7 @@ class ScheduleBloc extends Cubit<ScheduleState> {
     emit(state.copyWith(visibleMonth: DateTime(d.year, d.month - 1, 1)));
   }
 
-  String monthLabel(DateTime month) => DateFormat('LLLL yyyy', 'ru').format(month);
+  String monthLabel(DateTime month, [String locale = 'en']) => DateFormat('LLLL yyyy', locale).format(month);
 
   List<DateTime?> calendarCells(DateTime month) {
     final first = DateTime(month.year, month.month, 1);

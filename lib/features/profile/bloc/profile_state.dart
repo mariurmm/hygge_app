@@ -20,17 +20,6 @@ class ProfileState extends Equatable {
     required this.recentSessionLesson,
   });
 
-  String get statusLine =>
-      isPremium ? 'Член премиум-клуба' : 'Стандартный аккаунт';
-
-  String get monthlyTravelDescription =>
-      '$sessionsCompletedThisMonth сеансов завершены в этом месяце';
-
-  String get leftSessionsLine =>
-      '$sessionsLeftToNextStage сессии до следующего этапа';
-
-  String get goalLine => 'Цель: $goalSessionsTotal сеансов';
-
   ProfileState copyWith({
     bool? isPremium,
     String? displayName,

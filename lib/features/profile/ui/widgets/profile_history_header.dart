@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class ProfileHistoryHeader extends StatelessWidget {
   final VoidCallback onViewAll;
@@ -10,6 +11,7 @@ class ProfileHistoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -17,7 +19,7 @@ class ProfileHistoryHeader extends StatelessWidget {
           width: AppConstants.profileHistoryTitleMaxWidth,
           height: AppConstants.profileHistoryTitleMaxHeight,
           child: Text(
-            'Недавняя история ваших пройденных программ',
+            loc.profileHistoryTitle,
             style: AppTextStyles.scheduleCardTitle,
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
@@ -36,7 +38,7 @@ class ProfileHistoryHeader extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
-                'Посмотреть все',
+                loc.profileHistoryViewAll,
                 style: AppTextStyles.scheduleCardLabel.copyWith(
                   decoration: TextDecoration.underline,
                   decorationColor: Colors.white70,

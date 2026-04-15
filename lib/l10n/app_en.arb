@@ -21,6 +21,11 @@
     "description": "Подзаголовок экрана входа — подсказка пользователю"
   },
 
+  "loginGreeting": "Hello!",
+  "@loginGreeting": {
+    "description": "Приветственный текст на экране входа"
+  },
+
   "signInWithGoogle": "Sign in with Google",
   "@signInWithGoogle": {
     "description": "Текст кнопки входа через Google-аккаунт"
@@ -80,5 +85,290 @@
   "readOurNews": "Read our news",
   "@readOurNews": {
     "description": "Текст над баннером с новостями"
+  },
+
+  "homeHeadlinePart1": "Find your\n",
+  "@homeHeadlinePart1": {
+    "description": "Первая часть заголовка на главном экране (до выделенного слова)"
+  },
+
+  "homeHeadlineAccent": "peace",
+  "@homeHeadlineAccent": {
+    "description": "Выделенное курсивом слово в заголовке главного экрана"
+  },
+
+  "homeHeadlinePart2": "\ntoday",
+  "@homeHeadlinePart2": {
+    "description": "Третья часть заголовка на главном экране (после выделенного слова)"
+  },
+
+  "homeAnnouncements": "Announcements",
+  "@homeAnnouncements": {
+    "description": "Заголовок раздела анонсов на главном экране"
+  },
+
+  "homeUpcomingPrograms": "Upcoming programs",
+  "@homeUpcomingPrograms": {
+    "description": "Заголовок раздела предстоящих программ на главном экране"
+  },
+
+  "historyTitle": "Program history",
+  "@historyTitle": {
+    "description": "Заголовок экрана истории программ"
+  },
+
+  "historySubtitle": "Completed sessions are displayed here.",
+  "@historySubtitle": {
+    "description": "Подзаголовок экрана истории программ"
+  },
+
+  "programsHeading": "Master-organized programs",
+  "@programsHeading": {
+    "description": "Heading on the Programs tab"
+  },
+
+  "programsDescription": "Discover rhythmic practices designed to restore your natural state. Relax, breathe, and find your sanctuary.",
+  "@programsDescription": {
+    "description": "Subtitle/description on the Programs tab"
+  },
+
+  "filterAll": "All programs",
+  "@filterAll": {
+    "description": "Programs filter: all"
+  },
+
+  "filterMeditation": "Meditations",
+  "@filterMeditation": {
+    "description": "Programs filter: meditations"
+  },
+
+  "filterYoga": "Yoga",
+  "@filterYoga": {
+    "description": "Programs filter: yoga"
+  },
+
+  "filterOutdoor": "Outdoors",
+  "@filterOutdoor": {
+    "description": "Programs filter: outdoor activities"
+  },
+
+  "filterCeremony": "Ceremonies",
+  "@filterCeremony": {
+    "description": "Programs filter: ceremonies"
+  },
+
+  "filterMasterClass": "Master classes",
+  "@filterMasterClass": {
+    "description": "Programs filter: master classes"
+  },
+
+  "filterLecture": "Lectures",
+  "@filterLecture": {
+    "description": "Programs filter: lectures"
+  },
+
+  "filterAuthorTour": "Author tours",
+  "@filterAuthorTour": {
+    "description": "Programs filter: author tours"
+  },
+
+  "programCardDefaultTitle": "Morning meditation",
+  "@programCardDefaultTitle": {
+    "description": "Fallback title for a program card when no title is provided"
+  },
+
+  "programCardDefaultDescription": "Gentle introduction to mindfulness, focusing on breathing and setting intentions.",
+  "@programCardDefaultDescription": {
+    "description": "Fallback description for a program card when no text is provided"
+  },
+
+  "minutesLabel": "{count} min",
+  "@minutesLabel": {
+    "description": "Duration label in minutes",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+
+  "scheduleTitle": "Time for your retreat",
+  "@scheduleTitle": {
+    "description": "Main heading on the Schedule tab"
+  },
+
+  "scheduleMonthlyDescription": "Peaceful moments scheduled for {month}.",
+  "@scheduleMonthlyDescription": {
+    "description": "Subtitle on the Schedule tab with current month name",
+    "placeholders": {
+      "month": {
+        "type": "String",
+        "example": "April 2026"
+      }
+    }
+  },
+
+  "scheduleSignedTitle": "Enrolled",
+  "@scheduleSignedTitle": {
+    "description": "Section title for enrolled/signed sessions on the Schedule tab"
+  },
+
+  "scheduleProgramFallback": "Program",
+  "@scheduleProgramFallback": {
+    "description": "Fallback ritual/program label when none is provided"
+  },
+
+  "scheduleProgressDescription": "This month you completed {completed} of {total} sessions. Keep the gentle rhythm.",
+  "@scheduleProgressDescription": {
+    "description": "Progress card description with completed and total session counts",
+    "placeholders": {
+      "completed": {
+        "type": "int",
+        "example": "12"
+      },
+      "total": {
+        "type": "int",
+        "example": "15"
+      }
+    }
+  },
+
+  "progressLabel": "Progress",
+  "@progressLabel": {
+    "description": "Label for the progress card/bar"
+  },
+
+  "profileAboutTitle": "About us",
+  "@profileAboutTitle": {
+    "description": "Heading for the About section on the Profile tab"
+  },
+
+  "profileAccountTitle": "Account & Subscription",
+  "@profileAccountTitle": {
+    "description": "Title on the account and subscription card"
+  },
+
+  "profileAccountDescription": "Manage your account and subscription",
+  "@profileAccountDescription": {
+    "description": "Description on the account and subscription card"
+  },
+
+  "profileHistoryTitle": "Recent history of your completed programs",
+  "@profileHistoryTitle": {
+    "description": "Title in the history header on the Profile tab"
+  },
+
+  "profileHistoryViewAll": "View all",
+  "@profileHistoryViewAll": {
+    "description": "Link to view all program history"
+  },
+
+  "profileMonthlyTitle": "Monthly journey",
+  "@profileMonthlyTitle": {
+    "description": "Title on the monthly travel/journey card"
+  },
+
+  "profileStatusPremium": "Premium club member",
+  "@profileStatusPremium": {
+    "description": "Status line shown for premium users"
+  },
+
+  "profileStatusStandard": "Standard account",
+  "@profileStatusStandard": {
+    "description": "Status line shown for standard users"
+  },
+
+  "profileMonthlySessionsCompleted": "{count} sessions completed this month",
+  "@profileMonthlySessionsCompleted": {
+    "description": "Number of sessions completed this month",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+
+  "profileSessionsLeftToStage": "{count} sessions until next stage",
+  "@profileSessionsLeftToStage": {
+    "description": "Number of sessions remaining until next stage",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+
+  "profileGoalSessions": "Goal: {count} sessions",
+  "@profileGoalSessions": {
+    "description": "Goal total number of sessions",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
+
+  "homeProgramCardTitle": "New program",
+  "@homeProgramCardTitle": {
+    "description": "Placeholder title for an upcoming program card on the Home tab"
+  },
+
+  "homeProgramCardDate": "Starting 06/01",
+  "@homeProgramCardDate": {
+    "description": "Placeholder date for an upcoming program card on the Home tab"
+  },
+
+  "settingsTitle": "Profile settings",
+  "@settingsTitle": {
+    "description": "Title in the Settings screen header"
+  },
+
+  "settingsChangePhoto": "Change photo",
+  "@settingsChangePhoto": {
+    "description": "Button to change avatar photo in Settings"
+  },
+
+  "settingsRequiredFields": "Required fields",
+  "@settingsRequiredFields": {
+    "description": "Section heading for required profile fields in Settings"
+  },
+
+  "settingsFullName": "Full name",
+  "@settingsFullName": {
+    "description": "Label for the full name input field in Settings"
+  },
+
+  "settingsEmailAddress": "Email address",
+  "@settingsEmailAddress": {
+    "description": "Label for the email input field in Settings"
+  },
+
+  "settingsSignOut": "Sign out of account",
+  "@settingsSignOut": {
+    "description": "Action row label for sign-out in Settings"
+  },
+
+  "settingsDeleteAccount": "Delete account",
+  "@settingsDeleteAccount": {
+    "description": "Action row label for account deletion in Settings"
+  },
+
+  "settingsChangeLanguage": "Change language",
+  "@settingsChangeLanguage": {
+    "description": "Button label to open the language picker in Settings"
+  },
+
+  "settingsSelectLanguage": "Select language",
+  "@settingsSelectLanguage": {
+    "description": "Title of the language picker sheet in Settings"
+  },
+
+  "profileMapAddress": "Kazakhstan, Almaty, Zenkova St, 17",
+  "@profileMapAddress": {
+    "description": "Physical address shown in the About section of the Profile tab"
   }
 }

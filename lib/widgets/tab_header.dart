@@ -37,7 +37,7 @@ class ProgramsHeader extends StatelessWidget {
                 height: AppConstants.programsHeaderLogoSize,
               ),
               const SizedBox(width: AppSpacings.programsHeaderTitleGap),
-              Text('hy.gge', style: AppTextStyles.programsLogo),
+              Text('hy.gge concept', style: AppTextStyles.programsLogo),
             ],
           ),
           trailing ??

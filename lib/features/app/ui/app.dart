@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../bloc/app_bloc.dart';
+import '../bloc/locale_cubit.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -16,9 +17,18 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = AppRouter.create();
 
-    return BlocProvider(
-      create: (_) => AppBloc(authRepository: AuthRepository.instance),
-      child: MaterialApp.router(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AppBloc(authRepository: AuthRepository.instance),
+        ),
+        BlocProvider(
+          create: (_) => LocaleCubit()..load(),
+        ),
+      ],
+      child: BlocBuilder<LocaleCubit, Locale?>(
+        builder: (context, locale) => MaterialApp.router(
+          locale: locale,
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
 
@@ -42,6 +52,7 @@ class App extends StatelessWidget {
         // ── Локализация ───────────────────────────────────────
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
+        ),
       ),
     );
   }
