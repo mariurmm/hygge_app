@@ -366,6 +366,20 @@
   "@settingsSelectLanguage": {
     "description": "Title of the language picker sheet in Settings"
   },
+  "settingsSave": "Save",
+"@settingsSave": {
+  "description": "Save button in the Settings screen header"
+},
+
+"settingsAppSettings": "App settings",
+"@settingsAppSettings": {
+  "description": "Section heading for app settings (language etc.) in Settings"
+},
+
+"settingsAccount": "Account",
+"@settingsAccount": {
+  "description": "Section heading for account actions (sign out, delete) in Settings"
+},
 
   "profileMapAddress": "Kazakhstan, Almaty, Zenkova St, 17",
   "@profileMapAddress": {

@@ -67,6 +67,10 @@
   "settingsDeleteAccount": "Удалить аккаунт",
   "settingsChangeLanguage": "Изменить язык",
   "settingsSelectLanguage": "Выберите язык",
+  "settingsSave": "Сохранить",
+"settingsAppSettings": "Настройки приложения",
+"settingsAccount": "Аккаунт",
+
 
   "profileMapAddress": "Казахстан, Алматы, ул. Зенкова, 17"
 }
