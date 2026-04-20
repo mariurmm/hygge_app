@@ -67,6 +67,9 @@
   "settingsDeleteAccount": "Аккаунтты жою",
   "settingsChangeLanguage": "Тілді өзгерту",
   "settingsSelectLanguage": "Тілді таңдаңыз",
+  "settingsSave": "Сақтау",
+"settingsAppSettings": "Қолданба баптаулары",
+"settingsAccount": "Аккаунт",
 
   "profileMapAddress": "Қазақстан, Алматы, Зенков к-сі, 17"
 }

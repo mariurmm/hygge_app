@@ -2,34 +2,68 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../l10n/generated/app_localizations.dart';
 
-class AppShell extends StatelessWidget {
+class AppShell extends StatefulWidget {
   final Widget child;
 
   const AppShell({super.key, required this.child});
 
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  int _lastIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _animation = ConstantTween<double>(0.0).animate(_animationController);
+  }
+
   int _currentIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home/programs')) {
+    if (location.startsWith('/home/programs'))
       return AppConstants.programsTabIndex;
-    }
-    if (location.startsWith('/home/schedule')) {
+    if (location.startsWith('/home/schedule'))
       return AppConstants.scheduleTabIndex;
-    }
-    if (location.startsWith('/home/profile') ||
-        location.startsWith('/home/history') ||
-        location.startsWith('/home/settings')) {
+    if (location.startsWith('/home/profile'))
       return AppConstants.profileTabIndex;
-    }
     return AppConstants.mainTabIndex;
   }
 
   void _onTabTapped(BuildContext context, int index) {
+    if (index == _lastIndex) return;
+
+    HapticFeedback.mediumImpact();
+
+    _animation =
+        Tween<double>(
+          begin: _lastIndex.toDouble(),
+          end: index.toDouble(),
+        ).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutQuart,
+          ),
+        );
+
+    _animationController.forward(from: 0);
+    _lastIndex = index;
+
     switch (index) {
       case AppConstants.mainTabIndex:
         context.go('/home/main');
@@ -46,34 +80,42 @@ class AppShell extends StatelessWidget {
     }
   }
 
+  Color colorWithOpacity(Color c, double o) =>
+      Color.fromRGBO(c.red, c.green, c.blue, o);
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final int selectedIndex = _currentIndex(context);
 
+    if (selectedIndex != _lastIndex && !_animationController.isAnimating) {
+      _lastIndex = selectedIndex;
+      _animation = ConstantTween<double>(
+        selectedIndex.toDouble(),
+      ).animate(_animationController);
+    }
+
     final tabs = [
       _TabItem(
         iconPath: 'assets/svg/home.svg',
-        activeIconPath: 'assets/svg/home.svg',
-        label: loc.tabMain,
         index: AppConstants.mainTabIndex,
       ),
       _TabItem(
         iconPath: 'assets/svg/programs.svg',
-        activeIconPath: 'assets/svg/programs.svg',
-        label: loc.tabPrograms,
         index: AppConstants.programsTabIndex,
       ),
       _TabItem(
         iconPath: 'assets/svg/schedule.svg',
-        activeIconPath: 'assets/svg/schedule.svg',
-        label: loc.tabSchedule,
         index: AppConstants.scheduleTabIndex,
       ),
       _TabItem(
         iconPath: 'assets/svg/profile.svg',
-        activeIconPath: 'assets/svg/profile.svg',
-        label: loc.tabProfile,
         index: AppConstants.profileTabIndex,
       ),
     ];
@@ -81,20 +123,23 @@ class AppShell extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
-        fit: StackFit.expand,
         children: [
-          // Основной контент — занимает все пространство
-          Positioned(top: 0, left: 0, right: 0, bottom: 0, child: child),
-
-          // Навбар поверх контента — floating
+          Positioned.fill(child: widget.child),
           Positioned(
             left: 16,
             right: 16,
             bottom: 16,
-            child: _FloatingNavBar(
-              tabs: tabs,
-              selectedIndex: selectedIndex,
-              onTabTapped: (index) => _onTabTapped(context, index),
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return _FloatingNavBar(
+                  tabs: tabs,
+                  currentIndexValue: _animation.value,
+                  targetIndex: selectedIndex,
+                  onTabTapped: (index) => _onTabTapped(context, index),
+                  colorWithOpacity: colorWithOpacity,
+                );
+              },
             ),
           ),
         ],
@@ -103,131 +148,131 @@ class AppShell extends StatelessWidget {
   }
 }
 
-// ── Плавающий навбар ──
 class _FloatingNavBar extends StatelessWidget {
   final List<_TabItem> tabs;
-  final int selectedIndex;
+  final double currentIndexValue;
+  final int targetIndex;
   final ValueChanged<int> onTabTapped;
+  final Color Function(Color, double) colorWithOpacity;
 
   const _FloatingNavBar({
     required this.tabs,
-    required this.selectedIndex,
+    required this.currentIndexValue,
+    required this.targetIndex,
     required this.onTabTapped,
+    required this.colorWithOpacity,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(35),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          height: 62,
-          decoration: BoxDecoration(
-            color: const Color.fromRGBO(255, 255, 255, 0.22),
-            borderRadius: BorderRadius.circular(35),
-            border: Border.all(
-              color: const Color.fromRGBO(255, 255, 255, 0.35),
-              width: 1,
-            ),
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              const totalTabs = 4;
-              final sectionWidth = constraints.maxWidth / totalTabs;
-              final highlightWidth = min(72.0, max(52.0, sectionWidth - 16));
-              final highlightLeft =
-                  sectionWidth * selectedIndex +
-                  (sectionWidth - highlightWidth) / 2;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final totalTabs = tabs.length;
+        final sectionWidth = constraints.maxWidth / totalTabs;
 
-              return Stack(
-                alignment: Alignment.center,
+        final stretch = (currentIndexValue - targetIndex).abs().clamp(0.0, 1.0);
+
+        // Увеличиваем базовую ширину, чтобы она была прямоугольной (вытянутой)
+        // Теперь базовая ширина 80 (или чуть меньше ширины секции)
+        final highlightWidth = (sectionWidth * 0.85) + (30.0 * stretch);
+        final highlightHeight = 48.0 - (4.0 * stretch);
+
+        // Идеальное центрирование относительно иконок
+        final highlightLeft =
+            (sectionWidth * currentIndexValue) +
+            (sectionWidth / 2) -
+            (highlightWidth / 2);
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(35),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              height: 62,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(255, 255, 255, 0.22),
+                borderRadius: BorderRadius.circular(35),
+                border: Border.all(
+                  color: const Color.fromRGBO(255, 255, 255, 0.35),
+                  width: 1,
+                ),
+              ),
+              child: Stack(
                 children: [
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
+                  // ИНДИКАТОР (ПРЯМОУГОЛЬНАЯ ВЫТЯНУТАЯ КАПЛЯ)
+                  Positioned(
                     left: highlightLeft,
-                    top: 6,
-                    bottom: 6,
+                    top: (62 - highlightHeight) / 2,
                     child: Container(
                       width: highlightWidth,
+                      height: highlightHeight,
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(255, 255, 255, 0.54),
-                        borderRadius: BorderRadius.circular(28),
+                        // Используем фиксированный радиус для формы вытянутого прямоугольника
+                        borderRadius: BorderRadius.circular(24),
+                        gradient: LinearGradient(
+                          colors: [
+                            colorWithOpacity(Colors.white, 0.25),
+                            colorWithOpacity(Colors.white, 0.10),
+                          ],
+                        ),
+                        border: Border.all(
+                          color: colorWithOpacity(Colors.white, 0.3),
+                          width: 0.8,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color.fromRGBO(0, 0, 0, 0.08),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            color: colorWithOpacity(Colors.white, 0.15),
+                            blurRadius: 20,
+                            spreadRadius: 2,
                           ),
                         ],
                       ),
                     ),
                   ),
+                  // ИКОНКИ
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: tabs
-                        .map(
-                          (tab) => _NavBarItem(
-                            tab: tab,
-                            isSelected: tab.index == selectedIndex,
-                            onTap: () => onTabTapped(tab.index),
+                    children: tabs.map((tab) {
+                      final distance = (currentIndexValue - tab.index).abs();
+                      final t = (1.0 - distance).clamp(0.0, 1.0);
+
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => onTabTapped(tab.index),
+                          behavior: HitTestBehavior.opaque,
+                          child: Center(
+                            child: Transform.scale(
+                              scale: 1.0 + (0.15 * t),
+                              child: SvgPicture.asset(
+                                tab.iconPath,
+                                width: 24,
+                                height: 24,
+                                colorFilter: ColorFilter.mode(
+                                  Color.lerp(
+                                    Colors.white.withOpacity(0.5),
+                                    Colors.white,
+                                    t,
+                                  )!,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
                           ),
-                        )
-                        .toList(),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-// ── Одна кнопка навбара ──
-class _NavBarItem extends StatelessWidget {
-  final _TabItem tab;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavBarItem({
-    required this.tab,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 56,
-        child: Center(
-          child: SvgPicture.asset(
-            isSelected ? tab.activeIconPath : tab.iconPath,
-            width: 24,
-            height: 24,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Модель вкладки ──
 class _TabItem {
   final String iconPath;
-  final String activeIconPath;
-  final String label;
   final int index;
-
-  const _TabItem({
-    required this.iconPath,
-    required this.activeIconPath,
-    required this.label,
-    required this.index,
-  });
+  _TabItem({required this.iconPath, required this.index});
 }

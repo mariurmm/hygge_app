@@ -1,7 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/app_paddings.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
+import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/widgets/tab_header.dart';
+import 'dart:ui';
 import '../../../l10n/generated/app_localizations.dart';
 
 class MainTab extends StatelessWidget {
@@ -17,54 +21,15 @@ class MainTab extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Фоновое изображение на весь экран
           Positioned.fill(
             child: Image.asset('assets/png/background1.png', fit: BoxFit.cover),
           ),
-
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Хедер ──
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Логотип + название
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/svg/logohygge.svg',
-                            width: 32,
-                            height: 32,
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            'hy.gge concept',
-                            style: TextStyle(
-                              fontFamily: 'Cera Pro',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // Колокольчик
-                      const Icon(
-                        Icons.notifications_none_rounded,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                    ],
-                  ),
-                ),
+                const ProgramsHeader(),
 
                 // ── Скролл контент ──
                 Expanded(
@@ -76,27 +41,21 @@ class MainTab extends StatelessWidget {
                         // ── Заголовок ──
                         Padding(
                           padding: const EdgeInsets.only(
-                            left: 20,
+                            left: AppPaddings.programsScreenHorizontal,
                             top: 8,
-                            right: 20,
+                            right: AppPaddings.programsScreenHorizontal,
                           ),
                           child: RichText(
                             text: TextSpan(
-                              style: const TextStyle(
-                                fontFamily: 'Cera Pro',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 28,
-                                height: 1.25,
-                                color: Colors.white,
-                              ),
+                              style: AppTextStyles.programsHeading,
                               children: [
                                 TextSpan(text: loc.homeHeadlinePart1),
                                 TextSpan(
                                   text: loc.homeHeadlineAccent,
-                                  style: const TextStyle(
+                                  style: AppTextStyles.programsHeading.copyWith(
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w400,
-                                    color: Color(0xFFE08564),
+                                    color: const Color(0xFFE08564),
                                   ),
                                 ),
                                 TextSpan(text: loc.homeHeadlinePart2),
@@ -109,14 +68,13 @@ class MainTab extends StatelessWidget {
 
                         // ── Анонсы ──
                         Padding(
-                          padding: const EdgeInsets.only(left: 19),
+                          padding: const EdgeInsets.only(
+                            left: AppPaddings.programsScreenHorizontal,
+                          ),
                           child: Text(
                             loc.homeAnnouncements,
-                            style: const TextStyle(
-                              fontFamily: 'Cera Pro',
-                              fontWeight: FontWeight.w500,
+                            style: AppTextStyles.programsHeading.copyWith(
                               fontSize: 24,
-                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -130,25 +88,18 @@ class MainTab extends StatelessWidget {
                             borderRadius: BorderRadius.circular(35),
                             child: Stack(
                               children: [
-                                // Картинка баннера
                                 Image.asset(
                                   'assets/png/banner.png',
                                   width: double.infinity,
                                   height: 218,
                                   fit: BoxFit.cover,
                                 ),
-                                // Подпись внизу баннера
                                 Positioned(
                                   left: 20,
                                   bottom: 16,
                                   child: Text(
                                     loc.readOurNews,
-                                    style: const TextStyle(
-                                      fontFamily: 'Cera Pro',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
+                                    style: AppTextStyles.programsFilter,
                                   ),
                                 ),
                               ],
@@ -160,14 +111,13 @@ class MainTab extends StatelessWidget {
 
                         // ── Предстоящие программы ──
                         Padding(
-                          padding: const EdgeInsets.only(left: 19),
+                          padding: const EdgeInsets.only(
+                            left: AppPaddings.programsScreenHorizontal,
+                          ),
                           child: Text(
                             loc.homeUpcomingPrograms,
-                            style: const TextStyle(
-                              fontFamily: 'Cera Pro',
-                              fontWeight: FontWeight.w500,
+                            style: AppTextStyles.programsHeading.copyWith(
                               fontSize: 24,
-                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -179,7 +129,9 @@ class MainTab extends StatelessWidget {
                           height: 172,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.only(left: 18, right: 18),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppPaddings.programsScreenHorizontal,
+                            ),
                             itemCount: 4,
                             itemBuilder: (context, index) => _ProgramCard(
                               title: loc.homeProgramCardTitle,
@@ -200,7 +152,6 @@ class MainTab extends StatelessWidget {
   }
 }
 
-// ── Карточка программы ──
 class _ProgramCard extends StatelessWidget {
   final String title;
   final String date;
@@ -245,25 +196,9 @@ class _ProgramCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Cera Pro',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
+                Text(title, style: AppTextStyles.programsCardTitle),
                 const SizedBox(height: 6),
-                Text(
-                  date,
-                  style: const TextStyle(
-                    fontFamily: 'Cera Pro',
-                    fontWeight: FontWeight.w300,
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                ),
+                Text(date, style: AppTextStyles.programsCardDescription),
               ],
             ),
           ),

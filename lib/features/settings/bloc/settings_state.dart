@@ -16,9 +16,12 @@ class SettingsState extends Equatable {
     bool? busy,
     String? errorMessage,
     bool clearError = false,
+    bool clearLocalAvatar = false,
   }) {
     return SettingsState(
-      localAvatarPath: localAvatarPath ?? this.localAvatarPath,
+      localAvatarPath: clearLocalAvatar
+          ? null
+          : (localAvatarPath ?? this.localAvatarPath),
       busy: busy ?? this.busy,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );

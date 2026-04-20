@@ -15,16 +15,20 @@ class SettingsBloc extends Cubit<SettingsState> {
   SettingsBloc({
     required AuthRepository authRepository,
     required UserModel user,
-  })  : _authRepository = authRepository,
-        nameController = TextEditingController(text: user.displayName),
-        emailController = TextEditingController(text: user.email),
-        super(const SettingsState());
+  }) : _authRepository = authRepository,
+       nameController = TextEditingController(text: user.displayName),
+       emailController = TextEditingController(text: user.email),
+       super(const SettingsState());
 
   Future<void> pickAvatarFromGallery() async {
     final picker = ImagePicker();
     final XFile? file = await picker.pickImage(source: ImageSource.gallery);
     if (file == null) return;
     emit(state.copyWith(localAvatarPath: file.path, clearError: true));
+  }
+
+  void deleteAvatar() {
+    emit(state.copyWith(clearLocalAvatar: true, clearError: true));
   }
 
   Future<void> persistProfileFields() async {
@@ -36,10 +40,7 @@ class SettingsBloc extends Cubit<SettingsState> {
       );
       emit(state.copyWith(busy: false));
     } catch (e) {
-      emit(state.copyWith(
-        busy: false,
-        errorMessage: e.toString(),
-      ));
+      emit(state.copyWith(busy: false, errorMessage: e.toString()));
     }
   }
 
@@ -49,10 +50,7 @@ class SettingsBloc extends Cubit<SettingsState> {
       await _authRepository.deleteAccount();
       emit(state.copyWith(busy: false));
     } catch (e) {
-      emit(state.copyWith(
-        busy: false,
-        errorMessage: e.toString(),
-      ));
+      emit(state.copyWith(busy: false, errorMessage: e.toString()));
       rethrow;
     }
   }

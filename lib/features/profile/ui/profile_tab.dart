@@ -73,8 +73,7 @@ class ProfileTab extends StatelessWidget {
                               minWidth: 44,
                               minHeight: 44,
                             ),
-                            onPressed: () =>
-                                context.push(RouteNames.settings),
+                            onPressed: () => context.push(RouteNames.settings),
                             icon: Image.asset(
                               AssetPaths.settingsIcon,
                               width: AppConstants.programsHeaderIconSize,
@@ -106,47 +105,55 @@ class ProfileTab extends StatelessWidget {
                                     style: AppTextStyles.programsSubtitle,
                                   ),
                                   SizedBox(
-                                      height: AppSpacings.profileStatusNameGap),
+                                    height: AppSpacings.profileStatusNameGap,
+                                  ),
                                   Text(
                                     state.displayName,
                                     style: AppTextStyles.programsHeading,
                                   ),
                                   SizedBox(
-                                      height: AppSpacings.profileNameCardGap),
-                                  ProfileAccountSubscriptionCard(
-                                    onTap: () {},
+                                    height: AppSpacings.profileNameCardGap,
                                   ),
+                                  ProfileAccountSubscriptionCard(onTap: () {}),
                                   SizedBox(
-                                      height: AppSpacings.profileCardsVerticalGap),
+                                    height: AppSpacings.profileCardsVerticalGap,
+                                  ),
                                   ProfileMonthlyTravelCard(
                                     percent: state.travelProgressPercent,
-                                    description: loc.profileMonthlySessionsCompleted(
-                                      state.sessionsCompletedThisMonth,
-                                    ),
-                                    leftSessionsLine: loc.profileSessionsLeftToStage(
-                                      state.sessionsLeftToNextStage,
-                                    ),
+                                    description: loc
+                                        .profileMonthlySessionsCompleted(
+                                          state.sessionsCompletedThisMonth,
+                                        ),
+                                    leftSessionsLine: loc
+                                        .profileSessionsLeftToStage(
+                                          state.sessionsLeftToNextStage,
+                                        ),
                                     goalLine: loc.profileGoalSessions(
                                       state.goalSessionsTotal,
                                     ),
                                   ),
                                   SizedBox(
-                                      height: AppSpacings.profileHistorySectionTop),
+                                    height:
+                                        AppSpacings.profileHistorySectionTop,
+                                  ),
                                   ProfileHistoryHeader(
                                     onViewAll: () =>
                                         context.push(RouteNames.history),
                                   ),
                                   SizedBox(
-                                      height:
-                                          AppSpacings.profileHistoryLinkCardGap),
+                                    height:
+                                        AppSpacings.profileHistoryLinkCardGap,
+                                  ),
                                   ProgrammCard(
                                     type: ProgrammCardType.big,
                                     lesson: state.recentSessionLesson,
-                                    timingOverlayLabel: state.recentSessionLesson
+                                    timingOverlayLabel: state
+                                        .recentSessionLesson
                                         .historyWhenLabel(now),
                                   ),
                                   SizedBox(
-                                      height: AppSpacings.profileCardsVerticalGap),
+                                    height: AppSpacings.profileCardsVerticalGap,
+                                  ),
                                   const ProfileAboutSection(),
                                 ],
                               ),
