@@ -45,7 +45,7 @@ class MainTab extends StatelessWidget {
                           ),
                           const SizedBox(width: 10),
                           const Text(
-                            'hy.gge',
+                            'hy.gge concept',
                             style: TextStyle(
                               fontFamily: 'Cera Pro',
                               fontWeight: FontWeight.w500,
@@ -81,8 +81,8 @@ class MainTab extends StatelessWidget {
                             right: 20,
                           ),
                           child: RichText(
-                            text: const TextSpan(
-                              style: TextStyle(
+                            text: TextSpan(
+                              style: const TextStyle(
                                 fontFamily: 'Cera Pro',
                                 fontWeight: FontWeight.w500,
                                 fontSize: 28,
@@ -90,16 +90,16 @@ class MainTab extends StatelessWidget {
                                 color: Colors.white,
                               ),
                               children: [
-                                TextSpan(text: 'Обретите\nсвое '),
+                                TextSpan(text: loc.homeHeadlinePart1),
                                 TextSpan(
-                                  text: 'спокойствие',
-                                  style: TextStyle(
+                                  text: loc.homeHeadlineAccent,
+                                  style: const TextStyle(
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFFE08564),
                                   ),
                                 ),
-                                TextSpan(text: '\nсегодня'),
+                                TextSpan(text: loc.homeHeadlinePart2),
                               ],
                             ),
                           ),
@@ -108,11 +108,11 @@ class MainTab extends StatelessWidget {
                         const SizedBox(height: 24),
 
                         // ── Анонсы ──
-                        const Padding(
-                          padding: EdgeInsets.only(left: 19),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 19),
                           child: Text(
-                            'Анонсы',
-                            style: TextStyle(
+                            loc.homeAnnouncements,
+                            style: const TextStyle(
                               fontFamily: 'Cera Pro',
                               fontWeight: FontWeight.w500,
                               fontSize: 24,
@@ -159,11 +159,11 @@ class MainTab extends StatelessWidget {
                         const SizedBox(height: 28),
 
                         // ── Предстоящие программы ──
-                        const Padding(
-                          padding: EdgeInsets.only(left: 19),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 19),
                           child: Text(
-                            'Предстоящие программы',
-                            style: TextStyle(
+                            loc.homeUpcomingPrograms,
+                            style: const TextStyle(
                               fontFamily: 'Cera Pro',
                               fontWeight: FontWeight.w500,
                               fontSize: 24,
@@ -181,9 +181,9 @@ class MainTab extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             itemCount: 4,
-                            itemBuilder: (context, index) => const _ProgramCard(
-                              title: 'Новая программа',
-                              date: 'Начало 01.06',
+                            itemBuilder: (context, index) => _ProgramCard(
+                              title: loc.homeProgramCardTitle,
+                              date: loc.homeProgramCardDate,
                             ),
                           ),
                         ),

@@ -13,6 +13,8 @@ import 'package:hygge_app/features/app/bloc/app_event.dart';
 import 'package:hygge_app/features/settings/bloc/settings_bloc.dart';
 import 'package:hygge_app/features/settings/bloc/settings_state.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
+import '../../../features/app/bloc/locale_cubit.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -39,6 +41,7 @@ class SettingsScreen extends StatelessWidget {
           builder: (context, state) {
             final bloc = context.read<SettingsBloc>();
             final appUser = context.watch<AppBloc>().state.user;
+            final loc = AppLocalizations.of(context);
 
             return Scaffold(
               backgroundColor: Colors.transparent,
@@ -88,7 +91,7 @@ class SettingsScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'Настройки профиля',
+                                    loc.settingsTitle,
                                     textAlign: TextAlign.center,
                                     style: AppTextStyles.settingsHeaderTitle,
                                   ),
@@ -117,7 +120,7 @@ class SettingsScreen extends StatelessWidget {
                                     ? null
                                     : () => bloc.pickAvatarFromGallery(),
                                 child: Text(
-                                  'Поменять фото',
+                                  loc.settingsChangePhoto,
                                   style: AppTextStyles.settingsChangePhoto,
                                 ),
                               ),
@@ -126,7 +129,7 @@ class SettingsScreen extends StatelessWidget {
                               height: AppConstants.settingsAfterChangePhotoSpacing,
                             ),
                             Text(
-                              'Обязательные данные',
+                              loc.settingsRequiredFields,
                               style: AppTextStyles.settingsHeaderTitle.copyWith(
                                 fontSize: 20,
                               ),
@@ -135,7 +138,7 @@ class SettingsScreen extends StatelessWidget {
                               height: AppConstants.settingsLabelInputSpacing,
                             ),
                             Text(
-                              'Имя Фамилия',
+                              loc.settingsFullName,
                               style: AppTextStyles.settingsLabel16Light,
                             ),
                             const SizedBox(
@@ -169,7 +172,7 @@ class SettingsScreen extends StatelessWidget {
                               height: AppConstants.settingsLabelInputSpacing,
                             ),
                             Text(
-                              'Адрес электронной почты',
+                              loc.settingsEmailAddress,
                               style: AppTextStyles.settingsLabel16Light,
                             ),
                             const SizedBox(
@@ -186,16 +189,14 @@ class SettingsScreen extends StatelessWidget {
                                   alignment: Alignment.centerLeft,
                                   child: TextField(
                                     controller: bloc.emailController,
-                                    style: AppTextStyles.settingsInput16Medium,
-                                    cursorColor: Colors.white,
-                                    keyboardType: TextInputType.emailAddress,
+                                    enabled: false,
+                                    style: AppTextStyles.settingsInput16Medium
+                                        .copyWith(color: Colors.white54),
                                     decoration: const InputDecoration(
                                       isDense: true,
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.zero,
                                     ),
-                                    onEditingComplete: () =>
-                                        bloc.persistProfileFields(),
                                   ),
                                 ),
                               ),
@@ -206,7 +207,7 @@ class SettingsScreen extends StatelessWidget {
                             _settingsActionRow(
                               assetPath: AssetPaths.logoutIcon,
                               fallbackIcon: Icons.logout_rounded,
-                              label: 'Выйти из аккаунта',
+                              label: loc.settingsSignOut,
                               textStyle: AppTextStyles.settingsActionWhite,
                               onTap: state.busy
                                   ? null
@@ -221,9 +222,17 @@ class SettingsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             _settingsActionRow(
+                              assetPath: '',
+                              fallbackIcon: Icons.language_rounded,
+                              label: loc.settingsChangeLanguage,
+                              textStyle: AppTextStyles.settingsActionWhite,
+                              onTap: () => _showLanguagePicker(context),
+                            ),
+                            const SizedBox(height: 16),
+                            _settingsActionRow(
                               assetPath: AssetPaths.deleteAccountIcon,
                               fallbackIcon: Icons.delete_outline_rounded,
-                              label: 'Удалить аккаунт',
+                              label: loc.settingsDeleteAccount,
                               textStyle: AppTextStyles.settingsActionDelete,
                               onTap: state.busy
                                   ? null
@@ -248,6 +257,84 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+void _showLanguagePicker(BuildContext context) {
+  final loc = AppLocalizations.of(context);
+  final currentCode =
+      context.read<LocaleCubit>().state?.languageCode ??
+      Localizations.localeOf(context).languageCode;
+
+  showModalBottomSheet<void>(
+    context: context,
+    useRootNavigator: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetCtx) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(20, 20, 20, 0.92),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                loc.settingsSelectLanguage,
+                style: AppTextStyles.settingsHeaderTitle,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...AppLocalizations.supportedLocales.map((locale) {
+              final isSelected = locale.languageCode == currentCode;
+              return InkWell(
+                onTap: () {
+                  context.read<LocaleCubit>().setLocale(locale);
+                  Navigator.of(sheetCtx).pop();
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 4,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _localeName(locale.languageCode),
+                          style: AppTextStyles.settingsActionWhite,
+                        ),
+                      ),
+                      if (isSelected)
+                        const Icon(
+                          Icons.check_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+String _localeName(String code) {
+  switch (code) {
+    case 'ru':
+      return 'Русский';
+    case 'kk':
+      return 'Қазақша';
+    default:
+      return 'English';
   }
 }
 

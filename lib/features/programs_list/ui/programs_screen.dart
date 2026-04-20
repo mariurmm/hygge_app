@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_state.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 import 'programm_list.dart';
 
@@ -14,7 +15,7 @@ class ProgramsScreen extends StatelessWidget {
       create: (_) => ProgramsBloc(),
       child: BlocBuilder<ProgramsBloc, ProgramsState>(
         builder: (context, state) => Scaffold(
-          appBar: AppBar(title: const Text('Программы')),
+          appBar: AppBar(title: Text(AppLocalizations.of(context).tabPrograms)),
           body: Padding(
             padding: const EdgeInsets.only(bottom: 24),
             child: ProgrammList(

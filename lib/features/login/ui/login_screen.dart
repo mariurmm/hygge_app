@@ -16,7 +16,7 @@ import '../../../l10n/generated/app_localizations.dart';
 /// Дизайн:
 /// - Фон — фото листа (assets/images/login_background.png)
 /// - Логотип Hygge сверху (assets/images/hygge_logo.png)
-/// - Текст «Здравствуйте!» по центру
+/// - Текст приветствия по центру
 /// - Иконка медитирующей фигуры с чакрами (assets/icons/chakra.svg)
 /// - Полупрозрачная кнопка «Вход через Google» внизу
 ///
@@ -55,6 +55,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return BlocListener<AppBloc, AppState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
@@ -78,10 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const Spacer(),
 
-                  // «Здравствуйте!»
-                  // TODO: заменить на loc.loginGreeting после добавления в .arb файлы
                   Text(
-                    'Здравствуйте!',
+                    loc.loginGreeting,
                     style: const TextStyle(
                       fontFamily: 'CeraPro',
                       fontWeight: FontWeight.w500,
@@ -97,10 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const Spacer(),
 
-                  // Кнопка «Вход через Google»
-                  // TODO: заменить на loc.loginGoogleButton после добавления в .arb файлы
                   _GoogleSignInButton(
-                    label: 'Вход через Google',
+                    label: loc.signInWithGoogle,
                     isLoading: _isLoading,
                     onTap: _onSignInPressed,
                   ),

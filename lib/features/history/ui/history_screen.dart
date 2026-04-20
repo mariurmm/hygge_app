@@ -8,15 +8,19 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/history/bloc/history_bloc.dart';
 import 'package:hygge_app/features/history/bloc/history_state.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/programm_card.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/programm_list.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import '../../../l10n/generated/app_localizations.dart';
+
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return BlocProvider(
       create: (_) => HistoryBloc(),
       child: BlocBuilder<HistoryBloc, HistoryState>(
@@ -66,12 +70,12 @@ class HistoryScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'История программ',
+                                  loc.historyTitle,
                                   style: AppTextStyles.programsHeading,
                                 ),
                                 const SizedBox(height: AppSpacings.programsLeadGap),
                                 Text(
-                                  'Здесь отображаются завершённые сеансы.',
+                                  loc.historySubtitle,
                                   style: AppTextStyles.programsSubtitle,
                                 ),
                                 const SizedBox(height: AppSpacings.profileHistoryLinkCardGap),

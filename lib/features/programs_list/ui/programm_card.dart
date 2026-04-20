@@ -5,7 +5,8 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/programm_list.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'dart:ui';
 
 class ProgrammCard extends StatelessWidget {
@@ -24,6 +25,7 @@ class ProgrammCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return switch (type) {
       ProgrammCardType.big => ClipRRect(
         borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
@@ -107,12 +109,12 @@ class ProgrammCard extends StatelessWidget {
                             child: Text(
                               lesson.title.isNotEmpty
                                   ? lesson.title
-                                  : 'Утренняя медитация',
+                                  : loc.programCardDefaultTitle,
                               style: AppTextStyles.programsCardTitle,
                             ),
                           ),
                           Text(
-                            _durationLabel(lesson),
+                            _durationLabel(lesson, loc),
                             style: AppTextStyles.programsCardTitle,
                           ),
                         ],
@@ -121,7 +123,7 @@ class ProgrammCard extends StatelessWidget {
                       Text(
                         lesson.text.isNotEmpty
                             ? lesson.text
-                            : 'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
+                            : loc.programCardDefaultDescription,
                         style: AppTextStyles.programsCardDescription,
                       ),
                     ],
@@ -142,9 +144,9 @@ class ProgrammCard extends StatelessWidget {
     };
   }
 
-  String _durationLabel(LessonModel lesson) {
+  String _durationLabel(LessonModel lesson, AppLocalizations loc) {
     final mins = lesson.finishDate.difference(lesson.startDate).inMinutes;
-    if (mins > 0) return '$mins мин';
-    return '${AppConstants.programsDefaultDurationMin} мин';
+    if (mins > 0) return loc.minutesLabel(mins);
+    return loc.minutesLabel(AppConstants.programsDefaultDurationMin);
   }
 }

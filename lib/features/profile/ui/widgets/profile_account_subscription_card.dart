@@ -7,6 +7,7 @@ import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class ProfileAccountSubscriptionCard extends StatelessWidget {
   final VoidCallback? onTap;
@@ -15,6 +16,7 @@ class ProfileAccountSubscriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
@@ -59,7 +61,7 @@ class ProfileAccountSubscriptionCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Счет & Подписка',
+                          loc.profileAccountTitle,
                           style: AppTextStyles.scheduleCardTitle,
                         ),
                         SizedBox(
@@ -68,7 +70,7 @@ class ProfileAccountSubscriptionCard extends StatelessWidget {
                           width: AppConstants.profileAccountDescMaxWidth,
                           height: AppConstants.profileAccountDescMaxHeight,
                           child: Text(
-                            'Управляйте своим счетом и подпиской',
+                            loc.profileAccountDescription,
                             style: AppTextStyles.scheduleCardLabel
                                 .copyWith(height: 1.1),
                             maxLines: 2,

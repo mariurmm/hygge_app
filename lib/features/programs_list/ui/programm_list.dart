@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
-import 'package:hygge_app/features/programs_list/presentation/ui/programm_card.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 
 enum ProgrammCardType { small, big }
 

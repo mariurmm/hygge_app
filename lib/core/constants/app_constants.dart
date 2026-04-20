@@ -76,7 +76,7 @@ class AppConstants {
   // ── Settings screen ────────────────────────────────────────────
   static const double settingsHeaderTopSpacing = 43;
   static const double settingsAvatarWidth = 200;
-  static const double settingsAvatarHeight = 170;
+  static const double settingsAvatarHeight = 200;
   static const double settingsGlassRadius = 35;
   static const double settingsAfterAvatarSpacing = 7;
   static const double settingsAfterChangePhotoSpacing = 25;
