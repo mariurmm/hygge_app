@@ -45,13 +45,16 @@ class ScheduleTab extends StatelessWidget {
             body: Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
+                  child: Image.asset(
+                    AssetPaths.homeBackground,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 SafeArea(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const ProgramsHeader(),
+                      const ProgramsHeader(trailing: SizedBox.shrink()),
                       Expanded(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.only(
@@ -68,12 +71,16 @@ class ScheduleTab extends StatelessWidget {
                                   loc.scheduleTitle,
                                   style: AppTextStyles.scheduleSectionTitle,
                                 ),
-                                const SizedBox(height: AppSpacings.programsLeadGap),
+                                const SizedBox(
+                                  height: AppSpacings.programsLeadGap,
+                                ),
                                 Text(
                                   loc.scheduleMonthlyDescription(monthLabel),
                                   style: AppTextStyles.scheduleDescription,
                                 ),
-                                const SizedBox(height: AppSpacings.scheduleCalendarGap),
+                                const SizedBox(
+                                  height: AppSpacings.scheduleCalendarGap,
+                                ),
                                 ScheduleCalendar(
                                   monthLabel: monthLabel,
                                   cells: calendarCells,
@@ -82,7 +89,9 @@ class ScheduleTab extends StatelessWidget {
                                   onPrev: bloc.previousMonth,
                                   onNext: bloc.nextMonth,
                                 ),
-                                const SizedBox(height: AppSpacings.scheduleCalendarGap),
+                                const SizedBox(
+                                  height: AppSpacings.scheduleCalendarGap,
+                                ),
                                 Text(
                                   loc.scheduleSignedTitle,
                                   style: AppTextStyles.scheduleCalendarTitle,
@@ -101,8 +110,9 @@ class ScheduleTab extends StatelessWidget {
                                           : loc.scheduleProgramFallback,
                                       title: lesson.title,
                                       timeRange: lesson.scheduleTimeRange(),
-                                      whenLabel:
-                                          lesson.scheduleDayLabel(state.today),
+                                      whenLabel: lesson.scheduleDayLabel(
+                                        state.today,
+                                      ),
                                     ),
                                   ),
                                 ),
