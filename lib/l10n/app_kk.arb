@@ -1,6 +1,5 @@
 {
   "@@locale": "kk",
-
   "appName": "Hy.gge",
   "splashLoading": "Жүктелуде...",
   "loginTitle": "Қош келдіңіз",
@@ -24,7 +23,6 @@
   "homeUpcomingPrograms": "Алдағы бағдарламалар",
   "historyTitle": "Бағдарламалар тарихы",
   "historySubtitle": "Аяқталған сеанстар осында көрсетіледі.",
-
   "programsHeading": "Мастерлер ұйымдастырған бағдарламалар",
   "programsDescription": "Табиғи күйіңізді қалпына келтіруге арналған ырғақты тәжірибелерді ашыңыз. Демалыңыз, тыныс алыңыз және баспанаңызды табыңыз.",
   "filterAll": "Барлығы",
@@ -57,7 +55,6 @@
   "profileGoalSessions": "Мақсат: {count} сеанс",
   "homeProgramCardTitle": "Жаңа бағдарлама",
   "homeProgramCardDate": "Басталуы 01.06",
-
   "settingsTitle": "Профиль баптаулары",
   "settingsChangePhoto": "Фотосуретті өзгерту",
   "settingsRequiredFields": "Міндетті деректер",
@@ -68,8 +65,35 @@
   "settingsChangeLanguage": "Тілді өзгерту",
   "settingsSelectLanguage": "Тілді таңдаңыз",
   "settingsSave": "Сақтау",
-"settingsAppSettings": "Қолданба баптаулары",
-"settingsAccount": "Аккаунт",
-
-  "profileMapAddress": "Қазақстан, Алматы, Зенков к-сі, 17"
+  "settingsAppSettings": "Қолданба баптаулары",
+  "settingsAccount": "Аккаунт",
+  "profileMapAddress": "Қазақстан, Алматы, Зенков к-сі, 17",
+  "notificationWelcomeTitle": "Қош келдіңіз!",
+  "@notificationWelcomeTitle": {
+    "description": "Қолданбаға тіркелгеннен кейінгі сәлемдесу хабарламасы"
+  },
+  "notificationWelcomeDesc": "Сізді қолданбада көруімізге қуаныштымыз.",
+  "@notificationWelcomeDesc": {
+    "description": "Сәлемдесу хабарламасының сипаттамасы"
+  },
+  "notificationProgramReminderTitle": "Еске салу",
+  "@notificationProgramReminderTitle": {
+    "description": "Бағдарлама туралы еске салу хабарламасының атауы"
+  },
+  "notificationProgramReminderDesc": "Бүгінгі жаттығуды ұмытпаңыз.",
+  "@notificationProgramReminderDesc": {
+    "description": "Бағдарлама еске салу сипаттамасы"
+  },
+  "notificationSystemUpdateTitle": "Жүйе жаңартуы",
+  "@notificationSystemUpdateTitle": {
+    "description": "Жүйелік хабарлама атауы"
+  },
+  "notificationSystemUpdateDesc": "Жаңа нұсқа қолжетімді.",
+  "@notificationSystemUpdateDesc": {
+    "description": "Жүйелік жаңарту сипаттамасы"
+  },
+  "notificationEmptyState": "Хабарламалар жоқ",
+  "@notificationEmptyState": {
+    "description": "Бос хабарламалар күйі"
+  }
 }

@@ -17,7 +17,7 @@ class AppConstants {
   static const int mainTabIndex = 0; // Главная
   static const int programsTabIndex = 1; // Программы
   static const int scheduleTabIndex = 2; //Расписание
-  static const int profileTabIndex  = 3; //Профиль
+  static const int profileTabIndex = 3; //Профиль
 
   // ── Размеры ────────────────────────────────────────────────────
   /// Размер аватара пользователя (радиус CircleAvatar).
@@ -43,6 +43,7 @@ class AppConstants {
   static const double programsHeaderLogoSize = 32;
   static const double programsHeaderIconSize = 28;
   static const double programsHeaderTitleSize = 20;
+  static const double appHeaderHeight = 64;
   static const double programsBlurSigma = 12;
   static const double programsBorderWidth = 1;
   static const double programsCardsBottomInset = 100;
@@ -97,8 +98,7 @@ class AppConstants {
       'https://www.instagram.com/hy.gge.concept/';
   static const String profileInstagramBarUrl =
       'https://www.instagram.com/hy.gge.specialty.bar/';
-  static const String profileMapAddress =
-      'Казахстан, Алматы, ул. Зенкова, 17';
+  static const String profileMapAddress = 'Казахстан, Алматы, ул. Зенкова, 17';
   static const String profileMapUrl =
       'https://maps.app.goo.gl/4bk3WANmFhNcCwXF7';
 }

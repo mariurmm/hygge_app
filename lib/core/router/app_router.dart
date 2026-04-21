@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/app_shelll/app_shell.dart';
@@ -10,6 +11,9 @@ import '../../features/settings/ui/settings_screen.dart';
 import '../../features/login/ui/login_screen.dart';
 import '../../features/schedule/ui/schedule_tab.dart';
 import '../../features/splash/ui/splash_screen.dart';
+import '../../features/notifications/ui/notification_tab.dart';
+import '../../features/notifications/bloc/notifications_bloc.dart';
+
 import 'route_names.dart';
 
 class AppRouter {
@@ -31,11 +35,14 @@ class AppRouter {
           builder: (context, state) => const LoginScreen(),
         ),
 
-        // ── Home (ShellRoute + BottomNav) ────────────────────
+        // ── ShellRoute (единый scope для NotificationsBloc) ──
         ShellRoute(
           pageBuilder: (context, state, child) => CustomTransitionPage(
             key: state.pageKey,
-            child: AppShell(child: child),
+            child: BlocProvider(
+              create: (_) => NotificationsBloc()..add(LoadNotifications()),
+              child: AppShell(child: child),
+            ),
             transitionsBuilder: (context, animation, _, child) =>
                 FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
@@ -52,6 +59,7 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
+
             GoRoute(
               name: RouteNames.programsName,
               path: RouteNames.programs,
@@ -63,6 +71,7 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
+
             GoRoute(
               name: RouteNames.scheduleName,
               path: RouteNames.schedule,
@@ -74,6 +83,7 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
+
             GoRoute(
               name: RouteNames.profileName,
               path: RouteNames.profile,
@@ -85,10 +95,23 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
+
+            // ✅ ВАЖНО: Notifications теперь здесь
+            GoRoute(
+              name: RouteNames.notificationsName,
+              path: RouteNames.notifications,
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const NotificationTab(),
+                transitionsBuilder: (context, animation, _, child) =>
+                    FadeTransition(opacity: animation, child: child),
+                transitionDuration: const Duration(milliseconds: 200),
+              ),
+            ),
           ],
         ),
 
-        // ── Вне ShellRoute — без навбара ──────────────────────
+        // ── Вне ShellRoute ───────────────────────────────────
         GoRoute(
           name: RouteNames.historyName,
           path: RouteNames.history,
@@ -100,6 +123,7 @@ class AppRouter {
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
+
         GoRoute(
           name: RouteNames.settingsName,
           path: RouteNames.settings,
@@ -113,7 +137,7 @@ class AppRouter {
         ),
       ],
 
-      // ── Страница ошибки (404) ──────────────────────────────
+      // ── 404 ───────────────────────────────────────────────
       errorBuilder: (context, state) => Scaffold(
         body: Center(
           child: Text(

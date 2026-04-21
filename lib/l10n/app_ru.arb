@@ -1,6 +1,5 @@
 {
   "@@locale": "ru",
-
   "appName": "Hy.gge",
   "splashLoading": "Загрузка...",
   "loginTitle": "Добро пожаловать",
@@ -24,7 +23,6 @@
   "homeUpcomingPrograms": "Предстоящие программы",
   "historyTitle": "История программ",
   "historySubtitle": "Здесь отображаются завершённые сеансы.",
-
   "programsHeading": "Организованные мастерами программы",
   "programsDescription": "Откройте для себя ритмические практики, призванные восстановить ваше естественное состояние. Расслабьтесь, дышите и найдите свое убежище.",
   "filterAll": "Все программы",
@@ -57,7 +55,6 @@
   "profileGoalSessions": "Цель: {count} сеансов",
   "homeProgramCardTitle": "Новая программа",
   "homeProgramCardDate": "Начало 01.06",
-
   "settingsTitle": "Настройки профиля",
   "settingsChangePhoto": "Поменять фото",
   "settingsRequiredFields": "Обязательные данные",
@@ -68,9 +65,35 @@
   "settingsChangeLanguage": "Изменить язык",
   "settingsSelectLanguage": "Выберите язык",
   "settingsSave": "Сохранить",
-"settingsAppSettings": "Настройки приложения",
-"settingsAccount": "Аккаунт",
-
-
-  "profileMapAddress": "Казахстан, Алматы, ул. Зенкова, 17"
+  "settingsAppSettings": "Настройки приложения",
+  "settingsAccount": "Аккаунт",
+  "profileMapAddress": "Казахстан, Алматы, ул. Зенкова, 17",
+  "notificationWelcomeTitle": "Добро пожаловать!",
+  "@notificationWelcomeTitle": {
+    "description": "Заголовок приветственного уведомления после регистрации"
+  },
+  "notificationWelcomeDesc": "Рады видеть вас в приложении.",
+  "@notificationWelcomeDesc": {
+    "description": "Описание приветственного уведомления после регистрации"
+  },
+  "notificationProgramReminderTitle": "Напоминание",
+  "@notificationProgramReminderTitle": {
+    "description": "Заголовок уведомления о программе"
+  },
+  "notificationProgramReminderDesc": "Не забудьте про тренировку сегодня.",
+  "@notificationProgramReminderDesc": {
+    "description": "Описание уведомления о программе"
+  },
+  "notificationSystemUpdateTitle": "Обновление системы",
+  "@notificationSystemUpdateTitle": {
+    "description": "Заголовок системного уведомления"
+  },
+  "notificationSystemUpdateDesc": "Доступна новая версия.",
+  "@notificationSystemUpdateDesc": {
+    "description": "Описание системного уведомления"
+  },
+  "notificationEmptyState": "Уведомлений пока нет",
+  "@notificationEmptyState": {
+    "description": "Текст пустого состояния уведомлений"
+  }
 }
