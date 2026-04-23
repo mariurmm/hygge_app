@@ -25,6 +25,7 @@ class SettingsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => SettingsBloc(
         authRepository: AuthRepository.instance,
+        appBloc: context.read<AppBloc>(),
         user: context.read<AppBloc>().state.user,
       ),
       child: BlocListener<SettingsBloc, SettingsState>(
@@ -53,28 +54,74 @@ class _SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<_SettingsView> {
-  bool _hasChanges = false;
+  bool _hasUnsavedChanges = false;
+  bool _allowPop = false;
+  String _savedName = '';
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final bloc = context.read<SettingsBloc>();
+    bloc.nameController.removeListener(_onNameChanged);
     bloc.nameController.addListener(_onNameChanged);
+    if (_savedName.isEmpty) _savedName = bloc.nameController.text;
   }
 
   void _onNameChanged() {
     final bloc = context.read<SettingsBloc>();
-    final originalName = context.read<AppBloc>().state.user.displayName;
-    final hasChanges = bloc.nameController.text.trim() != originalName.trim();
-    if (hasChanges != _hasChanges) {
-      setState(() => _hasChanges = hasChanges);
+    final hasChanges = bloc.nameController.text.trim() != _savedName.trim();
+    if (hasChanges != _hasUnsavedChanges) {
+      setState(() => _hasUnsavedChanges = hasChanges);
     }
   }
 
-  Future<void> _save(BuildContext context) async {
+  Future<void> _save() async {
     final bloc = context.read<SettingsBloc>();
     await bloc.persistProfileFields();
-    if (mounted) setState(() => _hasChanges = false);
+    if (mounted) {
+      setState(() {
+        _savedName = bloc.nameController.text;
+        _hasUnsavedChanges = false;
+      });
+    }
+  }
+
+  void _popAfterAction() {
+    setState(() => _allowPop = true);
+    context.pop();
+  }
+
+  void _showUnsavedChangesDialog() {
+    showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Сохранить изменения?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'cancel'),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'discard'),
+            child: const Text('Не сохранять'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'save'),
+            child: const Text('Сохранить'),
+          ),
+        ],
+      ),
+    ).then((result) {
+      if (!mounted) return;
+      if (result == 'save') {
+        _save().then((_) {
+          if (mounted) _popAfterAction();
+        });
+      } else if (result == 'discard') {
+        context.read<SettingsBloc>().nameController.text = _savedName;
+        _popAfterAction();
+      }
+    });
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -96,7 +143,12 @@ class _SettingsViewState extends State<_SettingsView> {
     final appUser = context.watch<AppBloc>().state.user;
     final loc = AppLocalizations.of(context);
 
-    return Scaffold(
+    return PopScope(
+      canPop: _allowPop || !_hasUnsavedChanges,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _showUnsavedChangesDialog();
+      },
+      child: Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
       extendBodyBehindAppBar: true,
@@ -119,13 +171,20 @@ class _SettingsViewState extends State<_SettingsView> {
                   children: [
                     // ── Хедер ──
                     ProgramsHeader(
+                      trailing: const SizedBox.shrink(),
                       leading: IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
                           minWidth: 44,
                           minHeight: 44,
                         ),
-                        onPressed: context.pop,
+                        onPressed: () {
+                          if (_hasUnsavedChanges) {
+                            _showUnsavedChangesDialog();
+                          } else {
+                            context.pop();
+                          }
+                        },
                         icon: Image.asset(
                           AssetPaths.arrowBackPng,
                           width: 24,
@@ -133,23 +192,6 @@ class _SettingsViewState extends State<_SettingsView> {
                           errorBuilder: (_, __, ___) => const Icon(
                             Icons.arrow_back_ios_new_rounded,
                             color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      trailing: AnimatedOpacity(
-                        opacity: (_hasChanges && !state.busy) ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: TextButton(
-                          onPressed: (_hasChanges && !state.busy)
-                              ? () => _save(context)
-                              : null,
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(44, 44),
-                          ),
-                          child: Text(
-                            loc.settingsSave,
-                            style: AppTextStyles.settingsChangePhoto,
                           ),
                         ),
                       ),
@@ -172,7 +214,8 @@ class _SettingsViewState extends State<_SettingsView> {
                     _InputField(
                       label: loc.settingsFullName,
                       controller: bloc.nameController,
-                      onEditingComplete: () => _save(context),
+                      hasChanges: _hasUnsavedChanges,
+                      onSave: () => _save(),
                     ),
                     const SizedBox(height: 16),
                     _ReadonlyField(
@@ -222,6 +265,7 @@ class _SettingsViewState extends State<_SettingsView> {
           ),
         ],
       ),
+    ),
     );
   }
 }
@@ -262,32 +306,20 @@ class _AvatarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Column(
-      children: [
-        Center(
-          child: GlassRoundedPanel(
-            width: AppConstants.settingsAvatarWidth,
-            height: AppConstants.settingsAvatarHeight,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                AppConstants.settingsGlassRadius,
-              ),
-              child: _avatarContent(),
+    return Center(
+      child: GestureDetector(
+        onTap: busy ? null : bloc.pickAvatarFromGallery,
+        child: GlassRoundedPanel(
+          width: AppConstants.settingsAvatarWidth,
+          height: AppConstants.settingsAvatarHeight,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(
+              AppConstants.settingsGlassRadius,
             ),
+            child: _avatarContent(),
           ),
         ),
-        const SizedBox(height: AppConstants.settingsAfterAvatarSpacing),
-        Center(
-          child: TextButton(
-            onPressed: busy ? null : bloc.pickAvatarFromGallery,
-            child: Text(
-              loc.settingsChangePhoto,
-              style: AppTextStyles.settingsChangePhoto,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -320,12 +352,14 @@ class _InputField extends StatelessWidget {
   const _InputField({
     required this.label,
     required this.controller,
-    this.onEditingComplete,
+    required this.hasChanges,
+    this.onSave,
   });
 
   final String label;
   final TextEditingController controller;
-  final VoidCallback? onEditingComplete;
+  final bool hasChanges;
+  final VoidCallback? onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -338,20 +372,33 @@ class _InputField extends StatelessWidget {
           child: GlassRoundedPanel(
             width: AppConstants.settingsInputWidth,
             height: AppConstants.settingsInputHeight,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: TextField(
-                controller: controller,
-                style: AppTextStyles.settingsInput16Medium,
-                cursorColor: Colors.white,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
+            padding: const EdgeInsets.only(left: 20, right: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    style: AppTextStyles.settingsInput16Medium,
+                    cursorColor: Colors.white,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    onEditingComplete: hasChanges ? onSave : null,
+                  ),
                 ),
-                onEditingComplete: onEditingComplete,
-              ),
+                IconButton(
+                  onPressed: hasChanges ? onSave : null,
+                  icon: Icon(
+                    hasChanges ? Icons.check_rounded : Icons.edit_outlined,
+                    color: hasChanges ? Colors.white : Colors.white70,
+                    size: 18,
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                ),
+              ],
             ),
           ),
         ),

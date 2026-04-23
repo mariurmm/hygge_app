@@ -103,6 +103,15 @@ class AuthRepository {
     }
   }
 
+  /// Принудительно перечитать данные пользователя из Firebase Auth.
+  ///
+  /// Нужно вызывать после [updateUserProfileFields], потому что
+  /// [updateDisplayName] не триггерит стрим [authStateChanges].
+  /// После [reload] геттер [currentUser] вернёт актуальные данные.
+  Future<void> reloadCurrentUser() async {
+    await _authService.currentUser?.reload();
+  }
+
   /// Очистить локальные кэши (SharedPreferences).
   Future<void> clearLocalCaches() async {
     final prefs = await SharedPreferences.getInstance();
