@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
-import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 import 'dart:ui';
