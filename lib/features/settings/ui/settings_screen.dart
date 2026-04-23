@@ -92,22 +92,23 @@ class _SettingsViewState extends State<_SettingsView> {
   }
 
   void _showUnsavedChangesDialog() {
+    final loc = AppLocalizations.of(context);
     showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Сохранить изменения?'),
+        title: Text(loc.dialogSaveChangesTitle),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, 'cancel'),
-            child: const Text('Отмена'),
+            child: Text(loc.dialogCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, 'discard'),
-            child: const Text('Не сохранять'),
+            child: Text(loc.dialogDiscard),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, 'save'),
-            child: const Text('Сохранить'),
+            child: Text(loc.dialogSave),
           ),
         ],
       ),
@@ -149,123 +150,123 @@ class _SettingsViewState extends State<_SettingsView> {
         if (!didPop) _showUnsavedChangesDialog();
       },
       child: Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                bottom: AppConstants.profileCardsBottomInset,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppPaddings.profileScreenHorizontal,
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
+            ),
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  bottom: AppConstants.profileCardsBottomInset,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // ── Хедер ──
-                    ProgramsHeader(
-                      trailing: const SizedBox.shrink(),
-                      leading: IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 44,
-                          minHeight: 44,
-                        ),
-                        onPressed: () {
-                          if (_hasUnsavedChanges) {
-                            _showUnsavedChangesDialog();
-                          } else {
-                            context.pop();
-                          }
-                        },
-                        icon: Image.asset(
-                          AssetPaths.arrowBackPng,
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppPaddings.profileScreenHorizontal,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Хедер ──
+                      ProgramsHeader(
+                        trailing: const SizedBox.shrink(),
+                        leading: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 44,
+                            minHeight: 44,
+                          ),
+                          onPressed: () {
+                            if (_hasUnsavedChanges) {
+                              _showUnsavedChangesDialog();
+                            } else {
+                              context.pop();
+                            }
+                          },
+                          icon: Image.asset(
+                            AssetPaths.arrowBackPng,
+                            width: 24,
+                            height: 24,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                    // ── Аватар ──
-                    _AvatarSection(
-                      bloc: bloc,
-                      appUser: appUser,
-                      busy: state.busy,
-                    ),
+                      // ── Аватар ──
+                      _AvatarSection(
+                        bloc: bloc,
+                        appUser: appUser,
+                        busy: state.busy,
+                      ),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                    // ── Секция: Профиль ──
-                    _SectionLabel(label: loc.settingsRequiredFields),
-                    const SizedBox(height: 12),
-                    _InputField(
-                      label: loc.settingsFullName,
-                      controller: bloc.nameController,
-                      hasChanges: _hasUnsavedChanges,
-                      onSave: () => _save(),
-                    ),
-                    const SizedBox(height: 16),
-                    _ReadonlyField(
-                      label: loc.settingsEmailAddress,
-                      controller: bloc.emailController,
-                    ),
+                      // ── Секция: Профиль ──
+                      _SectionLabel(label: loc.settingsRequiredFields),
+                      const SizedBox(height: 12),
+                      _InputField(
+                        label: loc.settingsFullName,
+                        controller: bloc.nameController,
+                        hasChanges: _hasUnsavedChanges,
+                        onSave: () => _save(),
+                      ),
+                      const SizedBox(height: 16),
+                      _ReadonlyField(
+                        label: loc.settingsEmailAddress,
+                        controller: bloc.emailController,
+                      ),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                    // ── Секция: Настройки приложения ──
-                    _SectionLabel(label: loc.settingsAppSettings),
-                    const SizedBox(height: 12),
-                    _ActionRow(
-                      assetPath: '',
-                      fallbackIcon: Icons.language_rounded,
-                      label: loc.settingsChangeLanguage,
-                      textStyle: AppTextStyles.settingsActionWhite,
-                      onTap: () => _LanguagePickerSheet.show(context),
-                    ),
+                      // ── Секция: Настройки приложения ──
+                      _SectionLabel(label: loc.settingsAppSettings),
+                      const SizedBox(height: 12),
+                      _ActionRow(
+                        assetPath: '',
+                        fallbackIcon: Icons.language_rounded,
+                        label: loc.settingsChangeLanguage,
+                        textStyle: AppTextStyles.settingsActionWhite,
+                        onTap: () => _LanguagePickerSheet.show(context),
+                      ),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                    // ── Секция: Аккаунт ──
-                    _SectionLabel(label: loc.settingsAccount),
-                    const SizedBox(height: 12),
-                    _ActionRow(
-                      assetPath: AssetPaths.logoutIcon,
-                      fallbackIcon: Icons.logout_rounded,
-                      label: loc.settingsSignOut,
-                      textStyle: AppTextStyles.settingsActionWhite,
-                      onTap: state.busy ? null : () => _signOut(context),
-                    ),
-                    const SizedBox(height: 8),
-                    _ActionRow(
-                      assetPath: AssetPaths.deleteAccountIcon,
-                      fallbackIcon: Icons.delete_outline_rounded,
-                      label: loc.settingsDeleteAccount,
-                      textStyle: AppTextStyles.settingsActionDelete,
-                      onTap: state.busy
-                          ? null
-                          : () => _deleteAccount(context, bloc),
-                    ),
-                  ],
+                      // ── Секция: Аккаунт ──
+                      _SectionLabel(label: loc.settingsAccount),
+                      const SizedBox(height: 12),
+                      _ActionRow(
+                        assetPath: AssetPaths.logoutIcon,
+                        fallbackIcon: Icons.logout_rounded,
+                        label: loc.settingsSignOut,
+                        textStyle: AppTextStyles.settingsActionWhite,
+                        onTap: state.busy ? null : () => _signOut(context),
+                      ),
+                      const SizedBox(height: 8),
+                      _ActionRow(
+                        assetPath: AssetPaths.deleteAccountIcon,
+                        fallbackIcon: Icons.delete_outline_rounded,
+                        label: loc.settingsDeleteAccount,
+                        textStyle: AppTextStyles.settingsActionDelete,
+                        onTap: state.busy
+                            ? null
+                            : () => _deleteAccount(context, bloc),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 }
@@ -388,15 +389,23 @@ class _InputField extends StatelessWidget {
                     onEditingComplete: hasChanges ? onSave : null,
                   ),
                 ),
-                IconButton(
-                  onPressed: hasChanges ? onSave : null,
-                  icon: Icon(
-                    hasChanges ? Icons.check_rounded : Icons.edit_outlined,
-                    color: hasChanges ? Colors.white : Colors.white70,
-                    size: 18,
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: hasChanges
+                      ? () {
+                          print('tapped');
+                          onSave?.call();
+                        }
+                      : null,
+                  child: SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: Icon(
+                      hasChanges ? Icons.check_rounded : Icons.edit_outlined,
+                      color: hasChanges ? Colors.white : Colors.white70,
+                      size: 18,
+                    ),
                   ),
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
               ],
             ),

@@ -95,5 +95,9 @@
   "notificationEmptyState": "Хабарламалар жоқ",
   "@notificationEmptyState": {
     "description": "Бос хабарламалар күйі"
-  }
+  },
+  "dialogSaveChangesTitle": "Өзгерістерді сақтау керек пе?",
+  "dialogCancel": "Болдырмау",
+  "dialogDiscard": "Сақтамау",
+  "dialogSave": "Сақтау"
 }

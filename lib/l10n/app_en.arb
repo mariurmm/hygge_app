@@ -345,5 +345,21 @@
   "notificationEmptyState": "No notifications yet",
   "@notificationEmptyState": {
     "description": "Empty state text when there are no notifications"
+  },
+  "dialogSaveChangesTitle": "Save changes?",
+  "@dialogSaveChangesTitle": {
+    "description": "Title of the unsaved-changes dialog in Settings"
+  },
+  "dialogCancel": "Cancel",
+  "@dialogCancel": {
+    "description": "Cancel button in dialogs"
+  },
+  "dialogDiscard": "Don't save",
+  "@dialogDiscard": {
+    "description": "Discard-changes button in the unsaved-changes dialog"
+  },
+  "dialogSave": "Save",
+  "@dialogSave": {
+    "description": "Save button in the unsaved-changes dialog"
   }
 }
