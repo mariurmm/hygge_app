@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../l10n/generated/app_localizations.dart';
 
 class AppShell extends StatefulWidget {
   final Widget child;
@@ -20,28 +18,37 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+  late final AnimationController _animationController;
   late Animation<double> _animation;
   int _lastIndex = 0;
 
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
+
     _animation = ConstantTween<double>(0.0).animate(_animationController);
   }
 
   int _currentIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home/programs'))
+    final location = GoRouterState.of(context).uri.path;
+
+    if (location.startsWith('/home/programs')) {
       return AppConstants.programsTabIndex;
-    if (location.startsWith('/home/schedule'))
+    }
+
+    if (location.startsWith('/home/schedule')) {
       return AppConstants.scheduleTabIndex;
-    if (location.startsWith('/home/profile'))
+    }
+
+    if (location.startsWith('/home/profile')) {
       return AppConstants.profileTabIndex;
+    }
+
     return AppConstants.mainTabIndex;
   }
 
@@ -80,8 +87,9 @@ class _AppShellState extends State<AppShell>
     }
   }
 
-  Color colorWithOpacity(Color c, double o) =>
-      Color.fromRGBO(c.red, c.green, c.blue, o);
+  Color colorWithOpacity(Color c, double opacity) {
+    return c.withValues(alpha: opacity);
+  }
 
   @override
   void dispose() {
@@ -91,8 +99,7 @@ class _AppShellState extends State<AppShell>
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final int selectedIndex = _currentIndex(context);
+    final selectedIndex = _currentIndex(context);
 
     if (selectedIndex != _lastIndex && !_animationController.isAnimating) {
       _lastIndex = selectedIndex;
@@ -131,7 +138,7 @@ class _AppShellState extends State<AppShell>
             bottom: 16,
             child: AnimatedBuilder(
               animation: _animation,
-              builder: (context, child) {
+              builder: (context, _) {
                 return _FloatingNavBar(
                   tabs: tabs,
                   currentIndexValue: _animation.value,
@@ -167,17 +174,12 @@ class _FloatingNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final totalTabs = tabs.length;
-        final sectionWidth = constraints.maxWidth / totalTabs;
-
+        final sectionWidth = constraints.maxWidth / tabs.length;
         final stretch = (currentIndexValue - targetIndex).abs().clamp(0.0, 1.0);
 
-        // Увеличиваем базовую ширину, чтобы она была прямоугольной (вытянутой)
-        // Теперь базовая ширина 80 (или чуть меньше ширины секции)
         final highlightWidth = (sectionWidth * 0.85) + (30.0 * stretch);
         final highlightHeight = 48.0 - (4.0 * stretch);
 
-        // Идеальное центрирование относительно иконок
         final highlightLeft =
             (sectionWidth * currentIndexValue) +
             (sectionWidth / 2) -
@@ -199,7 +201,6 @@ class _FloatingNavBar extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // ИНДИКАТОР (ПРЯМОУГОЛЬНАЯ ВЫТЯНУТАЯ КАПЛЯ)
                   Positioned(
                     left: highlightLeft,
                     top: (62 - highlightHeight) / 2,
@@ -207,7 +208,6 @@ class _FloatingNavBar extends StatelessWidget {
                       width: highlightWidth,
                       height: highlightHeight,
                       decoration: BoxDecoration(
-                        // Используем фиксированный радиус для формы вытянутого прямоугольника
                         borderRadius: BorderRadius.circular(24),
                         gradient: LinearGradient(
                           colors: [
@@ -229,7 +229,6 @@ class _FloatingNavBar extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // ИКОНКИ
                   Row(
                     children: tabs.map((tab) {
                       final distance = (currentIndexValue - tab.index).abs();
@@ -248,7 +247,7 @@ class _FloatingNavBar extends StatelessWidget {
                                 height: 24,
                                 colorFilter: ColorFilter.mode(
                                   Color.lerp(
-                                    Colors.white.withOpacity(0.5),
+                                    Colors.white.withValues(alpha: 0.5),
                                     Colors.white,
                                     t,
                                   )!,
@@ -274,5 +273,6 @@ class _FloatingNavBar extends StatelessWidget {
 class _TabItem {
   final String iconPath;
   final int index;
-  _TabItem({required this.iconPath, required this.index});
+
+  const _TabItem({required this.iconPath, required this.index});
 }

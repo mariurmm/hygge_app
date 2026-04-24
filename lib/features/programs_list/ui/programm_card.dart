@@ -5,6 +5,7 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/features/favourites/ui/widgets/favourite_button.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'dart:ui';
@@ -13,7 +14,6 @@ class ProgrammCard extends StatelessWidget {
   final ProgrammCardType type;
   final LessonModel lesson;
 
-  /// Подпись поверх превью (история / недавний сеанс), например «Вчера 8:00».
   final String? timingOverlayLabel;
 
   const ProgrammCard({
@@ -26,7 +26,9 @@ class ProgrammCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+
     return switch (type) {
+      /// ───────────────── BIG CARD ─────────────────
       ProgrammCardType.big => ClipRRect(
         borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
         child: BackdropFilter(
@@ -58,14 +60,16 @@ class ProgrammCard extends StatelessWidget {
                     height: AppConstants.programsCardMediaHeight,
                     child: Stack(
                       fit: StackFit.expand,
+
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color:
-                                AppColors.programsCardMedia.withValues(alpha: 0.95),
+                            color: AppColors.programsCardMedia.withValues(
+                              alpha: 0.95,
+                            ),
                           ),
                         ),
-                        if (timingOverlayLabel != null) ...[
+                        if (timingOverlayLabel != null)
                           Positioned.fill(
                             child: DecoratedBox(
                               decoration: BoxDecoration(
@@ -80,6 +84,7 @@ class ProgrammCard extends StatelessWidget {
                               ),
                             ),
                           ),
+                        if (timingOverlayLabel != null)
                           Positioned(
                             left: AppPaddings.profileRecentSessionTimeLeft,
                             top: AppPaddings.profileRecentSessionTimeTop,
@@ -88,7 +93,11 @@ class ProgrammCard extends StatelessWidget {
                               style: AppTextStyles.scheduleCardLabel,
                             ),
                           ),
-                        ],
+                        Positioned(
+                          right: 14,
+                          top: 14,
+                          child: FavouriteButton(lessonUuid: lesson.uuid),
+                        ),
                       ],
                     ),
                   ),
@@ -134,11 +143,68 @@ class ProgrammCard extends StatelessWidget {
           ),
         ),
       ),
-      ProgrammCardType.small => Card(
-        child: Column(
-          children: [
-            Text(lesson.title)
-          ],
+
+      /// ───────────────── SMALL CARD (НОРМАЛЬНАЯ ВЕРСИЯ) ─────────────────
+      ProgrammCardType.small => ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: AppConstants.programsBlurSigma,
+            sigmaY: AppConstants.programsBlurSigma,
+          ),
+          child: Container(
+            width: 150,
+            height: 170,
+            decoration: BoxDecoration(
+              color: AppColors.programsCard.withValues(alpha: 0.75),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // превью
+                Container(
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: AppColors.programsCardMedia.withValues(alpha: 0.9),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.play_circle_outline,
+                      color: Colors.white70,
+                      size: 28,
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        lesson.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.programsCardTitle.copyWith(
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _durationLabel(lesson, loc),
+                        style: AppTextStyles.programsCardDescription,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     };

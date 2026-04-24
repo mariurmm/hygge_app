@@ -345,5 +345,9 @@
   "notificationEmptyState": "No notifications yet",
   "@notificationEmptyState": {
     "description": "Empty state text when there are no notifications"
-  }
+  },
+  "profileFavouritesSectionTitle": "Favourites",
+"@profileFavouritesSectionTitle": {
+  "description": "Title of favourites section in profile screen"
+}
 }

@@ -10,8 +10,19 @@ class ProgrammsLoadingState extends ProgrammsState {}
 
 class ProgrammLoadedState extends ProgrammsState {
   final List<LessonModel> lessons;
+  final Set<String> favoriteIds;
 
-  ProgrammLoadedState({required this.lessons});
+  ProgrammLoadedState({required this.lessons, this.favoriteIds = const {}});
+
+  ProgrammLoadedState copyWith({
+    List<LessonModel>? lessons,
+    Set<String>? favoriteIds,
+  }) {
+    return ProgrammLoadedState(
+      lessons: lessons ?? this.lessons,
+      favoriteIds: favoriteIds ?? this.favoriteIds,
+    );
+  }
 }
 
 abstract class ProgrammsEvent {}
@@ -32,7 +43,8 @@ class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
       LessonModel(
         uuid: 'program-1',
         title: 'Утренняя медитация',
-        text: 'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
+        text:
+            'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
         startDate: now,
         finishDate: now.add(const Duration(minutes: 30)),
         price: 1000,
@@ -45,7 +57,8 @@ class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
       LessonModel(
         uuid: 'program-2',
         title: 'Утренняя медитация',
-        text: 'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
+        text:
+            'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
         startDate: now,
         finishDate: now.add(const Duration(minutes: 30)),
         price: 1200,

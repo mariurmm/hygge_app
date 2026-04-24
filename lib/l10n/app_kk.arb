@@ -95,5 +95,9 @@
   "notificationEmptyState": "Хабарламалар жоқ",
   "@notificationEmptyState": {
     "description": "Бос хабарламалар күйі"
-  }
+  },
+  "profileFavouritesSectionTitle": "Таңдаулылар",
+"@profileFavouritesSectionTitle": {
+  "description": "Профильдегі таңдаулылар бөлімінің атауы"
+}
 }

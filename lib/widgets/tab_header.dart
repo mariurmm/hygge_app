@@ -5,7 +5,6 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'notification_icon_button.dart';
 
 class ProgramsHeader extends StatelessWidget {
   final Widget? leading;
@@ -16,38 +15,40 @@ class ProgramsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppConstants.appHeaderHeight, // 🔥 фиксированная высота
+      height: AppConstants.appHeaderHeight,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppPaddings.programsHeaderHorizontal,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (leading != null) ...[
-                  leading!,
-                  const SizedBox(width: AppSpacings.programsHeaderTitleGap),
+            // LEFT SIDE
+            Expanded(
+              child: Row(
+                children: [
+                  if (leading != null) ...[leading!, const SizedBox(width: 8)],
+
+                  SvgPicture.asset(
+                    AssetPaths.hyggeLogo,
+                    width: AppConstants.programsHeaderLogoSize,
+                    height: AppConstants.programsHeaderLogoSize,
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  Flexible(
+                    child: Text(
+                      'hy.gge concept',
+                      style: AppTextStyles.programsLogo,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
-                SvgPicture.asset(
-                  AssetPaths.hyggeLogo,
-                  width: AppConstants.programsHeaderLogoSize,
-                  height: AppConstants.programsHeaderLogoSize,
-                ),
-                const SizedBox(width: AppSpacings.programsHeaderTitleGap),
-                Text('hy.gge concept', style: AppTextStyles.programsLogo),
-              ],
+              ),
             ),
 
-            // правая зона фиксированного размера
-            SizedBox(
-              width: 48,
-              height: 48,
-              child: Center(child: trailing ?? const NotificationIconButton()),
-            ),
+            // RIGHT SIDE
+            if (trailing != null) trailing!,
           ],
         ),
       ),

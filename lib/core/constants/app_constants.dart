@@ -88,6 +88,11 @@ class AppConstants {
   static const double settingsActionIconSize = 30;
   static const double settingsActionIconTextGap = 12;
 
+  // ── Notifications screen ───────────────────────────────────────
+  static const double notificationTileRadius = 20;
+  static const double notificationIconSize = 40;
+  static const double notificationBadgeSize = 8;
+
   // ── Контакты «О нас» ───────────────────────────────────────────
   static const String profileContactPhoneDisplay = '+7(777)-777-77-77';
   static const String profileContactPhoneUri = 'tel:+77777777777';

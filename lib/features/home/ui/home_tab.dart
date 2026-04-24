@@ -1,15 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+
 import 'package:hygge_app/widgets/tab_header.dart';
-import 'dart:ui';
+
+import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+
+import 'package:hygge_app/features/home/bloc/home_bloc.dart';
+import 'package:hygge_app/features/home/bloc/home_event.dart';
+import 'package:hygge_app/features/home/bloc/home_state.dart';
+
+import 'package:hygge_app/features/notifications/bloc/notifications_cubit.dart';
+import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
+
 import '../../../l10n/generated/app_localizations.dart';
 
 class MainTab extends StatelessWidget {
   const MainTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => HomeBloc()..add(HomeLoadRequested()),
+      child: const _MainTabView(),
+    );
+  }
+}
+
+class _MainTabView extends StatelessWidget {
+  const _MainTabView();
 
   @override
   Widget build(BuildContext context) {
@@ -22,23 +47,23 @@ class MainTab extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/png/background1.png', fit: BoxFit.cover),
+            child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
           ),
+
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Хедер ──
-                const ProgramsHeader(),
+                // ================= HEADER =================
+                ProgramsHeader(trailing: _NotificationsBell()),
 
-                // ── Скролл контент ──
+                // ================= BODY =================
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(bottom: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ── Заголовок ──
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
@@ -66,7 +91,6 @@ class MainTab extends StatelessWidget {
 
                         const SizedBox(height: 24),
 
-                        // ── Анонсы ──
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
@@ -81,7 +105,6 @@ class MainTab extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        // Баннер анонса
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: ClipRRect(
@@ -109,7 +132,6 @@ class MainTab extends StatelessWidget {
 
                         const SizedBox(height: 28),
 
-                        // ── Предстоящие программы ──
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
@@ -124,20 +146,40 @@ class MainTab extends StatelessWidget {
 
                         const SizedBox(height: 16),
 
-                        // Горизонтальный скролл карточек
-                        SizedBox(
-                          height: 172,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppPaddings.programsScreenHorizontal,
-                            ),
-                            itemCount: 4,
-                            itemBuilder: (context, index) => _ProgramCard(
-                              title: loc.homeProgramCardTitle,
-                              date: loc.homeProgramCardDate,
-                            ),
-                          ),
+                        BlocBuilder<HomeBloc, HomeState>(
+                          builder: (context, state) {
+                            if (state.isLoading) {
+                              return const Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            return SizedBox(
+                              height: 170,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal:
+                                      AppPaddings.programsScreenHorizontal,
+                                ),
+                                itemCount: state.lessons.length,
+                                itemBuilder: (context, index) {
+                                  final lesson = state.lessons[index];
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 14),
+                                    child: ProgrammCard(
+                                      type: ProgrammCardType.small,
+                                      lesson: lesson,
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -152,58 +194,52 @@ class MainTab extends StatelessWidget {
   }
 }
 
-class _ProgramCard extends StatelessWidget {
-  final String title;
-  final String date;
-
-  const _ProgramCard({required this.title, required this.date});
-
+/// ===================== NOTIFICATIONS WIDGET =====================
+/// изолирован, чтобы не ломал экран
+class _NotificationsBell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 170,
-      margin: const EdgeInsets.only(right: 14),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(255, 255, 255, 0.14),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: const Color.fromRGBO(255, 255, 255, 0.18),
-                width: 1,
+    final cubit = context.read<NotificationsCubit?>();
+
+    if (cubit == null) {
+      // fallback если кубит не подключен
+      return IconButton(
+        onPressed: () => context.go('/home/notifications'),
+        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+      );
+    }
+
+    return BlocBuilder<NotificationsCubit, NotificationsState>(
+      builder: (context, state) {
+        final hasUnread = state.hasUnread;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            IconButton(
+              onPressed: () => context.go('/home/notifications'),
+              icon: const Icon(
+                Icons.notifications_outlined,
+                color: Colors.white,
               ),
             ),
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(255, 255, 255, 0.08),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.play_circle_outline,
-                        color: Colors.white70,
-                        size: 32,
-                      ),
-                    ),
+
+            if (hasUnread)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
                   ),
                 ),
-                const SizedBox(height: 12),
-                Text(title, style: AppTextStyles.programsCardTitle),
-                const SizedBox(height: 6),
-                Text(date, style: AppTextStyles.programsCardDescription),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

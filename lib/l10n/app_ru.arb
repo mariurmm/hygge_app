@@ -95,5 +95,9 @@
   "notificationEmptyState": "Уведомлений пока нет",
   "@notificationEmptyState": {
     "description": "Текст пустого состояния уведомлений"
-  }
+  },
+  "profileFavouritesSectionTitle": "Избранное",
+"@profileFavouritesSectionTitle": {
+  "description": "Заголовок секции избранного в профиле"
+}
 }
