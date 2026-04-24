@@ -1,8 +1,4 @@
-enum NotificationType {
-  welcome,
-  programReminder,
-  systemUpdate,
-}
+enum NotificationType { welcome, programReminder, systemUpdate }
 
 class NotificationModel {
   final String id;
@@ -17,16 +13,11 @@ class NotificationModel {
     this.isRead = false,
   });
 
-  NotificationModel copyWith({
-    String? id,
-    NotificationType? type,
-    DateTime? date,
-    bool? isRead,
-  }) {
+  NotificationModel copyWith({bool? isRead}) {
     return NotificationModel(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      date: date ?? this.date,
+      id: id,
+      type: type,
+      date: date,
       isRead: isRead ?? this.isRead,
     );
   }

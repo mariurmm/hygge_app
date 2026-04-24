@@ -13,7 +13,6 @@ import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 import '../../../l10n/generated/app_localizations.dart';
 
-
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
 
@@ -26,6 +25,7 @@ class HistoryScreen extends StatelessWidget {
       child: BlocBuilder<HistoryBloc, HistoryState>(
         builder: (context, state) {
           final now = DateTime.now();
+
           return Scaffold(
             backgroundColor: Colors.transparent,
             extendBody: true,
@@ -73,24 +73,35 @@ class HistoryScreen extends StatelessWidget {
                                   loc.historyTitle,
                                   style: AppTextStyles.programsHeading,
                                 ),
-                                const SizedBox(height: AppSpacings.programsLeadGap),
+                                const SizedBox(
+                                  height: AppSpacings.programsLeadGap,
+                                ),
                                 Text(
                                   loc.historySubtitle,
                                   style: AppTextStyles.programsSubtitle,
                                 ),
-                                const SizedBox(height: AppSpacings.profileHistoryLinkCardGap),
-                                ...state.lessons.map(
-                                  (lesson) => Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: AppSpacings.programsCardsGap,
-                                    ),
-                                    child: ProgrammCard(
+                                const SizedBox(
+                                  height: AppSpacings.profileHistoryLinkCardGap,
+                                ),
+
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: state.lessons.length,
+                                  separatorBuilder: (_, __) => const SizedBox(
+                                    height: AppSpacings.programsCardsGap,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    final lesson = state.lessons[index];
+
+                                    return ProgrammCard(
+                                      key: ValueKey(lesson.uuid),
                                       type: ProgrammCardType.big,
                                       lesson: lesson,
-                                      timingOverlayLabel:
-                                          lesson.historyWhenLabel(now),
-                                    ),
-                                  ),
+                                      timingOverlayLabel: lesson
+                                          .historyWhenLabel(now),
+                                    );
+                                  },
                                 ),
                               ],
                             ),

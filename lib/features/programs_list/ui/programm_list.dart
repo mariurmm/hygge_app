@@ -22,31 +22,31 @@ class ProgrammList extends StatelessWidget {
     if (lessons.isEmpty) {
       return const Text('Нет доступных занятий');
     }
-    if (scrollDirection == Axis.vertical) {
-      return Column(
-        children: lessons
-            .map(
-              (lesson) => Padding(
-                padding: const EdgeInsets.only(
-                  bottom: AppSpacings.programsCardsGap,
-                ),
-                child: ProgrammCard(type: type, lesson: lesson),
-              ),
-            )
-            .toList(),
+
+    if (scrollDirection == Axis.horizontal) {
+      return SizedBox(
+        height: 260, // фикс под big card (можно вынести в constants)
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: lessons.length,
+          padding: const EdgeInsets.only(right: AppSpacings.programsCardsGap),
+          separatorBuilder: (_, __) =>
+              const SizedBox(width: AppSpacings.programsCardsGap),
+          itemBuilder: (context, index) {
+            return ProgrammCard(type: type, lesson: lessons[index]);
+          },
+        ),
       );
     }
-    return ListView.builder(
-      scrollDirection: scrollDirection,
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: lessons.length,
+      separatorBuilder: (_, __) =>
+          const SizedBox(height: AppSpacings.programsCardsGap),
       itemBuilder: (context, index) {
-        final lesson = lessons[index];
-        return Padding(
-          padding: const EdgeInsets.only(
-            bottom: AppSpacings.programsCardsGap,
-          ),
-          child: ProgrammCard(type: type, lesson: lesson),
-        );
+        return ProgrammCard(type: type, lesson: lessons[index]);
       },
     );
   }
