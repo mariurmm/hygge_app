@@ -56,6 +56,7 @@ class _SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<_SettingsView> {
   bool _hasUnsavedChanges = false;
   bool _allowPop = false;
+  bool _saving = false;
   String _savedName = '';
 
   @override
@@ -76,12 +77,15 @@ class _SettingsViewState extends State<_SettingsView> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
+    setState(() => _saving = true);
     final bloc = context.read<SettingsBloc>();
     await bloc.persistProfileFields();
     if (mounted) {
       setState(() {
         _savedName = bloc.nameController.text;
         _hasUnsavedChanges = false;
+        _saving = false;
       });
     }
   }
@@ -216,7 +220,7 @@ class _SettingsViewState extends State<_SettingsView> {
                         label: loc.settingsFullName,
                         controller: bloc.nameController,
                         hasChanges: _hasUnsavedChanges,
-                        onSave: () => _save(),
+                        onSave: _saving ? null : _save,
                       ),
                       const SizedBox(height: 16),
                       _ReadonlyField(
@@ -398,18 +402,15 @@ class _InputField extends StatelessWidget {
                 ),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: hasChanges
-                      ? () {
-                          print('tapped');
-                          onSave?.call();
-                        }
-                      : null,
+                  onTap: onSave,
                   child: SizedBox(
                     height: 50,
                     width: 50,
                     child: Icon(
                       hasChanges ? Icons.check_rounded : Icons.edit_outlined,
-                      color: hasChanges ? Colors.white : Colors.white70,
+                      color: (hasChanges && onSave != null)
+                          ? Colors.white
+                          : Colors.white38,
                       size: 18,
                     ),
                   ),

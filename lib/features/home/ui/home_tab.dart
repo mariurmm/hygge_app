@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:hygge_app/core/constants/app_paddings.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 
