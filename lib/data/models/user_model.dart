@@ -4,15 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'subscription_model.dart';
 
 /// Модель пользователя.
-///
-/// Используется в BLoC-состояниях и для передачи данных
-/// между слоями. Расширяет [Equatable], чтобы BLoC мог
-/// корректно сравнивать состояния (== работает по полям).
-///
-/// Три фабричных конструктора:
-/// - [fromJson]  — из Map (Firestore).
-/// - [toJson]    — в Map (для сохранения в Firestore).
-/// - [fromFirebaseUser] — из объекта [User] (FirebaseAuth).
 class UserModel extends Equatable {
   /// Уникальный идентификатор (совпадает с uid в FirebaseAuth).
   final String uid;
@@ -23,7 +14,7 @@ class UserModel extends Equatable {
   /// Email пользователя.
   final String email;
 
-  /// URL аватара (может быть пустой строкой).
+  /// URL аватара.
   final String photoUrl;
 
   /// Активный абонемент пользователя.
@@ -37,8 +28,6 @@ class UserModel extends Equatable {
     this.subscription,
   });
 
-  /// Пустой пользователь — используется как дефолтное значение
-  /// вместо `null` (удобнее проверять `user == UserModel.empty`).
   static const UserModel empty = UserModel(
     uid: '',
     displayName: '',
@@ -47,28 +36,27 @@ class UserModel extends Equatable {
     subscription: null,
   );
 
-  /// Пользователь пустой?
   bool get isEmpty => this == empty;
-
-  /// Пользователь НЕ пустой?
   bool get isNotEmpty => this != empty;
 
-  // ── Фабрики ──────────────────────────────────────────────────
-
-  /// Создать [UserModel] из Map (обычно из Firestore-документа).
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = 'ru',
+  }) {
     return UserModel(
-      uid: json['uid'] as String? ?? '',
+      uid: json['uid'] as String? ?? json['id'] as String? ?? '',
       displayName: json['displayName'] as String? ?? '',
       email: json['email'] as String? ?? '',
       photoUrl: json['photoUrl'] as String? ?? '',
-      subscription: json['subscription'] is Map<String, dynamic>
-          ? SubscriptionModel.fromJson(json['subscription'] as Map<String, dynamic>)
+      subscription: json['subscription'] is Map
+          ? SubscriptionModel.fromJson(
+              Map<String, dynamic>.from(json['subscription'] as Map),
+              locale: locale,
+            )
           : null,
     );
   }
 
-  /// Создать [UserModel] из [User] (FirebaseAuth).
   factory UserModel.fromFirebaseUser(User user) {
     return UserModel(
       uid: user.uid,
@@ -79,7 +67,6 @@ class UserModel extends Equatable {
     );
   }
 
-  /// Конвертировать в Map (для сохранения в Firestore).
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
@@ -90,7 +77,6 @@ class UserModel extends Equatable {
     };
   }
 
-  /// Equatable — список полей для сравнения.
   @override
   List<Object?> get props => [uid, displayName, email, photoUrl, subscription];
 }

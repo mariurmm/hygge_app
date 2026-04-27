@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
-import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
@@ -28,10 +27,11 @@ class ProgramsHeader extends StatelessWidget {
                 children: [
                   if (leading != null) ...[leading!, const SizedBox(width: 8)],
 
-                  SvgPicture.asset(
+                  Image.asset(
                     AssetPaths.hyggeLogo,
                     width: AppConstants.programsHeaderLogoSize,
                     height: AppConstants.programsHeaderLogoSize,
+                    fit: BoxFit.contain,
                   ),
 
                   const SizedBox(width: 8),

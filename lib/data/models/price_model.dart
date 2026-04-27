@@ -4,15 +4,9 @@ class PriceModel extends Equatable {
   final double amount;
   final String currency;
 
-  const PriceModel({
-    required this.amount,
-    required this.currency,
-  });
+  const PriceModel({required this.amount, required this.currency});
 
-  static const PriceModel empty = PriceModel(
-    amount: 0,
-    currency: 'KZT',
-  );
+  static const PriceModel empty = PriceModel(amount: 0, currency: 'KZT');
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
@@ -25,10 +19,7 @@ class PriceModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'amount': amount,
-      'currency': currency,
-    };
+    return {'amount': amount, 'currency': currency};
   }
 
   @override

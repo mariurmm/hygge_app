@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'localized_value.dart';
+
 /// Модель абонемента.
 class SubscriptionModel extends Equatable {
   /// Уникальный идентификатор.
@@ -29,7 +31,6 @@ class SubscriptionModel extends Equatable {
     required this.lessonsCount,
   });
 
-  /// Пустая модель.
   static final SubscriptionModel empty = SubscriptionModel(
     uuid: '',
     title: '',
@@ -42,10 +43,13 @@ class SubscriptionModel extends Equatable {
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
+  factory SubscriptionModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
     return SubscriptionModel(
-      uuid: json['uuid'] as String? ?? '',
-      title: json['title'] as String? ?? '',
+      uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
+      title: LocalizedValue.read(json['title'], locale: locale),
       price: _parseDouble(json['price']),
       startDate: _parseDate(json['startDate']),
       finishDate: _parseDate(json['finishDate']),
@@ -91,11 +95,11 @@ class SubscriptionModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        uuid,
-        title,
-        price,
-        startDate,
-        finishDate,
-        lessonsCount,
-      ];
+    uuid,
+    title,
+    price,
+    startDate,
+    finishDate,
+    lessonsCount,
+  ];
 }

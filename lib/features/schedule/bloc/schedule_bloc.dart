@@ -1,20 +1,37 @@
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
+import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
 
 class ScheduleBloc extends Cubit<ScheduleState> {
-  ScheduleBloc()
-      : super(
+  ScheduleBloc({FirebaseFeatureRepository? repository})
+      : _repository = repository ?? FirebaseFeatureRepository(),
+        super(
           ScheduleState(
             visibleMonth: DateTime(DateTime.now().year, DateTime.now().month, 1),
             today: DateTime.now(),
-            signedLessons: _seedLessons(DateTime.now()),
-            completedSessions: 12,
-            totalSessions: 15,
+            signedLessons: const [],
+            completedSessions: 0,
+            totalSessions: 0,
           ),
-        );
+        ) {
+    _loadSchedule();
+  }
+
+  final FirebaseFeatureRepository _repository;
+
+  Future<void> _loadSchedule() async {
+    final signedLessons = await _repository.fetchBookings(status: 'booked');
+    final completedLessons = await _repository.fetchBookings(status: 'completed');
+
+    emit(
+      state.copyWith(
+        signedLessons: signedLessons,
+        completedSessions: completedLessons.length,
+        totalSessions: signedLessons.length + completedLessons.length,
+      ),
+    );
+  }
 
   void nextMonth() {
     final d = state.visibleMonth;
@@ -26,7 +43,8 @@ class ScheduleBloc extends Cubit<ScheduleState> {
     emit(state.copyWith(visibleMonth: DateTime(d.year, d.month - 1, 1)));
   }
 
-  String monthLabel(DateTime month, [String locale = 'en']) => DateFormat('LLLL yyyy', locale).format(month);
+  String monthLabel(DateTime month, [String locale = 'en']) =>
+      DateFormat('LLLL yyyy', locale).format(month);
 
   List<DateTime?> calendarCells(DateTime month) {
     final first = DateTime(month.year, month.month, 1);
@@ -43,24 +61,5 @@ class ScheduleBloc extends Cubit<ScheduleState> {
       cells.add(null);
     }
     return cells;
-  }
-
-  static List<LessonModel> _seedLessons(DateTime now) {
-    final tomorrow = now.add(const Duration(days: 1));
-    final start = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 8, 0);
-    final end = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 30);
-    return [
-      LessonModel(
-        uuid: 'schedule-seed-1',
-        ritual: 'Утренний ритуал',
-        title: 'Йога глубокого дыхания',
-        text:
-            'Согревающий поток, предназначенный для создания внутреннего тепла и снятия физического напряжения.',
-        startDate: start,
-        finishDate: end,
-        price: 0,
-        master: MasterModel.empty,
-      ),
-    ];
   }
 }

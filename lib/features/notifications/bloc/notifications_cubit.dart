@@ -1,63 +1,46 @@
-// lib/features/notifications/bloc/notifications_cubit.dart
+import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
 import 'package:hygge_app/features/notifications/domain/notification_item.dart';
+import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
 
 class NotificationsCubit extends Cubit<NotificationsState> {
-  NotificationsCubit() : super(const NotificationsState()) {
-    _loadNotifications();
+  NotificationsCubit({FirebaseFeatureRepository? repository})
+      : _repository = repository ?? FirebaseFeatureRepository(),
+        super(const NotificationsState()) {
+    _subscription = _repository.watchNotifications().listen((items) {
+      emit(NotificationsState(items: items));
+    });
   }
 
-  void _loadNotifications() {
-    final now = DateTime.now();
-    // Сид-данные (потом заменить на Firestore)
-    emit(NotificationsState(items: [
-      NotificationItem(
-        id: 'n1',
-        title: 'Занятие через 30 минут',
-        body: 'Утренняя медитация начинается в 8:00. Не забудьте коврик!',
-        createdAt: now.subtract(const Duration(minutes: 25)),
-        type: NotificationType.reminder,
-      ),
-      NotificationItem(
-        id: 'n2',
-        title: 'Запись подтверждена',
-        body: 'Вы записаны на Йогу глубокого дыхания, 12 мая 10:00.',
-        createdAt: now.subtract(const Duration(hours: 2)),
-        isRead: true,
-        type: NotificationType.booking,
-      ),
-      NotificationItem(
-        id: 'n3',
-        title: 'Новая программа',
-        body: 'Sound Bath — новая программа в расписании. Попробуйте!',
-        createdAt: now.subtract(const Duration(days: 1)),
-        type: NotificationType.news,
-      ),
-    ]));
-  }
+  final FirebaseFeatureRepository _repository;
+  StreamSubscription<List<NotificationItem>>? _subscription;
 
-  /// Помечает одно уведомление прочитанным.
-  void markAsRead(String id) {
+  Future<void> markAsRead(String id) async {
     final updated = state.items
         .map((n) => n.id == id ? n.copyWith(isRead: true) : n)
         .toList();
     emit(state.copyWith(items: updated));
+    await _repository.markNotificationAsRead(id);
   }
 
-  /// Все уведомления — прочитаны.
-  void markAllAsRead() {
-    final updated = state.items
-        .map((n) => n.copyWith(isRead: true))
-        .toList();
+  Future<void> markAllAsRead() async {
+    final updated = state.items.map((n) => n.copyWith(isRead: true)).toList();
     emit(state.copyWith(items: updated));
+    await _repository.markAllNotificationsAsRead();
   }
 
-  /// Удаляет уведомление.
-  void remove(String id) {
+  Future<void> remove(String id) async {
     emit(state.copyWith(
       items: state.items.where((n) => n.id != id).toList(),
     ));
+    await _repository.removeNotification(id);
+  }
+
+  @override
+  Future<void> close() async {
+    await _subscription?.cancel();
+    return super.close();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
-import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ProfileTravelProgressBar extends StatelessWidget {
   final int percent;
@@ -51,8 +50,6 @@ class ProfileTravelProgressBar extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(width: 8),
-        Text('$percent%', style: AppTextStyles.scheduleProgressPercent),
       ],
     );
   }

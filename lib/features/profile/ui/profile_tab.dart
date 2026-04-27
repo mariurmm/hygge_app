@@ -19,7 +19,9 @@ import 'package:hygge_app/features/profile/ui/widgets/profile_history_header.dar
 import 'package:hygge_app/features/profile/ui/widgets/profile_monthly_travel_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+
 import '../../../l10n/generated/app_localizations.dart';
 
 class ProfileTab extends StatelessWidget {
@@ -94,86 +96,119 @@ class ProfileTab extends StatelessWidget {
                             padding: const EdgeInsets.only(
                               bottom: AppConstants.profileCardsBottomInset,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppPaddings.profileScreenHorizontal,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    state.isPremium
-                                        ? loc.profileStatusPremium
-                                        : loc.profileStatusStandard,
-                                    style: AppTextStyles.programsSubtitle,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppPaddings.profileScreenHorizontal,
                                   ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        state.isPremium
+                                            ? loc.profileStatusPremium
+                                            : loc.profileStatusStandard,
+                                        style: AppTextStyles.programsSubtitle,
+                                      ),
 
-                                  const SizedBox(
-                                    height: AppSpacings.profileStatusNameGap,
-                                  ),
+                                      const SizedBox(
+                                        height:
+                                            AppSpacings.profileStatusNameGap,
+                                      ),
 
-                                  Text(
-                                    state.displayName,
-                                    style: AppTextStyles.programsHeading,
-                                  ),
+                                      Text(
+                                        state.displayName,
+                                        style: AppTextStyles.programsHeading,
+                                      ),
 
-                                  const SizedBox(
-                                    height: AppSpacings.profileNameCardGap,
-                                  ),
+                                      const SizedBox(
+                                        height: AppSpacings.profileNameCardGap,
+                                      ),
 
-                                  ProfileAccountSubscriptionCard(onTap: () {}),
+                                      ProfileAccountSubscriptionCard(
+                                        onTap: () {
+                                          Navigator.of(
+                                            context,
+                                            rootNavigator: true,
+                                          ).push(
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const AccountSubscriptionPage(),
+                                            ),
+                                          );
+                                        },
+                                      ),
 
-                                  const SizedBox(
-                                    height: AppSpacings.profileCardsVerticalGap,
-                                  ),
+                                      const SizedBox(
+                                        height:
+                                            AppSpacings.profileCardsVerticalGap,
+                                      ),
 
-                                  ProfileMonthlyTravelCard(
-                                    percent: state.travelProgressPercent,
-                                    description: loc
-                                        .profileMonthlySessionsCompleted(
-                                          state.sessionsCompletedThisMonth,
+                                      ProfileMonthlyTravelCard(
+                                        percent: state.travelProgressPercent,
+                                        description: loc
+                                            .profileMonthlySessionsCompleted(
+                                              state.sessionsCompletedThisMonth,
+                                            ),
+                                        leftSessionsLine: loc
+                                            .profileSessionsLeftToStage(
+                                              state.sessionsLeftToNextStage,
+                                            ),
+                                        goalLine: loc.profileGoalSessions(
+                                          state.goalSessionsTotal,
                                         ),
-                                    leftSessionsLine: loc
-                                        .profileSessionsLeftToStage(
-                                          state.sessionsLeftToNextStage,
-                                        ),
-                                    goalLine: loc.profileGoalSessions(
-                                      state.goalSessionsTotal,
-                                    ),
+                                      ),
+                                    ],
                                   ),
+                                ),
 
-                                  const SizedBox(
-                                    height:
-                                        AppSpacings.profileHistorySectionTop,
+                                ProfileFavouritesSection(),
+                                
+                                const SizedBox(
+                                  height: AppSpacings.profileCardsVerticalGap,
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppPaddings.profileScreenHorizontal,
                                   ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ProfileHistoryHeader(
+                                        onViewAll: () =>
+                                            context.push(RouteNames.history),
+                                      ),
 
-                                  ProfileFavouritesSection(),
+                                      const SizedBox(
+                                        height: AppSpacings
+                                            .profileHistoryLinkCardGap,
+                                      ),
 
-                                  ProfileHistoryHeader(
-                                    onViewAll: () =>
-                                        context.push(RouteNames.history),
+                                      ProgrammCard(
+                                        type: ProgrammCardType.big,
+                                        lesson: state.recentSessionLesson,
+                                        timingOverlayLabel: state
+                                            .recentSessionLesson
+                                            .historyWhenLabel(now),
+                                      ),
+
+                                      const SizedBox(
+                                        height:
+                                            AppSpacings.profileCardsVerticalGap,
+                                      ),
+
+                                      const ProfileAboutSection(),
+                                    ],
                                   ),
-
-                                  const SizedBox(
-                                    height:
-                                        AppSpacings.profileHistoryLinkCardGap,
-                                  ),
-
-                                  ProgrammCard(
-                                    type: ProgrammCardType.big,
-                                    lesson: state.recentSessionLesson,
-                                    timingOverlayLabel: state
-                                        .recentSessionLesson
-                                        .historyWhenLabel(now),
-                                  ),
-
-                                  const SizedBox(
-                                    height: AppSpacings.profileCardsVerticalGap,
-                                  ),
-
-                                  const ProfileAboutSection(),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

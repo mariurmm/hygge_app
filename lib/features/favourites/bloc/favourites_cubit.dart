@@ -1,63 +1,43 @@
-// import 'package:bloc/bloc.dart';
-// import 'package:hygge_app/data/models/lesson_model.dart';
-// import 'package:hygge_app/features/favourites/bloc/favourites_state.dart';
-
-// /// Управляет избранными программами.
-// /// Хранит только UUID и список всех уроков.
-// /// UI получает вычисляемые favouriteLessons.
-// class FavouritesCubit extends Cubit<FavouritesState> {
-//   FavouritesCubit() : super(const FavouritesState());
-
-//   /// Переключает избранное состояние урока.
-//   void toggle(String uuid) {
-//     final updatedIds = Set<String>.from(state.favouriteIds);
-
-//     if (updatedIds.contains(uuid)) {
-//       updatedIds.remove(uuid);
-//     } else {
-//       updatedIds.add(uuid);
-//     }
-
-//     emit(state.copyWith(favouriteIds: updatedIds));
-//   }
-
-//   /// Регистрирует полный список уроков.
-//   /// Вызывается из ProgramsBloc.
-//   void registerLessons(List<LessonModel> lessons) {
-//     emit(state.copyWith(allLessons: lessons));
-//   }
-// }
+import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_state.dart';
+import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
 
 class FavouritesCubit extends Cubit<FavouritesState> {
-  FavouritesCubit() : super(const FavouritesState());
+  FavouritesCubit({FirebaseFeatureRepository? repository})
+      : _repository = repository ?? FirebaseFeatureRepository(),
+        super(const FavouritesState()) {
+    _subscription = _repository.watchFavouriteIds().listen((ids) {
+      emit(state.copyWith(favouriteIds: ids));
+    });
+  }
 
-  void toggle(String uuid) {
+  final FirebaseFeatureRepository _repository;
+  StreamSubscription<Set<String>>? _subscription;
+
+  Future<void> toggle(String uuid) async {
     final updated = Set<String>.from(state.favouriteIds);
+    final shouldAdd = !updated.contains(uuid);
 
-    if (updated.contains(uuid)) {
-      updated.remove(uuid);
-      print('FAV TOGGLE: REMOVE $uuid');
-    } else {
+    if (shouldAdd) {
       updated.add(uuid);
-      print('FAV TOGGLE: ADD $uuid');
+    } else {
+      updated.remove(uuid);
     }
 
     emit(state.copyWith(favouriteIds: updated));
-
-    print('FAV IDS AFTER TOGGLE: ${updated.toList()}');
-    print('FAV LESSONS COUNT: ${state.favouriteLessons.length}');
+    await _repository.setFavourite(programId: uuid, isFavourite: shouldAdd);
   }
 
   void registerLessons(List<LessonModel> lessons) {
-    print('REGISTER LESSONS: ${lessons.length}');
-
     emit(state.copyWith(allLessons: lessons));
+  }
 
-    print('ALL LESSONS UPDATED: ${state.allLessons.length}');
-    print('FAV LESSONS AFTER REGISTER: ${state.favouriteLessons.length}');
+  @override
+  Future<void> close() async {
+    await _subscription?.cancel();
+    return super.close();
   }
 }

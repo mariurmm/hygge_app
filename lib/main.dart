@@ -21,12 +21,17 @@ void main() async {
     await dotenv.load();
     AppLogger.info('main: .env загружен');
   } catch (_) {
-    AppLogger.warning('main: .env файл не найден — используем значения по умолчанию');
+    AppLogger.warning(
+      'main: .env файл не найден — используем значения по умолчанию',
+    );
   }
 
   // Инициализируем Firebase.
   await Firebase.initializeApp();
   AppLogger.info('main: Firebase инициализирован');
+
+  // Если нужно заполнить Firestore тестовыми данными, раскомментируйте эту строку и запустите приложение один раз.
+  // await seedFirestore();
 
   // Запускаем приложение.
   runApp(const App());

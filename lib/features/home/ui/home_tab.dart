@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
@@ -197,19 +197,26 @@ class _MainTabView extends StatelessWidget {
 /// ===================== NOTIFICATIONS WIDGET =====================
 /// изолирован, чтобы не ломал экран
 class _NotificationsBell extends StatelessWidget {
+  const _NotificationsBell();
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<NotificationsCubit?>();
 
     if (cubit == null) {
-      // fallback если кубит не подключен
       return IconButton(
         onPressed: () => context.go('/home/notifications'),
-        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+        icon: SvgPicture.asset(
+          'assets/svg/notification.svg',
+          width: 24,
+          height: 24,
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        ),
       );
     }
 
     return BlocBuilder<NotificationsCubit, NotificationsState>(
+      bloc: cubit,
       builder: (context, state) {
         final hasUnread = state.hasUnread;
 
@@ -218,12 +225,16 @@ class _NotificationsBell extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () => context.go('/home/notifications'),
-              icon: const Icon(
-                Icons.notifications_outlined,
-                color: Colors.white,
+              icon: SvgPicture.asset(
+                AssetPaths.notificationIcon,
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
-
             if (hasUnread)
               Positioned(
                 right: 8,

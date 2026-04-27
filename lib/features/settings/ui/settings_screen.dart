@@ -152,7 +152,7 @@ class _SettingsViewState extends State<_SettingsView> {
                             style: AppTextStyles.settingsChangePhoto,
                           ),
                         ),
-                      ),
+                      ), 
                     ),
 
                     const SizedBox(height: 24),

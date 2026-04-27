@@ -20,7 +20,7 @@ class ProfileHistoryHeader extends StatelessWidget {
           height: AppConstants.profileHistoryTitleMaxHeight,
           child: Text(
             loc.profileHistoryTitle,
-            style: AppTextStyles.scheduleCardTitle,
+            style: AppTextStyles.programsHeading.copyWith(fontSize: 24),
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
@@ -33,7 +33,10 @@ class ProfileHistoryHeader extends StatelessWidget {
               onPressed: onViewAll,
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),

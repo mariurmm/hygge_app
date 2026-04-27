@@ -61,63 +61,80 @@ class ProgramsTab extends StatelessWidget {
                             padding: const EdgeInsets.only(
                               bottom: AppConstants.programsCardsBottomInset,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal:
-                                    AppPaddings.programsScreenHorizontal,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    loc.programsHeading,
-                                    style: AppTextStyles.programsHeading,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppPaddings.programsScreenHorizontal,
                                   ),
-                                  const SizedBox(
-                                    height: AppSpacings.programsLeadGap,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        loc.programsHeading,
+                                        style: AppTextStyles.programsHeading,
+                                      ),
+                                      const SizedBox(
+                                        height: AppSpacings.programsLeadGap,
+                                      ),
+                                      Text(
+                                        loc.programsDescription,
+                                        style: AppTextStyles.programsSubtitle,
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    loc.programsDescription,
-                                    style: AppTextStyles.programsSubtitle,
-                                  ),
-                                  const SizedBox(
-                                    height: AppSpacings.programsBodyGap,
-                                  ),
-                                  SizedBox(
-                                    height: AppConstants.programsFilterHeight,
-                                    child: ListView.separated(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: filterLabels.length,
-                                      separatorBuilder: (_, __) =>
-                                          const SizedBox(
-                                            width:
-                                                AppSpacings.programsFiltersGap,
-                                          ),
-                                      itemBuilder: (context, index) {
-                                        return ProgramFilterButton(
-                                          label: filterLabels[index],
-                                          isSelected:
-                                              state.selectedFilter.index ==
-                                              index,
-                                          isAllPrograms: index == 0,
-                                          onTap: () {
-                                            context
-                                                .read<ProgramsBloc>()
-                                                .selectFilter(index);
-                                          },
-                                        );
-                                      },
+                                ),
+
+                                const SizedBox(
+                                  height: AppSpacings.programsBodyGap,
+                                ),
+
+                                SizedBox(
+                                  height: AppConstants.programsFilterHeight,
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal:
+                                          AppPaddings.programsScreenHorizontal,
                                     ),
+                                    itemCount: filterLabels.length,
+                                    separatorBuilder: (_, __) => const SizedBox(
+                                      width: AppSpacings.programsFiltersGap,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return ProgramFilterButton(
+                                        label: filterLabels[index],
+                                        isSelected:
+                                            state.selectedFilter.index == index,
+                                        isAllPrograms: index == 0,
+                                        onTap: () {
+                                          context
+                                              .read<ProgramsBloc>()
+                                              .selectFilter(index);
+                                        },
+                                      );
+                                    },
                                   ),
-                                  const SizedBox(
-                                    height: AppSpacings.programsFiltersGap,
+                                ),
+
+                                const SizedBox(
+                                  height: AppSpacings.programsFiltersGap,
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppPaddings.programsScreenHorizontal,
                                   ),
-                                  ProgrammList(
+                                  child: ProgrammList(
                                     type: ProgrammCardType.big,
                                     lessons: state.visibleLessons,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

@@ -72,32 +72,12 @@
   "@notificationWelcomeTitle": {
     "description": "Қолданбаға тіркелгеннен кейінгі сәлемдесу хабарламасы"
   },
-  "notificationWelcomeDesc": "Сізді қолданбада көруімізге қуаныштымыз.",
-  "@notificationWelcomeDesc": {
-    "description": "Сәлемдесу хабарламасының сипаттамасы"
-  },
-  "notificationProgramReminderTitle": "Еске салу",
-  "@notificationProgramReminderTitle": {
-    "description": "Бағдарлама туралы еске салу хабарламасының атауы"
-  },
-  "notificationProgramReminderDesc": "Бүгінгі жаттығуды ұмытпаңыз.",
-  "@notificationProgramReminderDesc": {
-    "description": "Бағдарлама еске салу сипаттамасы"
-  },
-  "notificationSystemUpdateTitle": "Жүйе жаңартуы",
-  "@notificationSystemUpdateTitle": {
-    "description": "Жүйелік хабарлама атауы"
-  },
-  "notificationSystemUpdateDesc": "Жаңа нұсқа қолжетімді.",
-  "@notificationSystemUpdateDesc": {
-    "description": "Жүйелік жаңарту сипаттамасы"
-  },
-  "notificationEmptyState": "Хабарламалар жоқ",
-  "@notificationEmptyState": {
-    "description": "Бос хабарламалар күйі"
-  },
+  "notificationsTitle": "Хабарламалар",
+  "notificationsMarkAllRead": "Барлығын оқу",
+  "notificationsEmpty": "Хабарлама жоқ",
+  "notificationsUnreadCount": "{count} оқылмаған",
   "profileFavouritesSectionTitle": "Таңдаулылар",
-"@profileFavouritesSectionTitle": {
-  "description": "Профильдегі таңдаулылар бөлімінің атауы"
-}
+  "@profileFavouritesSectionTitle": {
+    "description": "Профильдегі таңдаулылар бөлімінің атауы"
+  }
 }
