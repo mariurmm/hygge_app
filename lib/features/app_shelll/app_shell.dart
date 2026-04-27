@@ -35,12 +35,15 @@ class _AppShellState extends State<AppShell>
 
   int _currentIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home/programs'))
+    if (location.startsWith('/home/programs')) {
       return AppConstants.programsTabIndex;
-    if (location.startsWith('/home/schedule'))
+    }
+    if (location.startsWith('/home/schedule')) {
       return AppConstants.scheduleTabIndex;
-    if (location.startsWith('/home/profile'))
+    }
+    if (location.startsWith('/home/profile')) {
       return AppConstants.profileTabIndex;
+    }
     return AppConstants.mainTabIndex;
   }
 

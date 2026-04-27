@@ -232,6 +232,13 @@ class _SettingsViewState extends State<_SettingsView> {
                       _ActionRow(
                         assetPath: '',
                         fallbackIcon: Icons.language_rounded,
+                        leadingWidget: Text(
+                          _languageFlag(
+                            context.watch<LocaleCubit>().state?.languageCode ??
+                                Localizations.localeOf(context).languageCode,
+                          ),
+                          style: const TextStyle(fontSize: 24),
+                        ),
                         label: loc.settingsChangeLanguage,
                         textStyle: AppTextStyles.settingsActionWhite,
                         onTap: () => _LanguagePickerSheet.show(context),
@@ -472,6 +479,7 @@ class _ActionRow extends StatelessWidget {
     required this.label,
     required this.textStyle,
     required this.onTap,
+    this.leadingWidget,
   });
 
   final String assetPath;
@@ -479,6 +487,7 @@ class _ActionRow extends StatelessWidget {
   final String label;
   final TextStyle textStyle;
   final VoidCallback? onTap;
+  final Widget? leadingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -489,16 +498,17 @@ class _ActionRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            Image.asset(
-              assetPath,
-              width: AppConstants.settingsActionIconSize,
-              height: AppConstants.settingsActionIconSize,
-              errorBuilder: (_, __, ___) => Icon(
-                fallbackIcon,
-                color: textStyle.color,
-                size: AppConstants.settingsActionIconSize,
-              ),
-            ),
+            leadingWidget ??
+                Image.asset(
+                  assetPath,
+                  width: AppConstants.settingsActionIconSize,
+                  height: AppConstants.settingsActionIconSize,
+                  errorBuilder: (_, __, ___) => Icon(
+                    fallbackIcon,
+                    color: textStyle.color,
+                    size: AppConstants.settingsActionIconSize,
+                  ),
+                ),
             const SizedBox(width: AppConstants.settingsActionIconTextGap),
             Flexible(
               child: Text(
@@ -513,6 +523,14 @@ class _ActionRow extends StatelessWidget {
     );
   }
 }
+
+// ─── Language helpers ─────────────────────────────────────────────────────────
+
+String _languageFlag(String code) => switch (code) {
+  'ru' => '🇷🇺',
+  'kk' => '🇰🇿',
+  _ => '🇬🇧',
+};
 
 // ─── Language Picker ──────────────────────────────────────────────────────────
 
@@ -588,6 +606,11 @@ class _LanguageTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         child: Row(
           children: [
+            Text(
+              _languageFlag(locale.languageCode),
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
                 _localeName(locale.languageCode),
