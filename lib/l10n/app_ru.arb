@@ -99,5 +99,9 @@
   "dialogSaveChangesTitle": "Сохранить изменения?",
   "dialogCancel": "Отмена",
   "dialogDiscard": "Не сохранять",
-  "dialogSave": "Сохранить"
+  "dialogSave": "Сохранить",
+  "profileFavouritesSectionTitle": "Избранное",
+  "@profileFavouritesSectionTitle": {
+    "description": "Заголовок секции избранного в профиле"
+  }
 }

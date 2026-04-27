@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hygge_app/features/favourites/bloc/favourites_cubit.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/router/app_router.dart';
@@ -19,39 +20,38 @@ class App extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<FavouritesCubit>(create: (_) => FavouritesCubit()),
         BlocProvider(
           create: (_) => AppBloc(authRepository: AuthRepository.instance),
         ),
-        BlocProvider(
-          create: (_) => LocaleCubit()..load(),
-        ),
+        BlocProvider(create: (_) => LocaleCubit()..load()),
       ],
       child: BlocBuilder<LocaleCubit, Locale?>(
         builder: (context, locale) => MaterialApp.router(
           locale: locale,
-        title: AppConstants.appName,
-        debugShowCheckedModeBanner: false,
+          title: AppConstants.appName,
+          debugShowCheckedModeBanner: false,
 
-        // ── Тема с iOS-стилем ─────────────────────────────────
-        theme: AppTheme.light.copyWith(
-          // Платформа — iOS (убирает android-поведение)
-          platform: TargetPlatform.iOS,
+          // ── Тема с iOS-стилем ─────────────────────────────────
+          theme: AppTheme.light.copyWith(
+            // Платформа — iOS (убирает android-поведение)
+            platform: TargetPlatform.iOS,
 
-          // Убираем ripple/splash эффекты Material
-          splashFactory: NoSplash.splashFactory,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
+            // Убираем ripple/splash эффекты Material
+            splashFactory: NoSplash.splashFactory,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
 
-        // ── iOS-физика скролла (без glow) ─────────────────────
-        scrollBehavior: const CupertinoScrollBehavior(),
+          // ── iOS-физика скролла (без glow) ─────────────────────
+          scrollBehavior: const CupertinoScrollBehavior(),
 
-        // ── Навигация ─────────────────────────────────────────
-        routerConfig: router,
+          // ── Навигация ─────────────────────────────────────────
+          routerConfig: router,
 
-        // ── Локализация ───────────────────────────────────────
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
+          // ── Локализация ───────────────────────────────────────
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
         ),
       ),
     );

@@ -99,5 +99,9 @@
   "dialogSaveChangesTitle": "Өзгерістерді сақтау керек пе?",
   "dialogCancel": "Болдырмау",
   "dialogDiscard": "Сақтамау",
-  "dialogSave": "Сақтау"
+  "dialogSave": "Сақтау",
+  "profileFavouritesSectionTitle": "Таңдаулылар",
+  "@profileFavouritesSectionTitle": {
+    "description": "Профильдегі таңдаулылар бөлімінің атауы"
+  }
 }

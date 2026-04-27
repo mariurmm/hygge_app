@@ -1,22 +1,21 @@
-part of 'notifications_bloc.dart';
+// lib/features/notifications/bloc/notifications_state.dart
 
-abstract class NotificationsState {}
+import 'package:equatable/equatable.dart';
+import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 
-/// Начальное состояние
-class NotificationsInitial extends NotificationsState {}
+class NotificationsState extends Equatable {
+  final List<NotificationItem> items;
 
-/// Состояние процесса загрузки
-class NotificationsLoading extends NotificationsState {}
+  const NotificationsState({this.items = const []});
 
-/// Состояние с готовыми данными
-class NotificationsLoaded extends NotificationsState {
-  final List<NotificationModel> notifications;
+  /// Непрочитанных уведомлений (для бейджа на иконке).
+  int get unreadCount => items.where((n) => !n.isRead).length;
 
-  NotificationsLoaded({required this.notifications});
-}
+  bool get hasUnread => unreadCount > 0;
 
-/// Состояние ошибки
-class NotificationsError extends NotificationsState {
-  final String message;
-  NotificationsError({required this.message});
+  NotificationsState copyWith({List<NotificationItem>? items}) =>
+      NotificationsState(items: items ?? this.items);
+
+  @override
+  List<Object?> get props => [items];
 }

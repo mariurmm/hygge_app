@@ -361,5 +361,9 @@
   "dialogSave": "Save",
   "@dialogSave": {
     "description": "Save button in the unsaved-changes dialog"
+  },
+  "profileFavouritesSectionTitle": "Favourites",
+  "@profileFavouritesSectionTitle": {
+    "description": "Title of favourites section in profile screen"
   }
 }

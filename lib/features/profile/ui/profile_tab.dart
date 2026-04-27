@@ -14,6 +14,7 @@ import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_about_section.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_account_subscription_card.dart';
+import 'package:hygge_app/features/profile/ui/widgets/profile_favourites_section.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_history_header.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_monthly_travel_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
@@ -50,6 +51,7 @@ class ProfileTab extends StatelessWidget {
           builder: (context, state) {
             final now = DateTime.now();
             final loc = AppLocalizations.of(context);
+
             return Scaffold(
               backgroundColor: Colors.transparent,
               extendBody: true,
@@ -86,6 +88,7 @@ class ProfileTab extends StatelessWidget {
                             ),
                           ),
                         ),
+
                         Expanded(
                           child: SingleChildScrollView(
                             padding: const EdgeInsets.only(
@@ -104,20 +107,26 @@ class ProfileTab extends StatelessWidget {
                                         : loc.profileStatusStandard,
                                     style: AppTextStyles.programsSubtitle,
                                   ),
-                                  SizedBox(
+
+                                  const SizedBox(
                                     height: AppSpacings.profileStatusNameGap,
                                   ),
+
                                   Text(
                                     state.displayName,
                                     style: AppTextStyles.programsHeading,
                                   ),
-                                  SizedBox(
+
+                                  const SizedBox(
                                     height: AppSpacings.profileNameCardGap,
                                   ),
+
                                   ProfileAccountSubscriptionCard(onTap: () {}),
-                                  SizedBox(
+
+                                  const SizedBox(
                                     height: AppSpacings.profileCardsVerticalGap,
                                   ),
+
                                   ProfileMonthlyTravelCard(
                                     percent: state.travelProgressPercent,
                                     description: loc
@@ -132,18 +141,24 @@ class ProfileTab extends StatelessWidget {
                                       state.goalSessionsTotal,
                                     ),
                                   ),
-                                  SizedBox(
+
+                                  const SizedBox(
                                     height:
                                         AppSpacings.profileHistorySectionTop,
                                   ),
+
+                                  ProfileFavouritesSection(),
+
                                   ProfileHistoryHeader(
                                     onViewAll: () =>
                                         context.push(RouteNames.history),
                                   ),
-                                  SizedBox(
+
+                                  const SizedBox(
                                     height:
                                         AppSpacings.profileHistoryLinkCardGap,
                                   ),
+
                                   ProgrammCard(
                                     type: ProgrammCardType.big,
                                     lesson: state.recentSessionLesson,
@@ -151,9 +166,11 @@ class ProfileTab extends StatelessWidget {
                                         .recentSessionLesson
                                         .historyWhenLabel(now),
                                   ),
-                                  SizedBox(
+
+                                  const SizedBox(
                                     height: AppSpacings.profileCardsVerticalGap,
                                   ),
+
                                   const ProfileAboutSection(),
                                 ],
                               ),
