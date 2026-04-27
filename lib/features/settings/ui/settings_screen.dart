@@ -25,6 +25,7 @@ class SettingsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => SettingsBloc(
         authRepository: AuthRepository.instance,
+        appBloc: context.read<AppBloc>(),
         user: context.read<AppBloc>().state.user,
       ),
       child: BlocListener<SettingsBloc, SettingsState>(
@@ -53,28 +54,79 @@ class _SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<_SettingsView> {
-  bool _hasChanges = false;
+  bool _hasUnsavedChanges = false;
+  bool _allowPop = false;
+  bool _saving = false;
+  String _savedName = '';
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final bloc = context.read<SettingsBloc>();
+    bloc.nameController.removeListener(_onNameChanged);
     bloc.nameController.addListener(_onNameChanged);
+    if (_savedName.isEmpty) _savedName = bloc.nameController.text;
   }
 
   void _onNameChanged() {
     final bloc = context.read<SettingsBloc>();
-    final originalName = context.read<AppBloc>().state.user.displayName;
-    final hasChanges = bloc.nameController.text.trim() != originalName.trim();
-    if (hasChanges != _hasChanges) {
-      setState(() => _hasChanges = hasChanges);
+    final hasChanges = bloc.nameController.text.trim() != _savedName.trim();
+    if (hasChanges != _hasUnsavedChanges) {
+      setState(() => _hasUnsavedChanges = hasChanges);
     }
   }
 
-  Future<void> _save(BuildContext context) async {
+  Future<void> _save() async {
+    if (_saving) return;
+    setState(() => _saving = true);
     final bloc = context.read<SettingsBloc>();
     await bloc.persistProfileFields();
-    if (mounted) setState(() => _hasChanges = false);
+    if (mounted) {
+      setState(() {
+        _savedName = bloc.nameController.text;
+        _hasUnsavedChanges = false;
+        _saving = false;
+      });
+    }
+  }
+
+  void _popAfterAction() {
+    setState(() => _allowPop = true);
+    context.pop();
+  }
+
+  void _showUnsavedChangesDialog() {
+    final loc = AppLocalizations.of(context);
+    showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(loc.dialogSaveChangesTitle),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'cancel'),
+            child: Text(loc.dialogCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'discard'),
+            child: Text(loc.dialogDiscard),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'save'),
+            child: Text(loc.dialogSave),
+          ),
+        ],
+      ),
+    ).then((result) {
+      if (!mounted) return;
+      if (result == 'save') {
+        _save().then((_) {
+          if (mounted) _popAfterAction();
+        });
+      } else if (result == 'discard') {
+        context.read<SettingsBloc>().nameController.text = _savedName;
+        _popAfterAction();
+      }
+    });
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -96,131 +148,135 @@ class _SettingsViewState extends State<_SettingsView> {
     final appUser = context.watch<AppBloc>().state.user;
     final loc = AppLocalizations.of(context);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                bottom: AppConstants.profileCardsBottomInset,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppPaddings.profileScreenHorizontal,
+    return PopScope(
+      canPop: _allowPop || !_hasUnsavedChanges,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _showUnsavedChangesDialog();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
+            ),
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  bottom: AppConstants.profileCardsBottomInset,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // ── Хедер ──
-                    ProgramsHeader(
-                      leading: IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 44,
-                          minHeight: 44,
-                        ),
-                        onPressed: context.pop,
-                        icon: Image.asset(
-                          AssetPaths.arrowBackPng,
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppPaddings.profileScreenHorizontal,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Хедер ──
+                      ProgramsHeader(
+                        trailing: const SizedBox.shrink(),
+                        leading: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 44,
+                            minHeight: 44,
+                          ),
+                          onPressed: () {
+                            if (_hasUnsavedChanges) {
+                              _showUnsavedChangesDialog();
+                            } else {
+                              context.pop();
+                            }
+                          },
+                          icon: Image.asset(
+                            AssetPaths.arrowBackPng,
+                            width: 24,
+                            height: 24,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                      trailing: AnimatedOpacity(
-                        opacity: (_hasChanges && !state.busy) ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: TextButton(
-                          onPressed: (_hasChanges && !state.busy)
-                              ? () => _save(context)
-                              : null,
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(44, 44),
+
+                      const SizedBox(height: 24),
+
+                      // ── Аватар ──
+                      _AvatarSection(
+                        bloc: bloc,
+                        appUser: appUser,
+                        busy: state.busy,
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // ── Секция: Профиль ──
+                      _SectionLabel(label: loc.settingsRequiredFields),
+                      const SizedBox(height: 12),
+                      _InputField(
+                        label: loc.settingsFullName,
+                        controller: bloc.nameController,
+                        hasChanges: _hasUnsavedChanges,
+                        onSave: _saving ? null : _save,
+                      ),
+                      const SizedBox(height: 16),
+                      _ReadonlyField(
+                        label: loc.settingsEmailAddress,
+                        controller: bloc.emailController,
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // ── Секция: Настройки приложения ──
+                      _SectionLabel(label: loc.settingsAppSettings),
+                      const SizedBox(height: 12),
+                      _ActionRow(
+                        assetPath: '',
+                        fallbackIcon: Icons.language_rounded,
+                        leadingWidget: Text(
+                          _languageFlag(
+                            context.watch<LocaleCubit>().state?.languageCode ??
+                                Localizations.localeOf(context).languageCode,
                           ),
-                          child: Text(
-                            loc.settingsSave,
-                            style: AppTextStyles.settingsChangePhoto,
-                          ),
+                          style: const TextStyle(fontSize: 24),
                         ),
-                      ), 
-                    ),
+                        label: loc.settingsChangeLanguage,
+                        textStyle: AppTextStyles.settingsActionWhite,
+                        onTap: () => _LanguagePickerSheet.show(context),
+                      ),
 
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
-                    // ── Аватар ──
-                    _AvatarSection(
-                      bloc: bloc,
-                      appUser: appUser,
-                      busy: state.busy,
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // ── Секция: Профиль ──
-                    _SectionLabel(label: loc.settingsRequiredFields),
-                    const SizedBox(height: 12),
-                    _InputField(
-                      label: loc.settingsFullName,
-                      controller: bloc.nameController,
-                      onEditingComplete: () => _save(context),
-                    ),
-                    const SizedBox(height: 16),
-                    _ReadonlyField(
-                      label: loc.settingsEmailAddress,
-                      controller: bloc.emailController,
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // ── Секция: Настройки приложения ──
-                    _SectionLabel(label: loc.settingsAppSettings),
-                    const SizedBox(height: 12),
-                    _ActionRow(
-                      assetPath: '',
-                      fallbackIcon: Icons.language_rounded,
-                      label: loc.settingsChangeLanguage,
-                      textStyle: AppTextStyles.settingsActionWhite,
-                      onTap: () => _LanguagePickerSheet.show(context),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // ── Секция: Аккаунт ──
-                    _SectionLabel(label: loc.settingsAccount),
-                    const SizedBox(height: 12),
-                    _ActionRow(
-                      assetPath: AssetPaths.logoutIcon,
-                      fallbackIcon: Icons.logout_rounded,
-                      label: loc.settingsSignOut,
-                      textStyle: AppTextStyles.settingsActionWhite,
-                      onTap: state.busy ? null : () => _signOut(context),
-                    ),
-                    const SizedBox(height: 8),
-                    _ActionRow(
-                      assetPath: AssetPaths.deleteAccountIcon,
-                      fallbackIcon: Icons.delete_outline_rounded,
-                      label: loc.settingsDeleteAccount,
-                      textStyle: AppTextStyles.settingsActionDelete,
-                      onTap: state.busy
-                          ? null
-                          : () => _deleteAccount(context, bloc),
-                    ),
-                  ],
+                      // ── Секция: Аккаунт ──
+                      _SectionLabel(label: loc.settingsAccount),
+                      const SizedBox(height: 12),
+                      _ActionRow(
+                        assetPath: AssetPaths.logoutIcon,
+                        fallbackIcon: Icons.logout_rounded,
+                        label: loc.settingsSignOut,
+                        textStyle: AppTextStyles.settingsActionWhite,
+                        onTap: state.busy ? null : () => _signOut(context),
+                      ),
+                      const SizedBox(height: 8),
+                      _ActionRow(
+                        assetPath: AssetPaths.deleteAccountIcon,
+                        fallbackIcon: Icons.delete_outline_rounded,
+                        label: loc.settingsDeleteAccount,
+                        textStyle: AppTextStyles.settingsActionDelete,
+                        onTap: state.busy
+                            ? null
+                            : () => _deleteAccount(context, bloc),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -262,32 +318,20 @@ class _AvatarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Column(
-      children: [
-        Center(
-          child: GlassRoundedPanel(
-            width: AppConstants.settingsAvatarWidth,
-            height: AppConstants.settingsAvatarHeight,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                AppConstants.settingsGlassRadius,
-              ),
-              child: _avatarContent(),
+    return Center(
+      child: GestureDetector(
+        onTap: busy ? null : bloc.pickAvatarFromGallery,
+        child: GlassRoundedPanel(
+          width: AppConstants.settingsAvatarWidth,
+          height: AppConstants.settingsAvatarHeight,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(
+              AppConstants.settingsGlassRadius,
             ),
+            child: _avatarContent(),
           ),
         ),
-        const SizedBox(height: AppConstants.settingsAfterAvatarSpacing),
-        Center(
-          child: TextButton(
-            onPressed: busy ? null : bloc.pickAvatarFromGallery,
-            child: Text(
-              loc.settingsChangePhoto,
-              style: AppTextStyles.settingsChangePhoto,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -320,12 +364,14 @@ class _InputField extends StatelessWidget {
   const _InputField({
     required this.label,
     required this.controller,
-    this.onEditingComplete,
+    required this.hasChanges,
+    this.onSave,
   });
 
   final String label;
   final TextEditingController controller;
-  final VoidCallback? onEditingComplete;
+  final bool hasChanges;
+  final VoidCallback? onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -338,20 +384,38 @@ class _InputField extends StatelessWidget {
           child: GlassRoundedPanel(
             width: AppConstants.settingsInputWidth,
             height: AppConstants.settingsInputHeight,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: TextField(
-                controller: controller,
-                style: AppTextStyles.settingsInput16Medium,
-                cursorColor: Colors.white,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
+            padding: const EdgeInsets.only(left: 20, right: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    style: AppTextStyles.settingsInput16Medium,
+                    cursorColor: Colors.white,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    onEditingComplete: hasChanges ? onSave : null,
+                  ),
                 ),
-                onEditingComplete: onEditingComplete,
-              ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onSave,
+                  child: SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: Icon(
+                      hasChanges ? Icons.check_rounded : Icons.edit_outlined,
+                      color: (hasChanges && onSave != null)
+                          ? Colors.white
+                          : Colors.white38,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -416,6 +480,7 @@ class _ActionRow extends StatelessWidget {
     required this.label,
     required this.textStyle,
     required this.onTap,
+    this.leadingWidget,
   });
 
   final String assetPath;
@@ -423,6 +488,7 @@ class _ActionRow extends StatelessWidget {
   final String label;
   final TextStyle textStyle;
   final VoidCallback? onTap;
+  final Widget? leadingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -433,16 +499,17 @@ class _ActionRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            Image.asset(
-              assetPath,
-              width: AppConstants.settingsActionIconSize,
-              height: AppConstants.settingsActionIconSize,
-              errorBuilder: (_, __, ___) => Icon(
-                fallbackIcon,
-                color: textStyle.color,
-                size: AppConstants.settingsActionIconSize,
-              ),
-            ),
+            leadingWidget ??
+                Image.asset(
+                  assetPath,
+                  width: AppConstants.settingsActionIconSize,
+                  height: AppConstants.settingsActionIconSize,
+                  errorBuilder: (_, __, ___) => Icon(
+                    fallbackIcon,
+                    color: textStyle.color,
+                    size: AppConstants.settingsActionIconSize,
+                  ),
+                ),
             const SizedBox(width: AppConstants.settingsActionIconTextGap),
             Flexible(
               child: Text(
@@ -457,6 +524,14 @@ class _ActionRow extends StatelessWidget {
     );
   }
 }
+
+// ─── Language helpers ─────────────────────────────────────────────────────────
+
+String _languageFlag(String code) => switch (code) {
+  'ru' => '🇷🇺',
+  'kk' => '🇰🇿',
+  _ => '🇬🇧',
+};
 
 // ─── Language Picker ──────────────────────────────────────────────────────────
 
@@ -532,6 +607,11 @@ class _LanguageTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         child: Row(
           children: [
+            Text(
+              _languageFlag(locale.languageCode),
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
                 _localeName(locale.languageCode),

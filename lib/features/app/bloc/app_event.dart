@@ -30,3 +30,11 @@ class AppAuthStateChanged extends AppEvent {
 class AppSignOutRequested extends AppEvent {
   const AppSignOutRequested();
 }
+
+/// Принудительно обновить пользователя из Firebase Auth.
+///
+/// Отправляется после успешного сохранения профиля в настройках,
+/// чтобы [AppBloc] перечитал актуальные данные и обновил [AppState].
+class AppUserRefreshRequested extends AppEvent {
+  const AppUserRefreshRequested();
+}

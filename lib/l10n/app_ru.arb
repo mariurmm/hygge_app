@@ -76,6 +76,34 @@
   "notificationsMarkAllRead": "Прочитать все",
   "notificationsEmpty": "Нет уведомлений",
   "notificationsUnreadCount": "{count} непрочитанных",
+  "notificationWelcomeDesc": "Рады видеть вас в приложении.",
+  "@notificationWelcomeDesc": {
+    "description": "Описание приветственного уведомления после регистрации"
+  },
+  "notificationProgramReminderTitle": "Напоминание",
+  "@notificationProgramReminderTitle": {
+    "description": "Заголовок уведомления о программе"
+  },
+  "notificationProgramReminderDesc": "Не забудьте про тренировку сегодня.",
+  "@notificationProgramReminderDesc": {
+    "description": "Описание уведомления о программе"
+  },
+  "notificationSystemUpdateTitle": "Обновление системы",
+  "@notificationSystemUpdateTitle": {
+    "description": "Заголовок системного уведомления"
+  },
+  "notificationSystemUpdateDesc": "Доступна новая версия.",
+  "@notificationSystemUpdateDesc": {
+    "description": "Описание системного уведомления"
+  },
+  "notificationEmptyState": "Уведомлений пока нет",
+  "@notificationEmptyState": {
+    "description": "Текст пустого состояния уведомлений"
+  },
+  "dialogSaveChangesTitle": "Сохранить изменения?",
+  "dialogCancel": "Отмена",
+  "dialogDiscard": "Не сохранять",
+  "dialogSave": "Сохранить",
   "profileFavouritesSectionTitle": "Избранное",
   "@profileFavouritesSectionTitle": {
     "description": "Заголовок секции избранного в профиле"
