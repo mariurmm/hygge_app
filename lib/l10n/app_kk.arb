@@ -96,8 +96,12 @@
   "@notificationEmptyState": {
     "description": "Бос хабарламалар күйі"
   },
+  "dialogSaveChangesTitle": "Өзгерістерді сақтау керек пе?",
+  "dialogCancel": "Болдырмау",
+  "dialogDiscard": "Сақтамау",
+  "dialogSave": "Сақтау",
   "profileFavouritesSectionTitle": "Таңдаулылар",
-"@profileFavouritesSectionTitle": {
-  "description": "Профильдегі таңдаулылар бөлімінің атауы"
-}
+  "@profileFavouritesSectionTitle": {
+    "description": "Профильдегі таңдаулылар бөлімінің атауы"
+  }
 }

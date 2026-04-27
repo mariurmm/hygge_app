@@ -22,27 +22,25 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   late final StreamSubscription<UserModel> _authSubscription;
 
   AppBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(const AppState.unknown()) {
+    : _authRepository = authRepository,
+      super(const AppState.unknown()) {
     // Регистрируем обработчики событий.
     on<AppAuthStateChanged>(_onAuthStateChanged);
     on<AppSignOutRequested>(_onSignOutRequested);
+    on<AppUserRefreshRequested>(_onUserRefreshRequested);
 
     // Подписываемся на стрим авторизации.
     // Каждый раз, когда пользователь входит/выходит,
     // стрим присылает нового [UserModel].
-    _authSubscription = _authRepository.authStateChanges.listen(
-      (UserModel user) {
-        add(AppAuthStateChanged(user));
-      },
-    );
+    _authSubscription = _authRepository.authStateChanges.listen((
+      UserModel user,
+    ) {
+      add(AppAuthStateChanged(user));
+    });
   }
 
   /// Обработчик: изменился статус авторизации.
-  void _onAuthStateChanged(
-    AppAuthStateChanged event,
-    Emitter<AppState> emit,
-  ) {
+  void _onAuthStateChanged(AppAuthStateChanged event, Emitter<AppState> emit) {
     if (event.user.isNotEmpty) {
       AppLogger.info('AppBloc: пользователь авторизован — ${event.user.email}');
       emit(AppState.authenticated(event.user));
@@ -60,6 +58,23 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await _authRepository.signOut();
     // Стрим authStateChanges сам пришлёт AppAuthStateChanged(empty),
     // поэтому emit здесь не нужен.
+  }
+
+  /// Обработчик: принудительное обновление профиля пользователя.
+  ///
+  /// Вызывается после сохранения настроек профиля, так как
+  /// [updateDisplayName] не триггерит стрим [authStateChanges].
+  /// Перечитывает актуальные данные из Firebase Auth и обновляет [AppState].
+  Future<void> _onUserRefreshRequested(
+    AppUserRefreshRequested event,
+    Emitter<AppState> emit,
+  ) async {
+    await _authRepository.reloadCurrentUser();
+    final UserModel user = _authRepository.currentUser;
+    if (user.isNotEmpty) {
+      AppLogger.info('AppBloc: профиль обновлён — ${user.displayName}');
+      emit(AppState.authenticated(user));
+    }
   }
 
   /// Закрываем подписку при уничтожении BLoC.
