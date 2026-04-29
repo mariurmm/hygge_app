@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_cubit.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_spacings.dart';
 import '../../../core/constants/asset_paths.dart';
@@ -10,25 +11,27 @@ import '../../../features/programs/bloc/programs_bloc.dart';
 import '../../../features/programs/bloc/programs_state.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/program_filter_button.dart';
-import '../../programs_list/ui/programm_list.dart';
 import '../../../widgets/tab_header.dart';
+import '../../programs_list/ui/programm_list.dart';
 
 class ProgramsTab extends StatelessWidget {
   const ProgramsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<ProgramsBloc>(
       create: (_) => ProgramsBloc(),
       child: BlocListener<ProgramsBloc, ProgramsState>(
-        listenWhen: (prev, curr) => prev.allLessons != curr.allLessons,
+        listenWhen: (previous, current) =>
+            previous.allLessons != current.allLessons,
         listener: (context, state) {
           context.read<FavouritesCubit>().registerLessons(state.allLessons);
         },
         child: BlocBuilder<ProgramsBloc, ProgramsState>(
           builder: (context, state) {
-            final loc = AppLocalizations.of(context);
-            final filterLabels = [
+            final AppLocalizations loc = AppLocalizations.of(context);
+
+            final List<String> filterLabels = <String>[
               loc.filterAll,
               loc.filterMeditation,
               loc.filterYoga,
@@ -44,7 +47,7 @@ class ProgramsTab extends StatelessWidget {
               extendBody: true,
               extendBodyBehindAppBar: true,
               body: Stack(
-                children: [
+                children: <Widget>[
                   Positioned.fill(
                     child: Image.asset(
                       AssetPaths.homeBackground,
@@ -54,7 +57,7 @@ class ProgramsTab extends StatelessWidget {
                   SafeArea(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
                         const ProgramsHeader(),
                         Expanded(
                           child: SingleChildScrollView(
@@ -63,7 +66,7 @@ class ProgramsTab extends StatelessWidget {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                              children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal:
@@ -72,7 +75,7 @@ class ProgramsTab extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: [
+                                    children: <Widget>[
                                       Text(
                                         loc.programsHeading,
                                         style: AppTextStyles.programsHeading,
@@ -84,12 +87,14 @@ class ProgramsTab extends StatelessWidget {
                                         loc.programsDescription,
                                         style: AppTextStyles.programsSubtitle,
                                       ),
-                                      const SizedBox(
-                                        height: AppSpacings.programsBodyGap,
-                                      ),
                                     ],
                                   ),
                                 ),
+
+                                const SizedBox(
+                                  height: AppSpacings.programsBodyGap,
+                                ),
+
                                 SizedBox(
                                   height: AppConstants.programsFilterHeight,
                                   child: ListView.separated(
@@ -117,9 +122,11 @@ class ProgramsTab extends StatelessWidget {
                                     },
                                   ),
                                 ),
+
                                 const SizedBox(
                                   height: AppSpacings.programsFiltersGap,
                                 ),
+
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal:

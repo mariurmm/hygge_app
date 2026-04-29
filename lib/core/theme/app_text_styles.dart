@@ -148,4 +148,8 @@ class AppTextStyles {
   static final TextStyle settingsActionDelete = settingsActionWhite.copyWith(
     color: AppColors.settingsDeleteText,
   );
+
+  static TextStyle? get bodyBold => null;
+
+  static TextStyle? get h2 => null;
 }

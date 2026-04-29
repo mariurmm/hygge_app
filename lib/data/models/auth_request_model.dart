@@ -8,10 +8,7 @@ class AuthRequestModel extends Equatable {
   /// Пароль пользователя.
   final String password;
 
-  const AuthRequestModel({
-    required this.email,
-    required this.password,
-  });
+  const AuthRequestModel({required this.email, required this.password});
 
   /// Пустая модель.
   static const AuthRequestModel empty = AuthRequestModel(
@@ -30,10 +27,7 @@ class AuthRequestModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'password': password,
-    };
+    return {'email': email, 'password': password};
   }
 
   @override

@@ -72,6 +72,10 @@
   "@notificationWelcomeTitle": {
     "description": "Заголовок приветственного уведомления после регистрации"
   },
+  "notificationsTitle": "Уведомления",
+  "notificationsMarkAllRead": "Прочитать все",
+  "notificationsEmpty": "Нет уведомлений",
+  "notificationsUnreadCount": "{count} непрочитанных",
   "notificationWelcomeDesc": "Рады видеть вас в приложении.",
   "@notificationWelcomeDesc": {
     "description": "Описание приветственного уведомления после регистрации"

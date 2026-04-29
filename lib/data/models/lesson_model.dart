@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
+import 'localized_value.dart';
 import 'master_model.dart';
 
 /// Модель занятия (программа / расписание / история).
@@ -40,17 +41,14 @@ class LessonModel extends Equatable {
     required this.master,
   });
 
-  /// Календарный день начала (для сетки расписания).
   DateTime get calendarDay =>
       DateTime(startDate.year, startDate.month, startDate.day);
 
-  /// Диапазон времени «8:00 – 9:30».
   String scheduleTimeRange() {
     final f = DateFormat('H:mm', 'ru');
     return '${f.format(startDate)} - ${f.format(finishDate)}';
   }
 
-  /// Подпись дня относительно [today]: «Сегодня», «Завтра», «12 апр.».
   String scheduleDayLabel(DateTime today) {
     final t = DateTime(today.year, today.month, today.day);
     final d = calendarDay;
@@ -59,7 +57,6 @@ class LessonModel extends Equatable {
     return DateFormat('d MMM', 'ru').format(d);
   }
 
-  /// Подпись для истории: «Вчера 8:00», «Сегодня 10:00», …
   String historyWhenLabel(DateTime now) {
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
@@ -70,7 +67,6 @@ class LessonModel extends Equatable {
     return '${DateFormat('d MMM', 'ru').format(d)} $time';
   }
 
-  /// Пустая модель.
   static final LessonModel empty = LessonModel(
     uuid: '',
     title: '',
@@ -84,17 +80,23 @@ class LessonModel extends Equatable {
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory LessonModel.fromJson(Map<String, dynamic> json) {
+  factory LessonModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
     return LessonModel(
-      uuid: json['uuid'] as String? ?? '',
-      ritual: json['ritual'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      text: json['text'] as String? ?? '',
+      uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
+      ritual: LocalizedValue.read(json['ritual'], locale: locale),
+      title: LocalizedValue.read(json['title'], locale: locale),
+      text: LocalizedValue.read(json['text'], locale: locale),
       startDate: _parseDate(json['startDate']),
       finishDate: _parseDate(json['finishDate']),
       price: _parseDouble(json['price']),
-      master: json['master'] is Map<String, dynamic>
-          ? MasterModel.fromJson(json['master'] as Map<String, dynamic>)
+      master: json['master'] is Map
+          ? MasterModel.fromJson(
+              Map<String, dynamic>.from(json['master'] as Map),
+              locale: locale,
+            )
           : MasterModel.empty,
     );
   }
@@ -133,13 +135,13 @@ class LessonModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        uuid,
-        ritual,
-        title,
-        text,
-        startDate,
-        finishDate,
-        price,
-        master,
-      ];
+    uuid,
+    ritual,
+    title,
+    text,
+    startDate,
+    finishDate,
+    price,
+    master,
+  ];
 }

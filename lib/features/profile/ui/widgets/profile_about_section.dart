@@ -14,7 +14,10 @@ class ProfileAboutSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(loc.profileAboutTitle, style: AppTextStyles.programsHeading),
+        Text(
+          loc.profileAboutTitle,
+          style: AppTextStyles.programsHeading.copyWith(fontSize: 24),
+        ),
         const SizedBox(height: AppSpacings.programsLeadGap),
         _LinkRow(
           icon: Icons.phone_outlined,

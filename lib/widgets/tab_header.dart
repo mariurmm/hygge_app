@@ -27,10 +27,11 @@ class ProgramsHeader extends StatelessWidget {
                 children: [
                   if (leading != null) ...[leading!, const SizedBox(width: 8)],
 
-                  SvgPicture.asset(
+                  Image.asset(
                     AssetPaths.hyggeLogo,
                     width: AppConstants.programsHeaderLogoSize,
                     height: AppConstants.programsHeaderLogoSize,
+                    fit: BoxFit.contain,
                   ),
 
                   const SizedBox(width: 8),
