@@ -6,18 +6,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
-
-import 'package:hygge_app/widgets/tab_header.dart';
-
-import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
-
 import 'package:hygge_app/features/home/bloc/home_bloc.dart';
 import 'package:hygge_app/features/home/bloc/home_event.dart';
 import 'package:hygge_app/features/home/bloc/home_state.dart';
-
 import 'package:hygge_app/features/notifications/bloc/notifications_cubit.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+import 'package:hygge_app/widgets/tab_header.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 
@@ -26,8 +22,8 @@ class MainTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeBloc()..add(HomeLoadRequested()),
+    return BlocProvider<HomeBloc>(
+      create: (_) => HomeBloc()..add(const HomeLoadRequested()),
       child: const _MainTabView(),
     );
   }
@@ -45,19 +41,19 @@ class _MainTabView extends StatelessWidget {
       extendBody: true,
       extendBodyBehindAppBar: true,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
+          Image.asset(
+            AssetPaths.homeBackground,
+            fit: BoxFit.cover,
           ),
-
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ================= HEADER =================
-                ProgramsHeader(trailing: _NotificationsBell()),
-
-                // ================= BODY =================
+                const ProgramsHeader(
+                  trailing: _NotificationsBell(),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(bottom: 24),
@@ -88,9 +84,7 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 24),
-
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
@@ -102,9 +96,7 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 12),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: ClipRRect(
@@ -129,12 +121,11 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 28),
-
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
+                            right: AppPaddings.programsScreenHorizontal,
                           ),
                           child: Text(
                             loc.homeUpcomingPrograms,
@@ -143,44 +134,8 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 16),
-
-                        BlocBuilder<HomeBloc, HomeState>(
-                          builder: (context, state) {
-                            if (state.isLoading) {
-                              return const Padding(
-                                padding: EdgeInsets.all(24),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-
-                            return SizedBox(
-                              height: 170,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal:
-                                      AppPaddings.programsScreenHorizontal,
-                                ),
-                                itemCount: state.lessons.length,
-                                itemBuilder: (context, index) {
-                                  final lesson = state.lessons[index];
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 14),
-                                    child: ProgrammCard(
-                                      type: ProgrammCardType.small,
-                                      lesson: lesson,
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                        const _UpcomingProgramsList(),
                       ],
                     ),
                   ),
@@ -194,8 +149,71 @@ class _MainTabView extends StatelessWidget {
   }
 }
 
-/// ===================== NOTIFICATIONS WIDGET =====================
-/// изолирован, чтобы не ломал экран
+class _UpcomingProgramsList extends StatelessWidget {
+  const _UpcomingProgramsList();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Padding(
+            padding: EdgeInsets.all(24),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (state.lessons.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppPaddings.programsScreenHorizontal,
+              vertical: 12,
+            ),
+            child: Text(
+              _emptyText(context),
+              style: AppTextStyles.programsSubtitle,
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppPaddings.programsScreenHorizontal,
+          ),
+          child: Column(
+            children: List.generate(
+              state.lessons.length,
+              (index) {
+                final lesson = state.lessons[index];
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: ProgrammCard(
+                    type: ProgrammCardType.big,
+                    lesson: lesson,
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static String _emptyText(BuildContext context) {
+    final code = Localizations.localeOf(context).languageCode;
+
+    return switch (code) {
+      'en' => 'No upcoming programs yet',
+      'kk' => 'Әзірге алдағы бағдарламалар жоқ',
+      _ => 'Пока нет предстоящих программ',
+    };
+  }
+}
+
 class _NotificationsBell extends StatelessWidget {
   const _NotificationsBell();
 
@@ -206,36 +224,21 @@ class _NotificationsBell extends StatelessWidget {
     if (cubit == null) {
       return IconButton(
         onPressed: () => context.go('/home/notifications'),
-        icon: SvgPicture.asset(
-          'assets/svg/notification.svg',
-          width: 24,
-          height: 24,
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-        ),
+        icon: const _NotificationSvgIcon(),
       );
     }
 
     return BlocBuilder<NotificationsCubit, NotificationsState>(
       bloc: cubit,
       builder: (context, state) {
-        final hasUnread = state.hasUnread;
-
         return Stack(
           clipBehavior: Clip.none,
           children: [
             IconButton(
               onPressed: () => context.go('/home/notifications'),
-              icon: SvgPicture.asset(
-                AssetPaths.notificationIcon,
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.white,
-                  BlendMode.srcIn,
-                ),
-              ),
+              icon: const _NotificationSvgIcon(),
             ),
-            if (hasUnread)
+            if (state.hasUnread)
               Positioned(
                 right: 8,
                 top: 8,
@@ -251,6 +254,23 @@ class _NotificationsBell extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _NotificationSvgIcon extends StatelessWidget {
+  const _NotificationSvgIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      AssetPaths.notificationIcon,
+      width: 24,
+      height: 24,
+      colorFilter: const ColorFilter.mode(
+        Colors.white,
+        BlendMode.srcIn,
+      ),
     );
   }
 }

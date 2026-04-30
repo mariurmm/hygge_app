@@ -6,6 +6,7 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_cubit.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_state.dart';
+import 'package:hygge_app/features/programs_detail/ui/program_details_page.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
@@ -50,9 +51,21 @@ class ProfileFavouritesSection extends StatelessWidget {
                 separatorBuilder: (_, __) =>
                     const SizedBox(width: AppSpacings.programsCardsGap),
                 itemBuilder: (context, index) {
-                  return ProgrammCard(
-                    type: ProgrammCardType.small,
-                    lesson: lessons[index],
+                  final lesson = lessons[index];
+
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (_) => ProgramDetailsPage(program: lesson),
+                        ),
+                      );
+                    },
+                    child: ProgrammCard(
+                      type: ProgrammCardType.small,
+                      lesson: lesson,
+                    ),
                   );
                 },
               ),

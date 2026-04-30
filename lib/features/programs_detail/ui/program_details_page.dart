@@ -9,6 +9,7 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
 
 import '../bloc/program_details_bloc.dart';
@@ -209,34 +210,61 @@ class ProgramDetailsView extends StatelessWidget {
                               Expanded(
                                 child: SizedBox(
                                   height: 54,
-                                  child: ElevatedButton(
-                                    onPressed: state.isBooking
-                                        ? null
-                                        : () {
-                                            context
-                                                .read<ProgramDetailsBloc>()
-                                                .add(
-                                                  ProgramDetailsBooked(program),
-                                                );
-                                          },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primary,
-                                      foregroundColor: Colors.white,
-                                      disabledBackgroundColor: AppColors.primary
-                                          .withOpacity(0.55),
-                                      disabledForegroundColor: Colors.white
-                                          .withOpacity(0.75),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(24),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      state.isBooking
-                                          ? _t(context, 'booking')
-                                          : _t(context, 'book'),
-                                      style: AppTextStyles.button,
-                                    ),
-                                  ),
+                                  child: program.isBookable
+                                      ? ElevatedButton(
+                                          onPressed: state.isBooking
+                                              ? null
+                                              : () {
+                                                  context
+                                                      .read<
+                                                        ProgramDetailsBloc
+                                                      >()
+                                                      .add(
+                                                        ProgramDetailsBooked(
+                                                          program,
+                                                        ),
+                                                      );
+                                                },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.primary,
+                                            foregroundColor: Colors.white,
+                                            disabledBackgroundColor: AppColors
+                                                .primary
+                                                .withValues(alpha: 0.55),
+                                            disabledForegroundColor: Colors
+                                                .white
+                                                .withValues(alpha: 0.75),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(24),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            state.isBooking
+                                                ? _t(context, 'booking')
+                                                : _t(context, 'book'),
+                                            style: AppTextStyles.button,
+                                          ),
+                                        )
+                                      : Container(
+                                          height: 54,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: AppColors
+                                                .profileAccountCardFill,
+                                            borderRadius: BorderRadius.circular(
+                                              24,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            AppLocalizations.of(context).comingSoon,
+                                            style: AppTextStyles.button
+                                                .copyWith(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.8),
+                                                ),
+                                          ),
+                                        ),
                                 ),
                               ),
                               const SizedBox(width: 12),

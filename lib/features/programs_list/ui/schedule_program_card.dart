@@ -37,7 +37,9 @@ class ScheduleProgramCard extends StatelessWidget {
           height: AppConstants.scheduleCardHeight,
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.2),
               width: AppConstants.programsBorderWidth,
@@ -57,24 +59,63 @@ class ScheduleProgramCard extends StatelessWidget {
                   height: AppConstants.scheduleProgramsIconHeight,
                 ),
               ),
+
               const SizedBox(width: AppSpacings.scheduleCardTextGapH),
-              Padding(
-                padding: const EdgeInsets.only(top: AppPaddings.scheduleCardTextTop),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(ritual, style: AppTextStyles.scheduleCardLabel),
-                    const SizedBox(height: AppSpacings.scheduleCardTextGapV),
-                    Text(title, style: AppTextStyles.scheduleCardTitle),
-                    const SizedBox(height: AppSpacings.programsFiltersGap),
-                    Row(
-                      children: [
-                        Text(timeRange, style: AppTextStyles.scheduleCardLabel),
-                        const SizedBox(width: AppSpacings.scheduleCardBottomRowGap),
-                        Text(whenLabel, style: AppTextStyles.scheduleCardLabel),
-                      ],
-                    ),
-                  ],
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: AppPaddings.scheduleCardTextTop,
+                    right: AppPaddings.scheduleCardIconLeft,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ritual,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.scheduleCardLabel,
+                      ),
+
+                      const SizedBox(height: AppSpacings.scheduleCardTextGapV),
+
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.scheduleCardTitle,
+                      ),
+
+                      const SizedBox(height: AppSpacings.programsFiltersGap),
+
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              timeRange,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.scheduleCardLabel,
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: AppSpacings.scheduleCardBottomRowGap,
+                          ),
+
+                          Flexible(
+                            child: Text(
+                              whenLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.scheduleCardLabel,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

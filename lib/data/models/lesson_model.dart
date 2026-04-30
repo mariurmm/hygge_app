@@ -4,31 +4,19 @@ import 'package:intl/intl.dart';
 import 'localized_value.dart';
 import 'master_model.dart';
 
-/// Модель занятия (программа / расписание / история).
 class LessonModel extends Equatable {
-  /// Уникальный идентификатор.
   final String uuid;
-
-  /// Подзаголовок ритуала (экран расписания).
   final String ritual;
-
-  /// Название занятия.
   final String title;
-
-  /// Описание занятия.
   final String text;
-
-  /// Дата начала.
   final DateTime startDate;
-
-  /// Дата окончания.
   final DateTime finishDate;
-
-  /// Стоимость занятия.
   final double price;
-
-  /// Мастер, ведущий занятие.
   final MasterModel master;
+
+  /// true — можно записаться.
+  /// false — это анонс будущей программы, кнопка записи не показывается.
+  final bool isBookable;
 
   const LessonModel({
     required this.uuid,
@@ -39,6 +27,7 @@ class LessonModel extends Equatable {
     required this.finishDate,
     required this.price,
     required this.master,
+    this.isBookable = true,
   });
 
   DateTime get calendarDay =>
@@ -52,8 +41,10 @@ class LessonModel extends Equatable {
   String scheduleDayLabel(DateTime today) {
     final t = DateTime(today.year, today.month, today.day);
     final d = calendarDay;
+
     if (d == t) return 'Сегодня';
     if (d == t.add(const Duration(days: 1))) return 'Завтра';
+
     return DateFormat('d MMM', 'ru').format(d);
   }
 
@@ -62,8 +53,10 @@ class LessonModel extends Equatable {
     final yesterday = today.subtract(const Duration(days: 1));
     final d = calendarDay;
     final time = DateFormat('H:mm', 'ru').format(startDate);
+
     if (d == yesterday) return 'Вчера $time';
     if (d == today) return 'Сегодня $time';
+
     return '${DateFormat('d MMM', 'ru').format(d)} $time';
   }
 
@@ -75,6 +68,7 @@ class LessonModel extends Equatable {
     finishDate: DateTime.fromMillisecondsSinceEpoch(0),
     price: 0,
     master: MasterModel.empty,
+    isBookable: true,
   );
 
   bool get isEmpty => this == empty;
@@ -89,9 +83,10 @@ class LessonModel extends Equatable {
       ritual: LocalizedValue.read(json['ritual'], locale: locale),
       title: LocalizedValue.read(json['title'], locale: locale),
       text: LocalizedValue.read(json['text'], locale: locale),
-      startDate: _parseDate(json['startDate']),
-      finishDate: _parseDate(json['finishDate']),
+      startDate: _parseDate(json['startDate'] ?? json['availableFrom']),
+      finishDate: _parseDate(json['finishDate'] ?? json['availableFrom']),
       price: _parseDouble(json['price']),
+      isBookable: json['isBookable'] as bool? ?? true,
       master: json['master'] is Map
           ? MasterModel.fromJson(
               Map<String, dynamic>.from(json['master'] as Map),
@@ -111,15 +106,20 @@ class LessonModel extends Equatable {
       'finishDate': finishDate.toIso8601String(),
       'price': price,
       'master': master.toJson(),
+      'isBookable': isBookable,
     };
   }
 
   static DateTime _parseDate(dynamic value) {
     if (value is DateTime) return value;
+
     if (value is String && value.isNotEmpty) {
       return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
     }
-    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
 
     try {
       return (value as dynamic).toDate() as DateTime;
@@ -135,13 +135,14 @@ class LessonModel extends Equatable {
 
   @override
   List<Object?> get props => [
-    uuid,
-    ritual,
-    title,
-    text,
-    startDate,
-    finishDate,
-    price,
-    master,
-  ];
+        uuid,
+        ritual,
+        title,
+        text,
+        startDate,
+        finishDate,
+        price,
+        master,
+        isBookable,
+      ];
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hygge_app/core/firebase/firebase_seed.dart';
 
 import 'core/utils/logger.dart';
 import 'features/app/ui/app.dart';
@@ -31,7 +32,7 @@ void main() async {
   AppLogger.info('main: Firebase инициализирован');
 
   // Если нужно заполнить Firestore тестовыми данными, раскомментируйте эту строку и запустите приложение один раз.
-  // await seedFirestore();
+  await seedFirestore();
 
   // Запускаем приложение.
   runApp(const App());
