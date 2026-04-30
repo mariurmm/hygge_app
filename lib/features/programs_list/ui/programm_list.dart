@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 enum ProgrammCardType { small, big }
 
@@ -20,7 +22,10 @@ class ProgrammList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (lessons.isEmpty) {
-      return const Text('Нет доступных занятий');
+      return Text(
+        AppLocalizations.of(context).noAvailableLessons,
+        style: AppTextStyles.settingsLabel16Light,
+      );
     }
 
     if (scrollDirection == Axis.horizontal) {

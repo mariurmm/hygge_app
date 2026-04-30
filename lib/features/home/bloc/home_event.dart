@@ -1,3 +1,7 @@
-abstract class HomeEvent {}
+abstract class HomeEvent {
+  const HomeEvent();
+}
 
-class HomeLoadRequested extends HomeEvent {}
+class HomeLoadRequested extends HomeEvent {
+  const HomeLoadRequested();
+}

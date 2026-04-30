@@ -318,10 +318,6 @@
   "@profileMapAddress": {
     "description": "Physical address shown in the About section of the Profile tab"
   },
-  "profileFavouritesSectionTitle": "Favourites",
-  "@profileFavouritesSectionTitle": {
-    "description": "Title of favourites section in profile screen"
-  },
   "notificationsTitle": "Notifications",
   "@notificationsTitle": {
     "description": "Title of notifications screen"
@@ -360,5 +356,13 @@
   "profileFavouritesSectionTitle": "Favourites",
   "@profileFavouritesSectionTitle": {
     "description": "Title of favourites section in profile screen"
+  },
+  "noAvailableLessons": "No available lessons",
+  "@noAvailableLessons": {
+    "description": "Text shown when there are no available lessons"
+  },
+  "comingSoon": "Coming soon",
+  "@comingSoon": {
+    "description": "Label shown when a program is not yet available for booking"
   }
 }

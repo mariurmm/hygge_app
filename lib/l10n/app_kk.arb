@@ -107,5 +107,13 @@
   "profileFavouritesSectionTitle": "Таңдаулылар",
   "@profileFavouritesSectionTitle": {
     "description": "Профильдегі таңдаулылар бөлімінің атауы"
+  },
+  "noAvailableLessons": "Қолжетімді сабақтар жоқ",
+  "@noAvailableLessons": {
+    "description": "Қолжетімді сабақтар болмаған кезде көрсетілетін мәтін"
+  },
+  "comingSoon": "Жақында қолжетімді",
+  "@comingSoon": {
+    "description": "Бағдарламаға жазылу әлі ашылмаған кезде көрсетілетін мәтін"
   }
 }

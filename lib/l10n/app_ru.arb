@@ -107,5 +107,13 @@
   "profileFavouritesSectionTitle": "Избранное",
   "@profileFavouritesSectionTitle": {
     "description": "Заголовок секции избранного в профиле"
+  },
+  "noAvailableLessons": "Нет доступных занятий",
+  "@noAvailableLessons": {
+    "description": "Текст, отображаемый при отсутствии доступных занятий"
+  },
+  "comingSoon": "Скоро доступно",
+  "@comingSoon": {
+    "description": "Текст, отображаемый, когда программа ещё недоступна для записи"
   }
 }
