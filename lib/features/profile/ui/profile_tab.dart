@@ -7,11 +7,12 @@ import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository_impl.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_state.dart'
     show AppState, AppStatus;
 import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
-import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_about_section.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_account_subscription_card.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_favourites_section.dart';
@@ -30,14 +31,16 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          ProfileBloc(user: context.read<AppBloc>().state.user),
+      create: (context) => ProfileBloc(
+        repository: UpcomingLessonRepositoryImpl(),
+        user: context.read<AppBloc>().state.user,
+      )..add(const ProfileLoadRequested()),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AppBloc, AppState>(
             listenWhen: (p, c) => p.user != c.user,
             listener: (context, state) {
-              context.read<ProfileBloc>().syncUser(state.user);
+              context.read<ProfileBloc>().add(ProfileUserSynced(state.user));
             },
           ),
           BlocListener<AppBloc, AppState>(
@@ -193,10 +196,10 @@ class ProfileTab extends StatelessWidget {
 
                                       ProgrammCard(
                                         type: ProgrammCardType.big,
-                                        lesson: state.recentSessionLesson,
+                                        lesson: state.recentSessionLesson ?? LessonModel.empty,
                                         timingOverlayLabel: state
                                             .recentSessionLesson
-                                            .historyWhenLabel(now),
+                                            ?.historyWhenLabel(now),
                                       ),
 
                                       const SizedBox(

@@ -1,31 +1,32 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
 import 'home_event.dart';
 import 'home_state.dart';
 
-import 'package:flutter/foundation.dart';
-
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc({FirebaseFeatureRepository? repository})
-    : _repository = repository ?? FirebaseFeatureRepository(),
-      super(const HomeState()) {
+  HomeBloc({required UpcomingLessonRepository repository})
+      : _repository = repository,
+        super(const HomeState()) {
     on<HomeLoadRequested>(_onLoad);
   }
 
-  final FirebaseFeatureRepository _repository;
+  final UpcomingLessonRepository _repository;
 
-  Future<void> _onLoad(HomeLoadRequested event, Emitter<HomeState> emit) async {
+  static const int _upcomingLimit = 10;
+
+  Future<void> _onLoad(
+    HomeLoadRequested event,
+    Emitter<HomeState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true));
 
     try {
-      final lessons = await _repository.fetchUpcomingPrograms(limit: 10);
-
+      final lessons = await _repository.fetchUpcomingPrograms(
+        limit: _upcomingLimit,
+      );
       emit(state.copyWith(lessons: lessons, isLoading: false));
-    } catch (e, s) {
-      debugPrint('HOME UPCOMING ERROR: $e');
-      debugPrintStack(stackTrace: s);
-
+    } on Exception {
       emit(state.copyWith(lessons: const [], isLoading: false));
     }
   }

@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:flutter_svg/svg.dart';
+// import 'package:go_router/go_router.dart';
 
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository_impl.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
+import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/home/bloc/home_bloc.dart';
 import 'package:hygge_app/features/home/bloc/home_event.dart';
-import 'package:hygge_app/features/home/bloc/home_state.dart';
-import 'package:hygge_app/features/notifications/bloc/notifications_cubit.dart';
-import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+// import 'package:hygge_app/features/home/bloc/home_state.dart';
+// import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+// import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+import 'package:hygge_app/widgets/notification_button.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import 'package:hygge_app/widgets/upcoming_programs_list.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 
@@ -23,7 +27,9 @@ class MainTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HomeBloc>(
-      create: (_) => HomeBloc()..add(const HomeLoadRequested()),
+      create: (_) => HomeBloc(
+        repository: UpcomingLessonRepositoryImpl(),
+      )..add(const HomeLoadRequested()),
       child: const _MainTabView(),
     );
   }
@@ -51,19 +57,21 @@ class _MainTabView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ProgramsHeader(
-                  trailing: _NotificationsBell(),
+                ProgramsHeader(
+                  trailing: notificationIconButton(),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.only(
+                      bottom: AppConstants.programsCardsBottomInset,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
-                            top: 8,
+                            top: AppSpacings.sm,
                             right: AppPaddings.programsScreenHorizontal,
                           ),
                           child: RichText(
@@ -76,7 +84,7 @@ class _MainTabView extends StatelessWidget {
                                   style: AppTextStyles.programsHeading.copyWith(
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w400,
-                                    color: const Color(0xFFE08564),
+                                    color: AppColors.homeHeadlineAccent,
                                   ),
                                 ),
                                 TextSpan(text: loc.homeHeadlinePart2),
@@ -84,7 +92,7 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacings.xl),
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
@@ -92,26 +100,28 @@ class _MainTabView extends StatelessWidget {
                           child: Text(
                             loc.homeAnnouncements,
                             style: AppTextStyles.programsHeading.copyWith(
-                              fontSize: 24,
+                              fontSize: AppSpacings.xl,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacings.scheduleSignedTitleGap),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacings.md,
+                          ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(35),
+                            borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
                             child: Stack(
                               children: [
                                 Image.asset(
-                                  'assets/png/banner.png',
+                                  AssetPaths.homeAnnouncementCard,
                                   width: double.infinity,
                                   height: 218,
                                   fit: BoxFit.cover,
                                 ),
                                 Positioned(
-                                  left: 20,
-                                  bottom: 16,
+                                  left: AppSpacings.xl,
+                                  bottom: AppSpacings.lg,
                                   child: Text(
                                     loc.readOurNews,
                                     style: AppTextStyles.programsFilter,
@@ -121,7 +131,7 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 28),
+                        const SizedBox(height: AppSpacings.programsBodyGap),
                         Padding(
                           padding: const EdgeInsets.only(
                             left: AppPaddings.programsScreenHorizontal,
@@ -134,8 +144,8 @@ class _MainTabView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        const _UpcomingProgramsList(),
+                        const SizedBox(height: AppSpacings.lg),
+                        const UpcomingProgramsList(),
                       ],
                     ),
                   ),
@@ -144,132 +154,6 @@ class _MainTabView extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _UpcomingProgramsList extends StatelessWidget {
-  const _UpcomingProgramsList();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Padding(
-            padding: EdgeInsets.all(24),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        if (state.lessons.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppPaddings.programsScreenHorizontal,
-              vertical: 12,
-            ),
-            child: Text(
-              _emptyText(context),
-              style: AppTextStyles.programsSubtitle,
-            ),
-          );
-        }
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppPaddings.programsScreenHorizontal,
-          ),
-          child: Column(
-            children: List.generate(
-              state.lessons.length,
-              (index) {
-                final lesson = state.lessons[index];
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: ProgrammCard(
-                    type: ProgrammCardType.big,
-                    lesson: lesson,
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  static String _emptyText(BuildContext context) {
-    final code = Localizations.localeOf(context).languageCode;
-
-    return switch (code) {
-      'en' => 'No upcoming programs yet',
-      'kk' => 'Әзірге алдағы бағдарламалар жоқ',
-      _ => 'Пока нет предстоящих программ',
-    };
-  }
-}
-
-class _NotificationsBell extends StatelessWidget {
-  const _NotificationsBell();
-
-  @override
-  Widget build(BuildContext context) {
-    final cubit = context.read<NotificationsCubit?>();
-
-    if (cubit == null) {
-      return IconButton(
-        onPressed: () => context.go('/home/notifications'),
-        icon: const _NotificationSvgIcon(),
-      );
-    }
-
-    return BlocBuilder<NotificationsCubit, NotificationsState>(
-      bloc: cubit,
-      builder: (context, state) {
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            IconButton(
-              onPressed: () => context.go('/home/notifications'),
-              icon: const _NotificationSvgIcon(),
-            ),
-            if (state.hasUnread)
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _NotificationSvgIcon extends StatelessWidget {
-  const _NotificationSvgIcon();
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      AssetPaths.notificationIcon,
-      width: 24,
-      height: 24,
-      colorFilter: const ColorFilter.mode(
-        Colors.white,
-        BlendMode.srcIn,
       ),
     );
   }

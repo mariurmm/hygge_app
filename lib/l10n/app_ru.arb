@@ -100,6 +100,10 @@
   "@notificationEmptyState": {
     "description": "Текст пустого состояния уведомлений"
   },
+  "notifications": "Уведомления",
+  "noNotifications": "Нет уведомлений",
+  "readAll": "Прочитать все",
+  "unreadNotifications": "{count} непрочитанных",
   "dialogSaveChangesTitle": "Сохранить изменения?",
   "dialogCancel": "Отмена",
   "dialogDiscard": "Не сохранять",
@@ -115,5 +119,9 @@
   "comingSoon": "Скоро доступно",
   "@comingSoon": {
     "description": "Текст, отображаемый, когда программа ещё недоступна для записи"
+  },
+  "noUpcomingPrograms": "Пока нет предстоящих программ",
+  "@noUpcomingPrograms": {
+    "description": "Текст пустого состояния, когда на главном экране нет предстоящих программ"
   }
 }

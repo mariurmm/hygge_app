@@ -1,23 +1,44 @@
 import 'package:bloc/bloc.dart';
-import 'package:hygge_app/features/programs/bloc/programs_state.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
 
-class ProgramsBloc extends Cubit<ProgramsState> {
-  ProgramsBloc({FirebaseFeatureRepository? repository})
-      : _repository = repository ?? FirebaseFeatureRepository(),
+part 'programs_event.dart';
+part 'programs_state.dart';
+
+class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
+  ProgramsBloc({ProgramsRepository? repository})
+      : _repository = repository ?? ProgramsRepositoryImpl(),
         super(const ProgramsState()) {
-    _loadLessons();
+    on<ProgramsInitialized>(_onInitialized);
+    on<ProgramsFilterChanged>(_onFilterChanged);
   }
 
-  final FirebaseFeatureRepository _repository;
+  final ProgramsRepository _repository;
+
+  Future<void> _onInitialized(
+    ProgramsInitialized event,
+    Emitter<ProgramsState> emit,
+  ) async {
+    try {
+      final lessons = await _repository.fetchPrograms();
+      emit(state.copyWith(allLessons: lessons));
+    } catch (e) {
+      emit(state.copyWith(allLessons: const []));
+    }
+  }
+
+  Future<void> _onFilterChanged(
+    ProgramsFilterChanged event,
+    Emitter<ProgramsState> emit,
+  ) async {
+    if (event.filterIndex < 0 ||
+        event.filterIndex >= ProgramsFilter.values.length) return;
+    emit(state.copyWith(selectedFilter: ProgramsFilter.values[event.filterIndex]));
+  }
 
   void selectFilter(int index) {
-    if (index < 0 || index >= ProgramsFilter.values.length) return;
-    emit(state.copyWith(selectedFilter: ProgramsFilter.values[index]));
-  }
-
-  Future<void> _loadLessons() async {
-    final lessons = await _repository.fetchPrograms();
-    emit(state.copyWith(allLessons: lessons));
+    add(ProgramsFilterChanged(index));
   }
 }

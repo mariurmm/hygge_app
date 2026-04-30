@@ -1,74 +1,81 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/user_model.dart';
-import 'package:hygge_app/features/profile/bloc/profile_state.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
-class ProfileBloc extends Cubit<ProfileState> {
+part 'profile_event.dart';
+part 'profile_state.dart';
+
+class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({
+    required UpcomingLessonRepository repository,
     UserModel? user,
-    FirebaseFeatureRepository? repository,
-  })  : _repository = repository ?? FirebaseFeatureRepository(),
-        super(_initialState(user)) {
-    _loadProfileStats();
+  })  : _repository = repository,
+        super(const ProfileState()) {
+    on<ProfileLoadRequested>(_onLoadRequested);
+    on<ProfileUserSynced>(_onUserSynced);
   }
 
-  final FirebaseFeatureRepository _repository;
+  final UpcomingLessonRepository _repository;
 
-  static LessonModel _emptyRecentSessionLesson() {
-    return LessonModel(
-      uuid: '',
-      ritual: '',
-      title: '',
-      text: '',
-      startDate: DateTime.fromMillisecondsSinceEpoch(0),
-      finishDate: DateTime.fromMillisecondsSinceEpoch(0),
-      price: 0,
-      master: MasterModel.empty,
-    );
+  static const int _goalSessionsTotal = 15;
+  static const String _completedStatus = 'completed';
+  static const String _fallbackName = 'Жанна Цой';
+
+  // ── Handlers ───────────────────────────────────────────────────────────────
+
+  Future<void> _onLoadRequested(
+    ProfileLoadRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(_applyUser(event.user, state).copyWith(status: ProfileStatus.loading));
+
+    try {
+      final completed =
+          await _repository.fetchBookings(status: _completedStatus);
+
+      final count = completed.length;
+      final progress = _goalSessionsTotal == 0
+          ? 0
+          : ((count / _goalSessionsTotal) * 100).round().clamp(0, 100);
+
+      emit(state.copyWith(
+        status: ProfileStatus.success,
+        sessionsCompletedThisMonth: count,
+        goalSessionsTotal: _goalSessionsTotal,
+        sessionsLeftToNextStage:
+            (_goalSessionsTotal - count).clamp(0, _goalSessionsTotal),
+        travelProgressPercent: progress,
+        recentSessionLesson: completed.isNotEmpty ? completed.last : null,
+      ));
+    } on Exception {
+      emit(state.copyWith(status: ProfileStatus.failure));
+    }
   }
 
-  static ProfileState _initialState(UserModel? user) {
-    final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty
-        ? user.displayName
-        : 'Жанна Цой';
-    final premium = _hasActiveFitnessSubscription(user);
-
-    return ProfileState(
-      isPremium: premium,
-      displayName: name,
-      travelProgressPercent: 0,
-      sessionsCompletedThisMonth: 0,
-      sessionsLeftToNextStage: 15,
-      goalSessionsTotal: 15,
-      recentSessionLesson: _emptyRecentSessionLesson(),
-    );
+  void _onUserSynced(
+    ProfileUserSynced event,
+    Emitter<ProfileState> emit,
+  ) {
+    emit(_applyUser(event.user, state));
+    add(const ProfileLoadRequested());
   }
 
-  Future<void> _loadProfileStats() async {
-    final completed = await _repository.fetchBookings(status: 'completed');
-    final recent = completed.isNotEmpty ? completed.last : _emptyRecentSessionLesson();
-    const goal = 15;
-    final completedCount = completed.length;
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
-    emit(
-      state.copyWith(
-        sessionsCompletedThisMonth: completedCount,
-        goalSessionsTotal: goal,
-        sessionsLeftToNextStage: (goal - completedCount).clamp(0, goal),
-        travelProgressPercent: goal == 0 ? 0 : ((completedCount / goal) * 100).round().clamp(0, 100),
-        recentSessionLesson: recent,
-      ),
-    );
+  ProfileState _applyUser(UserModel? user, ProfileState current) =>
+      current.copyWith(
+        displayName: _resolveName(user),
+        isPremium: _hasActiveSubscription(user),
+      );
+
+  String _resolveName(UserModel? user) {
+    if (user == null || user.isEmpty) return _fallbackName;
+    return user.displayName.isNotEmpty ? user.displayName : _fallbackName;
   }
 
-  void syncUser(UserModel user) {
-    emit(_initialState(user));
-    _loadProfileStats();
-  }
-
-  static bool _hasActiveFitnessSubscription(UserModel? user) {
+  bool _hasActiveSubscription(UserModel? user) {
     if (user == null || user.isEmpty) return false;
     final sub = user.subscription;
     if (sub == null || sub.isEmpty) return false;

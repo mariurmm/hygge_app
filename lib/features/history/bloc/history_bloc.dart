@@ -1,18 +1,33 @@
 import 'package:bloc/bloc.dart';
-import 'package:hygge_app/features/history/bloc/history_state.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
-class HistoryBloc extends Cubit<HistoryState> {
-  HistoryBloc({FirebaseFeatureRepository? repository})
-      : _repository = repository ?? FirebaseFeatureRepository(),
-        super(const HistoryState(lessons: [])) {
-    _loadHistory();
+part 'history_event.dart';
+part 'history_state.dart';
+
+class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
+  HistoryBloc({required UpcomingLessonRepository repository})
+      : _repository = repository,
+        super(const HistoryState()) {
+    on<HistoryLoadRequested>(_onLoadRequested);
   }
 
-  final FirebaseFeatureRepository _repository;
+  final UpcomingLessonRepository _repository;
 
-  Future<void> _loadHistory() async {
-    final lessons = await _repository.fetchBookings(status: 'completed');
-    emit(HistoryState(lessons: lessons));
+  static const String _completedStatus = 'completed';
+
+  Future<void> _onLoadRequested(
+    HistoryLoadRequested event,
+    Emitter<HistoryState> emit,
+  ) async {
+    emit(state.copyWith(status: HistoryStatus.loading));
+
+    try {
+      final lessons = await _repository.fetchBookings(status: _completedStatus);
+      emit(state.copyWith(status: HistoryStatus.success, lessons: lessons));
+    } on Exception {
+      emit(state.copyWith(status: HistoryStatus.failure));
+    }
   }
 }
