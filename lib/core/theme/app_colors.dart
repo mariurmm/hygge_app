@@ -71,4 +71,6 @@ class AppColors {
 
   /// Текст «Удалить аккаунт».
   static const Color settingsDeleteText = Color(0xFFDA4E4E);
+
+  static const Color homeHeadlineAccent = Color(0xFFE08564);
 }

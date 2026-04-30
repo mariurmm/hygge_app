@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:flutter_svg/svg.dart';
+// import 'package:go_router/go_router.dart';
 
 import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository_impl.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/home/bloc/home_bloc.dart';
 import 'package:hygge_app/features/home/bloc/home_event.dart';
-import 'package:hygge_app/features/home/bloc/home_state.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+// import 'package:hygge_app/features/home/bloc/home_state.dart';
+// import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+// import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+import 'package:hygge_app/widgets/notification_button.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import 'package:hygge_app/widgets/upcoming_programs_list.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 
@@ -23,7 +27,9 @@ class MainTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HomeBloc>(
-      create: (_) => HomeBloc()..add(const HomeLoadRequested()),
+      create: (_) => HomeBloc(
+        repository: UpcomingLessonRepositoryImpl(),
+      )..add(const HomeLoadRequested()),
       child: const _MainTabView(),
     );
   }
@@ -52,7 +58,7 @@ class _MainTabView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ProgramsHeader(
-                  trailing: _notificationIconButton(),
+                  trailing: notificationIconButton(),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -78,7 +84,7 @@ class _MainTabView extends StatelessWidget {
                                   style: AppTextStyles.programsHeading.copyWith(
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w400,
-                                    color: const Color(0xFFE08564),
+                                    color: AppColors.homeHeadlineAccent,
                                   ),
                                 ),
                                 TextSpan(text: loc.homeHeadlinePart2),
@@ -94,7 +100,7 @@ class _MainTabView extends StatelessWidget {
                           child: Text(
                             loc.homeAnnouncements,
                             style: AppTextStyles.programsHeading.copyWith(
-                              fontSize: 24,
+                              fontSize: AppSpacings.xl,
                             ),
                           ),
                         ),
@@ -108,7 +114,7 @@ class _MainTabView extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Image.asset(
-                                  'assets/png/banner.png',
+                                  AssetPaths.homeAnnouncementCard,
                                   width: double.infinity,
                                   height: 218,
                                   fit: BoxFit.cover,
@@ -139,7 +145,7 @@ class _MainTabView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacings.lg),
-                        const _UpcomingProgramsList(),
+                        const UpcomingProgramsList(),
                       ],
                     ),
                   ),
@@ -151,76 +157,4 @@ class _MainTabView extends StatelessWidget {
       ),
     );
   }
-}
-
-class _UpcomingProgramsList extends StatelessWidget {
-  const _UpcomingProgramsList();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Padding(
-            padding: EdgeInsets.all(AppSpacings.xl),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        if (state.lessons.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppPaddings.programsScreenHorizontal,
-              vertical: AppSpacings.scheduleSignedTitleGap,
-            ),
-            child: Text(
-              context.read<AppLocalizations>().noUpcomingPrograms,
-              style: AppTextStyles.programsSubtitle,
-            ),
-          );
-        }
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppPaddings.programsScreenHorizontal,
-          ),
-          child: Column(
-            children: List.generate(
-              state.lessons.length,
-              (index) {
-                final lesson = state.lessons[index];
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacings.lg),
-                  child: ProgrammCard(
-                    type: ProgrammCardType.big,
-                    lesson: lesson,
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-
-Widget _notificationIconButton() {
-  return Builder(
-    builder: (context) => IconButton(
-      onPressed: () => context.go('/home/notifications'),
-      icon: SvgPicture.asset(
-        AssetPaths.notificationIcon,
-        width: 24,
-        height: 24,
-        colorFilter: const ColorFilter.mode(
-          Colors.white,
-          BlendMode.srcIn,
-        ),
-      ),
-    ),
-  );
 }

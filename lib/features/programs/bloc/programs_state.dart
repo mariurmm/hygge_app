@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
+part of 'programs_bloc.dart';
 
 enum ProgramsFilter {
   all,
@@ -12,7 +11,7 @@ enum ProgramsFilter {
   authorTour,
 }
 
-class ProgramsState extends Equatable {
+final class ProgramsState extends Equatable {
   final ProgramsFilter selectedFilter;
   final List<LessonModel> allLessons;
 

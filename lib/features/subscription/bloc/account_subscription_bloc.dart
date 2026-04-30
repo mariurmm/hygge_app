@@ -1,14 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:hygge_app/data/repositories/user_repository/user_repository.dart';
+import 'package:hygge_app/data/repositories/user_repository/user_repository_impl.dart';
 import 'account_subscription_event.dart';
 import 'account_subscription_state.dart';
 
 class AccountSubscriptionBloc
     extends Bloc<AccountSubscriptionEvent, AccountSubscriptionState> {
-  final FirebaseFeatureRepository repository;
+  final UserRepository _repository;
 
-  AccountSubscriptionBloc({required this.repository})
-    : super(const AccountSubscriptionState()) {
+  AccountSubscriptionBloc({UserRepository? repository})
+    : _repository = repository ?? UserRepositoryImpl(),
+        super(const AccountSubscriptionState()) {
     on<AccountSubscriptionStarted>(_onStarted);
   }
 
@@ -19,7 +21,7 @@ class AccountSubscriptionBloc
     emit(state.copyWith(status: AccountSubscriptionStatus.loading));
 
     try {
-      final user = await repository.getCurrentUser();
+      final user = await _repository.getCurrentUser();
 
       emit(
         state.copyWith(status: AccountSubscriptionStatus.loaded, user: user),

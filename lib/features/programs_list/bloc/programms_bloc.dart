@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository_impl.dart';
 
 abstract class ProgrammsState {}
 
@@ -30,20 +33,24 @@ abstract class ProgrammsEvent {}
 class ProgrammsLoadEvent extends ProgrammsEvent {}
 
 class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
-  ProgrammsBloc({FirebaseFeatureRepository? repository})
-      : _repository = repository ?? FirebaseFeatureRepository(),
+  ProgrammsBloc({
+    ProgramsRepository? programsRepository,
+    FavouritesRepository? favouritesRepository,
+  })  : _programsRepository = programsRepository ?? ProgramsRepositoryImpl(),
+        _favouritesRepository = favouritesRepository ?? FavouritesRepositoryImpl(),
         super(ProgrammsLoadingState()) {
     on<ProgrammsLoadEvent>(_onLoad);
   }
 
-  final FirebaseFeatureRepository _repository;
+  final ProgramsRepository _programsRepository;
+  final FavouritesRepository _favouritesRepository;
 
   FutureOr<void> _onLoad(
     ProgrammsLoadEvent event,
     Emitter<ProgrammsState> emit,
   ) async {
-    final lessons = await _repository.fetchPrograms();
-    final favoriteIds = await _repository.fetchFavouriteIds();
+    final lessons = await _programsRepository.fetchPrograms();
+    final favoriteIds = await _favouritesRepository.fetchFavouriteIds();
     emit(ProgrammLoadedState(lessons: lessons, favoriteIds: favoriteIds));
   }
 }

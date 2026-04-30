@@ -17,4 +17,5 @@ class AssetPaths {
   static const String arrowBackPng = 'assets/png/arrow_back.png';
   static const String logoutIcon = 'assets/png/logout.png';
   static const String deleteAccountIcon = 'assets/png/delete.png';
+  static const String homeAnnouncementCard = 'assets/png/banner.png';
 }

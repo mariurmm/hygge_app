@@ -4,8 +4,7 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/features/favourites/bloc/favourites_cubit.dart';
-import 'package:hygge_app/features/favourites/bloc/favourites_state.dart';
+import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 import 'package:hygge_app/features/programs_detail/ui/program_details_page.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
@@ -18,7 +17,7 @@ class ProfileFavouritesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
 
-    return BlocSelector<FavouritesCubit, FavouritesState, List<LessonModel>>(
+    return BlocSelector<FavouritesBloc, FavouritesState, List<LessonModel>>(
       selector: (state) => state.favouriteLessons,
       builder: (context, lessons) {
         if (lessons.isEmpty) return const SizedBox.shrink();

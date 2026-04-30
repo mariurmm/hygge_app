@@ -7,7 +7,7 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/subscription_model.dart';
-import 'package:hygge_app/features/shared/data/firebase_feature_repository.dart';
+import 'package:hygge_app/data/repositories/user_repository/user_repository_impl.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
 
 import '../bloc/account_subscription_bloc.dart';
@@ -21,7 +21,7 @@ class AccountSubscriptionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          AccountSubscriptionBloc(repository: FirebaseFeatureRepository())
+          AccountSubscriptionBloc(repository: UserRepositoryImpl())
             ..add(const AccountSubscriptionStarted()),
       child: const AccountSubscriptionView(),
     );

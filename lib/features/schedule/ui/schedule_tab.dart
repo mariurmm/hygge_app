@@ -5,6 +5,7 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository_impl.dart';
 import 'package:hygge_app/features/programs_list/ui/schedule_program_card.dart';
 import 'package:hygge_app/features/programs_list/ui/schedule_progress_card.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
@@ -19,24 +20,17 @@ class ScheduleTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ScheduleBloc(),
+      create: (_) => ScheduleBloc(
+        repository: UpcomingLessonRepositoryImpl(),
+      )..add(const ScheduleInitialized()),
       child: BlocBuilder<ScheduleBloc, ScheduleState>(
         builder: (context, state) {
           final loc = AppLocalizations.of(context);
-          final bloc = context.read<ScheduleBloc>();
-          final calendarCells = bloc.calendarCells(state.visibleMonth);
+          final calendarCells = ScheduleBloc.calendarCells(state.visibleMonth);
           final locale = Localizations.localeOf(context).languageCode;
-          final monthLabel = bloc.monthLabel(state.visibleMonth, locale);
+          final monthLabel = ScheduleBloc.monthLabel(state.visibleMonth, locale);
           final percent = (state.progress * 100).round();
-          final scheduledDates = state.signedLessons
-              .map(
-                (lesson) => DateTime(
-                  lesson.calendarDay.year,
-                  lesson.calendarDay.month,
-                  lesson.calendarDay.day,
-                ),
-              )
-              .toSet();
+          final scheduledDates = state.scheduledDates;
 
           return Scaffold(
             backgroundColor: Colors.transparent,
@@ -86,8 +80,12 @@ class ScheduleTab extends StatelessWidget {
                                   cells: calendarCells,
                                   today: state.today,
                                   scheduledDates: scheduledDates,
-                                  onPrev: bloc.previousMonth,
-                                  onNext: bloc.nextMonth,
+                                  onPrev: () => context
+                                      .read<ScheduleBloc>()
+                                      .add(const SchedulePreviousMonthPressed()),
+                                  onNext: () => context
+                                      .read<ScheduleBloc>()
+                                      .add(const ScheduleNextMonthPressed()),
                                 ),
                                 const SizedBox(
                                   height: AppSpacings.scheduleCalendarGap,
@@ -99,7 +97,7 @@ class ScheduleTab extends StatelessWidget {
                                 const SizedBox(
                                   height: AppSpacings.scheduleSignedTitleGap,
                                 ),
-                                ...state.signedLessons.map(
+                                ...state.bookedLessons.map(
                                   (lesson) => Padding(
                                     padding: const EdgeInsets.only(
                                       bottom: AppSpacings.programsCardsGap,

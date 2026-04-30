@@ -1,16 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
-import '../../shared/data/firebase_feature_repository.dart';
 import 'program_details_event.dart';
 import 'program_details_state.dart';
 
 class ProgramDetailsBloc
     extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
-  final FirebaseFeatureRepository repository;
+  final FavouritesRepository _favouritesRepository;
+  final UpcomingLessonRepository _bookingRepository;
 
-  ProgramDetailsBloc({required this.repository})
-    : super(ProgramDetailsState(program: LessonModel.empty)) {
+  ProgramDetailsBloc({
+    required FavouritesRepository favouritesRepository,
+    required UpcomingLessonRepository bookingRepository,
+  })  : _favouritesRepository = favouritesRepository,
+        _bookingRepository = bookingRepository,
+        super(ProgramDetailsState(program: LessonModel.empty)) {
     on<ProgramDetailsStarted>(_onStarted);
     on<ProgramDetailsFavouriteToggled>(_onFavouriteToggled);
     on<ProgramDetailsBooked>(_onBooked);
@@ -28,7 +34,7 @@ class ProgramDetailsBloc
     );
 
     try {
-      final favouriteIds = await repository.fetchFavouriteIds();
+      final favouriteIds = await _favouritesRepository.fetchFavouriteIds();
       final isFavourite = favouriteIds.contains(event.program.uuid);
 
       emit(
@@ -57,7 +63,7 @@ class ProgramDetailsBloc
     emit(state.copyWith(isFavourite: nextValue));
 
     try {
-      await repository.setFavourite(
+      await _favouritesRepository.setFavourite(
         programId: event.program.uuid,
         isFavourite: nextValue,
       );
@@ -78,7 +84,7 @@ class ProgramDetailsBloc
     emit(state.copyWith(isBooking: true));
 
     try {
-      await repository.bookProgram(event.program);
+      await _bookingRepository.bookProgram(event.program);
 
       emit(state.copyWith(isBooking: false));
     } catch (_) {

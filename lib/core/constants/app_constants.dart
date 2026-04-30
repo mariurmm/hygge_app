@@ -106,4 +106,9 @@ class AppConstants {
   static const String profileMapAddress = 'Казахстан, Алматы, ул. Зенкова, 17';
   static const String profileMapUrl =
       'https://maps.app.goo.gl/4bk3WANmFhNcCwXF7';
+
+  static const double notificationButtonSize = 24;
+
+  static const double iconSizeMd = 22;
+  static const double iconSizeHero = 56;
 }

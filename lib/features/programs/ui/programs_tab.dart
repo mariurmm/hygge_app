@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
-import 'package:hygge_app/features/favourites/bloc/favourites_cubit.dart';
+import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_spacings.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../features/programs/bloc/programs_bloc.dart';
-import '../../../features/programs/bloc/programs_state.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/program_filter_button.dart';
 import '../../../widgets/tab_header.dart';
@@ -25,7 +24,9 @@ class ProgramsTab extends StatelessWidget {
         listenWhen: (previous, current) =>
             previous.allLessons != current.allLessons,
         listener: (context, state) {
-          context.read<FavouritesCubit>().registerLessons(state.allLessons);
+          context.read<FavouritesBloc>().add(
+            FavouritesLessonsRegistered(state.allLessons),
+          );
         },
         child: BlocBuilder<ProgramsBloc, ProgramsState>(
           builder: (context, state) {

@@ -100,6 +100,10 @@
   "@notificationEmptyState": {
     "description": "Текст пустого состояния уведомлений"
   },
+  "notifications": "Уведомления",
+  "noNotifications": "Нет уведомлений",
+  "readAll": "Прочитать все",
+  "unreadNotifications": "{count} непрочитанных",
   "dialogSaveChangesTitle": "Сохранить изменения?",
   "dialogCancel": "Отмена",
   "dialogDiscard": "Не сохранять",

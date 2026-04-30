@@ -100,6 +100,10 @@
   "@notificationEmptyState": {
     "description": "Бос хабарламалар күйі"
   },
+  "notifications": "Хабарландырулар",
+  "noNotifications": "Хабарландырулар жоқ",
+  "readAll": "Барлығын оқы",
+  "unreadNotifications": "{count} оқылмаған",
   "dialogSaveChangesTitle": "Өзгерістерді сақтау керек пе?",
   "dialogCancel": "Болдырмау",
   "dialogDiscard": "Сақтамау",

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
-import 'package:hygge_app/features/programs/bloc/programs_state.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 import 'programm_list.dart';
