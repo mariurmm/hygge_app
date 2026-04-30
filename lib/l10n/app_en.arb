@@ -364,5 +364,9 @@
   "comingSoon": "Coming soon",
   "@comingSoon": {
     "description": "Label shown when a program is not yet available for booking"
+  },
+  "noUpcomingPrograms": "No upcoming programs yet",
+  "@noUpcomingPrograms": {
+    "description": "Empty state text when there are no upcoming programs on the Home tab"
   }
 }
