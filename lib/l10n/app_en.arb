@@ -389,10 +389,6 @@
   "@noUpcomingPrograms": {
     "description": "Empty state text when there are no upcoming programs on the Home tab"
   },
-  "markAllAsRead": "Mark all as read",
-  "@markAllAsRead": {
-    "description": "Button text to mark all notifications as read"
-  },
   "scheduleLoadErrorTitle": "Failed to load schedule",
   "@scheduleLoadErrorTitle": {
     "description": "Error title when schedule loading fails"

@@ -133,10 +133,6 @@
   "@noUpcomingPrograms": {
     "description": "Текст пустого состояния, когда на главном экране нет предстоящих программ"
   },
-  "markAllAsRead": "Отметить все как прочитанные",
-  "@markAllAsRead": {
-    "description": "Текст кнопки для отметки всех уведомлений как прочитанных"
-  },
   "scheduleLoadErrorTitle": "Не удалось загрузить расписание",
   "@scheduleLoadErrorTitle": {
     "description": "Error title when schedule loading fails"

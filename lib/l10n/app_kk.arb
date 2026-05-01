@@ -136,10 +136,6 @@
   "@noUpcomingPrograms": {
     "description": "Басты бетте алдағы бағдарламалар болмаған кезде бос күйдің мәтіні"
   },
-  "markAllAsRead": "Барлығын оқылған деп белгілеу",
-  "@markAllAsRead": {
-    "description": "Барлық хабарламаларды оқылған деп белгілеу батырмасының мәтіні"
-  },
   "scheduleLoadErrorTitle": "Кестені жүктеу мүмкін болмады",
   "@scheduleLoadErrorTitle": {
     "description": "Кесте жүктелмеген кездегі қате тақырыбы"
