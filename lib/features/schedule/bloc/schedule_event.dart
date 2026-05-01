@@ -1,7 +1,10 @@
 part of 'schedule_bloc.dart';
 
-sealed class ScheduleEvent {
+sealed class ScheduleEvent extends Equatable {
   const ScheduleEvent();
+
+  @override
+  List<Object?> get props => <Object?>[];
 }
 
 final class ScheduleStarted extends ScheduleEvent {

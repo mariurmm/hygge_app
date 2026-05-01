@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
+import 'package:equatable/equatable.dart';
 
 part 'schedule_event.dart';
 

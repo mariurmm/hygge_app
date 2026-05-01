@@ -101,8 +101,17 @@
     "description": "Текст пустого состояния уведомлений"
   },
   "notifications": "Уведомления",
+  "@notifications": {
+    "description": "Заголовок экрана уведомлений"
+  },
   "noNotifications": "Нет уведомлений",
-  "readAll": "Прочитать все",
+  "@noNotifications": {
+    "description": "Текст при отсутствии уведомлений"
+  },
+  "readAll": "Отметить все как прочитанные",
+  "@readAll": {
+    "description": "Кнопка для отметки всех уведомлений как прочитанных"
+  },
   "unreadNotifications": "{count} непрочитанных",
   "dialogSaveChangesTitle": "Сохранить изменения?",
   "dialogCancel": "Отмена",

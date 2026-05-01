@@ -10,7 +10,7 @@ import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class UpcomingProgramsList extends StatelessWidget {
-  const UpcomingProgramsList();
+  const UpcomingProgramsList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,7 @@ class UpcomingProgramsList extends StatelessWidget {
         if (state.isLoading) {
           return const Padding(
             padding: EdgeInsets.all(AppSpacings.xl),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -44,20 +42,14 @@ class UpcomingProgramsList extends StatelessWidget {
             horizontal: AppPaddings.programsScreenHorizontal,
           ),
           child: Column(
-            children: List.generate(
-              state.lessons.length,
-              (index) {
-                final lesson = state.lessons[index];
+            children: List.generate(state.lessons.length, (index) {
+              final lesson = state.lessons[index];
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacings.lg),
-                  child: ProgrammCard(
-                    type: ProgrammCardType.big,
-                    lesson: lesson,
-                  ),
-                );
-              },
-            ),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacings.lg),
+                child: ProgrammCard(type: ProgrammCardType.big, lesson: lesson),
+              );
+            }),
           ),
         );
       },

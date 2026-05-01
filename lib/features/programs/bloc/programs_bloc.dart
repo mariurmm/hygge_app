@@ -9,8 +9,8 @@ part 'programs_state.dart';
 
 class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
   ProgramsBloc({ProgramsRepository? repository})
-      : _repository = repository ?? ProgramsRepositoryImpl(),
-        super(const ProgramsState()) {
+    : _repository = repository ?? ProgramsRepositoryImpl(),
+      super(const ProgramsState()) {
     on<ProgramsInitialized>(_onInitialized);
     on<ProgramsFilterChanged>(_onFilterChanged);
   }
@@ -34,8 +34,12 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
     Emitter<ProgramsState> emit,
   ) async {
     if (event.filterIndex < 0 ||
-        event.filterIndex >= ProgramsFilter.values.length) return;
-    emit(state.copyWith(selectedFilter: ProgramsFilter.values[event.filterIndex]));
+        event.filterIndex >= ProgramsFilter.values.length) {
+      return;
+    }
+    emit(
+      state.copyWith(selectedFilter: ProgramsFilter.values[event.filterIndex]),
+    );
   }
 
   void selectFilter(int index) {
