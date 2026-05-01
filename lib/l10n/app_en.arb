@@ -318,8 +318,6 @@
   "@profileMapAddress": {
     "description": "Physical address shown in the About section of the Profile tab"
   },
-
-
   "notificationsTitle": "Notifications",
   "@notificationsTitle": {
     "description": "Title of notifications screen"
@@ -345,7 +343,9 @@
   "unreadNotifications": "{count} unread",
   "@unreadNotifications": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "dialogSaveChangesTitle": "Save changes?",
@@ -379,6 +379,9 @@
   "noUpcomingPrograms": "No upcoming programs yet",
   "@noUpcomingPrograms": {
     "description": "Empty state text when there are no upcoming programs on the Home tab"
+  },
+  "markAllAsRead": "Mark all as read",
+  "@markAllAsRead": {
+    "description": "Button text to mark all notifications as read"
   }
-
 }

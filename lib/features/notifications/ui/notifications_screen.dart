@@ -76,7 +76,7 @@ class _NotificationsView extends StatelessWidget {
                                   .read<NotificationsBloc>()
                                   .add(const NotificationsMarkedAllAsRead()),
                               child: Text(
-                                loc.readAll,
+                                loc.markAllAsRead,
                                 style: AppTextStyles.settingsChangePhoto,
                               ),
                             )

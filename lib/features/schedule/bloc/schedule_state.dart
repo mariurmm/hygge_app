@@ -1,70 +1,91 @@
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 
-/// Loading lifecycle for the schedule screen.
-enum ScheduleStatus { initial, loading, loaded, failure }
+enum ScheduleStatus { initial, loading, success, failure }
 
-class ScheduleState extends Equatable {
+final class ScheduleState extends Equatable {
   final ScheduleStatus status;
-  final DateTime visibleMonth;
   final DateTime today;
+  final DateTime selectedDay;
   final List<LessonModel> bookedLessons;
   final List<LessonModel> completedLessons;
   final String? errorMessage;
 
   const ScheduleState({
-    this.status = ScheduleStatus.initial,
-    required this.visibleMonth,
     required this.today,
-    this.bookedLessons = const [],
-    this.completedLessons = const [],
+    required this.selectedDay,
+    this.status = ScheduleStatus.initial,
+    this.bookedLessons = const <LessonModel>[],
+    this.completedLessons = const <LessonModel>[],
     this.errorMessage,
   });
 
-  /// All lessons the user ever signed up for (booked + completed).
-  List<LessonModel> get allLessons => [...bookedLessons, ...completedLessons];
+  factory ScheduleState.initial() {
+    final DateTime now = DateTime.now();
+    final DateTime today = _dayOnly(now);
+
+    return ScheduleState(today: today, selectedDay: today);
+  }
+
+  List<LessonModel> get allLessons => <LessonModel>[
+    ...bookedLessons,
+    ...completedLessons,
+  ];
 
   int get completedSessions => completedLessons.length;
+
   int get totalSessions => bookedLessons.length + completedLessons.length;
 
   double get progress =>
       totalSessions == 0 ? 0 : completedSessions / totalSessions;
 
-  /// All booked dates as a [Set] (for calendar dot highlighting).
-  Set<DateTime> get scheduledDates =>
-      bookedLessons.map((l) => l.calendarDay).toSet();
+  Set<DateTime> get scheduledDates => bookedLessons
+      .map((LessonModel lesson) => _dayOnly(lesson.calendarDay))
+      .toSet();
 
-  /// Booked lessons that fall on [day].
-  List<LessonModel> lessonsForDay(DateTime day) {
-    final d = DateTime(day.year, day.month, day.day);
-    return bookedLessons.where((l) => l.calendarDay == d).toList();
-  }
+  List<LessonModel> get selectedDayLessons {
+    final DateTime selected = _dayOnly(selectedDay);
 
-  ScheduleState copyWith({
-    ScheduleStatus? status,
-    DateTime? visibleMonth,
-    DateTime? today,
-    List<LessonModel>? bookedLessons,
-    List<LessonModel>? completedLessons,
-    String? errorMessage,
-  }) {
-    return ScheduleState(
-      status: status ?? this.status,
-      visibleMonth: visibleMonth ?? this.visibleMonth,
-      today: today ?? this.today,
-      bookedLessons: bookedLessons ?? this.bookedLessons,
-      completedLessons: completedLessons ?? this.completedLessons,
-      errorMessage: errorMessage,
+    final List<LessonModel> lessons = bookedLessons
+        .where((LessonModel lesson) => _dayOnly(lesson.calendarDay) == selected)
+        .toList(growable: false);
+
+    return lessons..sort(
+      (LessonModel a, LessonModel b) => a.startDate.compareTo(b.startDate),
     );
   }
 
+  bool get hasSelectedDayLessons => selectedDayLessons.isNotEmpty;
+
+  ScheduleState copyWith({
+    ScheduleStatus? status,
+    DateTime? today,
+    DateTime? selectedDay,
+    List<LessonModel>? bookedLessons,
+    List<LessonModel>? completedLessons,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return ScheduleState(
+      status: status ?? this.status,
+      today: today ?? this.today,
+      selectedDay: selectedDay ?? this.selectedDay,
+      bookedLessons: bookedLessons ?? this.bookedLessons,
+      completedLessons: completedLessons ?? this.completedLessons,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+    );
+  }
+
+  static DateTime _dayOnly(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
+
   @override
-  List<Object?> get props => [
-        status,
-        visibleMonth,
-        today,
-        bookedLessons,
-        completedLessons,
-        errorMessage,
-      ];
+  List<Object?> get props => <Object?>[
+    status,
+    today,
+    selectedDay,
+    bookedLessons,
+    completedLessons,
+    errorMessage,
+  ];
 }
