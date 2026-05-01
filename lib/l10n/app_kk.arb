@@ -127,5 +127,24 @@
   "markAllAsRead": "Барлығын оқылған деп белгілеу",
   "@markAllAsRead": {
     "description": "Барлық хабарламаларды оқылған деп белгілеу батырмасының мәтіні"
+  },
+  "scheduleLoadErrorTitle": "Кестені жүктеу мүмкін болмады",
+  "@scheduleLoadErrorTitle": {
+    "description": "Кесте жүктелмеген кездегі қате тақырыбы"
+  },
+
+  "scheduleLoadErrorDescription": "Қосылымды тексеріп, төмен тартып жаңартыңыз.",
+  "@scheduleLoadErrorDescription": {
+    "description": "Кесте жүктелмеген кездегі қате сипаттамасы"
+  },
+
+  "scheduleEmptyTitle": "Бұл күнге жазбалар жоқ",
+  "@scheduleEmptyTitle": {
+    "description": "Таңдалған күнде сеанстар болмаған кездегі тақырып"
+  },
+
+  "scheduleEmptyDescription": "Басқа күнді таңдаңыз немесе жаңа сеансқа жазылыңыз.",
+  "@scheduleEmptyDescription": {
+    "description": "Сеанстар болмаған кездегі сипаттама"
   }
 }

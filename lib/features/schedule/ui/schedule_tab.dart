@@ -163,8 +163,8 @@ final class _ScheduleBody extends StatelessWidget {
 
     if (state.status == ScheduleStatus.failure) {
       return ScheduleEmptyState(
-        title: state.errorMessage ?? 'Не удалось загрузить расписание',
-        description: 'Проверьте подключение и обновите страницу свайпом вниз.',
+        title: state.errorMessage ?? loc.scheduleLoadErrorTitle,
+        description: loc.scheduleLoadErrorDescription,
       );
     }
 
@@ -177,10 +177,9 @@ final class _ScheduleBody extends StatelessWidget {
         ),
         const SizedBox(height: AppPaddings.defaultPadding),
         if (selectedLessons.isEmpty)
-          const ScheduleEmptyState(
-            title: 'На этот день записей нет',
-            description:
-                'Выберите другую дату или запишитесь на новую практику.',
+          ScheduleEmptyState(
+            title: loc.scheduleEmptyTitle,
+            description: loc.scheduleEmptyDescription,
           )
         else
           ...selectedLessons.map(

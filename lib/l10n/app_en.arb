@@ -383,5 +383,24 @@
   "markAllAsRead": "Mark all as read",
   "@markAllAsRead": {
     "description": "Button text to mark all notifications as read"
+  },
+  "scheduleLoadErrorTitle": "Failed to load schedule",
+  "@scheduleLoadErrorTitle": {
+    "description": "Error title when schedule loading fails"
+  },
+
+  "scheduleLoadErrorDescription": "Check your connection and pull down to refresh.",
+  "@scheduleLoadErrorDescription": {
+    "description": "Error description when schedule loading fails"
+  },
+
+  "scheduleEmptyTitle": "No sessions for this day",
+  "@scheduleEmptyTitle": {
+    "description": "Empty state title when there are no sessions for selected day"
+  },
+
+  "scheduleEmptyDescription": "Choose another date or book a new session.",
+  "@scheduleEmptyDescription": {
+    "description": "Empty state description when there are no sessions"
   }
 }
