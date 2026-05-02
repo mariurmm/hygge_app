@@ -7,7 +7,6 @@ import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository_impl.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_state.dart'
@@ -170,7 +169,7 @@ class ProfileTab extends StatelessWidget {
                                 ),
 
                                 ProfileFavouritesSection(),
-                                
+
                                 const SizedBox(
                                   height: AppSpacings.profileCardsVerticalGap,
                                 ),
@@ -194,13 +193,16 @@ class ProfileTab extends StatelessWidget {
                                             .profileHistoryLinkCardGap,
                                       ),
 
-                                      ProgrammCard(
-                                        type: ProgrammCardType.big,
-                                        lesson: state.recentSessionLesson ?? LessonModel.empty,
-                                        timingOverlayLabel: state
-                                            .recentSessionLesson
-                                            ?.historyWhenLabel(now),
-                                      ),
+                                      if (state.recentSessionProgram != null)
+                                        ProgrammCard(
+                                          type: ProgrammCardType.big,
+                                          program: state.recentSessionProgram!,
+                                          lesson: state.recentSessionLesson,
+                                          master: state.recentSessionMaster,
+                                          timingOverlayLabel: state
+                                              .recentSessionLesson
+                                              ?.historyWhenLabel(now),
+                                        ),
 
                                       const SizedBox(
                                         height:

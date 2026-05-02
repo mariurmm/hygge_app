@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
@@ -16,7 +15,7 @@ class ProgramDetailsBloc
     required UpcomingLessonRepository bookingRepository,
   })  : _favouritesRepository = favouritesRepository,
         _bookingRepository = bookingRepository,
-        super(ProgramDetailsState(program: LessonModel.empty)) {
+        super(ProgramDetailsState.initial()) {
     on<ProgramDetailsStarted>(_onStarted);
     on<ProgramDetailsFavouriteToggled>(_onFavouriteToggled);
     on<ProgramDetailsBooked>(_onBooked);
@@ -30,6 +29,9 @@ class ProgramDetailsBloc
       state.copyWith(
         status: ProgramDetailsStatus.loaded,
         program: event.program,
+        lesson: event.lesson,
+        master: event.master,
+        errorMessage: null,
       ),
     );
 
@@ -41,7 +43,10 @@ class ProgramDetailsBloc
         state.copyWith(
           status: ProgramDetailsStatus.loaded,
           program: event.program,
+          lesson: event.lesson,
+          master: event.master,
           isFavourite: isFavourite,
+          errorMessage: null,
         ),
       );
     } catch (_) {
@@ -49,6 +54,8 @@ class ProgramDetailsBloc
         state.copyWith(
           status: ProgramDetailsStatus.loaded,
           program: event.program,
+          lesson: event.lesson,
+          master: event.master,
         ),
       );
     }
@@ -60,7 +67,12 @@ class ProgramDetailsBloc
   ) async {
     final nextValue = !state.isFavourite;
 
-    emit(state.copyWith(isFavourite: nextValue));
+    emit(
+      state.copyWith(
+        isFavourite: nextValue,
+        errorMessage: null,
+      ),
+    );
 
     try {
       await _favouritesRepository.setFavourite(
@@ -81,17 +93,27 @@ class ProgramDetailsBloc
     ProgramDetailsBooked event,
     Emitter<ProgramDetailsState> emit,
   ) async {
-    emit(state.copyWith(isBooking: true));
+    emit(
+      state.copyWith(
+        isBooking: true,
+        errorMessage: null,
+      ),
+    );
 
     try {
-      await _bookingRepository.bookProgram(event.program);
+      await _bookingRepository.bookProgram(event.lesson);
 
-      emit(state.copyWith(isBooking: false));
+      emit(
+        state.copyWith(
+          isBooking: false,
+          errorMessage: null,
+        ),
+      );
     } catch (_) {
       emit(
         state.copyWith(
           isBooking: false,
-          errorMessage: 'Не удалось записаться на программу',
+          errorMessage: 'Не удалось записаться на занятие',
         ),
       );
     }

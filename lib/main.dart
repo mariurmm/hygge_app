@@ -36,7 +36,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   AppLogger.info('main: Firebase инициализирован');
 
-  await seedFirestore();
+  // await FirebaseSeed.seedInitialData();
 
   runApp(
     MultiRepositoryProvider(
@@ -47,9 +47,7 @@ Future<void> main() async {
         RepositoryProvider<NotificationRepository>(
           create: (_) => NotificationRepositoryImpl(),
         ),
-        RepositoryProvider<UserRepository>(
-          create: (_) => UserRepositoryImpl(),
-        ),
+        RepositoryProvider<UserRepository>(create: (_) => UserRepositoryImpl()),
         RepositoryProvider<ProgramsRepository>(
           create: (_) => ProgramsRepositoryImpl(),
         ),

@@ -73,6 +73,9 @@
     "description": "Қолданбаға тіркелгеннен кейінгі сәлемдесу хабарламасы"
   },
   "notificationsTitle": "Хабарламалар",
+  "@notificationsTitle": {
+    "description": "Хабарламалар экранының тақырыбы"
+  },
   "notificationsMarkAllRead": "Барлығын оқу",
   "notificationsEmpty": "Хабарлама жоқ",
   "notificationsUnreadCount": "{count} оқылмаған",
@@ -100,9 +103,18 @@
   "@notificationEmptyState": {
     "description": "Бос хабарламалар күйі"
   },
-  "notifications": "Хабарландырулар",
-  "noNotifications": "Хабарландырулар жоқ",
-  "readAll": "Барлығын оқы",
+  "notifications": "Хабарламалар",
+  "@notifications": {
+    "description": "Хабарламалар экранының тақырыбы"
+  },
+  "noNotifications": "Хабарламалар жоқ",
+  "@noNotifications": {
+    "description": "Хабарламалар болмаған кездегі мәтін"
+  },
+  "readAll": "Барлығын оқылған деп белгілеу",
+  "@readAll": {
+    "description": "Барлық хабарламаларды оқылған деп белгілеу батырмасы"
+  },
   "unreadNotifications": "{count} оқылмаған",
   "dialogSaveChangesTitle": "Өзгерістерді сақтау керек пе?",
   "dialogCancel": "Болдырмау",
@@ -123,5 +135,21 @@
   "noUpcomingPrograms": "Әзірге алдағы бағдарламалар жоқ",
   "@noUpcomingPrograms": {
     "description": "Басты бетте алдағы бағдарламалар болмаған кезде бос күйдің мәтіні"
+  },
+  "scheduleLoadErrorTitle": "Кестені жүктеу мүмкін болмады",
+  "@scheduleLoadErrorTitle": {
+    "description": "Кесте жүктелмеген кездегі қате тақырыбы"
+  },
+  "scheduleLoadErrorDescription": "Қосылымды тексеріп, төмен тартып жаңартыңыз.",
+  "@scheduleLoadErrorDescription": {
+    "description": "Кесте жүктелмеген кездегі қате сипаттамасы"
+  },
+  "scheduleEmptyTitle": "Бұл күнге жазбалар жоқ",
+  "@scheduleEmptyTitle": {
+    "description": "Таңдалған күнде сеанстар болмаған кездегі тақырып"
+  },
+  "scheduleEmptyDescription": "Басқа күнді таңдаңыз немесе жаңа сеансқа жазылыңыз.",
+  "@scheduleEmptyDescription": {
+    "description": "Сеанстар болмаған кездегі сипаттама"
   }
 }

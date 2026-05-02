@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 
 part 'favourites_event.dart';
@@ -10,8 +10,8 @@ part 'favourites_state.dart';
 
 class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
   FavouritesBloc({required FavouritesRepository repository})
-      : _repository = repository,
-        super(const FavouritesState()) {
+    : _repository = repository,
+      super(const FavouritesState()) {
     on<FavouritesWatchStarted>(_onWatchStarted);
     on<FavouritesToggled>(_onToggled);
     on<FavouritesLessonsRegistered>(_onLessonsRegistered);
@@ -62,7 +62,7 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
     FavouritesLessonsRegistered event,
     Emitter<FavouritesState> emit,
   ) {
-    emit(state.copyWith(allLessons: event.lessons));
+    emit(state.copyWith(allPrograms: event.programs));
   }
 
   @override
@@ -70,5 +70,4 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
     await _subscription?.cancel();
     return super.close();
   }
-
 }

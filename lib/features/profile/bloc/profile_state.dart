@@ -1,3 +1,5 @@
+
+
 part of 'profile_bloc.dart';
 
 const int _goalSessionsTotal = 15;
@@ -14,6 +16,8 @@ final class ProfileState extends Equatable {
     this.sessionsLeftToNextStage = _goalSessionsTotal,
     this.goalSessionsTotal = _goalSessionsTotal,
     this.recentSessionLesson,
+    this.recentSessionProgram,
+this.recentSessionMaster,
   });
 
   final ProfileStatus status;
@@ -24,6 +28,8 @@ final class ProfileState extends Equatable {
   final int sessionsLeftToNextStage;
   final int goalSessionsTotal;
   final LessonModel? recentSessionLesson;
+  final ProgramModel? recentSessionProgram;
+final MasterModel? recentSessionMaster;
 
   bool get isLoading => status == ProfileStatus.loading;
 
@@ -36,6 +42,8 @@ final class ProfileState extends Equatable {
     int? sessionsLeftToNextStage,
     int? goalSessionsTotal,
     LessonModel? recentSessionLesson,
+    ProgramModel? recentSessionProgram,
+MasterModel? recentSessionMaster,
   }) =>
       ProfileState(
         status: status ?? this.status,
@@ -49,6 +57,8 @@ final class ProfileState extends Equatable {
             sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
         goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
         recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
+        recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,
+        recentSessionMaster: recentSessionMaster ?? this.recentSessionMaster,
       );
 
   @override
@@ -61,5 +71,7 @@ final class ProfileState extends Equatable {
         sessionsLeftToNextStage,
         goalSessionsTotal,
         recentSessionLesson,
+        recentSessionProgram,
+recentSessionMaster,
       ];
 }

@@ -58,16 +58,22 @@ class ScheduleCalendar extends StatelessWidget {
               return const SizedBox.shrink();
             }
             final normalizedDay = DateTime(day.year, day.month, day.day);
-            final normalizedToday = DateTime(today.year, today.month, today.day);
+            final normalizedToday = DateTime(
+              today.year,
+              today.month,
+              today.day,
+            );
             final isToday = normalizedDay == normalizedToday;
             final isScheduled = scheduledDates.contains(normalizedDay);
 
             final bgColor = isToday
                 ? Colors.white.withValues(alpha: 0.2)
                 : isScheduled
-                    ? AppColors.terracotta.withValues(alpha: 0.28)
-                    : Colors.transparent;
-            final textColor = isToday ? Colors.white : Colors.white.withValues(alpha: 0.9);
+                ? AppColors.terracotta.withValues(alpha: 0.28)
+                : Colors.transparent;
+            final textColor = isToday
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.9);
 
             return Center(
               child: Container(
@@ -79,15 +85,17 @@ class ScheduleCalendar extends StatelessWidget {
                   border: isToday
                       ? Border.all(color: Colors.white.withValues(alpha: 0.65))
                       : isScheduled
-                          ? Border.all(
-                              color: AppColors.terracotta.withValues(alpha: 0.9),
-                            )
-                          : null,
+                      ? Border.all(
+                          color: AppColors.terracotta.withValues(alpha: 0.9),
+                        )
+                      : null,
                 ),
                 child: Center(
                   child: Text(
                     '${day.day}',
-                    style: AppTextStyles.scheduleDate.copyWith(color: textColor),
+                    style: AppTextStyles.scheduleDate.copyWith(
+                      color: textColor,
+                    ),
                   ),
                 ),
               ),

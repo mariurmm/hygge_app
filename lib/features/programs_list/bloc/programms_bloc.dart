@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
@@ -12,13 +12,13 @@ abstract class ProgrammsState {}
 class ProgrammsLoadingState extends ProgrammsState {}
 
 class ProgrammLoadedState extends ProgrammsState {
-  final List<LessonModel> lessons;
+  final List<ProgramModel> lessons;
   final Set<String> favoriteIds;
 
   ProgrammLoadedState({required this.lessons, this.favoriteIds = const {}});
 
   ProgrammLoadedState copyWith({
-    List<LessonModel>? lessons,
+    List<ProgramModel>? lessons,
     Set<String>? favoriteIds,
   }) {
     return ProgrammLoadedState(
@@ -36,9 +36,10 @@ class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
   ProgrammsBloc({
     ProgramsRepository? programsRepository,
     FavouritesRepository? favouritesRepository,
-  })  : _programsRepository = programsRepository ?? ProgramsRepositoryImpl(),
-        _favouritesRepository = favouritesRepository ?? FavouritesRepositoryImpl(),
-        super(ProgrammsLoadingState()) {
+  }) : _programsRepository = programsRepository ?? ProgramsRepositoryImpl(),
+       _favouritesRepository =
+           favouritesRepository ?? FavouritesRepositoryImpl(),
+       super(ProgrammsLoadingState()) {
     on<ProgrammsLoadEvent>(_onLoad);
   }
 

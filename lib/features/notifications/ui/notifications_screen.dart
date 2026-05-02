@@ -14,20 +14,15 @@ import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
 import 'package:hygge_app/features/notifications/ui/widgets/notification_tile.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
-
-class NotificationsScreen extends StatelessWidget {
-  const NotificationsScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => NotificationsBloc(
-        repository: context.read<NotificationRepository>(),
-      )..add(const NotificationsInitialized()),
+      create: (_) =>
+          NotificationsBloc(repository: context.read<NotificationRepository>())
+            ..add(const NotificationsInitialized()),
       child: const _NotificationsView(),
     );
   }
-}
 
 class _NotificationsView extends StatelessWidget {
   const _NotificationsView();
@@ -58,7 +53,8 @@ class _NotificationsView extends StatelessWidget {
                       leading: IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
-                          minWidth: 40, //в AppConstants сделай переменной, типа IconButtonMinSiz
+                          minWidth:
+                              40, //в AppConstants сделай переменной, типа IconButtonMinSiz
                           minHeight: 40, //такие это хардкод, так нельзя
                         ),
                         icon: const Icon(
@@ -137,12 +133,12 @@ class _NotificationsList extends StatelessWidget {
                 final item = state.items[index];
                 return NotificationTile(
                   item: item,
-                  onTap: () => context
-                      .read<NotificationsBloc>()
-                      .add(NotificationMarkedAsRead(item.id)),
-                  onDismiss: () => context
-                      .read<NotificationsBloc>()
-                      .add(NotificationRemoved(item.id)),
+                  onTap: () => context.read<NotificationsBloc>().add(
+                    NotificationMarkedAsRead(item.id),
+                  ),
+                  onDismiss: () => context.read<NotificationsBloc>().add(
+                    NotificationRemoved(item.id),
+                  ),
                 );
               },
             ),

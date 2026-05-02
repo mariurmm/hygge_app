@@ -318,8 +318,6 @@
   "@profileMapAddress": {
     "description": "Physical address shown in the About section of the Profile tab"
   },
-
-
   "notificationsTitle": "Notifications",
   "@notificationsTitle": {
     "description": "Title of notifications screen"
@@ -340,12 +338,23 @@
     }
   },
   "notifications": "Notifications",
+  "@notifications": {
+    "description": "Title for notifications screen"
+  },
   "noNotifications": "No notifications",
+  "@noNotifications": {
+    "description": "Empty state text when there are no notifications"
+  },
   "readAll": "Mark all as read",
+  "@readAll": {
+    "description": "Button text to mark all notifications as read"
+  },
   "unreadNotifications": "{count} unread",
   "@unreadNotifications": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "dialogSaveChangesTitle": "Save changes?",
@@ -379,6 +388,21 @@
   "noUpcomingPrograms": "No upcoming programs yet",
   "@noUpcomingPrograms": {
     "description": "Empty state text when there are no upcoming programs on the Home tab"
+  },
+  "scheduleLoadErrorTitle": "Failed to load schedule",
+  "@scheduleLoadErrorTitle": {
+    "description": "Error title when schedule loading fails"
+  },
+  "scheduleLoadErrorDescription": "Check your connection and pull down to refresh.",
+  "@scheduleLoadErrorDescription": {
+    "description": "Error description when schedule loading fails"
+  },
+  "scheduleEmptyTitle": "No sessions for this day",
+  "@scheduleEmptyTitle": {
+    "description": "Empty state title when there are no sessions for selected day"
+  },
+  "scheduleEmptyDescription": "Choose another date or book a new session.",
+  "@scheduleEmptyDescription": {
+    "description": "Empty state description when there are no sessions"
   }
-
 }
