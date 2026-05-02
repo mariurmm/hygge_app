@@ -15,10 +15,12 @@ enum ProgramsFilter {
 class ProgramsState extends Equatable {
   final ProgramsFilter selectedFilter;
   final List<LessonModel> allLessons;
+  final bool isLoading;
 
   const ProgramsState({
     this.selectedFilter = ProgramsFilter.all,
     this.allLessons = const [],
+    this.isLoading = true,
   });
 
   static const _keywords = {
@@ -43,13 +45,15 @@ class ProgramsState extends Equatable {
   ProgramsState copyWith({
     ProgramsFilter? selectedFilter,
     List<LessonModel>? allLessons,
+    bool? isLoading,
   }) {
     return ProgramsState(
       selectedFilter: selectedFilter ?? this.selectedFilter,
       allLessons: allLessons ?? this.allLessons,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 
   @override
-  List<Object?> get props => [selectedFilter, allLessons];
+  List<Object?> get props => [selectedFilter, allLessons, isLoading];
 }

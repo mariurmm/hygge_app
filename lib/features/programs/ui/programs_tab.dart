@@ -6,6 +6,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_spacings.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../data/repositories/schedule_repository.dart';
 import '../../../features/programs/bloc/programs_bloc.dart';
 import '../../../features/programs/bloc/programs_state.dart';
 import '../../../l10n/generated/app_localizations.dart';
@@ -19,7 +20,7 @@ class ProgramsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProgramsBloc(),
+      create: (_) => ProgramsBloc(scheduleRepo: ScheduleRepository()),
       child: BlocListener<ProgramsBloc, ProgramsState>(
         listenWhen: (prev, curr) => prev.allLessons != curr.allLessons,
         listener: (context, state) {
@@ -112,10 +113,18 @@ class ProgramsTab extends StatelessWidget {
                                   const SizedBox(
                                     height: AppSpacings.programsFiltersGap,
                                   ),
-                                  ProgrammList(
-                                    type: ProgrammCardType.big,
-                                    lessons: state.visibleLessons,
-                                  ),
+                                  if (state.isLoading)
+                                    const Padding(
+                                      padding: EdgeInsets.all(24),
+                                      child: Center(
+                                        child: CircularProgressIndicator(color: Colors.white),
+                                      ),
+                                    )
+                                  else
+                                    ProgrammList(
+                                      type: ProgrammCardType.big,
+                                      lessons: state.visibleLessons,
+                                    ),
                                 ],
                               ),
                             ),

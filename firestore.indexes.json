@@ -1,0 +1,22 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "userBookings",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "classId", "order": "ASCENDING" },
+        { "fieldPath": "status",  "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userBookings",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "status",           "order": "ASCENDING" },
+        { "fieldPath": "notificationSent", "order": "ASCENDING" },
+        { "fieldPath": "datetime",         "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

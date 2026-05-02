@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
+import 'package:hygge_app/features/subscription/ui/subscription_screen.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
+import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_state.dart'
     show AppState, AppStatus;
@@ -28,8 +32,11 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          ProfileBloc(user: context.read<AppBloc>().state.user),
+      create: (context) => ProfileBloc(
+        bookingRepo: BookingRepository(),
+        scheduleRepo: ScheduleRepository(),
+        user: context.read<AppBloc>().state.user,
+      ),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AppBloc, AppState>(
@@ -121,7 +128,17 @@ class ProfileTab extends StatelessWidget {
                                     height: AppSpacings.profileNameCardGap,
                                   ),
 
-                                  ProfileAccountSubscriptionCard(onTap: () {}),
+                                  ProfileAccountSubscriptionCard(
+                                    onTap: () => Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider.value(
+                                          value: context
+                                              .read<SubscriptionCubit>(),
+                                          child: const SubscriptionScreen(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
 
                                   const SizedBox(
                                     height: AppSpacings.profileCardsVerticalGap,
@@ -159,13 +176,21 @@ class ProfileTab extends StatelessWidget {
                                         AppSpacings.profileHistoryLinkCardGap,
                                   ),
 
-                                  ProgrammCard(
-                                    type: ProgrammCardType.big,
-                                    lesson: state.recentSessionLesson,
-                                    timingOverlayLabel: state
-                                        .recentSessionLesson
-                                        .historyWhenLabel(now),
-                                  ),
+                                  if (state.isHistoryLoading)
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                      child: Center(
+                                        child: CircularProgressIndicator(color: Colors.white),
+                                      ),
+                                    )
+                                  else if (state.recentSessionLesson != null)
+                                    ProgrammCard(
+                                      type: ProgrammCardType.big,
+                                      lesson: state.recentSessionLesson!,
+                                      timingOverlayLabel: state
+                                          .recentSessionLesson!
+                                          .historyWhenLabel(now),
+                                    ),
 
                                   const SizedBox(
                                     height: AppSpacings.profileCardsVerticalGap,

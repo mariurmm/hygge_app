@@ -8,7 +8,8 @@ class ProfileState extends Equatable {
   final int sessionsCompletedThisMonth;
   final int sessionsLeftToNextStage;
   final int goalSessionsTotal;
-  final LessonModel recentSessionLesson;
+  final LessonModel? recentSessionLesson;
+  final bool isHistoryLoading;
 
   const ProfileState({
     required this.isPremium,
@@ -17,7 +18,8 @@ class ProfileState extends Equatable {
     required this.sessionsCompletedThisMonth,
     required this.sessionsLeftToNextStage,
     required this.goalSessionsTotal,
-    required this.recentSessionLesson,
+    this.recentSessionLesson,
+    this.isHistoryLoading = false,
   });
 
   ProfileState copyWith({
@@ -28,6 +30,7 @@ class ProfileState extends Equatable {
     int? sessionsLeftToNextStage,
     int? goalSessionsTotal,
     LessonModel? recentSessionLesson,
+    bool? isHistoryLoading,
   }) {
     return ProfileState(
       isPremium: isPremium ?? this.isPremium,
@@ -39,8 +42,8 @@ class ProfileState extends Equatable {
       sessionsLeftToNextStage:
           sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
       goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
-      recentSessionLesson:
-          recentSessionLesson ?? this.recentSessionLesson,
+      recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
+      isHistoryLoading: isHistoryLoading ?? this.isHistoryLoading,
     );
   }
 
@@ -53,5 +56,6 @@ class ProfileState extends Equatable {
         sessionsLeftToNextStage,
         goalSessionsTotal,
         recentSessionLesson,
+        isHistoryLoading,
       ];
 }

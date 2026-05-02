@@ -3,20 +3,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/features/notifications/ui/notifications_screen.dart';
 
+import '../../data/repositories/booking_repository.dart';
+import '../../data/repositories/schedule_repository.dart';
+import '../../data/repositories/subscription_repository.dart';
+import '../../features/app/bloc/app_bloc.dart';
 import '../../features/app_shelll/app_shell.dart';
+import '../../features/booking/cubit/booking_cubit.dart';
+import '../../features/home/bloc/home_cubit.dart';
 import '../../features/home/ui/home_tab.dart';
-import '../../features/programs/ui/programs_tab.dart';
 import '../../features/history/ui/history_screen.dart';
+import '../../features/notification/cubit/notification_cubit.dart';
 import '../../features/profile/ui/profile_tab.dart';
+import '../../features/programs/ui/programs_tab.dart';
+import '../../features/schedule/cubit/schedule_cubit.dart';
+import '../../features/schedule/ui/schedule_tab.dart';
 import '../../features/settings/ui/settings_screen.dart';
 import '../../features/login/ui/login_screen.dart';
-import '../../features/schedule/ui/schedule_tab.dart';
 import '../../features/splash/ui/splash_screen.dart';
+import '../../features/subscription/cubit/subscription_cubit.dart';
 
 import 'route_names.dart';
 
 class AppRouter {
   static GoRouter create() {
+    final scheduleRepo = ScheduleRepository();
+    final bookingRepo = BookingRepository();
+    final subscriptionRepo = SubscriptionRepository();
+
     return GoRouter(
       initialLocation: RouteNames.splash,
       routes: [
@@ -36,13 +49,52 @@ class AppRouter {
 
         // ── ShellRoute ────────────────────────────────────────
         ShellRoute(
-          pageBuilder: (context, state, child) => CustomTransitionPage(
-            key: state.pageKey,
-            child: AppShell(child: child),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
-            transitionDuration: const Duration(milliseconds: 200),
-          ),
+          pageBuilder: (context, state, child) {
+            final userId =
+                context.read<AppBloc>().state.user.uid;
+
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider<ScheduleCubit>(
+                    create: (_) => ScheduleCubit(
+                      scheduleRepo: scheduleRepo,
+                      bookingRepo: bookingRepo,
+                      userId: userId,
+                    ),
+                  ),
+                  BlocProvider<BookingCubit>(
+                    create: (_) => BookingCubit(
+                      bookingRepo: bookingRepo,
+                      subscriptionRepo: subscriptionRepo,
+                      userId: userId,
+                    ),
+                  ),
+                  BlocProvider<SubscriptionCubit>(
+                    create: (_) => SubscriptionCubit(
+                      repo: subscriptionRepo,
+                      userId: userId,
+                    ),
+                  ),
+                  BlocProvider<HomeCubit>(
+                    create: (_) => HomeCubit(
+                      bookingRepo: bookingRepo,
+                      scheduleRepo: scheduleRepo,
+                      userId: userId,
+                    ),
+                  ),
+                  BlocProvider<NotificationCubit>(
+                    create: (_) => NotificationCubit(),
+                  ),
+                ],
+                child: AppShell(child: child),
+              ),
+              transitionsBuilder: (context, animation, _, child) =>
+                  FadeTransition(opacity: animation, child: child),
+              transitionDuration: const Duration(milliseconds: 200),
+            );
+          },
           routes: [
             GoRoute(
               name: RouteNames.mainName,
@@ -130,6 +182,7 @@ class AppRouter {
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
+
       ],
 
       // ── 404 ───────────────────────────────────────────────

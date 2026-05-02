@@ -2,34 +2,26 @@ import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/user_model.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
+import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 
 class ProfileBloc extends Cubit<ProfileState> {
-  ProfileBloc({UserModel? user}) : super(_initialState(user));
+  final BookingRepository _bookingRepo;
+  final ScheduleRepository _scheduleRepo;
 
-  static LessonModel _recentSessionLesson() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final start = DateTime(yesterday.year, yesterday.month, yesterday.day, 8, 0);
-    final end = start.add(const Duration(minutes: 90));
-    return LessonModel(
-      uuid: 'profile-recent-1',
-      ritual: 'Утренний ритуал',
-      title: 'Йога глубокого дыхания',
-      text:
-          'Согревающий поток, предназначенный для создания внутреннего тепла и снятия физического напряжения.',
-      startDate: start,
-      finishDate: end,
-      price: 0,
-      master: MasterModel.empty,
-    );
+  ProfileBloc({
+    required BookingRepository bookingRepo,
+    required ScheduleRepository scheduleRepo,
+    UserModel? user,
+  })  : _bookingRepo = bookingRepo,
+        _scheduleRepo = scheduleRepo,
+        super(_initialState(user)) {
+    _loadHistory(user?.uid ?? '');
   }
 
   static ProfileState _initialState(UserModel? user) {
-    final name = user != null &&
-            user.isNotEmpty &&
-            user.displayName.isNotEmpty
+    final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty
         ? user.displayName
         : 'Жанна Цой';
     final premium = _hasActiveFitnessSubscription(user);
@@ -37,22 +29,74 @@ class ProfileBloc extends Cubit<ProfileState> {
     return ProfileState(
       isPremium: premium,
       displayName: name,
-      travelProgressPercent: 75,
-      sessionsCompletedThisMonth: 12,
-      sessionsLeftToNextStage: 4,
+      travelProgressPercent: 0,
+      sessionsCompletedThisMonth: 0,
+      sessionsLeftToNextStage: 0,
       goalSessionsTotal: 15,
-      recentSessionLesson: _recentSessionLesson(),
+      isHistoryLoading: true,
     );
   }
 
   void syncUser(UserModel user) {
-    emit(_initialState(user));
+    emit(state.copyWith(
+      displayName: user.isNotEmpty && user.displayName.isNotEmpty
+          ? user.displayName
+          : state.displayName,
+      isPremium: _hasActiveFitnessSubscription(user),
+    ));
+    _loadHistory(user.uid);
+  }
+
+  Future<void> _loadHistory(String userId) async {
+    if (userId.isEmpty) {
+      emit(state.copyWith(isHistoryLoading: false));
+      return;
+    }
+    try {
+      final bookings = await _bookingRepo.getBookingHistory(userId);
+      final now = DateTime.now();
+      final thisMonthBookings = bookings.where((b) =>
+          b.datetime.year == now.year && b.datetime.month == now.month);
+      final completedThisMonth = thisMonthBookings.length;
+
+      LessonModel? recent;
+      if (bookings.isNotEmpty) {
+        final cls = await _scheduleRepo.getClass(bookings.first.classId);
+        if (cls != null) {
+          recent = LessonModel(
+            uuid: cls.id,
+            ritual: cls.type,
+            title: cls.title,
+            text: '',
+            startDate: cls.datetime,
+            finishDate: cls.datetime.add(Duration(minutes: cls.durationMinutes)),
+            price: cls.price,
+            master: MasterModel.empty,
+          );
+        }
+      }
+
+      final goal = 15;
+      final left = (goal - completedThisMonth).clamp(0, goal);
+      final percent = ((completedThisMonth / goal) * 100).clamp(0, 100).toInt();
+
+      emit(state.copyWith(
+        sessionsCompletedThisMonth: completedThisMonth,
+        sessionsLeftToNextStage: left,
+        goalSessionsTotal: goal,
+        travelProgressPercent: percent,
+        recentSessionLesson: recent,
+        isHistoryLoading: false,
+      ));
+    } catch (_) {
+      emit(state.copyWith(isHistoryLoading: false));
+    }
   }
 
   static bool _hasActiveFitnessSubscription(UserModel? user) {
     if (user == null || user.isEmpty) return false;
     final sub = user.subscription;
     if (sub == null || sub.isEmpty) return false;
-    return sub.finishDate.isAfter(DateTime.now());
+    return sub.endDate.isAfter(DateTime.now());
   }
 }

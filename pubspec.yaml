@@ -29,6 +29,7 @@ dependencies:
   firebase_auth: ^6.1.4 # Авторизация пользователей (вход/регистрация)
   cloud_firestore: ^6.1.2 # База данных Firestore — хранение данных на сервере
   firebase_storage: ^13.0.6 # Хранение файлов в облаке (фото, документы)
+  firebase_messaging: ^16.2.0 # Push-уведомления через FCM
   google_sign_in: ^7.2.0 # Вход через Google-аккаунт
 
   # Навигация

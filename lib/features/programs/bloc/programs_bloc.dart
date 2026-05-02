@@ -1,50 +1,47 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/features/programs/bloc/programs_state.dart';
 
 class ProgramsBloc extends Cubit<ProgramsState> {
-  ProgramsBloc() : super(const ProgramsState()) {
-    _loadLessons();
+  final ScheduleRepository _scheduleRepo;
+  StreamSubscription? _sub;
+
+  ProgramsBloc({required ScheduleRepository scheduleRepo})
+      : _scheduleRepo = scheduleRepo,
+        super(const ProgramsState()) {
+    _watchClasses();
   }
 
   void selectFilter(int index) {
     if (index < 0 || index >= ProgramsFilter.values.length) return;
-    emit(
-      state.copyWith(
-        selectedFilter: ProgramsFilter.values[index],
-      ),
-    );
+    emit(state.copyWith(selectedFilter: ProgramsFilter.values[index]));
   }
 
-  void _loadLessons() {
-    final now = DateTime.now();
-    final lessons = [
-      LessonModel(
-        uuid: 'meditation-1',
-        title: 'Утренняя медитация',
-        text:
-            'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
-        startDate: now,
-        finishDate: now.add(const Duration(minutes: 30)),
-        price: 0,
-        master: const MasterModel(uuid: 'm1', firstName: 'Анна', lastName: 'Ли'),
-      ),
-      LessonModel(
-        uuid: 'yoga-1',
-        title: 'Утренняя йога',
-        text:
-            'Согревающий поток, предназначенный для создания внутреннего тепла и снятия физического напряжения.',
-        startDate: now,
-        finishDate: now.add(const Duration(minutes: 90)),
-        price: 0,
-        master: const MasterModel(
-          uuid: 'm2',
-          firstName: 'Мария',
-          lastName: 'Солнцева',
-        ),
-      ),
-    ];
-    emit(state.copyWith(allLessons: lessons));
+  void _watchClasses() {
+    _sub = _scheduleRepo.watchUpcomingClasses().listen((classes) {
+      final lessons = classes.map((cls) => LessonModel(
+            uuid: cls.id,
+            ritual: cls.type,
+            title: cls.title,
+            text: '',
+            startDate: cls.datetime,
+            finishDate: cls.datetime.add(Duration(minutes: cls.durationMinutes)),
+            price: cls.price,
+            master: MasterModel.empty,
+          )).toList();
+      emit(state.copyWith(allLessons: lessons, isLoading: false));
+    }, onError: (_) {
+      emit(state.copyWith(isLoading: false));
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _sub?.cancel();
+    return super.close();
   }
 }
