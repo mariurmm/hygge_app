@@ -1,33 +1,22 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
+import 'localized_value.dart';
 import 'master_model.dart';
 
-/// Модель занятия (программа / расписание / история).
 class LessonModel extends Equatable {
-  /// Уникальный идентификатор.
   final String uuid;
-
-  /// Подзаголовок ритуала (экран расписания).
   final String ritual;
-
-  /// Название занятия.
   final String title;
-
-  /// Описание занятия.
   final String text;
-
-  /// Дата начала.
   final DateTime startDate;
-
-  /// Дата окончания.
   final DateTime finishDate;
-
-  /// Стоимость занятия.
   final double price;
-
-  /// Мастер, ведущий занятие.
   final MasterModel master;
+
+  /// true — можно записаться.
+  /// false — это анонс будущей программы, кнопка записи не показывается.
+  final bool isBookable;
 
   const LessonModel({
     required this.uuid,
@@ -38,39 +27,39 @@ class LessonModel extends Equatable {
     required this.finishDate,
     required this.price,
     required this.master,
+    this.isBookable = true,
   });
 
-  /// Календарный день начала (для сетки расписания).
   DateTime get calendarDay =>
       DateTime(startDate.year, startDate.month, startDate.day);
 
-  /// Диапазон времени «8:00 – 9:30».
   String scheduleTimeRange() {
     final f = DateFormat('H:mm', 'ru');
     return '${f.format(startDate)} - ${f.format(finishDate)}';
   }
 
-  /// Подпись дня относительно [today]: «Сегодня», «Завтра», «12 апр.».
   String scheduleDayLabel(DateTime today) {
     final t = DateTime(today.year, today.month, today.day);
     final d = calendarDay;
+
     if (d == t) return 'Сегодня';
     if (d == t.add(const Duration(days: 1))) return 'Завтра';
+
     return DateFormat('d MMM', 'ru').format(d);
   }
 
-  /// Подпись для истории: «Вчера 8:00», «Сегодня 10:00», …
   String historyWhenLabel(DateTime now) {
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final d = calendarDay;
     final time = DateFormat('H:mm', 'ru').format(startDate);
+
     if (d == yesterday) return 'Вчера $time';
     if (d == today) return 'Сегодня $time';
+
     return '${DateFormat('d MMM', 'ru').format(d)} $time';
   }
 
-  /// Пустая модель.
   static final LessonModel empty = LessonModel(
     uuid: '',
     title: '',
@@ -79,22 +68,30 @@ class LessonModel extends Equatable {
     finishDate: DateTime.fromMillisecondsSinceEpoch(0),
     price: 0,
     master: MasterModel.empty,
+    isBookable: true,
   );
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory LessonModel.fromJson(Map<String, dynamic> json) {
+  factory LessonModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
     return LessonModel(
-      uuid: json['uuid'] as String? ?? '',
-      ritual: json['ritual'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      text: json['text'] as String? ?? '',
-      startDate: _parseDate(json['startDate']),
-      finishDate: _parseDate(json['finishDate']),
+      uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
+      ritual: LocalizedValue.read(json['ritual'], locale: locale),
+      title: LocalizedValue.read(json['title'], locale: locale),
+      text: LocalizedValue.read(json['text'], locale: locale),
+      startDate: _parseDate(json['startDate'] ?? json['availableFrom']),
+      finishDate: _parseDate(json['finishDate'] ?? json['availableFrom']),
       price: _parseDouble(json['price']),
-      master: json['master'] is Map<String, dynamic>
-          ? MasterModel.fromJson(json['master'] as Map<String, dynamic>)
+      isBookable: json['isBookable'] as bool? ?? true,
+      master: json['master'] is Map
+          ? MasterModel.fromJson(
+              Map<String, dynamic>.from(json['master'] as Map),
+              locale: locale,
+            )
           : MasterModel.empty,
     );
   }
@@ -109,15 +106,20 @@ class LessonModel extends Equatable {
       'finishDate': finishDate.toIso8601String(),
       'price': price,
       'master': master.toJson(),
+      'isBookable': isBookable,
     };
   }
 
   static DateTime _parseDate(dynamic value) {
     if (value is DateTime) return value;
+
     if (value is String && value.isNotEmpty) {
       return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
     }
-    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
 
     try {
       return (value as dynamic).toDate() as DateTime;
@@ -141,5 +143,6 @@ class LessonModel extends Equatable {
         finishDate,
         price,
         master,
+        isBookable,
       ];
 }

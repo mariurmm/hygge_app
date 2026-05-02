@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
-import 'package:hygge_app/features/favourites/bloc/favourites_cubit.dart';
+import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_spacings.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../data/repositories/schedule_repository.dart';
 import '../../../features/programs/bloc/programs_bloc.dart';
-import '../../../features/programs/bloc/programs_state.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/program_filter_button.dart';
-import '../../programs_list/ui/programm_list.dart';
 import '../../../widgets/tab_header.dart';
+import '../../programs_list/ui/programm_list.dart';
 
 class ProgramsTab extends StatelessWidget {
   const ProgramsTab({super.key});
@@ -22,14 +22,18 @@ class ProgramsTab extends StatelessWidget {
     return BlocProvider(
       create: (_) => ProgramsBloc(scheduleRepo: ScheduleRepository()),
       child: BlocListener<ProgramsBloc, ProgramsState>(
-        listenWhen: (prev, curr) => prev.allLessons != curr.allLessons,
+        listenWhen: (previous, current) =>
+            previous.allLessons != current.allLessons,
         listener: (context, state) {
-          context.read<FavouritesCubit>().registerLessons(state.allLessons);
+          context.read<FavouritesBloc>().add(
+            FavouritesLessonsRegistered(state.allLessons),
+          );
         },
         child: BlocBuilder<ProgramsBloc, ProgramsState>(
           builder: (context, state) {
-            final loc = AppLocalizations.of(context);
-            final filterLabels = [
+            final AppLocalizations loc = AppLocalizations.of(context);
+
+            final List<String> filterLabels = <String>[
               loc.filterAll,
               loc.filterMeditation,
               loc.filterYoga,
@@ -45,7 +49,7 @@ class ProgramsTab extends StatelessWidget {
               extendBody: true,
               extendBodyBehindAppBar: true,
               body: Stack(
-                children: [
+                children: <Widget>[
                   Positioned.fill(
                     child: Image.asset(
                       AssetPaths.homeBackground,
@@ -55,78 +59,97 @@ class ProgramsTab extends StatelessWidget {
                   SafeArea(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
                         const ProgramsHeader(),
                         Expanded(
                           child: SingleChildScrollView(
                             padding: const EdgeInsets.only(
                               bottom: AppConstants.programsCardsBottomInset,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal:
-                                    AppPaddings.programsScreenHorizontal,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    loc.programsHeading,
-                                    style: AppTextStyles.programsHeading,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppPaddings.programsScreenHorizontal,
                                   ),
-                                  const SizedBox(
-                                    height: AppSpacings.programsLeadGap,
-                                  ),
-                                  Text(
-                                    loc.programsDescription,
-                                    style: AppTextStyles.programsSubtitle,
-                                  ),
-                                  const SizedBox(
-                                    height: AppSpacings.programsBodyGap,
-                                  ),
-                                  SizedBox(
-                                    height: AppConstants.programsFilterHeight,
-                                    child: ListView.separated(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: filterLabels.length,
-                                      separatorBuilder: (_, __) =>
-                                          const SizedBox(
-                                            width:
-                                                AppSpacings.programsFiltersGap,
-                                          ),
-                                      itemBuilder: (context, index) {
-                                        return ProgramFilterButton(
-                                          label: filterLabels[index],
-                                          isSelected:
-                                              state.selectedFilter.index ==
-                                              index,
-                                          isAllPrograms: index == 0,
-                                          onTap: () {
-                                            context
-                                                .read<ProgramsBloc>()
-                                                .selectFilter(index);
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: AppSpacings.programsFiltersGap,
-                                  ),
-                                  if (state.isLoading)
-                                    const Padding(
-                                      padding: EdgeInsets.all(24),
-                                      child: Center(
-                                        child: CircularProgressIndicator(color: Colors.white),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        loc.programsHeading,
+                                        style: AppTextStyles.programsHeading,
                                       ),
-                                    )
-                                  else
-                                    ProgrammList(
-                                      type: ProgrammCardType.big,
-                                      lessons: state.visibleLessons,
+                                      const SizedBox(
+                                        height: AppSpacings.programsLeadGap,
+                                      ),
+                                      Text(
+                                        loc.programsDescription,
+                                        style: AppTextStyles.programsSubtitle,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  height: AppSpacings.programsBodyGap,
+                                ),
+
+                                SizedBox(
+                                  height: AppConstants.programsFilterHeight,
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal:
+                                          AppPaddings.programsScreenHorizontal,
                                     ),
-                                ],
-                              ),
+                                    itemCount: filterLabels.length,
+                                    separatorBuilder: (_, __) =>
+                                        const SizedBox(
+                                      width: AppSpacings.programsFiltersGap,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return ProgramFilterButton(
+                                        label: filterLabels[index],
+                                        isSelected:
+                                            state.selectedFilter.index == index,
+                                        isAllPrograms: index == 0,
+                                        onTap: () {
+                                          context
+                                              .read<ProgramsBloc>()
+                                              .selectFilter(index);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  height: AppSpacings.programsFiltersGap,
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppPaddings.programsScreenHorizontal,
+                                  ),
+                                  child: state.isLoading
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(24),
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : ProgrammList(
+                                          type: ProgrammCardType.big,
+                                          lessons: state.visibleLessons,
+                                        ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

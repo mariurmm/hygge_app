@@ -119,8 +119,7 @@ class ScheduleTab extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                              BlocBuilder<SubscriptionCubit,
-                                  SubscriptionState>(
+                              BlocBuilder<SubscriptionCubit, SubscriptionState>(
                                 builder: (context, subState) {
                                   final sub = subState.subscription;
                                   if (sub == null) {

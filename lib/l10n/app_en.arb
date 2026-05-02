@@ -318,33 +318,35 @@
   "@profileMapAddress": {
     "description": "Physical address shown in the About section of the Profile tab"
   },
-  "notificationWelcomeTitle": "Welcome!",
-  "@notificationWelcomeTitle": {
-    "description": "Title for welcome notification shown after user joins the app"
+
+
+  "notificationsTitle": "Notifications",
+  "@notificationsTitle": {
+    "description": "Title of notifications screen"
   },
-  "notificationWelcomeDesc": "Glad to see you in the app.",
-  "@notificationWelcomeDesc": {
-    "description": "Description for welcome notification shown after user joins the app"
+  "notificationsMarkAllRead": "Mark all as read",
+  "@notificationsMarkAllRead": {
+    "description": "Button to mark all notifications as read"
   },
-  "notificationProgramReminderTitle": "Reminder",
-  "@notificationProgramReminderTitle": {
-    "description": "Title for program reminder notification"
-  },
-  "notificationProgramReminderDesc": "Don't forget your program today.",
-  "@notificationProgramReminderDesc": {
-    "description": "Description for program reminder notification"
-  },
-  "notificationSystemUpdateTitle": "System update",
-  "@notificationSystemUpdateTitle": {
-    "description": "Title for system update notification"
-  },
-  "notificationSystemUpdateDesc": "New version is available.",
-  "@notificationSystemUpdateDesc": {
-    "description": "Description for system update notification"
-  },
-  "notificationEmptyState": "No notifications yet",
-  "@notificationEmptyState": {
+  "notificationsEmpty": "No notifications",
+  "@notificationsEmpty": {
     "description": "Empty state text when there are no notifications"
+  },
+  "notificationsUnreadCount": "{count} unread",
+  "@notificationsUnreadCount": {
+    "description": "Unread notifications counter",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "notifications": "Notifications",
+  "noNotifications": "No notifications",
+  "readAll": "Mark all as read",
+  "unreadNotifications": "{count} unread",
+  "@unreadNotifications": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
   },
   "dialogSaveChangesTitle": "Save changes?",
   "@dialogSaveChangesTitle": {
@@ -365,5 +367,18 @@
   "profileFavouritesSectionTitle": "Favourites",
   "@profileFavouritesSectionTitle": {
     "description": "Title of favourites section in profile screen"
+  },
+  "noAvailableLessons": "No available lessons",
+  "@noAvailableLessons": {
+    "description": "Text shown when there are no available lessons"
+  },
+  "comingSoon": "Coming soon",
+  "@comingSoon": {
+    "description": "Label shown when a program is not yet available for booking"
+  },
+  "noUpcomingPrograms": "No upcoming programs yet",
+  "@noUpcomingPrograms": {
+    "description": "Empty state text when there are no upcoming programs on the Home tab"
   }
+
 }

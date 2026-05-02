@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'localized_value.dart';
+
 /// Модель поста.
 class PostModel extends Equatable {
   /// Уникальный идентификатор.
@@ -21,7 +23,6 @@ class PostModel extends Equatable {
     required this.imageUrl,
   });
 
-  /// Пустая модель.
   static const PostModel empty = PostModel(
     uuid: '',
     title: '',
@@ -32,22 +33,20 @@ class PostModel extends Equatable {
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory PostModel.fromJson(Map<String, dynamic> json) {
+  factory PostModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
     return PostModel(
-      uuid: json['uuid'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      text: json['text'] as String? ?? '',
+      uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
+      title: LocalizedValue.read(json['title'], locale: locale),
+      text: LocalizedValue.read(json['text'], locale: locale),
       imageUrl: json['imageUrl'] as String? ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'uuid': uuid,
-      'title': title,
-      'text': text,
-      'imageUrl': imageUrl,
-    };
+    return {'uuid': uuid, 'title': title, 'text': text, 'imageUrl': imageUrl};
   }
 
   @override

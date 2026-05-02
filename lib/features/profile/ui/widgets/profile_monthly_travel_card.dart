@@ -37,8 +37,9 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
           width: AppConstants.profileCardWidth,
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius:
-                BorderRadius.circular(AppConstants.scheduleCardRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.2),
               width: AppConstants.programsBorderWidth,
@@ -64,10 +65,7 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSpacings.profileMonthlyTitleDescGap),
-              Text(
-                description,
-                style: AppTextStyles.scheduleCardLabel,
-              ),
+              Text(description, style: AppTextStyles.scheduleCardLabel),
               SizedBox(height: AppSpacings.profileMonthlyDescProgressGap),
               ProfileTravelProgressBar(percent: percent),
               SizedBox(height: AppSpacings.profileMonthlyProgressFooterGap),

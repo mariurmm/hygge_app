@@ -30,6 +30,7 @@ class ProgramsHeader extends StatelessWidget {
                     AssetPaths.hyggeLogo,
                     width: AppConstants.programsHeaderLogoSize,
                     height: AppConstants.programsHeaderLogoSize,
+                    fit: BoxFit.contain,
                   ),
 
                   const SizedBox(width: 8),

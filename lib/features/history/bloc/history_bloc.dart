@@ -1,60 +1,33 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
-import 'package:hygge_app/features/history/bloc/history_state.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
-class HistoryBloc extends Cubit<HistoryState> {
-  HistoryBloc() : super(HistoryState(lessons: _seedLessons()));
+part 'history_event.dart';
+part 'history_state.dart';
 
-  static List<LessonModel> _seedLessons() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final weekAgo = today.subtract(const Duration(days: 5));
+class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
+  HistoryBloc({required UpcomingLessonRepository repository})
+      : _repository = repository,
+        super(const HistoryState()) {
+    on<HistoryLoadRequested>(_onLoadRequested);
+  }
 
-    LessonModel item({
-      required String uuid,
-      required DateTime day,
-      required int hour,
-      required int minute,
-      required int durationMin,
-      required String title,
-      required String text,
-    }) {
-      final start = DateTime(day.year, day.month, day.day, hour, minute);
-      return LessonModel(
-        uuid: uuid,
-        ritual: 'Вечерний ритуал',
-        title: title,
-        text: text,
-        startDate: start,
-        finishDate: start.add(Duration(minutes: durationMin)),
-        price: 0,
-        master: MasterModel.empty,
-      );
+  final UpcomingLessonRepository _repository;
+
+  static const String _completedStatus = 'completed';
+
+  Future<void> _onLoadRequested(
+    HistoryLoadRequested event,
+    Emitter<HistoryState> emit,
+  ) async {
+    emit(state.copyWith(status: HistoryStatus.loading));
+
+    try {
+      final lessons = await _repository.fetchBookings(status: _completedStatus);
+      emit(state.copyWith(status: HistoryStatus.success, lessons: lessons));
+    } on Exception {
+      emit(state.copyWith(status: HistoryStatus.failure));
     }
-
-    return [
-      item(
-        uuid: 'hist-1',
-        day: yesterday,
-        hour: 8,
-        minute: 0,
-        durationMin: 90,
-        title: 'Йога глубокого дыхания',
-        text:
-            'Согревающий поток, предназначенный для создания внутреннего тепла и снятия физического напряжения.',
-      ),
-      item(
-        uuid: 'hist-2',
-        day: weekAgo,
-        hour: 19,
-        minute: 30,
-        durationMin: 45,
-        title: 'Утренняя медитация',
-        text:
-            'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
-      ),
-    ];
   }
 }

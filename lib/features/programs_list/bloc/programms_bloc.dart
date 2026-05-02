@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository_impl.dart';
 
 abstract class ProgrammsState {}
 
@@ -30,45 +33,24 @@ abstract class ProgrammsEvent {}
 class ProgrammsLoadEvent extends ProgrammsEvent {}
 
 class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
-  ProgrammsBloc() : super(ProgrammsLoadingState()) {
+  ProgrammsBloc({
+    ProgramsRepository? programsRepository,
+    FavouritesRepository? favouritesRepository,
+  })  : _programsRepository = programsRepository ?? ProgramsRepositoryImpl(),
+        _favouritesRepository = favouritesRepository ?? FavouritesRepositoryImpl(),
+        super(ProgrammsLoadingState()) {
     on<ProgrammsLoadEvent>(_onLoad);
   }
+
+  final ProgramsRepository _programsRepository;
+  final FavouritesRepository _favouritesRepository;
 
   FutureOr<void> _onLoad(
     ProgrammsLoadEvent event,
     Emitter<ProgrammsState> emit,
   ) async {
-    final now = DateTime.now();
-    final response = [
-      LessonModel(
-        uuid: 'program-1',
-        title: 'Утренняя медитация',
-        text:
-            'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
-        startDate: now,
-        finishDate: now.add(const Duration(minutes: 30)),
-        price: 1000,
-        master: MasterModel(
-          uuid: 'master-1',
-          firstName: 'Анна',
-          lastName: 'Мирова',
-        ),
-      ),
-      LessonModel(
-        uuid: 'program-2',
-        title: 'Утренняя медитация',
-        text:
-            'Мягкое введение в осознанность, сосредоточение на дыхании и постановке намерений.',
-        startDate: now,
-        finishDate: now.add(const Duration(minutes: 30)),
-        price: 1200,
-        master: MasterModel(
-          uuid: 'master-2',
-          firstName: 'Елена',
-          lastName: 'Светлова',
-        ),
-      ),
-    ].cast<LessonModel>();
-    emit(ProgrammLoadedState(lessons: response));
+    final lessons = await _programsRepository.fetchPrograms();
+    final favoriteIds = await _favouritesRepository.fetchFavouriteIds();
+    emit(ProgrammLoadedState(lessons: lessons, favoriteIds: favoriteIds));
   }
 }

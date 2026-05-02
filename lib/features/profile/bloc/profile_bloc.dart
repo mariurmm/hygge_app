@@ -24,10 +24,9 @@ class ProfileBloc extends Cubit<ProfileState> {
     final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty
         ? user.displayName
         : 'Жанна Цой';
-    final premium = _hasActiveFitnessSubscription(user);
 
     return ProfileState(
-      isPremium: premium,
+      isPremium: _hasActiveSubscription(user),
       displayName: name,
       travelProgressPercent: 0,
       sessionsCompletedThisMonth: 0,
@@ -42,7 +41,7 @@ class ProfileBloc extends Cubit<ProfileState> {
       displayName: user.isNotEmpty && user.displayName.isNotEmpty
           ? user.displayName
           : state.displayName,
-      isPremium: _hasActiveFitnessSubscription(user),
+      isPremium: _hasActiveSubscription(user),
     ));
     _loadHistory(user.uid);
   }
@@ -76,9 +75,10 @@ class ProfileBloc extends Cubit<ProfileState> {
         }
       }
 
-      final goal = 15;
+      const goal = 15;
       final left = (goal - completedThisMonth).clamp(0, goal);
-      final percent = ((completedThisMonth / goal) * 100).clamp(0, 100).toInt();
+      final percent =
+          ((completedThisMonth / goal) * 100).clamp(0, 100).toInt();
 
       emit(state.copyWith(
         sessionsCompletedThisMonth: completedThisMonth,
@@ -93,7 +93,7 @@ class ProfileBloc extends Cubit<ProfileState> {
     }
   }
 
-  static bool _hasActiveFitnessSubscription(UserModel? user) {
+  static bool _hasActiveSubscription(UserModel? user) {
     if (user == null || user.isEmpty) return false;
     final sub = user.subscription;
     if (sub == null || sub.isEmpty) return false;

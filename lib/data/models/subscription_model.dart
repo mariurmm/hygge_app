@@ -21,9 +21,7 @@ class SubscriptionModel extends Equatable {
   });
 
   int get remainingSessions => totalSessions - usedSessions;
-
   bool get isExpired => endDate.isBefore(DateTime.now());
-
   bool get isValid => isActive && !isExpired && remainingSessions > 0;
 
   static final SubscriptionModel empty = SubscriptionModel(
