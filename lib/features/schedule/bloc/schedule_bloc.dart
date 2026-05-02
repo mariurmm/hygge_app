@@ -1,17 +1,23 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
-import 'package:equatable/equatable.dart';
 
 part 'schedule_event.dart';
 
 final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final UpcomingLessonRepository _repository;
+  final FirebaseFirestore _firestore;
 
-  ScheduleBloc({required UpcomingLessonRepository repository})
-    : _repository = repository,
-      super(ScheduleState.initial()) {
+  ScheduleBloc({
+    required UpcomingLessonRepository repository,
+    FirebaseFirestore? firestore,
+  }) : _repository = repository,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       super(ScheduleState.initial()) {
     on<ScheduleStarted>(_onStarted);
     on<ScheduleRefreshRequested>(_onRefreshRequested);
     on<ScheduleDaySelected>(_onScheduleDaySelected);
@@ -51,18 +57,24 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     }
 
     try {
-      final List<List<LessonModel>> results =
-          await Future.wait<List<LessonModel>>(<Future<List<LessonModel>>>[
-            _repository.fetchBookings(status: 'booked'),
-            _repository.fetchBookings(status: 'completed'),
-          ]);
+      final results = await Future.wait<List<LessonModel>>([
+        _repository.fetchBookings(status: 'booked'),
+        _repository.fetchBookings(status: 'completed'),
+      ]);
+
+      final bookedLessons = results[0];
+      final completedLessons = results[1];
+      final allLessons = <LessonModel>[...bookedLessons, ...completedLessons];
+
+      final programsById = await _fetchProgramsByLessons(allLessons);
 
       emit(
         state.copyWith(
           status: ScheduleStatus.success,
           today: _dayOnly(DateTime.now()),
-          bookedLessons: results[0],
-          completedLessons: results[1],
+          bookedLessons: bookedLessons,
+          completedLessons: completedLessons,
+          programsById: programsById,
           clearError: true,
         ),
       );
@@ -76,6 +88,31 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     }
   }
 
-  static DateTime _dayOnly(DateTime value) =>
-      DateTime(value.year, value.month, value.day);
+  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(
+    List<LessonModel> lessons,
+  ) async {
+    final programIds = lessons
+        .map((lesson) => lesson.programId)
+        .where((id) => id.isNotEmpty)
+        .toSet();
+
+    final programsById = <String, ProgramModel>{};
+
+    for (final programId in programIds) {
+      final doc = await _firestore.collection('programs').doc(programId).get();
+      final data = doc.data();
+
+      if (!doc.exists || data == null) continue;
+
+      final program = ProgramModel.fromJson({...data, 'id': doc.id});
+
+      programsById[program.uuid] = program;
+    }
+
+    return programsById;
+  }
+
+  static DateTime _dayOnly(DateTime value) {
+    return DateTime(value.year, value.month, value.day);
+  }
 }

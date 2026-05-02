@@ -1,28 +1,34 @@
 part of 'favourites_bloc.dart';
 
-final class FavouritesState extends Equatable {
+class FavouritesState extends Equatable {
+  final Set<String> favouriteIds;
+  final List<ProgramModel> allPrograms;
+
   const FavouritesState({
     this.favouriteIds = const {},
-    this.allLessons = const [],
+    this.allPrograms = const [],
   });
 
-  final Set<String> favouriteIds;
-  final List<LessonModel> allLessons;
+  bool isFavourite(String programId) {
+    return favouriteIds.contains(programId);
+  }
 
-  List<LessonModel> get favouriteLessons =>
-      allLessons.where((l) => favouriteIds.contains(l.uuid)).toList();
-
-  bool isFavourite(String uuid) => favouriteIds.contains(uuid);
+  List<ProgramModel> get favouritePrograms {
+    return allPrograms
+        .where((program) => favouriteIds.contains(program.uuid))
+        .toList();
+  }
 
   FavouritesState copyWith({
     Set<String>? favouriteIds,
-    List<LessonModel>? allLessons,
-  }) =>
-      FavouritesState(
-        favouriteIds: favouriteIds ?? this.favouriteIds,
-        allLessons: allLessons ?? this.allLessons,
-      );
+    List<ProgramModel>? allPrograms,
+  }) {
+    return FavouritesState(
+      favouriteIds: favouriteIds ?? this.favouriteIds,
+      allPrograms: allPrograms ?? this.allPrograms,
+    );
+  }
 
   @override
-  List<Object?> get props => [favouriteIds, allLessons];
+  List<Object?> get props => [favouriteIds, allPrograms];
 }

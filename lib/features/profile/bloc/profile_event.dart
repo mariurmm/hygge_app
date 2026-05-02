@@ -5,11 +5,11 @@ sealed class ProfileEvent {
 }
 
 final class ProfileLoadRequested extends ProfileEvent {
-  const ProfileLoadRequested({this.user});
-  final UserModel? user;
+  const ProfileLoadRequested();
 }
 
 final class ProfileUserSynced extends ProfileEvent {
   const ProfileUserSynced(this.user);
+
   final UserModel user;
 }

@@ -19,13 +19,13 @@ class ProgramsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProgramsBloc>(
-      create: (_) => ProgramsBloc(),
+      create: (_) => ProgramsBloc()..add(const ProgramsInitialized()),
       child: BlocListener<ProgramsBloc, ProgramsState>(
         listenWhen: (previous, current) =>
-            previous.allLessons != current.allLessons,
+            previous.allPrograms != current.allPrograms,
         listener: (context, state) {
           context.read<FavouritesBloc>().add(
-            FavouritesLessonsRegistered(state.allLessons),
+            FavouritesLessonsRegistered(state.allPrograms),
           );
         },
         child: BlocBuilder<ProgramsBloc, ProgramsState>(
@@ -135,7 +135,10 @@ class ProgramsTab extends StatelessWidget {
                                   ),
                                   child: ProgrammList(
                                     type: ProgrammCardType.big,
-                                    lessons: state.visibleLessons,
+                                    programs: state.visiblePrograms,
+                                    lessonsByProgramId:
+                                        state.nearestLessonsByProgramId,
+                                    mastersById: state.mastersById,
                                   ),
                                 ),
                               ],

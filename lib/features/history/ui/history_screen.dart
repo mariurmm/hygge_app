@@ -21,9 +21,9 @@ class HistoryScreen extends StatelessWidget {
     final loc = AppLocalizations.of(context);
 
     return BlocProvider(
-      create: (_) => HistoryBloc(
-        repository: UpcomingLessonRepositoryImpl(),
-      ),
+      create: (_) =>
+          HistoryBloc(repository: UpcomingLessonRepositoryImpl())
+            ..add(const HistoryLoadRequested()),
       child: BlocBuilder<HistoryBloc, HistoryState>(
         builder: (context, state) {
           final now = DateTime.now();
@@ -95,11 +95,22 @@ class HistoryScreen extends StatelessWidget {
                                   ),
                                   itemBuilder: (context, index) {
                                     final lesson = state.lessons[index];
+                                    final program =
+                                        state.programsById[lesson.programId];
+
+                                    if (program == null) {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    final master =
+                                        state.mastersById[program.masterId];
 
                                     return ProgrammCard(
                                       key: ValueKey(lesson.uuid),
                                       type: ProgrammCardType.big,
+                                      program: program,
                                       lesson: lesson,
+                                      master: master,
                                       timingOverlayLabel: lesson
                                           .historyWhenLabel(now),
                                     );

@@ -182,21 +182,27 @@ final class _ScheduleBody extends StatelessWidget {
             description: loc.scheduleEmptyDescription,
           )
         else
-          ...selectedLessons.map(
-            (LessonModel lesson) => Padding(
+          ...selectedLessons.map((LessonModel lesson) {
+            final program = state.programsById[lesson.programId];
+
+            if (program == null) {
+              return const SizedBox.shrink();
+            }
+
+            return Padding(
               padding: const EdgeInsets.only(
                 bottom: AppSpacings.programsCardsGap,
               ),
               child: ScheduleProgramCard(
-                ritual: lesson.ritual.isNotEmpty
-                    ? lesson.ritual
+                ritual: program.ritual.isNotEmpty
+                    ? program.ritual
                     : loc.scheduleProgramFallback,
-                title: lesson.title,
+                title: program.title,
                 timeRange: lesson.scheduleTimeRange(),
                 whenLabel: lesson.scheduleDayLabel(state.today),
               ),
-            ),
-          ),
+            );
+          }),
         ScheduleProgressCard(
           percent: percent,
           description: loc.scheduleProgressDescription(

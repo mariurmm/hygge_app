@@ -44,10 +44,20 @@ class UpcomingProgramsList extends StatelessWidget {
           child: Column(
             children: List.generate(state.lessons.length, (index) {
               final lesson = state.lessons[index];
+              final program = state.programsById[lesson.programId];
+
+              if (program == null) {
+                return const SizedBox.shrink();
+              }
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacings.lg),
-                child: ProgrammCard(type: ProgrammCardType.big, lesson: lesson),
+                child: ProgrammCard(
+                  type: ProgrammCardType.big,
+                  program: program,
+                  lesson: lesson,
+                  master: state.mastersById[program.masterId],
+                ),
               );
             }),
           ),

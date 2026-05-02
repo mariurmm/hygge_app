@@ -1,289 +1,121 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<void> seedFirestore() async {
-  final db = FirebaseFirestore.instance;
+final class FirebaseSeed {
+  FirebaseSeed._();
 
-  await db.collection('app_content').doc('profile_about').set({
-    'title': {'en': 'About us', 'ru': 'О нас', 'kk': 'Біз туралы'},
-    'phoneDisplay': '+7 777 000 00 00',
-    'phoneUri': 'tel:+77770000000',
-    'email': 'hello@hygge.kz',
-    'emailUri': 'mailto:hello@hygge.kz',
-    'instagramConceptLabel': '@hy.gge_concept',
-    'instagramConceptUrl': 'https://instagram.com/hy.gge_concept',
-    'instagramBarLabel': '@hy.gge.specialty.bar',
-    'instagramBarUrl': 'https://instagram.com/hy.gge.specialty.bar',
-    'mapAddress': {
-      'en': 'Almaty, Kazakhstan',
-      'ru': 'Алматы, Казахстан',
-      'kk': 'Алматы, Қазақстан',
-    },
-    'mapUrl': 'https://maps.google.com',
-  }, SetOptions(merge: true));
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final master1 = {
-    'uuid': 'm1',
-    'firstName': {'en': 'Anna', 'ru': 'Анна', 'kk': 'Анна'},
-    'lastName': {'en': 'Smith', 'ru': 'Смит', 'kk': 'Смит'},
-    'bio': {
-      'en': 'Meditation teacher',
-      'ru': 'Преподаватель медитации',
-      'kk': 'Медитация мұғалімі',
-    },
-    'avatarUrl': 'https://example.com/anna.jpg',
-  };
+  static Future<void> seedInitialData() async {
+    final WriteBatch batch = _firestore.batch();
 
-  final master2 = {
-    'uuid': 'm2',
-    'firstName': {'en': 'David', 'ru': 'Дэвид', 'kk': 'Дэвид'},
-    'lastName': {'en': 'Lee', 'ru': 'Ли', 'kk': 'Ли'},
-    'bio': {
-      'en': 'Yoga instructor with 10 years experience',
-      'ru': 'Инструктор по йоге с 10-летним опытом',
-      'kk': '10 жылдық тәжірибесі бар йога нұсқаушысы',
-    },
-    'avatarUrl': 'https://example.com/david.jpg',
-  };
+    _seedMasters(batch);
+    _seedPrograms(batch);
+    _seedLessons(batch);
 
-  await db
-      .collection('masters')
-      .doc('m1')
-      .set(master1, SetOptions(merge: true));
-
-  await db
-      .collection('masters')
-      .doc('m2')
-      .set(master2, SetOptions(merge: true));
-
-  final programs = [
-    {
-      'uuid': 'p1',
-      'ritual': {
-        'en': 'Breathing and stretching',
-        'ru': 'Дыхание и растяжка',
-        'kk': 'Тыныс алу және созылу',
-      },
-      'title': {
-        'en': 'Morning Flow Yoga',
-        'ru': 'Утренняя йога флоу',
-        'kk': 'Таңғы йога флоу',
-      },
-      'text': {
-        'en': 'Start your morning with energy',
-        'ru': 'Начни утро с энергии',
-        'kk': 'Таңды энергиямен баста',
-      },
-      'price': 5000,
-      'master': master2,
-      'isActive': true,
-    },
-    {
-      'uuid': 'p2',
-      'ritual': {
-        'en': 'Relax and slow stretching',
-        'ru': 'Расслабление и растяжка',
-        'kk': 'Босаңсу және созылу',
-      },
-      'title': {
-        'en': 'Evening Relax Yoga',
-        'ru': 'Вечерняя расслабляющая йога',
-        'kk': 'Кешкі босаңсыту йогасы',
-      },
-      'text': {
-        'en': 'Release tension after a long day',
-        'ru': 'Сними напряжение после дня',
-        'kk': 'Күн соңында кернеуді босат',
-      },
-      'price': 6000,
-      'master': master2,
-      'isActive': true,
-    },
-    {
-      'uuid': 'p3',
-      'ritual': {
-        'en': 'Mind and breath focus',
-        'ru': 'Фокус на дыхании и сознании',
-        'kk': 'Тыныс пен санаға назар',
-      },
-      'title': {
-        'en': 'Mindfulness Meditation',
-        'ru': 'Медитация осознанности',
-        'kk': 'Саналы медитация',
-      },
-      'text': {
-        'en': 'Deep calm and awareness training',
-        'ru': 'Глубокое спокойствие и осознанность',
-        'kk': 'Терең тыныштық пен зейін',
-      },
-      'price': 4000,
-      'master': master1,
-      'isActive': true,
-    },
-    {
-      'uuid': 'p4',
-      'ritual': {
-        'en': 'Balance and core',
-        'ru': 'Баланс и корпус',
-        'kk': 'Тепе-теңдік пен корпус',
-      },
-      'title': {'en': 'Power Yoga', 'ru': 'Силовая йога', 'kk': 'Күштік йога'},
-      'text': {
-        'en': 'Build strength and endurance',
-        'ru': 'Развитие силы и выносливости',
-        'kk': 'Күш пен төзімділік',
-      },
-      'price': 7000,
-      'master': master2,
-      'isActive': true,
-    },
-  ];
-
-  for (final program in programs) {
-    await db
-        .collection('programs')
-        .doc(program['uuid'] as String)
-        .set(program, SetOptions(merge: true));
+    await batch.commit();
   }
 
-  final now = DateTime.now();
+  static void _seedMasters(WriteBatch batch) {
+    const String masterId = 'aigerim_amantaeva_001';
 
-  Timestamp ts(DateTime value) => Timestamp.fromDate(value);
+    final DocumentReference<Map<String, dynamic>> ref = _firestore
+        .collection('masters')
+        .doc(masterId);
 
-  final lessons = [
-    {
-      'uuid': 'l1',
-      'programId': 'p1',
-      'startDate': ts(now.add(const Duration(days: 1, hours: 8))),
-      'finishDate': ts(now.add(const Duration(days: 1, hours: 9))),
-      'price': 5000,
-      'master': master2,
-      'isAvailable': true,
-    },
-    {
-      'uuid': 'l2',
-      'programId': 'p1',
-      'startDate': ts(now.add(const Duration(days: 3, hours: 8))),
-      'finishDate': ts(now.add(const Duration(days: 3, hours: 9))),
-      'price': 5000,
-      'master': master2,
-      'isAvailable': true,
-    },
-    {
-      'uuid': 'l3',
-      'programId': 'p2',
-      'startDate': ts(now.add(const Duration(days: 1, hours: 18))),
-      'finishDate': ts(now.add(const Duration(days: 1, hours: 19))),
-      'price': 6000,
-      'master': master2,
-      'isAvailable': true,
-    },
-    {
-      'uuid': 'l4',
-      'programId': 'p3',
-      'startDate': ts(now.add(const Duration(hours: 6))),
-      'finishDate': ts(now.add(const Duration(hours: 7))),
-      'price': 4000,
-      'master': master1,
-      'isAvailable': true,
-    },
-    {
-      'uuid': 'l5',
-      'programId': 'p3',
-      'startDate': ts(now.add(const Duration(days: 2, hours: 6))),
-      'finishDate': ts(now.add(const Duration(days: 2, hours: 7))),
-      'price': 4000,
-      'master': master1,
-      'isAvailable': true,
-    },
-    {
-      'uuid': 'l6',
-      'programId': 'p4',
-      'startDate': ts(now.add(const Duration(days: 1, hours: 10))),
-      'finishDate': ts(now.add(const Duration(days: 1, hours: 11))),
-      'price': 7000,
-      'master': master2,
-      'isAvailable': true,
-    },
-    {
-      'uuid': 'l7',
-      'programId': 'p4',
-      'startDate': ts(now.add(const Duration(days: 4, hours: 10))),
-      'finishDate': ts(now.add(const Duration(days: 4, hours: 11))),
-      'price': 7000,
-      'master': master2,
-      'isAvailable': true,
-    },
-  ];
-
-  for (final lesson in lessons) {
-    await db
-        .collection('lessons')
-        .doc(lesson['uuid'] as String)
-        .set(lesson, SetOptions(merge: true));
-  }
-
-  final upcomingPrograms = [
-    {
-      'uuid': 'up1',
-      'ritual': {
-        'en': 'Mountain yoga retreat',
-        'ru': 'Йога-ретрит в горах',
-        'kk': 'Таудағы йога ретриті',
-      },
-      'title': {
-        'en': 'Summer Yoga in the Mountains',
-        'ru': 'Летняя йога в горах',
-        'kk': 'Жазғы таудағы йога',
-      },
-      'text': {
-        'en':
-            'A future outdoor yoga program planned for summer. Booking will open later.',
+    batch.set(ref, {
+      'uuid': masterId,
+      'firstName': {'ru': 'Айгерим', 'en': 'Aigerim', 'kk': 'Айгерім'},
+      'lastName': {'ru': 'Амантаева', 'en': 'Amantaeva', 'kk': 'Амантаева'},
+      'bio': {
         'ru':
-            'Будущая выездная программа по йоге на лето. Запись откроется позже.',
+            'Айгерим Амантаева — со-основатель Hygge Concept и сертифицированный преподаватель Хатха-йоги и Аштанга-виньясы. Обучалась в Институте Йоги «Pradnaya» по программе Yoga Vidya Gurukul, India; Boston Yoga Union, Massachusetts, USA; Lino Miele Workshop, Kerala, India.',
+        'en':
+            'Aigerim Amantaeva is a co-founder of Hygge Concept and a certified Hatha Yoga and Ashtanga Vinyasa teacher. She studied at the Pradnaya Yoga Institute under the Yoga Vidya Gurukul program in India, Boston Yoga Union in Massachusetts, USA, and the Lino Miele Workshop in Kerala, India.',
         'kk':
-            'Жазға жоспарланған ашық ауадағы йога бағдарламасы. Жазылу кейін ашылады.',
+            'Айгерім Амантаева — Hygge Concept жобасының тең құрылтайшысы және Хатха-йога мен Аштанга виньяса бойынша сертификатталған нұсқаушы. Ол Үндістандағы Yoga Vidya Gurukul бағдарламасы бойынша «Pradnaya» Йога институтында, АҚШ-тың Массачусетс штатындағы Boston Yoga Union орталығында және Үндістанның Керала штатындағы Lino Miele Workshop бағдарламасында білім алған.',
       },
-      'availableFrom': ts(DateTime(now.year, now.month + 2, 1, 9)),
-      'startDate': ts(DateTime(now.year, now.month + 2, 1, 9)),
-      'finishDate': ts(DateTime(now.year, now.month + 2, 1, 10)),
-      'price': 25000,
-      'master': master2,
-      'isVisible': true,
-      'isBookable': false,
-    },
-    {
-      'uuid': 'up2',
+      'avatarUrl':
+          'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_AIGERIM_AVATAR_URL.jpg',
+    });
+  }
+
+  static void _seedPrograms(WriteBatch batch) {
+    const String programId = 'hatha_yoga_aigerim_001';
+    const String masterId = 'aigerim_amantaeva_001';
+
+    final DocumentReference<Map<String, dynamic>> ref = _firestore
+        .collection('programs')
+        .doc(programId);
+
+    batch.set(ref, {
+      'uuid': programId,
+      'category': 'yoga',
+      'masterId': masterId,
+      'price': 3500,
+      'isActive': true,
+      'isBookable': true,
+      'imageUrl':
+          'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_HATHA_YOGA_IMAGE_URL.jpg',
       'ritual': {
-        'en': 'Silent meditation retreat',
-        'ru': 'Ретрит тишины',
-        'kk': 'Тыныштық ретриті',
+        'ru': 'Практика осознанного движения',
+        'en': 'Mindful Movement Practice',
+        'kk': 'Саналы қозғалыс тәжірибесі',
       },
       'title': {
-        'en': 'Autumn Silence Retreat',
-        'ru': 'Осенний ретрит тишины',
-        'kk': 'Күзгі тыныштық ретриті',
+        'ru': 'Хатха-йога с Айгерим',
+        'en': 'Hatha Yoga with Aigerim',
+        'kk': 'Айгеріммен Хатха-йога',
       },
       'text': {
+        'ru':
+            'Сбалансированная программа Хатха-йоги для развития гибкости, устойчивости, дыхания и внутренней концентрации. Подходит для тех, кто хочет мягко войти в практику и укрепить тело через осознанное движение.',
         'en':
-            'A future meditation retreat focused on silence, breath and awareness.',
-        'ru': 'Будущий медитационный ретрит о тишине, дыхании и осознанности.',
+            'A balanced Hatha Yoga program focused on flexibility, stability, breathing, and inner concentration. Suitable for those who want to enter the practice gently and strengthen the body through mindful movement.',
         'kk':
-            'Тыныштық, тыныс және зейінге арналған болашақ медитациялық ретрит.',
+            'Икемділікті, тұрақтылықты, тыныс алуды және ішкі зейінді дамытуға бағытталған теңгерімді Хатха-йога бағдарламасы. Тәжірибеге жұмсақ кірісіп, саналы қозғалыс арқылы денені нығайтқысы келетіндерге қолайлы.',
       },
-      'availableFrom': ts(DateTime(now.year, now.month + 3, 10, 8)),
-      'startDate': ts(DateTime(now.year, now.month + 3, 10, 8)),
-      'finishDate': ts(DateTime(now.year, now.month + 3, 10, 9)),
-      'price': 30000,
-      'master': master1,
-      'isVisible': true,
-      'isBookable': false,
-    },
-  ];
+    });
+  }
 
-  for (final program in upcomingPrograms) {
-    await db
-        .collection('upcoming_programs')
-        .doc(program['uuid'] as String)
-        .set(program, SetOptions(merge: true));
+  static void _seedLessons(WriteBatch batch) {
+    const String programId = 'hatha_yoga_aigerim_001';
+    const String masterId = 'aigerim_amantaeva_001';
+
+    final List<Map<String, dynamic>> lessons = <Map<String, dynamic>>[
+      {
+        'uuid': 'hatha_yoga_aigerim_001_2026_05_05_0800',
+        'programId': programId,
+        'masterId': masterId,
+        'startDate': Timestamp.fromDate(DateTime(2026, 5, 5, 8)),
+        'finishDate': Timestamp.fromDate(DateTime(2026, 5, 5, 9)),
+        'isBookable': true,
+      },
+      {
+        'uuid': 'hatha_yoga_aigerim_001_2026_05_07_0800',
+        'programId': programId,
+        'masterId': masterId,
+        'startDate': Timestamp.fromDate(DateTime(2026, 5, 7, 8)),
+        'finishDate': Timestamp.fromDate(DateTime(2026, 5, 7, 9)),
+        'isBookable': true,
+      },
+      {
+        'uuid': 'hatha_yoga_aigerim_001_2026_05_09_1000',
+        'programId': programId,
+        'masterId': masterId,
+        'startDate': Timestamp.fromDate(DateTime(2026, 5, 9, 10)),
+        'finishDate': Timestamp.fromDate(DateTime(2026, 5, 9, 11)),
+        'isBookable': true,
+      },
+    ];
+
+    for (final Map<String, dynamic> lesson in lessons) {
+      final String lessonId = lesson['uuid'] as String;
+
+      final DocumentReference<Map<String, dynamic>> ref = _firestore
+          .collection('lessons')
+          .doc(lessonId);
+
+      batch.set(ref, lesson);
+    }
   }
 }

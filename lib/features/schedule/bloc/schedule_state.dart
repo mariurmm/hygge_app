@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 
 enum ScheduleStatus { initial, loading, success, failure }
 
@@ -10,6 +11,7 @@ final class ScheduleState extends Equatable {
   final List<LessonModel> bookedLessons;
   final List<LessonModel> completedLessons;
   final String? errorMessage;
+  final Map<String, ProgramModel> programsById;
 
   const ScheduleState({
     required this.today,
@@ -18,6 +20,7 @@ final class ScheduleState extends Equatable {
     this.bookedLessons = const <LessonModel>[],
     this.completedLessons = const <LessonModel>[],
     this.errorMessage,
+    this.programsById = const {},
   });
 
   factory ScheduleState.initial() {
@@ -65,6 +68,7 @@ final class ScheduleState extends Equatable {
     List<LessonModel>? completedLessons,
     String? errorMessage,
     bool clearError = false,
+    Map<String, ProgramModel>? programsById,
   }) {
     return ScheduleState(
       status: status ?? this.status,
@@ -73,6 +77,7 @@ final class ScheduleState extends Equatable {
       bookedLessons: bookedLessons ?? this.bookedLessons,
       completedLessons: completedLessons ?? this.completedLessons,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+      programsById: programsById ?? this.programsById,
     );
   }
 
@@ -87,5 +92,6 @@ final class ScheduleState extends Equatable {
     bookedLessons,
     completedLessons,
     errorMessage,
+    programsById,
   ];
 }
