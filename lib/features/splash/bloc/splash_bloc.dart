@@ -6,9 +6,13 @@ part 'splash_event.dart';
 part 'splash_state.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  SplashBloc() : super(const SplashLoading()) {
+  SplashBloc({required AuthRepository authRepository})
+      : _authRepository = authRepository,
+        super(const SplashLoading()) {
     on<SplashStarted>(_onStarted);
   }
+
+  final AuthRepository _authRepository;
 
   Future<void> _onStarted(
     SplashStarted event,
@@ -18,7 +22,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       Duration(seconds: AppConstants.splashDelaySeconds),
     );
     emit(
-      AuthRepository.instance.isLoggedIn
+      _authRepository.isLoggedIn
           ? const SplashAuthenticated()
           : const SplashUnauthenticated(),
     );

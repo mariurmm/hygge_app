@@ -160,12 +160,19 @@ class MainTab extends StatelessWidget {
                                 ),
                                 itemCount: state.lessons.length,
                                 itemBuilder: (context, index) {
+                                  final lesson = state.lessons[index];
+                                  final program =
+                                      state.programsById[lesson.programId];
+                                  if (program == null) {
+                                    return const SizedBox.shrink();
+                                  }
                                   return Padding(
                                     padding:
                                         const EdgeInsets.only(right: 14),
                                     child: ProgrammCard(
                                       type: ProgrammCardType.small,
-                                      lesson: state.lessons[index],
+                                      program: program,
+                                      lesson: lesson,
                                     ),
                                   );
                                 },

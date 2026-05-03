@@ -78,10 +78,8 @@ class AppRouter {
                     ),
                   ),
                   BlocProvider<HomeCubit>(
-                    create: (_) => HomeCubit(
-                      bookingRepo: bookingRepo,
-                      scheduleRepo: scheduleRepo,
-                      userId: userId,
+                    create: (ctx) => HomeCubit(
+                      upcomingRepo: ctx.read(),
                     ),
                   ),
                   BlocProvider<NotificationsBloc>(

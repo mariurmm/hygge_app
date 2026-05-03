@@ -1,6 +1,5 @@
 import 'package:hygge_app/data/models/class_model.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 
 /// Maps a single [ClassModel] (from the schedule layer) into a [LessonModel]
@@ -25,13 +24,10 @@ class MapClassToLessonUseCase {
   static LessonModel _fromClass(ClassModel cls) {
     return LessonModel(
       uuid: cls.id,
-      ritual: cls.type,
-      title: cls.title,
-      text: '',
+      programId: '',
+      masterId: cls.trainerId,
       startDate: cls.datetime,
       finishDate: cls.datetime.add(Duration(minutes: cls.durationMinutes)),
-      price: cls.price,
-      master: MasterModel.empty,
     );
   }
 }

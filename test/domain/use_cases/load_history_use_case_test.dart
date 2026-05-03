@@ -124,12 +124,9 @@ void main() {
     test('returns recentLesson from mapLesson for the first booking', () async {
       final lesson = LessonModel(
         uuid: 'cls-1',
-        title: 'Yoga',
-        text: '',
+        programId: '',
         startDate: thisMonth,
         finishDate: thisMonth.add(const Duration(hours: 1)),
-        price: 0,
-        master: LessonModel.empty.master,
       );
       final useCase = LoadHistoryUseCase(
         bookingRepository: _FakeBookingRepository([

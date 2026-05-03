@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hygge_app/data/models/class_model.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/domain/use_cases/map_class_to_lesson_use_case.dart';
 
@@ -56,11 +55,14 @@ void main() {
       );
     });
 
-    test('maps id, title, type correctly', () {
+    test('maps id correctly', () {
       final lesson = useCase.fromClass(baseClass);
       expect(lesson.uuid, 'cls-1');
-      expect(lesson.title, 'Morning Yoga');
-      expect(lesson.ritual, 'yoga');
+    });
+
+    test('maps trainerId to masterId', () {
+      final lesson = useCase.fromClass(baseClass);
+      expect(lesson.masterId, 'trainer-1');
     });
 
     test('finishDate = startDate + durationMinutes', () {
@@ -69,19 +71,9 @@ void main() {
       expect(lesson.finishDate, DateTime(2026, 5, 10, 10, 0));
     });
 
-    test('price is preserved', () {
+    test('programId is empty string', () {
       final lesson = useCase.fromClass(baseClass);
-      expect(lesson.price, 1500.0);
-    });
-
-    test('master defaults to MasterModel.empty', () {
-      final lesson = useCase.fromClass(baseClass);
-      expect(lesson.master, MasterModel.empty);
-    });
-
-    test('text is empty string', () {
-      final lesson = useCase.fromClass(baseClass);
-      expect(lesson.text, '');
+      expect(lesson.programId, '');
     });
 
     test('zero-duration class → finishDate equals startDate', () {

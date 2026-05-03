@@ -1,22 +1,20 @@
 import 'package:bloc/bloc.dart';
+import 'package:hygge_app/data/models/program_model.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
-import '../../../data/models/lesson_model.dart';
-import '../../../data/models/master_model.dart';
-import '../../../data/repositories/booking_repository.dart';
-import '../../../data/repositories/schedule_repository.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final BookingRepository _bookingRepo;
-  final ScheduleRepository _scheduleRepo;
-  final String userId;
+  final UpcomingLessonRepository _upcomingRepo;
+  final ProgramsRepository _programsRepo;
 
   HomeCubit({
-    required BookingRepository bookingRepo,
-    required ScheduleRepository scheduleRepo,
-    required this.userId,
-  })  : _bookingRepo = bookingRepo,
-        _scheduleRepo = scheduleRepo,
+    required UpcomingLessonRepository upcomingRepo,
+    ProgramsRepository? programsRepo,
+  })  : _upcomingRepo = upcomingRepo,
+        _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
         super(const HomeState()) {
     loadUpcoming();
   }
@@ -24,27 +22,22 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadUpcoming() async {
     emit(state.copyWith(isLoading: true, error: null));
     try {
-      final bookings = await _bookingRepo.getUpcomingBookings(userId);
+      final lessons = await _upcomingRepo.fetchBookings(status: 'booked');
 
-      final lessons = await Future.wait(
-        bookings.map((booking) async {
-          final cls = await _scheduleRepo.getClass(booking.classId);
-          if (cls == null) return null;
-          return LessonModel(
-            uuid: cls.id,
-            ritual: cls.type,
-            title: cls.title,
-            text: '',
-            startDate: cls.datetime,
-            finishDate: cls.datetime.add(Duration(minutes: cls.durationMinutes)),
-            price: cls.price,
-            master: MasterModel.empty,
-          );
-        }),
-      );
+      final programIds = lessons
+          .map((l) => l.programId)
+          .where((id) => id.isNotEmpty)
+          .toSet();
+
+      final programsById = <String, ProgramModel>{};
+      for (final id in programIds) {
+        final program = await _programsRepo.fetchProgramById(id);
+        if (program != null) programsById[id] = program;
+      }
 
       emit(state.copyWith(
-        lessons: lessons.whereType<LessonModel>().toList(),
+        lessons: lessons,
+        programsById: programsById,
         isLoading: false,
       ));
     } catch (e) {
