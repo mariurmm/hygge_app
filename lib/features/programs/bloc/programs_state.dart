@@ -1,6 +1,6 @@
 part of 'programs_bloc.dart';
 
-enum ProgramsFilter {
+enum ProgramFilter {
   all,
   meditation,
   yoga,
@@ -11,48 +11,64 @@ enum ProgramsFilter {
   authorTour,
 }
 
-final class ProgramsState extends Equatable {
-  final ProgramsFilter selectedFilter;
-  final List<LessonModel> allLessons;
-  final bool isLoading;
+class ProgramsState extends Equatable {
+  final List<ProgramModel> allPrograms;
+  final ProgramFilter selectedFilter;
+  final Map<String, LessonModel> nearestLessonsByProgramId;
+  final Map<String, MasterModel> mastersById;
 
   const ProgramsState({
-    this.selectedFilter = ProgramsFilter.all,
-    this.allLessons = const [],
-    this.isLoading = true,
+    this.allPrograms = const [],
+    this.selectedFilter = ProgramFilter.all,
+    this.nearestLessonsByProgramId = const {},
+    this.mastersById = const {},
   });
 
-  static const _keywords = {
-    ProgramsFilter.meditation: ['медитац', 'meditation'],
-    ProgramsFilter.yoga: ['йога', 'yoga'],
-    ProgramsFilter.outdoor: ['outdoors', 'на улице', 'outdoor'],
-    ProgramsFilter.ceremony: ['церемони', 'ceremony'],
-    ProgramsFilter.masterClass: ['мастер', 'master class', 'masterclass'],
-    ProgramsFilter.lecture: ['лекци', 'lecture'],
-    ProgramsFilter.authorTour: ['тур', 'tour'],
-  };
+  List<ProgramModel> get visiblePrograms {
+    if (selectedFilter == ProgramFilter.all) return allPrograms;
 
-  List<LessonModel> get visibleLessons {
-    if (selectedFilter == ProgramsFilter.all) return allLessons;
-    final keys = _keywords[selectedFilter] ?? [];
-    return allLessons.where((lesson) {
-      final text = '${lesson.title} ${lesson.ritual}'.toLowerCase();
-      return keys.any(text.contains);
-    }).toList();
+    return allPrograms
+        .where((program) {
+          return switch (selectedFilter) {
+            ProgramFilter.meditation =>
+              program.category == ProgramCategory.meditation,
+            ProgramFilter.yoga => program.category == ProgramCategory.yoga,
+            ProgramFilter.outdoor =>
+              program.category == ProgramCategory.outdoor,
+            ProgramFilter.ceremony =>
+              program.category == ProgramCategory.ceremony,
+            ProgramFilter.masterClass =>
+              program.category == ProgramCategory.masterClass,
+            ProgramFilter.lecture =>
+              program.category == ProgramCategory.lecture,
+            ProgramFilter.authorTour =>
+              program.category == ProgramCategory.authorTour,
+            ProgramFilter.all => true,
+          };
+        })
+        .toList(growable: false);
   }
 
   ProgramsState copyWith({
-    ProgramsFilter? selectedFilter,
-    List<LessonModel>? allLessons,
-    bool? isLoading,
+    List<ProgramModel>? allPrograms,
+    ProgramFilter? selectedFilter,
+    Map<String, LessonModel>? nearestLessonsByProgramId,
+    Map<String, MasterModel>? mastersById,
   }) {
     return ProgramsState(
+      allPrograms: allPrograms ?? this.allPrograms,
       selectedFilter: selectedFilter ?? this.selectedFilter,
-      allLessons: allLessons ?? this.allLessons,
-      isLoading: isLoading ?? this.isLoading,
+      nearestLessonsByProgramId:
+          nearestLessonsByProgramId ?? this.nearestLessonsByProgramId,
+      mastersById: mastersById ?? this.mastersById,
     );
   }
 
   @override
-  List<Object?> get props => [selectedFilter, allLessons, isLoading];
+  List<Object?> get props => [
+    allPrograms,
+    selectedFilter,
+    nearestLessonsByProgramId,
+    mastersById,
+  ];
 }

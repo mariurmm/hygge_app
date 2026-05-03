@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 
 const int _goalSessionsTotal = 15;
 
@@ -15,6 +17,8 @@ final class ProfileState extends Equatable {
     this.sessionsLeftToNextStage = _goalSessionsTotal,
     this.goalSessionsTotal = _goalSessionsTotal,
     this.recentSessionLesson,
+    this.recentSessionProgram,
+    this.recentSessionMaster,
     this.isHistoryLoading = false,
   });
 
@@ -26,6 +30,8 @@ final class ProfileState extends Equatable {
   final int sessionsLeftToNextStage;
   final int goalSessionsTotal;
   final LessonModel? recentSessionLesson;
+  final ProgramModel? recentSessionProgram;
+  final MasterModel? recentSessionMaster;
   final bool isHistoryLoading;
 
   bool get isLoading => status == ProfileStatus.loading;
@@ -39,6 +45,8 @@ final class ProfileState extends Equatable {
     int? sessionsLeftToNextStage,
     int? goalSessionsTotal,
     LessonModel? recentSessionLesson,
+    ProgramModel? recentSessionProgram,
+    MasterModel? recentSessionMaster,
     bool? isHistoryLoading,
   }) =>
       ProfileState(
@@ -53,6 +61,8 @@ final class ProfileState extends Equatable {
             sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
         goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
         recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
+        recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,
+        recentSessionMaster: recentSessionMaster ?? this.recentSessionMaster,
         isHistoryLoading: isHistoryLoading ?? this.isHistoryLoading,
       );
 
@@ -66,6 +76,8 @@ final class ProfileState extends Equatable {
         sessionsLeftToNextStage,
         goalSessionsTotal,
         recentSessionLesson,
+        recentSessionProgram,
+        recentSessionMaster,
         isHistoryLoading,
       ];
 }

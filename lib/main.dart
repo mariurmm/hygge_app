@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hygge_app/core/firebase/firebase_seed.dart';
+// import 'package:hygge_app/core/firebase/firebase_seed.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/features/app/ui/app.dart';
 
@@ -36,7 +36,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   AppLogger.info('main: Firebase инициализирован');
 
-  await seedFirestore();
+  // await FirebaseSeed.seedInitialData();
 
   runApp(
     MultiRepositoryProvider(
@@ -47,9 +47,7 @@ Future<void> main() async {
         RepositoryProvider<NotificationRepository>(
           create: (_) => NotificationRepositoryImpl(),
         ),
-        RepositoryProvider<UserRepository>(
-          create: (_) => UserRepositoryImpl(),
-        ),
+        RepositoryProvider<UserRepository>(create: (_) => UserRepositoryImpl()),
         RepositoryProvider<ProgramsRepository>(
           create: (_) => ProgramsRepositoryImpl(),
         ),

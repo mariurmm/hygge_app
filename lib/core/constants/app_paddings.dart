@@ -1,5 +1,5 @@
-class AppPaddings{
-    // ── Отступы ────────────────────────────────────────────────────
+class AppPaddings {
+  // ── Отступы ────────────────────────────────────────────────────
   /// Стандартный отступ между элементами.
   static const double defaultPadding = 16;
 
@@ -32,4 +32,6 @@ class AppPaddings{
   static const double profileMonthlyCardInner = 20;
   static const double profileRecentSessionTimeTop = 21;
   static const double profileRecentSessionTimeLeft = 29;
+
+  static const double sectionSpacing = 16;
 }

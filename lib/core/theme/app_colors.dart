@@ -23,7 +23,6 @@ class AppColors {
   /// Цвет текста/иконок на secondary-фоне.
   static const Color onSecondary = Colors.black;
 
-
   // ── Фоны ───────────────────────────────────────────────────────
   /// Основной фон экранов.
   static const Color background = Color(0xFFEADDCA);
@@ -73,4 +72,8 @@ class AppColors {
   static const Color settingsDeleteText = Color(0xFFDA4E4E);
 
   static const Color homeHeadlineAccent = Color(0xFFE08564);
+
+  //splash
+  static const Color splashOverlayTop = Color(0xFF1a110c);
+  static const Color splashOverlayBottom = Color(0xFF28180e);
 }

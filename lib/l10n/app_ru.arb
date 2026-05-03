@@ -2,6 +2,7 @@
   "@@locale": "ru",
   "appName": "Hy.gge",
   "splashLoading": "Загрузка...",
+  "splashTagline": "фитнес студия & специальный бар",
   "loginTitle": "Добро пожаловать",
   "loginSubtitle": "Войдите, чтобы продолжить",
   "loginGreeting": "Здравствуйте!",
@@ -101,8 +102,17 @@
     "description": "Текст пустого состояния уведомлений"
   },
   "notifications": "Уведомления",
+  "@notifications": {
+    "description": "Заголовок экрана уведомлений"
+  },
   "noNotifications": "Нет уведомлений",
-  "readAll": "Прочитать все",
+  "@noNotifications": {
+    "description": "Текст при отсутствии уведомлений"
+  },
+  "readAll": "Отметить все как прочитанные",
+  "@readAll": {
+    "description": "Кнопка для отметки всех уведомлений как прочитанных"
+  },
   "unreadNotifications": "{count} непрочитанных",
   "dialogSaveChangesTitle": "Сохранить изменения?",
   "dialogCancel": "Отмена",
@@ -123,5 +133,21 @@
   "noUpcomingPrograms": "Пока нет предстоящих программ",
   "@noUpcomingPrograms": {
     "description": "Текст пустого состояния, когда на главном экране нет предстоящих программ"
+  },
+  "scheduleLoadErrorTitle": "Не удалось загрузить расписание",
+  "@scheduleLoadErrorTitle": {
+    "description": "Error title when schedule loading fails"
+  },
+  "scheduleLoadErrorDescription": "Проверьте подключение и обновите страницу свайпом вниз.",
+  "@scheduleLoadErrorDescription": {
+    "description": "Error description when schedule loading fails"
+  },
+  "scheduleEmptyTitle": "На этот день записей нет",
+  "@scheduleEmptyTitle": {
+    "description": "Empty state title when no sessions for selected day"
+  },
+  "scheduleEmptyDescription": "Выберите другую дату или запишитесь на новую практику.",
+  "@scheduleEmptyDescription": {
+    "description": "Empty state description when no sessions"
   }
 }

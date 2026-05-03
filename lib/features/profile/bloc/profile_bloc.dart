@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:hygge_app/core/constants/app_defaults.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/user_model.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
 import 'package:hygge_app/domain/use_cases/calculate_progress_use_case.dart';
 import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
@@ -9,13 +10,16 @@ import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 class ProfileBloc extends Cubit<ProfileState> {
   final LoadHistoryUseCase _loadHistoryUseCase;
   final CalculateProgressUseCase _calculateProgressUseCase;
+  final ProgramsRepositoryImpl _programsRepo;
 
   ProfileBloc({
     required LoadHistoryUseCase loadHistory,
     required CalculateProgressUseCase calculateProgress,
+    ProgramsRepositoryImpl? programsRepo,
     UserModel? user,
   })  : _loadHistoryUseCase = loadHistory,
         _calculateProgressUseCase = calculateProgress,
+        _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
         super(_initialState(user)) {
     _loadHistory(user?.uid ?? '');
   }
@@ -53,15 +57,20 @@ class ProfileBloc extends Cubit<ProfileState> {
     }
     try {
       final history = await _loadHistoryUseCase(userId);
-      final progress =
-          _calculateProgressUseCase(history.completedThisMonth);
+      final progress = _calculateProgressUseCase(history.completedThisMonth);
+
+      final lesson = history.recentLesson;
+      final program = lesson != null && lesson.programId.isNotEmpty
+          ? await _programsRepo.fetchProgramById(lesson.programId)
+          : null;
 
       emit(state.copyWith(
         sessionsCompletedThisMonth: progress.completedThisMonth,
         sessionsLeftToNextStage: progress.sessionsLeftToNextStage,
         goalSessionsTotal: progress.goalSessionsTotal,
         travelProgressPercent: progress.travelProgressPercent,
-        recentSessionLesson: history.recentLesson,
+        recentSessionLesson: lesson,
+        recentSessionProgram: program,
         isHistoryLoading: false,
       ));
     } catch (e, st) {
@@ -73,6 +82,7 @@ class ProfileBloc extends Cubit<ProfileState> {
 
   static bool _hasActiveSubscription(UserModel? user) {
     if (user == null || user.isEmpty) return false;
+
     final sub = user.subscription;
     if (sub == null || sub.isEmpty) return false;
     return sub.endDate.isAfter(DateTime.now());

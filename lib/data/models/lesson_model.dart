@@ -1,111 +1,88 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
-import 'localized_value.dart';
-import 'master_model.dart';
-
 class LessonModel extends Equatable {
   final String uuid;
-  final String ritual;
-  final String title;
-  final String text;
+  final String programId;
+  final String masterId;
   final DateTime startDate;
   final DateTime finishDate;
-  final double price;
-  final MasterModel master;
-
-  /// true — можно записаться.
-  /// false — это анонс будущей программы, кнопка записи не показывается.
   final bool isBookable;
 
   const LessonModel({
     required this.uuid,
-    this.ritual = '',
-    required this.title,
-    required this.text,
+    required this.programId,
+    this.masterId = '',
     required this.startDate,
     required this.finishDate,
-    required this.price,
-    required this.master,
     this.isBookable = true,
   });
+
+  static final LessonModel empty = LessonModel(
+    uuid: '',
+    programId: '',
+    masterId: '',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    finishDate: DateTime.fromMillisecondsSinceEpoch(0),
+    isBookable: false,
+  );
 
   DateTime get calendarDay =>
       DateTime(startDate.year, startDate.month, startDate.day);
 
-  String scheduleTimeRange() {
-    final f = DateFormat('H:mm', 'ru');
-    return '${f.format(startDate)} - ${f.format(finishDate)}';
-  }
-
-  String scheduleDayLabel(DateTime today) {
-    final t = DateTime(today.year, today.month, today.day);
-    final d = calendarDay;
-
-    if (d == t) return 'Сегодня';
-    if (d == t.add(const Duration(days: 1))) return 'Завтра';
-
-    return DateFormat('d MMM', 'ru').format(d);
-  }
-
-  String historyWhenLabel(DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final d = calendarDay;
-    final time = DateFormat('H:mm', 'ru').format(startDate);
-
-    if (d == yesterday) return 'Вчера $time';
-    if (d == today) return 'Сегодня $time';
-
-    return '${DateFormat('d MMM', 'ru').format(d)} $time';
-  }
-
-  static final LessonModel empty = LessonModel(
-    uuid: '',
-    title: '',
-    text: '',
-    startDate: DateTime.fromMillisecondsSinceEpoch(0),
-    finishDate: DateTime.fromMillisecondsSinceEpoch(0),
-    price: 0,
-    master: MasterModel.empty,
-    isBookable: true,
-  );
-
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory LessonModel.fromJson(
-    Map<String, dynamic> json, {
-    String locale = LocalizedValue.defaultLocale,
-  }) {
+  String scheduleTimeRange({String locale = 'ru'}) {
+    final formatter = DateFormat('H:mm', locale);
+    return '${formatter.format(startDate)} - ${formatter.format(finishDate)}';
+  }
+
+  String scheduleDayLabel(DateTime today, {String locale = 'ru'}) {
+    final normalizedToday = DateTime(today.year, today.month, today.day);
+    final lessonDay = calendarDay;
+
+    if (lessonDay == normalizedToday) return _todayLabel(locale);
+
+    if (lessonDay == normalizedToday.add(const Duration(days: 1))) {
+      return _tomorrowLabel(locale);
+    }
+
+    return DateFormat('d MMM', locale).format(lessonDay);
+  }
+
+  String historyWhenLabel(DateTime now, {String locale = 'ru'}) {
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final lessonDay = calendarDay;
+    final time = DateFormat('H:mm', locale).format(startDate);
+
+    if (lessonDay == yesterday) return '${_yesterdayLabel(locale)} $time';
+    if (lessonDay == today) return '${_todayLabel(locale)} $time';
+
+    return '${DateFormat('d MMM', locale).format(lessonDay)} $time';
+  }
+
+  factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
       uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
-      ritual: LocalizedValue.read(json['ritual'], locale: locale),
-      title: LocalizedValue.read(json['title'], locale: locale),
-      text: LocalizedValue.read(json['text'], locale: locale),
+      programId: json['programId'] as String? ?? '',
+      masterId: json['masterId'] as String? ?? '',
       startDate: _parseDate(json['startDate'] ?? json['availableFrom']),
-      finishDate: _parseDate(json['finishDate'] ?? json['availableFrom']),
-      price: _parseDouble(json['price']),
+      finishDate: _parseDate(
+        json['finishDate'] ?? json['endDate'] ?? json['availableTo'],
+      ),
       isBookable: json['isBookable'] as bool? ?? true,
-      master: json['master'] is Map
-          ? MasterModel.fromJson(
-              Map<String, dynamic>.from(json['master'] as Map),
-              locale: locale,
-            )
-          : MasterModel.empty,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
-      'ritual': ritual,
-      'title': title,
-      'text': text,
+      'programId': programId,
+      'masterId': masterId,
       'startDate': startDate.toIso8601String(),
       'finishDate': finishDate.toIso8601String(),
-      'price': price,
-      'master': master.toJson(),
       'isBookable': isBookable,
     };
   }
@@ -128,21 +105,37 @@ class LessonModel extends Equatable {
     }
   }
 
-  static double _parseDouble(dynamic value) {
-    if (value is num) return value.toDouble();
-    return double.tryParse(value?.toString() ?? '') ?? 0;
+  static String _todayLabel(String locale) {
+    return switch (locale) {
+      'kk' => 'Бүгін',
+      'en' => 'Today',
+      _ => 'Сегодня',
+    };
+  }
+
+  static String _tomorrowLabel(String locale) {
+    return switch (locale) {
+      'kk' => 'Ертең',
+      'en' => 'Tomorrow',
+      _ => 'Завтра',
+    };
+  }
+
+  static String _yesterdayLabel(String locale) {
+    return switch (locale) {
+      'kk' => 'Кеше',
+      'en' => 'Yesterday',
+      _ => 'Вчера',
+    };
   }
 
   @override
   List<Object?> get props => [
-        uuid,
-        ritual,
-        title,
-        text,
-        startDate,
-        finishDate,
-        price,
-        master,
-        isBookable,
-      ];
+    uuid,
+    programId,
+    masterId,
+    startDate,
+    finishDate,
+    isBookable,
+  ];
 }

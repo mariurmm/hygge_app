@@ -20,9 +20,7 @@ class UpcomingProgramsList extends StatelessWidget {
         if (state.isLoading) {
           return const Padding(
             padding: EdgeInsets.all(AppSpacings.xl),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -44,20 +42,24 @@ class UpcomingProgramsList extends StatelessWidget {
             horizontal: AppPaddings.programsScreenHorizontal,
           ),
           child: Column(
-            children: List.generate(
-              state.lessons.length,
-              (index) {
-                final lesson = state.lessons[index];
+            children: List.generate(state.lessons.length, (index) {
+              final lesson = state.lessons[index];
+              final program = state.programsById[lesson.programId];
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacings.lg),
-                  child: ProgrammCard(
-                    type: ProgrammCardType.big,
-                    lesson: lesson,
-                  ),
-                );
-              },
-            ),
+              if (program == null) {
+                return const SizedBox.shrink();
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacings.lg),
+                child: ProgrammCard(
+                  type: ProgrammCardType.big,
+                  program: program,
+                  lesson: lesson,
+                  master: state.mastersById[program.masterId],
+                ),
+              );
+            }),
           ),
         );
       },

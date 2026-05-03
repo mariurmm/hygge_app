@@ -11,8 +11,8 @@ class UpcomingLessonRepositoryImpl
   UpcomingLessonRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
@@ -33,21 +33,19 @@ class UpcomingLessonRepositoryImpl
 
   @override
   Future<List<LessonModel>> fetchUpcomingPrograms({int? limit}) => execute(
-        actionName: 'UpcomingLessonRepository.fetchUpcomingPrograms',
-        action: () async {
-          final snapshot = await _upcomingPrograms
-              .where('isVisible', isEqualTo: true)
-              .get();
+    actionName: 'UpcomingLessonRepository.fetchUpcomingPrograms',
+    action: () async {
+      final snapshot = await _upcomingPrograms
+          .where('isVisible', isEqualTo: true)
+          .get();
 
-          final items = snapshot.docs
-              .map(_lessonFromDoc)
-              .where((p) => p.isNotEmpty)
-              .toList()
+      final items =
+          snapshot.docs.map(_lessonFromDoc).where((p) => p.isNotEmpty).toList()
             ..sort((a, b) => a.startDate.compareTo(b.startDate));
 
-          return limit != null ? items.take(limit).toList() : items;
-        },
-      );
+      return limit != null ? items.take(limit).toList() : items;
+    },
+  );
 
   @override
   Stream<List<LessonModel>> watchUpcomingPrograms({int? limit}) {
@@ -55,11 +53,12 @@ class UpcomingLessonRepositoryImpl
         .where('isVisible', isEqualTo: true)
         .snapshots()
         .map((snapshot) {
-          final items = snapshot.docs
-              .map(_lessonFromDoc)
-              .where((p) => p.isNotEmpty)
-              .toList()
-            ..sort((a, b) => a.startDate.compareTo(b.startDate));
+          final items =
+              snapshot.docs
+                  .map(_lessonFromDoc)
+                  .where((p) => p.isNotEmpty)
+                  .toList()
+                ..sort((a, b) => a.startDate.compareTo(b.startDate));
 
           return limit != null ? items.take(limit).toList() : items;
         })
@@ -91,81 +90,79 @@ class UpcomingLessonRepositoryImpl
 
   @override
   Future<List<LessonModel>> fetchUpcomingLessons({int limit = 10}) => execute(
-        actionName: 'UpcomingLessonRepository.fetchUpcomingLessons',
-        action: () async {
-          final now = Timestamp.fromDate(DateTime.now());
+    actionName: 'UpcomingLessonRepository.fetchUpcomingLessons',
+    action: () async {
+      final now = Timestamp.fromDate(DateTime.now());
 
-          final snapshot = await _lessons
-              .where('startDate', isGreaterThan: now)
-              .orderBy('startDate')
-              .limit(limit)
-              .get();
+      final snapshot = await _lessons
+          .where('startDate', isGreaterThan: now)
+          .orderBy('startDate')
+          .limit(limit)
+          .get();
 
-          final result = <LessonModel>[];
-          for (final doc in snapshot.docs) {
-            final lesson = await _lessonWithProgramData(doc);
-            if (lesson != null) result.add(lesson);
-          }
-          return result;
-        },
-      );
+      final result = <LessonModel>[];
+      for (final doc in snapshot.docs) {
+        final lesson = await _lessonWithProgramData(doc);
+        if (lesson != null) result.add(lesson);
+      }
+      return result;
+    },
+  );
 
   @override
   Future<List<LessonModel>> fetchBookings({String? status}) => execute(
-        actionName: 'UpcomingLessonRepository.fetchBookings',
-        action: () async {
-          final uid = _uid;
-          if (uid == null) return const <LessonModel>[];
+    actionName: 'UpcomingLessonRepository.fetchBookings',
+    action: () async {
+      final uid = _uid;
+      if (uid == null) return const <LessonModel>[];
 
-          Query<Map<String, dynamic>> query = _bookings(uid);
-          if (status != null) query = query.where('status', isEqualTo: status);
+      Query<Map<String, dynamic>> query = _bookings(uid);
+      if (status != null) query = query.where('status', isEqualTo: status);
 
-          final snapshot = await query.get();
-          final result = <LessonModel>[];
+      final snapshot = await query.get();
+      final result = <LessonModel>[];
 
-          for (final doc in snapshot.docs) {
-            final lesson = await _lessonFromBooking(doc);
-            if (lesson != null) result.add(lesson);
-          }
+      for (final doc in snapshot.docs) {
+        final lesson = await _lessonFromBooking(doc);
+        if (lesson != null) result.add(lesson);
+      }
 
-          result.sort((a, b) => a.startDate.compareTo(b.startDate));
-          return result;
-        },
-      );
+      result.sort((a, b) => a.startDate.compareTo(b.startDate));
+      return result;
+    },
+  );
 
   @override
   Future<void> bookProgram(LessonModel lesson) => execute(
-        actionName: 'UpcomingLessonRepository.bookProgram',
-        action: () async {
-          final uid = _uid;
-          if (uid == null) return;
+    actionName: 'UpcomingLessonRepository.bookProgram',
+    action: () async {
+      final uid = _uid;
+      if (uid == null) return;
 
-          await _bookings(uid).doc(lesson.uuid).set(
-            {
-              'programId': lesson.uuid,
-              'status': 'booked',
-              'price': lesson.price,
-              'bookedAt': FieldValue.serverTimestamp(),
-              'lesson': lesson.toJson(),
-            },
-            SetOptions(merge: true),
-          );
-        },
-      );
+      await _bookings(uid).doc(lesson.uuid).set({
+        'lessonId': lesson.uuid,
+        'programId': lesson.programId,
+        'masterId': lesson.masterId,
+        'status': 'booked',
+        'bookedAt': FieldValue.serverTimestamp(),
+        'lesson': lesson.toJson(),
+      }, SetOptions(merge: true));
+    },
+  );
 
   @override
   Future<void> cancelBooking(String bookingId) => execute(
-        actionName: 'UpcomingLessonRepository.cancelBooking',
-        action: () async {
-          final uid = _uid;
-          if (uid == null || bookingId.isEmpty) return;
+    actionName: 'UpcomingLessonRepository.cancelBooking',
+    action: () async {
+      final uid = _uid;
+      if (uid == null || bookingId.isEmpty) return;
 
-          await _bookings(uid).doc(bookingId).update({
-            'status': 'cancelled',
-            'cancelledAt': FieldValue.serverTimestamp(),
-          });
-        },
-      );
+      await _bookings(uid).doc(bookingId).update({
+        'status': 'cancelled',
+        'cancelledAt': FieldValue.serverTimestamp(),
+      });
+    },
+  );
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 

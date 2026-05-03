@@ -1,23 +1,25 @@
 part of 'schedule_bloc.dart';
 
-sealed class ScheduleEvent {
+sealed class ScheduleEvent extends Equatable {
   const ScheduleEvent();
+
+  @override
+  List<Object?> get props => <Object?>[];
 }
 
-/// Load booked + completed lessons from the repository.
-final class ScheduleInitialized extends ScheduleEvent {
-  const ScheduleInitialized();
+final class ScheduleStarted extends ScheduleEvent {
+  const ScheduleStarted();
 }
 
-/// Re-fetch bookings (e.g. after returning from a booking flow).
 final class ScheduleRefreshRequested extends ScheduleEvent {
   const ScheduleRefreshRequested();
 }
 
-final class ScheduleNextMonthPressed extends ScheduleEvent {
-  const ScheduleNextMonthPressed();
-}
+final class ScheduleDaySelected extends ScheduleEvent {
+  final DateTime day;
 
-final class SchedulePreviousMonthPressed extends ScheduleEvent {
-  const SchedulePreviousMonthPressed();
+  const ScheduleDaySelected(this.day);
+
+  @override
+  List<Object?> get props => <Object?>[day];
 }

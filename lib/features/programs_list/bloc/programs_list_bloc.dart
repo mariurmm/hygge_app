@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
@@ -12,13 +12,13 @@ abstract class ProgramsListState {}
 class ProgramsListLoadingState extends ProgramsListState {}
 
 class ProgramsListLoadedState extends ProgramsListState {
-  final List<LessonModel> lessons;
+  final List<ProgramModel> lessons;
   final Set<String> favoriteIds;
 
   ProgramsListLoadedState({required this.lessons, this.favoriteIds = const {}});
 
   ProgramsListLoadedState copyWith({
-    List<LessonModel>? lessons,
+    List<ProgramModel>? lessons,
     Set<String>? favoriteIds,
   }) {
     return ProgramsListLoadedState(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hygge_app/features/notifications/ui/notifications_screen.dart';
 import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
 
 import '../../data/repositories/booking_repository.dart';
@@ -178,7 +177,7 @@ class AppRouter {
           path: RouteNames.notifications,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const NotificationsScreen(),
+            child: const SizedBox.shrink(),
             transitionsBuilder: (context, animation, _, child) =>
                 FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),

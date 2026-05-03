@@ -6,7 +6,6 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
@@ -208,11 +207,13 @@ class ProfileTab extends StatelessWidget {
                                                 color: Colors.white),
                                           ),
                                         )
-                                      else
+                                      else if (state.recentSessionProgram !=
+                                          null)
                                         ProgrammCard(
                                           type: ProgrammCardType.big,
-                                          lesson: state.recentSessionLesson ??
-                                              LessonModel.empty,
+                                          program: state.recentSessionProgram!,
+                                          lesson: state.recentSessionLesson,
+                                          master: state.recentSessionMaster,
                                           timingOverlayLabel: state
                                               .recentSessionLesson
                                               ?.historyWhenLabel(now),

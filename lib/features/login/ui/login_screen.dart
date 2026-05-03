@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/utils/logger.dart';
 import '../../../data/repositories/auth_repository.dart';
@@ -120,7 +121,7 @@ class _LoginBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset('assets/png/login_background.png', fit: BoxFit.cover);
+    return Image.asset(AssetPaths.loginBackground, fit: BoxFit.cover);
   }
 }
 
@@ -135,7 +136,7 @@ class _HyggeLogo extends StatelessWidget {
         horizontal: AppPaddings.defaultPadding,
       ),
       child: Image.asset(
-        'assets/png/hygge_logo.png',
+        AssetPaths.hyggeLogo,
         width: 500,
         height: 200,
         fit: BoxFit.contain,
@@ -167,7 +168,7 @@ class _ChakraIcon extends StatelessWidget {
     // );
 
     return Image.asset(
-      'assets/png/chakra.png',
+      AssetPaths.chakraIcon,
       width: 120,
       height: 120,
       color: Colors.white,

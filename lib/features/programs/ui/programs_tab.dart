@@ -7,7 +7,6 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_spacings.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../data/repositories/schedule_repository.dart';
 import '../../../features/programs/bloc/programs_bloc.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/program_filter_button.dart';
@@ -19,14 +18,14 @@ class ProgramsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ProgramsBloc(scheduleRepo: ScheduleRepository()),
+    return BlocProvider<ProgramsBloc>(
+      create: (_) => ProgramsBloc()..add(const ProgramsInitialized()),
       child: BlocListener<ProgramsBloc, ProgramsState>(
         listenWhen: (previous, current) =>
-            previous.allLessons != current.allLessons,
+            previous.allPrograms != current.allPrograms,
         listener: (context, state) {
           context.read<FavouritesBloc>().add(
-            FavouritesLessonsRegistered(state.allLessons),
+            FavouritesLessonsRegistered(state.allPrograms),
           );
         },
         child: BlocBuilder<ProgramsBloc, ProgramsState>(
@@ -117,9 +116,9 @@ class ProgramsTab extends StatelessWidget {
                                             state.selectedFilter.index == index,
                                         isAllPrograms: index == 0,
                                         onTap: () {
-                                          context
-                                              .read<ProgramsBloc>()
-                                              .selectFilter(index);
+                                          context.read<ProgramsBloc>().add(
+                                            ProgramsFilterChanged(index),
+                                          );
                                         },
                                       );
                                     },
@@ -135,19 +134,13 @@ class ProgramsTab extends StatelessWidget {
                                     horizontal:
                                         AppPaddings.programsScreenHorizontal,
                                   ),
-                                  child: state.isLoading
-                                      ? const Padding(
-                                          padding: EdgeInsets.all(24),
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        )
-                                      : ProgrammList(
-                                          type: ProgrammCardType.big,
-                                          lessons: state.visibleLessons,
-                                        ),
+                                  child: ProgrammList(
+                                    type: ProgrammCardType.big,
+                                    programs: state.visiblePrograms,
+                                    lessonsByProgramId:
+                                        state.nearestLessonsByProgramId,
+                                    mastersById: state.mastersById,
+                                  ),
                                 ),
                               ],
                             ),

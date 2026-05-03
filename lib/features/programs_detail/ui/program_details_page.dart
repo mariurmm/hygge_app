@@ -8,6 +8,8 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository_impl.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository_impl.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
@@ -18,18 +20,31 @@ import '../bloc/program_details_event.dart';
 import '../bloc/program_details_state.dart';
 
 class ProgramDetailsPage extends StatelessWidget {
-  final LessonModel program;
+  final ProgramModel program;
+  final LessonModel lesson;
+  final MasterModel master;
 
-  const ProgramDetailsPage({super.key, required this.program});
+  const ProgramDetailsPage({
+    super.key,
+    required this.program,
+    required this.lesson,
+    required this.master,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<ProgramDetailsBloc>(
       create: (_) =>
           ProgramDetailsBloc(
             favouritesRepository: FavouritesRepositoryImpl(),
             bookingRepository: UpcomingLessonRepositoryImpl(),
-          )..add(ProgramDetailsStarted(program)),
+          )..add(
+            ProgramDetailsStarted(
+              program: program,
+              lesson: lesson,
+              master: master,
+            ),
+          ),
       child: const ProgramDetailsView(),
     );
   }
@@ -89,8 +104,9 @@ class ProgramDetailsView extends StatelessWidget {
       ),
       child: BlocBuilder<ProgramDetailsBloc, ProgramDetailsState>(
         builder: (context, state) {
-          final program = state.program;
-          final master = program.master;
+          final ProgramModel program = state.program;
+          final LessonModel lesson = state.lesson;
+          final MasterModel master = state.master;
 
           return Scaffold(
             backgroundColor: AppColors.background,
@@ -117,14 +133,11 @@ class ProgramDetailsView extends StatelessWidget {
                           _InnerHeader(
                             onBack: () => Navigator.of(context).pop(),
                           ),
-
                           const SizedBox(height: 18),
-
                           Text(
                             program.title,
                             style: AppTextStyles.programsHeading,
                           ),
-
                           if (program.ritual.isNotEmpty) ...[
                             const SizedBox(height: 10),
                             Text(
@@ -132,11 +145,9 @@ class ProgramDetailsView extends StatelessWidget {
                               style: AppTextStyles.programsSubtitle,
                             ),
                           ],
-
                           const SizedBox(
                             height: AppSpacings.profileNameCardGap,
                           ),
-
                           _GlassCard(
                             height: 150,
                             child: Column(
@@ -149,31 +160,27 @@ class ProgramDetailsView extends StatelessWidget {
                                 ),
                                 _InfoRow(
                                   label: _t(context, 'time'),
-                                  value: program.scheduleTimeRange(),
+                                  value: lesson.scheduleTimeRange(),
                                 ),
                                 _InfoRow(
                                   label: _t(context, 'date'),
-                                  value: program.scheduleDayLabel(
+                                  value: lesson.scheduleDayLabel(
                                     DateTime.now(),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-
                           const SizedBox(
                             height: AppSpacings.profileCardsVerticalGap,
                           ),
-
                           Text(
                             _t(context, 'description'),
                             style: AppTextStyles.programsHeading.copyWith(
                               fontSize: 22,
                             ),
                           ),
-
                           const SizedBox(height: 12),
-
                           _GlassCard(
                             height: 170,
                             child: Align(
@@ -184,30 +191,24 @@ class ProgramDetailsView extends StatelessWidget {
                               ),
                             ),
                           ),
-
                           const SizedBox(
                             height: AppSpacings.profileCardsVerticalGap,
                           ),
-
                           Text(
                             _t(context, 'master'),
                             style: AppTextStyles.programsHeading.copyWith(
                               fontSize: 22,
                             ),
                           ),
-
                           const SizedBox(height: 12),
-
                           _MasterGlassCard(
-                            name: '${master.firstName} ${master.lastName}',
+                            name: master.fullName,
                             bio: master.bio,
                             avatarUrl: master.avatarUrl,
                           ),
-
                           const SizedBox(
                             height: AppSpacings.profileCardsVerticalGap,
                           ),
-
                           Row(
                             children: [
                               Expanded(
@@ -218,13 +219,17 @@ class ProgramDetailsView extends StatelessWidget {
                                           onPressed: state.isBooking
                                               ? null
                                               : () {
+                                                  if (lesson.isEmpty) {
+                                                    return;
+                                                  }
+
                                                   context
                                                       .read<
                                                         ProgramDetailsBloc
                                                       >()
                                                       .add(
                                                         ProgramDetailsBooked(
-                                                          program,
+                                                          lesson,
                                                         ),
                                                       );
                                                 },
@@ -260,7 +265,9 @@ class ProgramDetailsView extends StatelessWidget {
                                             ),
                                           ),
                                           child: Text(
-                                            AppLocalizations.of(context).comingSoon,
+                                            AppLocalizations.of(
+                                              context,
+                                            ).comingSoon,
                                             style: AppTextStyles.button
                                                 .copyWith(
                                                   color: Colors.white
@@ -285,7 +292,6 @@ class ProgramDetailsView extends StatelessWidget {
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 32),
                         ],
                       ),

@@ -1,28 +1,39 @@
 part of 'favourites_bloc.dart';
 
-sealed class FavouritesEvent {
+abstract class FavouritesEvent extends Equatable {
   const FavouritesEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
-/// Start watching favourite IDs from the repository.
-final class FavouritesWatchStarted extends FavouritesEvent {
+class FavouritesWatchStarted extends FavouritesEvent {
   const FavouritesWatchStarted();
 }
 
-/// Toggle favourite status for a given program UUID.
-final class FavouritesToggled extends FavouritesEvent {
-  const FavouritesToggled(this.uuid);
+class FavouritesToggled extends FavouritesEvent {
   final String uuid;
+
+  const FavouritesToggled(this.uuid);
+
+  @override
+  List<Object?> get props => [uuid];
 }
 
-/// Register all loaded lessons so favouriteLessons can be computed.
-final class FavouritesLessonsRegistered extends FavouritesEvent {
-  const FavouritesLessonsRegistered(this.lessons);
-  final List<LessonModel> lessons;
+class FavouritesLessonsRegistered extends FavouritesEvent {
+  final List<ProgramModel> programs;
+
+  const FavouritesLessonsRegistered(this.programs);
+
+  @override
+  List<Object?> get props => [programs];
 }
 
-/// Internal — emitted when the stream pushes a new set of IDs.
-final class _FavouriteIdsUpdated extends FavouritesEvent {
-  const _FavouriteIdsUpdated(this.ids);
+class _FavouriteIdsUpdated extends FavouritesEvent {
   final Set<String> ids;
+
+  const _FavouriteIdsUpdated(this.ids);
+
+  @override
+  List<Object?> get props => [ids];
 }
