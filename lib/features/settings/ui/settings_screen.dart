@@ -24,7 +24,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SettingsBloc(
-        authRepository: AuthRepository.instance,
+        authRepository: context.read<AuthRepository>(),
         appBloc: context.read<AppBloc>(),
         user: context.read<AppBloc>().state.user,
       ),
@@ -46,56 +46,21 @@ class SettingsScreen extends StatelessWidget {
 
 // ─── Main View ────────────────────────────────────────────────────────────────
 
-class _SettingsView extends StatefulWidget {
+// _SettingsView is a StatelessWidget — all unsaved-changes/saving state lives
+// in SettingsBloc (hasUnsavedChanges, allowPop, savedName, busy).
+class _SettingsView extends StatelessWidget {
   const _SettingsView();
 
-  @override
-  State<_SettingsView> createState() => _SettingsViewState();
-}
-
-class _SettingsViewState extends State<_SettingsView> {
-  bool _hasUnsavedChanges = false;
-  bool _allowPop = false;
-  bool _saving = false;
-  String _savedName = '';
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final bloc = context.read<SettingsBloc>();
-    bloc.nameController.removeListener(_onNameChanged);
-    bloc.nameController.addListener(_onNameChanged);
-    if (_savedName.isEmpty) _savedName = bloc.nameController.text;
+  Future<void> _save(BuildContext context) async {
+    await context.read<SettingsBloc>().save();
   }
 
-  void _onNameChanged() {
-    final bloc = context.read<SettingsBloc>();
-    final hasChanges = bloc.nameController.text.trim() != _savedName.trim();
-    if (hasChanges != _hasUnsavedChanges) {
-      setState(() => _hasUnsavedChanges = hasChanges);
-    }
-  }
-
-  Future<void> _save() async {
-    if (_saving) return;
-    setState(() => _saving = true);
-    final bloc = context.read<SettingsBloc>();
-    await bloc.persistProfileFields();
-    if (mounted) {
-      setState(() {
-        _savedName = bloc.nameController.text;
-        _hasUnsavedChanges = false;
-        _saving = false;
-      });
-    }
-  }
-
-  void _popAfterAction() {
-    setState(() => _allowPop = true);
+  void _popAfterAction(BuildContext context) {
+    context.read<SettingsBloc>().setAllowPop();
     context.pop();
   }
 
-  void _showUnsavedChangesDialog() {
+  void _showUnsavedChangesDialog(BuildContext context) {
     final loc = AppLocalizations.of(context);
     showDialog<String>(
       context: context,
@@ -117,14 +82,15 @@ class _SettingsViewState extends State<_SettingsView> {
         ],
       ),
     ).then((result) {
-      if (!mounted) return;
+      if (!context.mounted) return;
       if (result == 'save') {
-        _save().then((_) {
-          if (mounted) _popAfterAction();
+        _save(context).then((_) {
+          if (context.mounted) _popAfterAction(context);
         });
       } else if (result == 'discard') {
-        context.read<SettingsBloc>().nameController.text = _savedName;
-        _popAfterAction();
+        final bloc = context.read<SettingsBloc>();
+        bloc.nameController.text = bloc.state.savedName;
+        _popAfterAction(context);
       }
     });
   }
@@ -149,9 +115,9 @@ class _SettingsViewState extends State<_SettingsView> {
     final loc = AppLocalizations.of(context);
 
     return PopScope(
-      canPop: _allowPop || !_hasUnsavedChanges,
+      canPop: state.allowPop || !state.hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _showUnsavedChangesDialog();
+        if (!didPop) _showUnsavedChangesDialog(context);
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -184,8 +150,8 @@ class _SettingsViewState extends State<_SettingsView> {
                             minHeight: 44,
                           ),
                           onPressed: () {
-                            if (_hasUnsavedChanges) {
-                              _showUnsavedChangesDialog();
+                            if (state.hasUnsavedChanges) {
+                              _showUnsavedChangesDialog(context);
                             } else {
                               context.pop();
                             }
@@ -219,8 +185,8 @@ class _SettingsViewState extends State<_SettingsView> {
                       _InputField(
                         label: loc.settingsFullName,
                         controller: bloc.nameController,
-                        hasChanges: _hasUnsavedChanges,
-                        onSave: _saving ? null : _save,
+                        hasChanges: state.hasUnsavedChanges,
+                        onSave: state.busy ? null : () => _save(context),
                       ),
                       const SizedBox(height: 16),
                       _ReadonlyField(

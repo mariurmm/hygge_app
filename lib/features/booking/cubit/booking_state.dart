@@ -1,6 +1,6 @@
 part of 'booking_cubit.dart';
 
-enum BookingStatus2 {
+enum BookingCubitStatus {
   idle,
   loading,
   success,
@@ -13,18 +13,18 @@ enum BookingStatus2 {
 }
 
 class BookingState extends Equatable {
-  final BookingStatus2 status;
+  final BookingCubitStatus status;
   final String? message;
   final BookingModel? existingBooking;
 
   const BookingState({
-    this.status = BookingStatus2.idle,
+    this.status = BookingCubitStatus.idle,
     this.message,
     this.existingBooking,
   });
 
   BookingState copyWith({
-    BookingStatus2? status,
+    BookingCubitStatus? status,
     String? message,
     BookingModel? existingBooking,
   }) {

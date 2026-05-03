@@ -7,50 +7,51 @@ import 'package:hygge_app/data/repositories/programs_repository/programs_reposit
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository_impl.dart';
 
-abstract class ProgrammsState {}
+abstract class ProgramsListState {}
 
-class ProgrammsLoadingState extends ProgrammsState {}
+class ProgramsListLoadingState extends ProgramsListState {}
 
-class ProgrammLoadedState extends ProgrammsState {
+class ProgramsListLoadedState extends ProgramsListState {
   final List<LessonModel> lessons;
   final Set<String> favoriteIds;
 
-  ProgrammLoadedState({required this.lessons, this.favoriteIds = const {}});
+  ProgramsListLoadedState({required this.lessons, this.favoriteIds = const {}});
 
-  ProgrammLoadedState copyWith({
+  ProgramsListLoadedState copyWith({
     List<LessonModel>? lessons,
     Set<String>? favoriteIds,
   }) {
-    return ProgrammLoadedState(
+    return ProgramsListLoadedState(
       lessons: lessons ?? this.lessons,
       favoriteIds: favoriteIds ?? this.favoriteIds,
     );
   }
 }
 
-abstract class ProgrammsEvent {}
+abstract class ProgramsListEvent {}
 
-class ProgrammsLoadEvent extends ProgrammsEvent {}
+class ProgramsListLoadEvent extends ProgramsListEvent {}
 
-class ProgrammsBloc extends Bloc<ProgrammsEvent, ProgrammsState> {
-  ProgrammsBloc({
+class ProgramsListBloc extends Bloc<ProgramsListEvent, ProgramsListState> {
+  ProgramsListBloc({
     ProgramsRepository? programsRepository,
     FavouritesRepository? favouritesRepository,
   })  : _programsRepository = programsRepository ?? ProgramsRepositoryImpl(),
-        _favouritesRepository = favouritesRepository ?? FavouritesRepositoryImpl(),
-        super(ProgrammsLoadingState()) {
-    on<ProgrammsLoadEvent>(_onLoad);
+        _favouritesRepository =
+            favouritesRepository ?? FavouritesRepositoryImpl(),
+        super(ProgramsListLoadingState()) {
+    on<ProgramsListLoadEvent>(_onLoad);
   }
 
   final ProgramsRepository _programsRepository;
   final FavouritesRepository _favouritesRepository;
 
   FutureOr<void> _onLoad(
-    ProgrammsLoadEvent event,
-    Emitter<ProgrammsState> emit,
+    ProgramsListLoadEvent event,
+    Emitter<ProgramsListState> emit,
   ) async {
     final lessons = await _programsRepository.fetchPrograms();
     final favoriteIds = await _favouritesRepository.fetchFavouriteIds();
-    emit(ProgrammLoadedState(lessons: lessons, favoriteIds: favoriteIds));
+    emit(ProgramsListLoadedState(lessons: lessons, favoriteIds: favoriteIds));
   }
 }

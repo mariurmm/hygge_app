@@ -1,21 +1,21 @@
 import 'package:bloc/bloc.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/core/constants/app_defaults.dart';
+import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/user_model.dart';
-import 'package:hygge_app/data/repositories/booking_repository.dart';
-import 'package:hygge_app/data/repositories/schedule_repository.dart';
+import 'package:hygge_app/domain/use_cases/calculate_progress_use_case.dart';
+import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 
 class ProfileBloc extends Cubit<ProfileState> {
-  final BookingRepository _bookingRepo;
-  final ScheduleRepository _scheduleRepo;
+  final LoadHistoryUseCase _loadHistoryUseCase;
+  final CalculateProgressUseCase _calculateProgressUseCase;
 
   ProfileBloc({
-    required BookingRepository bookingRepo,
-    required ScheduleRepository scheduleRepo,
+    required LoadHistoryUseCase loadHistory,
+    required CalculateProgressUseCase calculateProgress,
     UserModel? user,
-  })  : _bookingRepo = bookingRepo,
-        _scheduleRepo = scheduleRepo,
+  })  : _loadHistoryUseCase = loadHistory,
+        _calculateProgressUseCase = calculateProgress,
         super(_initialState(user)) {
     _loadHistory(user?.uid ?? '');
   }
@@ -23,7 +23,7 @@ class ProfileBloc extends Cubit<ProfileState> {
   static ProfileState _initialState(UserModel? user) {
     final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty
         ? user.displayName
-        : 'Жанна Цой';
+        : kDefaultUserName;
 
     return ProfileState(
       isPremium: _hasActiveSubscription(user),
@@ -52,44 +52,22 @@ class ProfileBloc extends Cubit<ProfileState> {
       return;
     }
     try {
-      final bookings = await _bookingRepo.getBookingHistory(userId);
-      final now = DateTime.now();
-      final thisMonthBookings = bookings.where((b) =>
-          b.datetime.year == now.year && b.datetime.month == now.month);
-      final completedThisMonth = thisMonthBookings.length;
-
-      LessonModel? recent;
-      if (bookings.isNotEmpty) {
-        final cls = await _scheduleRepo.getClass(bookings.first.classId);
-        if (cls != null) {
-          recent = LessonModel(
-            uuid: cls.id,
-            ritual: cls.type,
-            title: cls.title,
-            text: '',
-            startDate: cls.datetime,
-            finishDate: cls.datetime.add(Duration(minutes: cls.durationMinutes)),
-            price: cls.price,
-            master: MasterModel.empty,
-          );
-        }
-      }
-
-      const goal = 15;
-      final left = (goal - completedThisMonth).clamp(0, goal);
-      final percent =
-          ((completedThisMonth / goal) * 100).clamp(0, 100).toInt();
+      final history = await _loadHistoryUseCase(userId);
+      final progress =
+          _calculateProgressUseCase(history.completedThisMonth);
 
       emit(state.copyWith(
-        sessionsCompletedThisMonth: completedThisMonth,
-        sessionsLeftToNextStage: left,
-        goalSessionsTotal: goal,
-        travelProgressPercent: percent,
-        recentSessionLesson: recent,
+        sessionsCompletedThisMonth: progress.completedThisMonth,
+        sessionsLeftToNextStage: progress.sessionsLeftToNextStage,
+        goalSessionsTotal: progress.goalSessionsTotal,
+        travelProgressPercent: progress.travelProgressPercent,
+        recentSessionLesson: history.recentLesson,
         isHistoryLoading: false,
       ));
-    } catch (_) {
-      emit(state.copyWith(isHistoryLoading: false));
+    } catch (e, st) {
+      AppLogger.error('History load failed', error: e, stackTrace: st);
+      emit(state.copyWith(
+          isHistoryLoading: false, status: ProfileStatus.failure));
     }
   }
 

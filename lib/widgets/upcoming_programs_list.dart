@@ -10,7 +10,7 @@ import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class UpcomingProgramsList extends StatelessWidget {
-  const UpcomingProgramsList();
+  const UpcomingProgramsList({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -9,22 +9,22 @@ import '../../../data/repositories/subscription_repository.dart';
 part 'subscription_state.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
-  final SubscriptionRepository _repo;
+  final SubscriptionRepository _repository;
   final String userId;
 
   StreamSubscription<SubscriptionModel?>? _sub;
 
   SubscriptionCubit({
-    required SubscriptionRepository repo,
+    required SubscriptionRepository repository,
     required this.userId,
-  })  : _repo = repo,
+  })  : _repository = repository,
         super(const SubscriptionState()) {
     _subscribe();
   }
 
   void _subscribe() {
     _sub?.cancel();
-    _sub = _repo.watchSubscription(userId).listen(
+    _sub = _repository.watchSubscription(userId).listen(
       (subscription) => emit(state.copyWith(
         status: SubscriptionStatus.loaded,
         subscription: subscription,
@@ -38,7 +38,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   Future<void> deductSession() async {
     try {
-      await _repo.deductSession(userId);
+      await _repository.deductSession(userId);
     } catch (e) {
       emit(state.copyWith(
         status: SubscriptionStatus.error,

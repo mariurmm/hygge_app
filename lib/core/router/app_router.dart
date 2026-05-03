@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/features/notifications/ui/notifications_screen.dart';
+import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
 
 import '../../data/repositories/booking_repository.dart';
 import '../../data/repositories/schedule_repository.dart';
@@ -12,7 +13,7 @@ import '../../features/booking/cubit/booking_cubit.dart';
 import '../../features/home/bloc/home_cubit.dart';
 import '../../features/home/ui/home_tab.dart';
 import '../../features/history/ui/history_screen.dart';
-import '../../features/notification/cubit/notification_cubit.dart';
+import '../../features/notifications/bloc/notifications_bloc.dart';
 import '../../features/profile/ui/profile_tab.dart';
 import '../../features/programs/ui/programs_tab.dart';
 import '../../features/schedule/cubit/schedule_cubit.dart';
@@ -73,7 +74,7 @@ class AppRouter {
                   ),
                   BlocProvider<SubscriptionCubit>(
                     create: (_) => SubscriptionCubit(
-                      repo: subscriptionRepo,
+                      repository: subscriptionRepo,
                       userId: userId,
                     ),
                   ),
@@ -84,8 +85,9 @@ class AppRouter {
                       userId: userId,
                     ),
                   ),
-                  BlocProvider<NotificationCubit>(
-                    create: (_) => NotificationCubit(),
+                  BlocProvider<NotificationsBloc>(
+                    create: (_) => NotificationsBloc()
+                      ..add(const NotificationsInitialized()),
                   ),
                 ],
                 child: AppShell(child: child),
@@ -177,6 +179,18 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const NotificationsScreen(),
+            transitionsBuilder: (context, animation, _, child) =>
+                FadeTransition(opacity: animation, child: child),
+            transitionDuration: const Duration(milliseconds: 200),
+          ),
+        ),
+
+        GoRoute(
+          name: RouteNames.subscriptionName,
+          path: RouteNames.subscription,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const AccountSubscriptionPage(),
             transitionsBuilder: (context, animation, _, child) =>
                 FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),

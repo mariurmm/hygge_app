@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await AuthRepository.instance.signInWithGoogle();
+      await context.read<AuthRepository>().signInWithGoogle();
       // Навигация произойдёт через BlocListener ниже.
     } catch (error) {
       AppLogger.error('LoginScreen: ошибка входа', error: error);

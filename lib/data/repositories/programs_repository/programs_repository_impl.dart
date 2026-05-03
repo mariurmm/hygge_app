@@ -66,5 +66,6 @@ class ProgramsRepositoryImpl
   Function _onStreamError(String actionName) =>
       (Object error, StackTrace st) {
         logError(actionName, error, st);
+        throw error;
       };
 }

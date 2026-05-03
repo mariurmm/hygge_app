@@ -144,14 +144,14 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                   const SizedBox(height: 24),
                   BlocConsumer<BookingCubit, BookingState>(
                     listener: (context, state) {
-                      if (state.status == BookingStatus2.success ||
-                          state.status == BookingStatus2.cancelled ||
-                          state.status == BookingStatus2.error ||
-                          state.status == BookingStatus2.alreadyBooked ||
-                          state.status == BookingStatus2.noSubscription ||
-                          state.status == BookingStatus2.classFull ||
+                      if (state.status == BookingCubitStatus.success ||
+                          state.status == BookingCubitStatus.cancelled ||
+                          state.status == BookingCubitStatus.error ||
+                          state.status == BookingCubitStatus.alreadyBooked ||
+                          state.status == BookingCubitStatus.noSubscription ||
+                          state.status == BookingCubitStatus.classFull ||
                           state.status ==
-                              BookingStatus2.externalBookingRequired) {
+                              BookingCubitStatus.externalBookingRequired) {
                         _showSnackBar(context, state);
                       }
                     },
@@ -176,8 +176,8 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
   void _showSnackBar(BuildContext context, BookingState state) {
     final msg = state.message ?? '';
     if (msg.isEmpty) return;
-    final isPositive = state.status == BookingStatus2.success ||
-        state.status == BookingStatus2.cancelled;
+    final isPositive = state.status == BookingCubitStatus.success ||
+        state.status == BookingCubitStatus.cancelled;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg,
@@ -243,7 +243,7 @@ class _BookButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = bookingState.status == BookingStatus2.loading;
+    final isLoading = bookingState.status == BookingCubitStatus.loading;
     final isBooked = bookingState.existingBooking != null;
     final isExternal = !classModel.isIncludedInSubscription;
 

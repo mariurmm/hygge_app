@@ -8,24 +8,16 @@ import '../models/user_model.dart';
 
 /// Репозиторий авторизации — координирует работу сервисов.
 ///
-/// Это **синглтон**: один экземпляр на всё приложение.
-/// Доступ через [AuthRepository.instance].
-///
 /// Зачем репозиторий, если есть сервисы?
 /// Сервис знает только про свой источник (Auth или Firestore).
 /// Репозиторий **координирует** несколько сервисов:
 ///   1. Входит через Google (FirebaseAuthService).
 ///   2. Сохраняет профиль в Firestore (FirestoreService).
 ///   3. Возвращает единую модель [UserModel].
+///
+/// Единственный экземпляр регистрируется в main.dart через [RepositoryProvider]
+/// и доступен везде через context.read&lt;AuthRepository&gt;().
 class AuthRepository {
-  // ── Синглтон ─────────────────────────────────────────────────
-
-  /// Приватный конструктор — нельзя создать снаружи.
-  AuthRepository._();
-
-  /// Единственный экземпляр репозитория.
-  static final AuthRepository instance = AuthRepository._();
-
   // ── Сервисы ──────────────────────────────────────────────────
 
   final FirebaseAuthService _authService = FirebaseAuthService();

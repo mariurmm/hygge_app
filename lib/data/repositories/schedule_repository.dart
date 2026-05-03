@@ -55,8 +55,10 @@ class ScheduleRepository {
     await _firestore.runTransaction((tx) async {
       final snap = await tx.get(ref);
       if (!snap.exists) throw Exception('Занятие не найдено: $classId');
-      final current = (snap.data()!['currentParticipants'] as num?)?.toInt() ?? 0;
-      final max = (snap.data()!['maxParticipants'] as num?)?.toInt() ?? 0;
+      final data = snap.data();
+      if (data == null) throw Exception('Document not found at ${snap.reference.path}');
+      final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
+      final max = (data['maxParticipants'] as num?)?.toInt() ?? 0;
       if (current >= max) throw Exception('Нет мест на занятии');
       tx.update(ref, {'currentParticipants': current + 1});
     });
@@ -68,7 +70,9 @@ class ScheduleRepository {
     await _firestore.runTransaction((tx) async {
       final snap = await tx.get(ref);
       if (!snap.exists) return;
-      final current = (snap.data()!['currentParticipants'] as num?)?.toInt() ?? 0;
+      final data = snap.data();
+      if (data == null) return;
+      final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
       tx.update(ref, {'currentParticipants': current > 0 ? current - 1 : 0});
     });
   }

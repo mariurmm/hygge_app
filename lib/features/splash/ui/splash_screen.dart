@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     // Проверяем статус авторизации.
-    final bool isLoggedIn = AuthRepository.instance.isLoggedIn;
+    final bool isLoggedIn = context.read<AuthRepository>().isLoggedIn;
 
     if (isLoggedIn) {
       context.go(RouteNames.main);

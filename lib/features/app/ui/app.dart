@@ -27,7 +27,8 @@ class App extends StatelessWidget {
           )..add(const FavouritesWatchStarted()),
         ),
         BlocProvider(
-          create: (_) => AppBloc(authRepository: AuthRepository.instance),
+          create: (context) =>
+              AppBloc(authRepository: context.read<AuthRepository>()),
         ),
         BlocProvider(create: (_) => LocaleCubit()..load()),
       ],

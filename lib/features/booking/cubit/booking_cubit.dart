@@ -22,7 +22,7 @@ class BookingCubit extends Cubit<BookingState> {
         super(const BookingState());
 
   Future<void> bookClass(ClassModel classModel) async {
-    emit(state.copyWith(status: BookingStatus2.loading));
+    emit(state.copyWith(status: BookingCubitStatus.loading));
 
     try {
       // 1. Проверяем — уже есть бронь?
@@ -30,7 +30,7 @@ class BookingCubit extends Cubit<BookingState> {
           await _bookingRepo.getBookingForClass(userId, classModel.id);
       if (existing != null) {
         emit(state.copyWith(
-          status: BookingStatus2.alreadyBooked,
+          status: BookingCubitStatus.alreadyBooked,
           message: 'Вы уже записаны на это занятие',
         ));
         return;
@@ -39,7 +39,7 @@ class BookingCubit extends Cubit<BookingState> {
       // 2. Для выездных практик/туров — блокируем с сообщением
       if (!classModel.isIncludedInSubscription) {
         emit(state.copyWith(
-          status: BookingStatus2.externalBookingRequired,
+          status: BookingCubitStatus.externalBookingRequired,
           message: 'Запись через администратора',
         ));
         return;
@@ -49,7 +49,7 @@ class BookingCubit extends Cubit<BookingState> {
       final subscription = await _subscriptionRepo.getSubscription(userId);
       if (subscription == null || !subscription.isValid) {
         emit(state.copyWith(
-          status: BookingStatus2.noSubscription,
+          status: BookingCubitStatus.noSubscription,
           message: 'Для записи необходим активный абонемент',
         ));
         return;
@@ -58,7 +58,7 @@ class BookingCubit extends Cubit<BookingState> {
       // 4. Проверяем места
       if (classModel.isFull) {
         emit(state.copyWith(
-          status: BookingStatus2.classFull,
+          status: BookingCubitStatus.classFull,
           message: 'На это занятие нет свободных мест',
         ));
         return;
@@ -68,29 +68,29 @@ class BookingCubit extends Cubit<BookingState> {
       await _bookingRepo.createBooking(userId, classModel.id, classModel.datetime);
 
       emit(state.copyWith(
-        status: BookingStatus2.success,
+        status: BookingCubitStatus.success,
         message: 'Вы записаны на «${classModel.title}»',
       ));
     } catch (e) {
       emit(state.copyWith(
-        status: BookingStatus2.error,
+        status: BookingCubitStatus.error,
         message: 'Ошибка записи: $e',
       ));
     }
   }
 
   Future<void> cancelBooking(String bookingId) async {
-    emit(state.copyWith(status: BookingStatus2.loading));
+    emit(state.copyWith(status: BookingCubitStatus.loading));
     try {
       await _bookingRepo.updateBookingStatus(
           userId, bookingId, BookingStatus.cancelled);
       emit(const BookingState(
-        status: BookingStatus2.cancelled,
+        status: BookingCubitStatus.cancelled,
         message: 'Запись отменена',
       ));
     } catch (e) {
       emit(state.copyWith(
-        status: BookingStatus2.error,
+        status: BookingCubitStatus.error,
         message: 'Ошибка отмены: $e',
       ));
     }
@@ -100,7 +100,7 @@ class BookingCubit extends Cubit<BookingState> {
     final existing = await _bookingRepo.getBookingForClass(userId, classId);
     emit(state.copyWith(
       existingBooking: existing,
-      status: BookingStatus2.idle,
+      status: BookingCubitStatus.idle,
     ));
   }
 

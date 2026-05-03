@@ -42,7 +42,7 @@ Future<void> main() async {
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(
-          create: (_) => AuthRepository.instance, // singleton
+          create: (_) => AuthRepository(),
         ),
         RepositoryProvider<NotificationRepository>(
           create: (_) => NotificationRepositoryImpl(),
