@@ -60,15 +60,17 @@ class BookingRepository {
   }
 
   /// Предстоящие брони (pending/confirmed, datetime > now) — для HomeTab.
+  /// Filters by datetime in Firestore; status is filtered client-side to avoid
+  /// requiring a composite index on (status, datetime).
   Future<List<BookingModel>> getUpcomingBookings(String userId) async {
     final now = Timestamp.fromDate(DateTime.now());
     try {
-      final snap = await _userBookings(userId)
-          .where('status', whereIn: ['pending', 'confirmed'])
-          .where('datetime', isGreaterThan: now)
-          .orderBy('datetime')
-          .get();
-      return snap.docs.map((doc) => BookingModel.fromJson(doc.data(), id: doc.id)).toList();
+      final snap =
+          await _userBookings(userId).where('datetime', isGreaterThan: now).orderBy('datetime').get();
+      return snap.docs
+          .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
+          .where((b) => b.status == BookingStatus.pending || b.status == BookingStatus.confirmed)
+          .toList();
     } catch (e, st) {
       AppLogger.error('BookingRepository: ошибка getUpcomingBookings', error: e, stackTrace: st);
       rethrow;
@@ -76,15 +78,17 @@ class BookingRepository {
   }
 
   /// История посещений (confirmed, datetime < now) — для ProfileTab.
+  /// Filters by datetime in Firestore; status is filtered client-side to avoid
+  /// requiring a composite index on (status, datetime).
   Future<List<BookingModel>> getBookingHistory(String userId) async {
     final now = Timestamp.fromDate(DateTime.now());
     try {
-      final snap = await _userBookings(userId)
-          .where('status', isEqualTo: 'confirmed')
-          .where('datetime', isLessThan: now)
-          .orderBy('datetime', descending: true)
-          .get();
-      return snap.docs.map((doc) => BookingModel.fromJson(doc.data(), id: doc.id)).toList();
+      final snap =
+          await _userBookings(userId).where('datetime', isLessThan: now).orderBy('datetime', descending: true).get();
+      return snap.docs
+          .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
+          .where((b) => b.status == BookingStatus.confirmed)
+          .toList();
     } catch (e, st) {
       AppLogger.error('BookingRepository: ошибка getBookingHistory', error: e, stackTrace: st);
       rethrow;
@@ -92,13 +96,13 @@ class BookingRepository {
   }
 
   /// Все будущие брони со статусом pending (для планировщика уведомлений).
+  /// Status and notificationSent are filtered client-side to avoid composite indexes.
   Future<List<Map<String, dynamic>>> getPendingBookingsForNotification(String userId) async {
     final now = Timestamp.fromDate(DateTime.now());
-    final snap = await _userBookings(userId)
-        .where('status', isEqualTo: 'pending')
-        .where('notificationSent', isEqualTo: false)
-        .where('datetime', isGreaterThan: now)
-        .get();
-    return snap.docs.map((doc) => {...doc.data(), 'bookingId': doc.id, 'userId': userId}).toList();
+    final snap = await _userBookings(userId).where('datetime', isGreaterThan: now).get();
+    return snap.docs
+        .map((doc) => {...doc.data(), 'bookingId': doc.id, 'userId': userId})
+        .where((b) => b['status'] == 'pending' && b['notificationSent'] == false)
+        .toList();
   }
 }
