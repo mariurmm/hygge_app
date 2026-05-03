@@ -111,4 +111,15 @@ class AppConstants {
 
   static const double iconSizeMd = 22;
   static const double iconSizeHero = 56;
+
+  //splash screen
+  static const double splashLogoWidth = 500;
+  static const double splashLogoHeight = 200;
+  static const double splashDotSize = 8;
+  static const double splashDotSpacing = 6;
+  static const double splashDotScaleMin = 0.4;
+  static const double splashDotScaleRange = 0.6;
+  static const double splashDotOpacityMin = 0.2;
+  static const double splashDotOpacityRange = 0.8;
+  static const int splashDotCount = 3;
 }

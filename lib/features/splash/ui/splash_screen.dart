@@ -1,100 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
-import 'package:hygge_app/core/constants/app_paddings.dart';
-import 'package:hygge_app/core/theme/app_colors.dart';
-import '../../../core/router/route_names.dart';
-import '../../../data/repositories/auth_repository.dart';
-import '../../../l10n/generated/app_localizations.dart';
-import '../../../ui_kit/ui_kit.dart';
 
-/// Сплэш-экран — первый экран при запуске приложения.
-///
-/// Что происходит:
-/// 1. Показываем название приложения + индикатор загрузки.
-/// 2. Ждём [AppConstants.splashDelaySeconds] секунд.
-/// 3. Проверяем, авторизован ли пользователь.
-/// 4. Переходим на Home (если авторизован) или Login (если нет).
-class SplashScreen extends StatefulWidget {
+import '../../../core/constants/app_constants.dart';
+// import '../../../core/constants/app_paddings.dart';
+import '../../../core/constants/app_spacings.dart';
+import '../../../core/constants/asset_paths.dart';
+import '../../../core/router/route_names.dart';
+// import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/generated/app_localizations.dart';
+import '../bloc/splash_bloc.dart';
+import '../widgets/splash_dots_loader.dart';
+
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigateAfterDelay();
-  }
-
-  /// Ждём, проверяем авторизацию и переходим.
-  Future<void> _navigateAfterDelay() async {
-    // Ждём заданное время (имитация загрузки / анимация).
-    await Future.delayed(
-      Duration(seconds: AppConstants.splashDelaySeconds),
-    );
-
-    // Проверяем, что виджет ещё «живой» (экран не был закрыт).
-    if (!mounted) return;
-
-    // Проверяем статус авторизации.
-    final bool isLoggedIn = AuthRepository.instance.isLoggedIn;
-
-    if (isLoggedIn) {
-      context.go(RouteNames.main);
-    } else {
-      context.go(RouteNames.login);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Получаем экземпляр локализации из контекста.
-    // Используем `AppLocalizations.of(context)` — это сгенерированный метод,
-    // который возвращает объект с геттерами для каждой строки из .arb файлов.
     final loc = AppLocalizations.of(context);
 
-    // Получаем текстовые стили из темы приложения.
-    // Это правильный подход: стили определены в AppTheme, а виджеты
-    // берут их через Theme.of(context).textTheme — так при смене темы
-    // (например, на тёмную) все тексты автоматически обновятся.
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Название приложения.
-            // Вместо loc.translate('appName') теперь просто loc.appName.
-            Text(
-              loc.appName,
-              style: textTheme.headlineLarge,
-            ),
-            const SizedBox(height: AppPaddings.largePadding),
-
-            // SizedBox(
-            //   width: AppConstants.splashLogoSize,
-            //   height: AppConstants.splashLogoSize,
-            //   child: Image.asset(
-            //     AssetPaths.splashLogo,
-            //     fit: BoxFit.contain,
-            //   ),
-            // ),
-
-            // Индикатор загрузки.
-            const AppLoadingIndicator(),
-            const SizedBox(height: AppPaddings.defaultPadding),
-
-            // Текст «Загрузка...».
-            Text(
-              loc.splashLoading,
-              style: textTheme.bodySmall,
-            ),
-          ],
+    return BlocProvider(
+      create: (_) => SplashBloc()..add(const SplashStarted()),
+      child: BlocListener<SplashBloc, SplashState>(
+        listener: (context, state) {
+          if (state is SplashAuthenticated) context.go(RouteNames.main);
+          if (state is SplashUnauthenticated) context.go(RouteNames.login);
+        },
+        child: Scaffold(
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                AssetPaths.loginBackground,
+                fit: BoxFit.cover,
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AssetPaths.hyggeLogo,
+                      width: AppConstants.splashLogoWidth,
+                      height: AppConstants.splashLogoHeight,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: AppSpacings.sm),
+                    Text(
+                      loc.appName,
+                      style: AppTextStyles.programsHeading,
+                    ),
+                    const SizedBox(height: AppSpacings.xl),
+                    const SplashDotsLoader(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -8,6 +8,7 @@
   "@splashLoading": {
     "description": "Текст на сплэш-экране во время загрузки приложения"
   },
+  "splashTagline": "fitness studio & specialty bar",
   "loginTitle": "Welcome",
   "@loginTitle": {
     "description": "Заголовок экрана входа"
