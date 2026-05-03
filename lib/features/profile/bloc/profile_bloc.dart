@@ -17,17 +17,15 @@ class ProfileBloc extends Cubit<ProfileState> {
     required CalculateProgressUseCase calculateProgress,
     ProgramsRepositoryImpl? programsRepo,
     UserModel? user,
-  })  : _loadHistoryUseCase = loadHistory,
-        _calculateProgressUseCase = calculateProgress,
-        _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
-        super(_initialState(user)) {
+  }) : _loadHistoryUseCase = loadHistory,
+       _calculateProgressUseCase = calculateProgress,
+       _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
+       super(_initialState(user)) {
     _loadHistory(user?.uid ?? '');
   }
 
   static ProfileState _initialState(UserModel? user) {
-    final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty
-        ? user.displayName
-        : kDefaultUserName;
+    final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty ? user.displayName : kDefaultUserName;
 
     return ProfileState(
       isPremium: _hasActiveSubscription(user),
@@ -41,12 +39,12 @@ class ProfileBloc extends Cubit<ProfileState> {
   }
 
   void syncUser(UserModel user) {
-    emit(state.copyWith(
-      displayName: user.isNotEmpty && user.displayName.isNotEmpty
-          ? user.displayName
-          : state.displayName,
-      isPremium: _hasActiveSubscription(user),
-    ));
+    emit(
+      state.copyWith(
+        displayName: user.isNotEmpty && user.displayName.isNotEmpty ? user.displayName : state.displayName,
+        isPremium: _hasActiveSubscription(user),
+      ),
+    );
     _loadHistory(user.uid);
   }
 
@@ -64,19 +62,20 @@ class ProfileBloc extends Cubit<ProfileState> {
           ? await _programsRepo.fetchProgramById(lesson.programId)
           : null;
 
-      emit(state.copyWith(
-        sessionsCompletedThisMonth: progress.completedThisMonth,
-        sessionsLeftToNextStage: progress.sessionsLeftToNextStage,
-        goalSessionsTotal: progress.goalSessionsTotal,
-        travelProgressPercent: progress.travelProgressPercent,
-        recentSessionLesson: lesson,
-        recentSessionProgram: program,
-        isHistoryLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          sessionsCompletedThisMonth: progress.completedThisMonth,
+          sessionsLeftToNextStage: progress.sessionsLeftToNextStage,
+          goalSessionsTotal: progress.goalSessionsTotal,
+          travelProgressPercent: progress.travelProgressPercent,
+          recentSessionLesson: lesson,
+          recentSessionProgram: program,
+          isHistoryLoading: false,
+        ),
+      );
     } catch (e, st) {
       AppLogger.error('History load failed', error: e, stackTrace: st);
-      emit(state.copyWith(
-          isHistoryLoading: false, status: ProfileStatus.failure));
+      emit(state.copyWith(isHistoryLoading: false, status: ProfileStatus.failure));
     }
   }
 

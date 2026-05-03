@@ -7,23 +7,16 @@ class SubscriptionState extends Equatable {
   final SubscriptionModel? subscription;
   final String? error;
 
-  const SubscriptionState({
-    this.status = SubscriptionStatus.initial,
-    this.subscription,
-    this.error,
-  });
+  const SubscriptionState({this.status = SubscriptionStatus.initial, this.subscription, this.error});
 
-  bool get hasActiveSubscription =>
-      subscription != null && subscription!.isValid;
+  bool get hasActiveSubscription => subscription != null && subscription!.isValid;
 
-  SubscriptionState copyWith({
-    SubscriptionStatus? status,
-    SubscriptionModel? subscription,
-    String? error,
-  }) {
+  static const _absent = Object();
+
+  SubscriptionState copyWith({SubscriptionStatus? status, Object? subscription = _absent, String? error}) {
     return SubscriptionState(
       status: status ?? this.status,
-      subscription: subscription ?? this.subscription,
+      subscription: identical(subscription, _absent) ? this.subscription : subscription as SubscriptionModel?,
       error: error,
     );
   }

@@ -28,9 +28,7 @@ Future<void> main() async {
     await dotenv.load();
     AppLogger.info('main: .env загружен');
   } catch (_) {
-    AppLogger.warning(
-      'main: .env файл не найден — используем значения по умолчанию',
-    );
+    AppLogger.warning('main: .env файл не найден — используем значения по умолчанию');
   }
 
   await Firebase.initializeApp();
@@ -41,25 +39,13 @@ Future<void> main() async {
   runApp(
     MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>(
-          create: (_) => AuthRepository(),
-        ),
-        RepositoryProvider<NotificationRepository>(
-          create: (_) => NotificationRepositoryImpl(),
-        ),
+        RepositoryProvider<AuthRepository>(create: (_) => AuthRepository()),
+        RepositoryProvider<NotificationRepository>(create: (_) => NotificationRepositoryImpl()),
         RepositoryProvider<UserRepository>(create: (_) => UserRepositoryImpl()),
-        RepositoryProvider<ProgramsRepository>(
-          create: (_) => ProgramsRepositoryImpl(),
-        ),
-        RepositoryProvider<FavouritesRepository>(
-          create: (_) => FavouritesRepositoryImpl(),
-        ),
-        RepositoryProvider<UpcomingLessonRepository>(
-          create: (_) => UpcomingLessonRepositoryImpl(),
-        ),
-        RepositoryProvider<ProfileAboutRepository>(
-          create: (_) => ProfileAboutRepositoryImpl(),
-        ),
+        RepositoryProvider<ProgramsRepository>(create: (_) => ProgramsRepositoryImpl()),
+        RepositoryProvider<FavouritesRepository>(create: (_) => FavouritesRepositoryImpl()),
+        RepositoryProvider<UpcomingLessonRepository>(create: (_) => UpcomingLessonRepositoryImpl()),
+        RepositoryProvider<ProfileAboutRepository>(create: (_) => ProfileAboutRepositoryImpl()),
       ],
       child: const App(),
     ),

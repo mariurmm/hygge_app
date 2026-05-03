@@ -8,6 +8,7 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 class ProgramFilterButton extends StatelessWidget {
   final String label;
   final bool isSelected;
+
   /// Индекс 0 — «Все программы» (другая палитра выбранного состояния).
   final bool isAllPrograms;
   final VoidCallback onTap;
@@ -22,7 +23,7 @@ class ProgramFilterButton extends StatelessWidget {
 
   Color _backgroundColor() {
     if (!isSelected) return AppColors.programsFilterUnselected;
-    if (isAllPrograms) return AppColors.programsFilterCategorySelected;
+    if (isAllPrograms) return AppColors.programsFilterAllSelected;
     return AppColors.programsFilterCategorySelected;
   }
 
@@ -33,23 +34,15 @@ class ProgramFilterButton extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppConstants.programsFilterRadius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: AppConstants.programsBlurSigma,
-            sigmaY: AppConstants.programsBlurSigma,
-          ),
+          filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
           child: Container(
             width: AppConstants.programsFilterWidth,
             height: AppConstants.programsFilterHeight,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: _backgroundColor(),
-              borderRadius: BorderRadius.circular(
-                AppConstants.programsFilterRadius,
-              ),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.28),
-                width: AppConstants.programsBorderWidth,
-              ),
+              borderRadius: BorderRadius.circular(AppConstants.programsFilterRadius),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.28), width: AppConstants.programsBorderWidth),
             ),
             child: Text(label, style: AppTextStyles.programsFilter),
           ),

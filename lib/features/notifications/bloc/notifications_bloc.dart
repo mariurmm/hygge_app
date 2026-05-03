@@ -10,8 +10,8 @@ part 'notifications_event.dart';
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   NotificationsBloc({NotificationRepository? repository})
-      : _repository = repository ?? NotificationRepositoryImpl(),
-        super(const NotificationsState()) {
+    : _repository = repository ?? NotificationRepositoryImpl(),
+      super(const NotificationsState()) {
     on<NotificationsInitialized>(_onInitialized);
     on<NotificationMarkedAsRead>(_onMarkAsRead);
     on<NotificationsMarkedAllAsRead>(_onMarkAllAsRead);
@@ -21,42 +21,26 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   final NotificationRepository _repository;
   StreamSubscription<List<NotificationItem>>? _subscription;
 
-  Future<void> _onInitialized(
-    NotificationsInitialized event,
-    Emitter<NotificationsState> emit,
-  ) async {
+  Future<void> _onInitialized(NotificationsInitialized event, Emitter<NotificationsState> emit) async {
     _subscription = _repository.watchNotifications().listen((items) {
       emit(NotificationsState(items: items));
     });
   }
 
-  Future<void> _onMarkAsRead(
-    NotificationMarkedAsRead event,
-    Emitter<NotificationsState> emit,
-  ) async {
-    final updated = state.items
-        .map((n) => n.id == event.id ? n.copyWith(isRead: true) : n)
-        .toList();
+  Future<void> _onMarkAsRead(NotificationMarkedAsRead event, Emitter<NotificationsState> emit) async {
+    final updated = state.items.map((n) => n.id == event.id ? n.copyWith(isRead: true) : n).toList();
     emit(state.copyWith(items: updated));
     await _repository.markNotificationAsRead(event.id);
   }
 
-  Future<void> _onMarkAllAsRead(
-    NotificationsMarkedAllAsRead event,
-    Emitter<NotificationsState> emit,
-  ) async {
+  Future<void> _onMarkAllAsRead(NotificationsMarkedAllAsRead event, Emitter<NotificationsState> emit) async {
     final updated = state.items.map((n) => n.copyWith(isRead: true)).toList();
     emit(state.copyWith(items: updated));
     await _repository.markAllNotificationsAsRead();
   }
 
-  Future<void> _onRemove(
-    NotificationRemoved event,
-    Emitter<NotificationsState> emit,
-  ) async {
-    emit(state.copyWith(
-      items: state.items.where((n) => n.id != event.id).toList(),
-    ));
+  Future<void> _onRemove(NotificationRemoved event, Emitter<NotificationsState> emit) async {
+    emit(state.copyWith(items: state.items.where((n) => n.id != event.id).toList()));
     await _repository.removeNotification(event.id);
   }
 

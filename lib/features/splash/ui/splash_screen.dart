@@ -20,8 +20,7 @@ class SplashScreen extends StatelessWidget {
     final loc = AppLocalizations.of(context);
 
     return BlocProvider(
-      create: (ctx) => SplashBloc(authRepository: ctx.read<AuthRepository>())
-        ..add(const SplashStarted()),
+      create: (ctx) => SplashBloc(authRepository: ctx.read<AuthRepository>())..add(const SplashStarted()),
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashAuthenticated) context.go(RouteNames.main);
@@ -31,10 +30,7 @@ class SplashScreen extends StatelessWidget {
           body: Stack(
             fit: StackFit.expand,
             children: [
-              Image.asset(
-                AssetPaths.loginBackground,
-                fit: BoxFit.cover,
-              ),
+              Image.asset(AssetPaths.loginBackground, fit: BoxFit.cover),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -46,10 +42,7 @@ class SplashScreen extends StatelessWidget {
                       fit: BoxFit.contain,
                     ),
                     const SizedBox(height: AppSpacings.sm),
-                    Text(
-                      loc.appName,
-                      style: AppTextStyles.programsHeading,
-                    ),
+                    Text(loc.appName, style: AppTextStyles.programsHeading),
                     const SizedBox(height: AppSpacings.xl),
                     const SplashDotsLoader(),
                   ],

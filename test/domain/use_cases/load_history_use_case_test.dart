@@ -123,10 +123,10 @@ void main() {
 
     test('returns recentLesson from mapLesson for the first booking', () async {
       final lesson = LessonModel(
-        uuid: 'cls-1',
+        id: 'cls-1',
         programId: '',
         startDate: thisMonth,
-        finishDate: thisMonth.add(const Duration(hours: 1)),
+        endDate: thisMonth.add(const Duration(hours: 1)),
       );
       final useCase = LoadHistoryUseCase(
         bookingRepository: _FakeBookingRepository([

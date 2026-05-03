@@ -29,13 +29,10 @@ class SettingsScreen extends StatelessWidget {
         user: context.read<AppBloc>().state.user,
       ),
       child: BlocListener<SettingsBloc, SettingsState>(
-        listenWhen: (prev, curr) =>
-            curr.errorMessage != null && curr.errorMessage != prev.errorMessage,
+        listenWhen: (prev, curr) => curr.errorMessage != null && curr.errorMessage != prev.errorMessage,
         listener: (context, state) {
           if (state.errorMessage case final msg?) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(msg)));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
           }
         },
         child: const _SettingsView(),
@@ -67,18 +64,9 @@ class _SettingsView extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: Text(loc.dialogSaveChangesTitle),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'cancel'),
-            child: Text(loc.dialogCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'discard'),
-            child: Text(loc.dialogDiscard),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'save'),
-            child: Text(loc.dialogSave),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'cancel'), child: Text(loc.dialogCancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'discard'), child: Text(loc.dialogDiscard)),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'save'), child: Text(loc.dialogSave)),
         ],
       ),
     ).then((result) {
@@ -125,18 +113,12 @@ class _SettingsView extends StatelessWidget {
         extendBodyBehindAppBar: true,
         body: Stack(
           children: [
-            Positioned.fill(
-              child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
-            ),
+            Positioned.fill(child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover)),
             SafeArea(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.only(
-                  bottom: AppConstants.profileCardsBottomInset,
-                ),
+                padding: const EdgeInsets.only(bottom: AppConstants.profileCardsBottomInset),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppPaddings.profileScreenHorizontal,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -145,10 +127,7 @@ class _SettingsView extends StatelessWidget {
                         trailing: const SizedBox.shrink(),
                         leading: IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 44,
-                            minHeight: 44,
-                          ),
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
                           onPressed: () {
                             if (state.hasUnsavedChanges) {
                               _showUnsavedChangesDialog(context);
@@ -160,10 +139,8 @@ class _SettingsView extends StatelessWidget {
                             AssetPaths.arrowBackPng,
                             width: 24,
                             height: 24,
-                            errorBuilder: (_, __, ___) => const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                            ),
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
                           ),
                         ),
                       ),
@@ -171,11 +148,7 @@ class _SettingsView extends StatelessWidget {
                       const SizedBox(height: 24),
 
                       // ── Аватар ──
-                      _AvatarSection(
-                        bloc: bloc,
-                        appUser: appUser,
-                        busy: state.busy,
-                      ),
+                      _AvatarSection(bloc: bloc, appUser: appUser, busy: state.busy),
 
                       const SizedBox(height: 32),
 
@@ -189,10 +162,7 @@ class _SettingsView extends StatelessWidget {
                         onSave: state.busy ? null : () => _save(context),
                       ),
                       const SizedBox(height: 16),
-                      _ReadonlyField(
-                        label: loc.settingsEmailAddress,
-                        controller: bloc.emailController,
-                      ),
+                      _ReadonlyField(label: loc.settingsEmailAddress, controller: bloc.emailController),
 
                       const SizedBox(height: 32),
 
@@ -232,9 +202,7 @@ class _SettingsView extends StatelessWidget {
                         fallbackIcon: Icons.delete_outline_rounded,
                         label: loc.settingsDeleteAccount,
                         textStyle: AppTextStyles.settingsActionDelete,
-                        onTap: state.busy
-                            ? null
-                            : () => _deleteAccount(context, bloc),
+                        onTap: state.busy ? null : () => _deleteAccount(context, bloc),
                       ),
                     ],
                   ),
@@ -272,11 +240,7 @@ class _SectionLabel extends StatelessWidget {
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
 class _AvatarSection extends StatelessWidget {
-  const _AvatarSection({
-    required this.bloc,
-    required this.appUser,
-    required this.busy,
-  });
+  const _AvatarSection({required this.bloc, required this.appUser, required this.busy});
 
   final SettingsBloc bloc;
   final UserModel appUser;
@@ -291,9 +255,7 @@ class _AvatarSection extends StatelessWidget {
           width: AppConstants.settingsAvatarWidth,
           height: AppConstants.settingsAvatarHeight,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-              AppConstants.settingsGlassRadius,
-            ),
+            borderRadius: BorderRadius.circular(AppConstants.settingsGlassRadius),
             child: _avatarContent(),
           ),
         ),
@@ -327,12 +289,7 @@ class _AvatarSection extends StatelessWidget {
 // ─── Editable Input Field ─────────────────────────────────────────────────────
 
 class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.label,
-    required this.controller,
-    required this.hasChanges,
-    this.onSave,
-  });
+  const _InputField({required this.label, required this.controller, required this.hasChanges, this.onSave});
 
   final String label;
   final TextEditingController controller;
@@ -374,9 +331,7 @@ class _InputField extends StatelessWidget {
                     width: 50,
                     child: Icon(
                       hasChanges ? Icons.check_rounded : Icons.edit_outlined,
-                      color: (hasChanges && onSave != null)
-                          ? Colors.white
-                          : Colors.white38,
+                      color: (hasChanges && onSave != null) ? Colors.white : Colors.white38,
                       size: 18,
                     ),
                   ),
@@ -407,11 +362,7 @@ class _ReadonlyField extends StatelessWidget {
           children: [
             Text(label, style: AppTextStyles.settingsLabel16Light),
             const SizedBox(width: 6),
-            const Icon(
-              Icons.lock_outline_rounded,
-              color: Colors.white38,
-              size: 13,
-            ),
+            const Icon(Icons.lock_outline_rounded, color: Colors.white38, size: 13),
           ],
         ),
         const SizedBox(height: AppConstants.settingsLabelInputSpacing),
@@ -424,9 +375,7 @@ class _ReadonlyField extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 controller.text,
-                style: AppTextStyles.settingsInput16Medium.copyWith(
-                  color: Colors.white38,
-                ),
+                style: AppTextStyles.settingsInput16Medium.copyWith(color: Colors.white38),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -470,19 +419,12 @@ class _ActionRow extends StatelessWidget {
                   assetPath,
                   width: AppConstants.settingsActionIconSize,
                   height: AppConstants.settingsActionIconSize,
-                  errorBuilder: (_, __, ___) => Icon(
-                    fallbackIcon,
-                    color: textStyle.color,
-                    size: AppConstants.settingsActionIconSize,
-                  ),
+                  errorBuilder: (_, __, ___) =>
+                      Icon(fallbackIcon, color: textStyle.color, size: AppConstants.settingsActionIconSize),
                 ),
             const SizedBox(width: AppConstants.settingsActionIconTextGap),
             Flexible(
-              child: Text(
-                label,
-                style: textStyle,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Text(label, style: textStyle, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
@@ -516,9 +458,7 @@ class _LanguagePickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    final currentCode =
-        context.read<LocaleCubit>().state?.languageCode ??
-        Localizations.localeOf(context).languageCode;
+    final currentCode = context.read<LocaleCubit>().state?.languageCode ?? Localizations.localeOf(context).languageCode;
 
     return Container(
       decoration: const BoxDecoration(
@@ -530,18 +470,10 @@ class _LanguagePickerSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text(
-              loc.settingsSelectLanguage,
-              style: AppTextStyles.settingsHeaderTitle,
-            ),
-          ),
+          Center(child: Text(loc.settingsSelectLanguage, style: AppTextStyles.settingsHeaderTitle)),
           const SizedBox(height: 16),
           ...AppLocalizations.supportedLocales.map(
-            (locale) => _LanguageTile(
-              locale: locale,
-              isSelected: locale.languageCode == currentCode,
-            ),
+            (locale) => _LanguageTile(locale: locale, isSelected: locale.languageCode == currentCode),
           ),
         ],
       ),
@@ -573,19 +505,10 @@ class _LanguageTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         child: Row(
           children: [
-            Text(
-              _languageFlag(locale.languageCode),
-              style: const TextStyle(fontSize: 24),
-            ),
+            Text(_languageFlag(locale.languageCode), style: const TextStyle(fontSize: 24)),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                _localeName(locale.languageCode),
-                style: AppTextStyles.settingsActionWhite,
-              ),
-            ),
-            if (isSelected)
-              const Icon(Icons.check_rounded, color: Colors.white, size: 22),
+            Expanded(child: Text(_localeName(locale.languageCode), style: AppTextStyles.settingsActionWhite)),
+            if (isSelected) const Icon(Icons.check_rounded, color: Colors.white, size: 22),
           ],
         ),
       ),

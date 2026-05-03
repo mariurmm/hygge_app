@@ -10,6 +10,7 @@ enum BookingCubitStatus {
   noSubscription,
   classFull,
   externalBookingRequired,
+  cancelConfirmationRequired,
 }
 
 class BookingState extends Equatable {
@@ -17,21 +18,15 @@ class BookingState extends Equatable {
   final String? message;
   final BookingModel? existingBooking;
 
-  const BookingState({
-    this.status = BookingCubitStatus.idle,
-    this.message,
-    this.existingBooking,
-  });
+  const BookingState({this.status = BookingCubitStatus.idle, this.message, this.existingBooking});
 
-  BookingState copyWith({
-    BookingCubitStatus? status,
-    String? message,
-    BookingModel? existingBooking,
-  }) {
+  static const _absent = Object();
+
+  BookingState copyWith({BookingCubitStatus? status, Object? message = _absent, Object? existingBooking = _absent}) {
     return BookingState(
       status: status ?? this.status,
-      message: message ?? this.message,
-      existingBooking: existingBooking ?? this.existingBooking,
+      message: identical(message, _absent) ? this.message : message as String?,
+      existingBooking: identical(existingBooking, _absent) ? this.existingBooking : existingBooking as BookingModel?,
     );
   }
 

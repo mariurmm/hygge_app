@@ -16,27 +16,14 @@ class PostModel extends Equatable {
   /// Ссылка на изображение.
   final String imageUrl;
 
-  const PostModel({
-    required this.uuid,
-    required this.title,
-    required this.text,
-    required this.imageUrl,
-  });
+  const PostModel({required this.uuid, required this.title, required this.text, required this.imageUrl});
 
-  static const PostModel empty = PostModel(
-    uuid: '',
-    title: '',
-    text: '',
-    imageUrl: '',
-  );
+  static const PostModel empty = PostModel(uuid: '', title: '', text: '', imageUrl: '');
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory PostModel.fromJson(
-    Map<String, dynamic> json, {
-    String locale = LocalizedValue.defaultLocale,
-  }) {
+  factory PostModel.fromJson(Map<String, dynamic> json, {String locale = LocalizedValue.defaultLocale}) {
     return PostModel(
       uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
       title: LocalizedValue.read(json['title'], locale: locale),

@@ -25,7 +25,7 @@ class ProfileHistoryHeader extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        SizedBox(width: AppSpacings.profileHistoryTitleLinkGap),
+        const SizedBox(width: AppSpacings.profileHistoryTitleLinkGap),
         Expanded(
           child: Align(
             alignment: Alignment.topRight,
@@ -33,10 +33,7 @@ class ProfileHistoryHeader extends StatelessWidget {
               onPressed: onViewAll,
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),

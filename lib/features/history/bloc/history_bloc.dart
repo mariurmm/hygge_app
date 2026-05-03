@@ -10,12 +10,10 @@ part 'history_event.dart';
 part 'history_state.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
-  HistoryBloc({
-    required UpcomingLessonRepository repository,
-    FirebaseFirestore? firestore,
-  }) : _repository = repository,
-       _firestore = firestore ?? FirebaseFirestore.instance,
-       super(const HistoryState()) {
+  HistoryBloc({required UpcomingLessonRepository repository, FirebaseFirestore? firestore})
+    : _repository = repository,
+      _firestore = firestore ?? FirebaseFirestore.instance,
+      super(const HistoryState()) {
     on<HistoryLoadRequested>(_onLoadRequested);
   }
 
@@ -24,10 +22,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   static const String _completedStatus = 'completed';
 
-  Future<void> _onLoadRequested(
-    HistoryLoadRequested event,
-    Emitter<HistoryState> emit,
-  ) async {
+  Future<void> _onLoadRequested(HistoryLoadRequested event, Emitter<HistoryState> emit) async {
     emit(state.copyWith(status: HistoryStatus.loading));
 
     try {
@@ -49,13 +44,8 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     }
   }
 
-  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(
-    List<LessonModel> lessons,
-  ) async {
-    final programIds = lessons
-        .map((lesson) => lesson.programId)
-        .where((id) => id.isNotEmpty)
-        .toSet();
+  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(List<LessonModel> lessons) async {
+    final programIds = lessons.map((lesson) => lesson.programId).where((id) => id.isNotEmpty).toSet();
 
     final result = <String, ProgramModel>{};
 
@@ -67,31 +57,26 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
       final program = ProgramModel.fromJson({...data, 'id': doc.id});
 
-      result[program.uuid] = program;
+      result[program.id] = program;
     }
 
     return result;
   }
 
-  Future<Map<String, MasterModel>> _fetchMastersByPrograms(
-    Iterable<ProgramModel> programs,
-  ) async {
-    final masterIds = programs
-        .map((program) => program.masterId)
-        .where((id) => id.isNotEmpty)
-        .toSet();
+  Future<Map<String, MasterModel>> _fetchMastersByPrograms(Iterable<ProgramModel> programs) async {
+    final trainerIds = programs.map((program) => program.trainerId).where((id) => id.isNotEmpty).toSet();
 
     final result = <String, MasterModel>{};
 
-    for (final masterId in masterIds) {
-      final doc = await _firestore.collection('masters').doc(masterId).get();
+    for (final trainerId in trainerIds) {
+      final doc = await _firestore.collection('masters').doc(trainerId).get();
 
       final data = doc.data();
       if (!doc.exists || data == null) continue;
 
       final master = MasterModel.fromJson({...data, 'id': doc.id});
 
-      result[master.uuid] = master;
+      result[master.id] = master;
     }
 
     return result;

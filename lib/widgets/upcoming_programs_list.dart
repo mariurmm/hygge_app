@@ -30,17 +30,12 @@ class UpcomingProgramsList extends StatelessWidget {
               horizontal: AppPaddings.programsScreenHorizontal,
               vertical: AppSpacings.scheduleSignedTitleGap,
             ),
-            child: Text(
-              loc.homeUpcomingPrograms,
-              style: AppTextStyles.programsSubtitle,
-            ),
+            child: Text(loc.homeUpcomingPrograms, style: AppTextStyles.programsSubtitle),
           );
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppPaddings.programsScreenHorizontal,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
           child: Column(
             children: List.generate(state.lessons.length, (index) {
               final lesson = state.lessons[index];
@@ -56,7 +51,7 @@ class UpcomingProgramsList extends StatelessWidget {
                   type: ProgrammCardType.big,
                   program: program,
                   lesson: lesson,
-                  master: state.mastersById[program.masterId],
+                  master: state.mastersById[program.trainerId],
                 ),
               );
             }),

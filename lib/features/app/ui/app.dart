@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository_impl.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
@@ -22,14 +22,10 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<FavouritesBloc>(
-          create: (_) => FavouritesBloc(
-            repository: FavouritesRepositoryImpl(),
-          )..add(const FavouritesWatchStarted()),
-        ),
-        BlocProvider(
           create: (context) =>
-              AppBloc(authRepository: context.read<AuthRepository>()),
+              FavouritesBloc(repository: context.read<FavouritesRepository>())..add(const FavouritesWatchStarted()),
         ),
+        BlocProvider(create: (context) => AppBloc(authRepository: context.read<AuthRepository>())),
         BlocProvider(create: (_) => LocaleCubit()..load()),
       ],
       child: BlocBuilder<LocaleCubit, Locale?>(

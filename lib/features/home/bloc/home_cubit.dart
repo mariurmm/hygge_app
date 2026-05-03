@@ -10,12 +10,10 @@ class HomeCubit extends Cubit<HomeState> {
   final UpcomingLessonRepository _upcomingRepo;
   final ProgramsRepository _programsRepo;
 
-  HomeCubit({
-    required UpcomingLessonRepository upcomingRepo,
-    ProgramsRepository? programsRepo,
-  })  : _upcomingRepo = upcomingRepo,
-        _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
-        super(const HomeState()) {
+  HomeCubit({required UpcomingLessonRepository upcomingRepo, ProgramsRepository? programsRepo})
+    : _upcomingRepo = upcomingRepo,
+      _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
+      super(const HomeState()) {
     loadUpcoming();
   }
 
@@ -24,10 +22,7 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final lessons = await _upcomingRepo.fetchBookings(status: 'booked');
 
-      final programIds = lessons
-          .map((l) => l.programId)
-          .where((id) => id.isNotEmpty)
-          .toSet();
+      final programIds = lessons.map((l) => l.programId).where((id) => id.isNotEmpty).toSet();
 
       final programsById = <String, ProgramModel>{};
       for (final id in programIds) {
@@ -35,11 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
         if (program != null) programsById[id] = program;
       }
 
-      emit(state.copyWith(
-        lessons: lessons,
-        programsById: programsById,
-        isLoading: false,
-      ));
+      emit(state.copyWith(lessons: lessons, programsById: programsById, isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }

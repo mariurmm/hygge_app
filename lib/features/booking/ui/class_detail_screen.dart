@@ -25,14 +25,12 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<BookingCubit>()
-        .checkBookingStatus(widget.classModel.id);
+    context.read<BookingCubit>().checkBookingStatus(widget.classModel.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    final cls = widget.classModel;
+    final classModel = widget.classModel;
     final dateFormat = DateFormat('d MMMM, EEEE', 'ru');
 
     return Scaffold(
@@ -53,65 +51,46 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
           SafeArea(
             child: SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 12),
-                  Text(cls.type,
-                      style: AppTextStyles.scheduleCardLabel),
+                  Text(classModel.type, style: AppTextStyles.scheduleCardLabel),
                   const SizedBox(height: 4),
-                  Text(cls.title,
-                      style: AppTextStyles.scheduleSectionTitle),
+                  Text(classModel.title, style: AppTextStyles.scheduleSectionTitle),
                   const SizedBox(height: 24),
                   _GlassCard(
                     child: Column(
                       children: [
-                        _DetailRow(
-                          icon: Icons.calendar_today_outlined,
-                          label: dateFormat.format(cls.datetime),
-                        ),
+                        _DetailRow(icon: Icons.calendar_today_outlined, label: dateFormat.format(classModel.startDate)),
                         const SizedBox(height: 12),
-                        _DetailRow(
-                          icon: Icons.access_time_outlined,
-                          label: cls.timeRange,
-                        ),
+                        _DetailRow(icon: Icons.access_time_outlined, label: classModel.timeRange),
                         const SizedBox(height: 12),
-                        _DetailRow(
-                          icon: Icons.timer_outlined,
-                          label: '${cls.durationMinutes} мин',
-                        ),
+                        _DetailRow(icon: Icons.timer_outlined, label: '${classModel.durationMinutes} мин'),
                         const SizedBox(height: 12),
                         _DetailRow(
                           icon: Icons.people_outline,
-                          label:
-                              '${cls.currentParticipants} / ${cls.maxParticipants} участников',
+                          label: '${classModel.currentParticipants} / ${classModel.maxParticipants} участников',
                         ),
-                        if (!cls.isIncludedInSubscription) ...[
+                        if (!classModel.isIncludedInSubscription) ...[
                           const SizedBox(height: 12),
-                          _DetailRow(
-                            icon: Icons.attach_money,
-                            label:
-                                '${cls.price.toStringAsFixed(0)} ₸',
-                          ),
+                          _DetailRow(icon: Icons.attach_money, label: '${classModel.price.toStringAsFixed(0)} ₸'),
                         ],
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (!cls.isIncludedInSubscription)
+                  if (!classModel.isIncludedInSubscription)
                     _GlassCard(
                       child: Row(
                         children: [
-                          const Icon(Icons.info_outline,
-                              color: Colors.white70, size: 18),
+                          const Icon(Icons.info_outline, color: Colors.white70, size: 18),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
                               'Это выездное мероприятие. Запись через администратора.',
-                              style: AppTextStyles.bodySmall
-                                  .copyWith(color: Colors.white70),
+                              style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                             ),
                           ),
                         ],
@@ -124,14 +103,12 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                           return _GlassCard(
                             child: Row(
                               children: [
-                                const Icon(Icons.card_membership,
-                                    color: Colors.white70, size: 18),
+                                const Icon(Icons.card_membership, color: Colors.white70, size: 18),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     'Для записи необходим активный абонемент.',
-                                    style: AppTextStyles.bodySmall
-                                        .copyWith(color: Colors.white70),
+                                    style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                                   ),
                                 ),
                               ],
@@ -143,24 +120,69 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                     ),
                   const SizedBox(height: 24),
                   BlocConsumer<BookingCubit, BookingState>(
-                    listener: (context, state) {
-                      if (state.status == BookingCubitStatus.success ||
-                          state.status == BookingCubitStatus.cancelled ||
-                          state.status == BookingCubitStatus.error ||
-                          state.status == BookingCubitStatus.alreadyBooked ||
-                          state.status == BookingCubitStatus.noSubscription ||
-                          state.status == BookingCubitStatus.classFull ||
-                          state.status ==
-                              BookingCubitStatus.externalBookingRequired) {
-                        _showSnackBar(context, state);
+                    listener: (context, state) async {
+                      if (state.status == BookingCubitStatus.cancelConfirmationRequired) {
+                        final bookingId = state.existingBooking?.id;
+                        if (bookingId == null) return;
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: AppColors.darkBrown,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            title: Text('Отменить запись?', style: AppTextStyles.scheduleCalendarTitle),
+                            content: Text(
+                              'Вы уверены, что хотите отменить запись на «${classModel.title}»?',
+                              style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(false),
+                                child: Text('Назад', style: AppTextStyles.button.copyWith(color: Colors.white54)),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(true),
+                                child: Text(
+                                  'Да, отменить',
+                                  style: AppTextStyles.button.copyWith(color: AppColors.terracotta),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true && context.mounted) {
+                          context.read<BookingCubit>().cancelBooking(bookingId);
+                        }
+                        return;
                       }
+
+                      const snackbarStatuses = {
+                        BookingCubitStatus.success,
+                        BookingCubitStatus.cancelled,
+                        BookingCubitStatus.error,
+                        BookingCubitStatus.alreadyBooked,
+                        BookingCubitStatus.noSubscription,
+                        BookingCubitStatus.classFull,
+                        BookingCubitStatus.externalBookingRequired,
+                      };
+                      if (!snackbarStatuses.contains(state.status)) return;
+                      final msg = state.message ?? '';
+                      if (msg.isEmpty) return;
+                      final isPositive =
+                          state.status == BookingCubitStatus.success || state.status == BookingCubitStatus.cancelled;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(msg, style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
+                          backgroundColor: isPositive ? AppColors.primary : AppColors.darkBrown,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      );
                     },
                     builder: (context, state) {
                       return _BookButton(
-                        classModel: cls,
+                        classModel: classModel,
                         bookingState: state,
-                        onCancelTap: () =>
-                            _confirmCancel(context, cls.title, state),
+                        onCancelTap: () => context.read<BookingCubit>().requestCancelBooking(),
                       );
                     },
                   ),
@@ -172,62 +194,6 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
       ),
     );
   }
-
-  void _showSnackBar(BuildContext context, BookingState state) {
-    final msg = state.message ?? '';
-    if (msg.isEmpty) return;
-    final isPositive = state.status == BookingCubitStatus.success ||
-        state.status == BookingCubitStatus.cancelled;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg,
-            style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
-        backgroundColor: isPositive ? AppColors.primary : AppColors.darkBrown,
-        behavior: SnackBarBehavior.floating,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  Future<void> _confirmCancel(
-      BuildContext context, String classTitle, BookingState state) async {
-    final bookingId = state.existingBooking?.id;
-    if (bookingId == null) return;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.darkBrown,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Отменить запись?',
-            style: AppTextStyles.scheduleCalendarTitle),
-        content: Text(
-          'Вы уверены, что хотите отменить запись на «$classTitle»?',
-          style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text('Назад',
-                style: AppTextStyles.button
-                    .copyWith(color: Colors.white54)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text('Да, отменить',
-                style: AppTextStyles.button
-                    .copyWith(color: AppColors.terracotta)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && context.mounted) {
-      context.read<BookingCubit>().cancelBooking(bookingId);
-    }
-  }
 }
 
 class _BookButton extends StatelessWidget {
@@ -235,11 +201,7 @@ class _BookButton extends StatelessWidget {
   final BookingState bookingState;
   final VoidCallback? onCancelTap;
 
-  const _BookButton({
-    required this.classModel,
-    required this.bookingState,
-    this.onCancelTap,
-  });
+  const _BookButton({required this.classModel, required this.bookingState, this.onCancelTap});
 
   @override
   Widget build(BuildContext context) {
@@ -248,24 +210,14 @@ class _BookButton extends StatelessWidget {
     final isExternal = !classModel.isIncludedInSubscription;
 
     if (isExternal) {
-      return _primaryButton(
-        label: 'Запись через администратора',
-        enabled: false,
-        isLoading: false,
-        onPressed: null,
-      );
+      return _primaryButton(label: 'Запись через администратора', enabled: false, isLoading: false, onPressed: null);
     }
 
     if (isBooked) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _primaryButton(
-            label: 'Вы записаны',
-            enabled: false,
-            isLoading: isLoading,
-            onPressed: null,
-          ),
+          _primaryButton(label: 'Вы записаны', enabled: false, isLoading: isLoading, onPressed: null),
           const SizedBox(height: 12),
           _cancelButton(context, isLoading),
         ],
@@ -273,12 +225,7 @@ class _BookButton extends StatelessWidget {
     }
 
     if (classModel.isFull) {
-      return _primaryButton(
-        label: 'Мест нет',
-        enabled: false,
-        isLoading: false,
-        onPressed: null,
-      );
+      return _primaryButton(label: 'Мест нет', enabled: false, isLoading: false, onPressed: null);
     }
 
     return _primaryButton(
@@ -312,19 +259,15 @@ class _BookButton extends StatelessWidget {
               disabledForegroundColor: Colors.white54,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(AppConstants.scheduleCardRadius),
-                side: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    width: AppConstants.programsBorderWidth),
+                borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
               ),
             ),
             child: isLoading
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2),
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                   )
                 : Text(label, style: AppTextStyles.button),
           ),
@@ -345,16 +288,12 @@ class _BookButton extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.terracotta,
               side: BorderSide(
-                  color: AppColors.terracotta.withValues(alpha: 0.6),
-                  width: AppConstants.programsBorderWidth),
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(AppConstants.scheduleCardRadius),
+                color: AppColors.terracotta.withValues(alpha: 0.6),
+                width: AppConstants.programsBorderWidth,
               ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius)),
             ),
-            child: Text('Отменить запись',
-                style: AppTextStyles.button
-                    .copyWith(color: AppColors.terracotta)),
+            child: Text('Отменить запись', style: AppTextStyles.button.copyWith(color: AppColors.terracotta)),
           ),
         ),
       ),
@@ -377,12 +316,8 @@ class _GlassCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius:
-                BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
           ),
           child: child,
         ),
@@ -402,9 +337,7 @@ class _DetailRow extends StatelessWidget {
       children: [
         Icon(icon, color: Colors.white70, size: 18),
         const SizedBox(width: 10),
-        Text(label,
-            style:
-                AppTextStyles.scheduleCardLabel.copyWith(color: Colors.white)),
+        Text(label, style: AppTextStyles.scheduleCardLabel.copyWith(color: Colors.white)),
       ],
     );
   }

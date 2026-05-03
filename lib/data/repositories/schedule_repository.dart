@@ -14,9 +14,7 @@ class ScheduleRepository {
         .where('datetime', isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
         .orderBy('datetime')
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ClassModel.fromJson(doc.data(), id: doc.id))
-            .toList());
+        .map((snapshot) => snapshot.docs.map((doc) => ClassModel.fromJson(doc.data(), id: doc.id)).toList());
   }
 
   /// Все занятия для отображения в календаре (весь месяц).
@@ -29,18 +27,13 @@ class ScheduleRepository {
         .where('datetime', isLessThan: Timestamp.fromDate(end))
         .orderBy('datetime')
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ClassModel.fromJson(doc.data(), id: doc.id))
-            .toList());
+        .map((snapshot) => snapshot.docs.map((doc) => ClassModel.fromJson(doc.data(), id: doc.id)).toList());
   }
 
   /// Получить одно занятие по id.
   Future<ClassModel?> getClass(String classId) async {
     try {
-      final doc = await _firestore
-          .collection(CollectionNames.classes)
-          .doc(classId)
-          .get();
+      final doc = await _firestore.collection(CollectionNames.classes).doc(classId).get();
       if (!doc.exists || doc.data() == null) return null;
       return ClassModel.fromJson(doc.data()!, id: doc.id);
     } catch (e, st) {

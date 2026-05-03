@@ -12,46 +12,28 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final UpcomingLessonRepository _repository;
   final FirebaseFirestore _firestore;
 
-  ScheduleBloc({
-    required UpcomingLessonRepository repository,
-    FirebaseFirestore? firestore,
-  }) : _repository = repository,
-       _firestore = firestore ?? FirebaseFirestore.instance,
-       super(ScheduleState.initial()) {
+  ScheduleBloc({required UpcomingLessonRepository repository, FirebaseFirestore? firestore})
+    : _repository = repository,
+      _firestore = firestore ?? FirebaseFirestore.instance,
+      super(ScheduleState.initial()) {
     on<ScheduleStarted>(_onStarted);
     on<ScheduleRefreshRequested>(_onRefreshRequested);
     on<ScheduleDaySelected>(_onScheduleDaySelected);
   }
 
-  Future<void> _onStarted(
-    ScheduleStarted event,
-    Emitter<ScheduleState> emit,
-  ) async {
+  Future<void> _onStarted(ScheduleStarted event, Emitter<ScheduleState> emit) async {
     await _load(emit, showLoading: true);
   }
 
-  Future<void> _onRefreshRequested(
-    ScheduleRefreshRequested event,
-    Emitter<ScheduleState> emit,
-  ) async {
+  Future<void> _onRefreshRequested(ScheduleRefreshRequested event, Emitter<ScheduleState> emit) async {
     await _load(emit, showLoading: false);
   }
 
-  void _onScheduleDaySelected(
-    ScheduleDaySelected event,
-    Emitter<ScheduleState> emit,
-  ) {
-    emit(
-      state.copyWith(
-        selectedDay: DateTime(event.day.year, event.day.month, event.day.day),
-      ),
-    );
+  void _onScheduleDaySelected(ScheduleDaySelected event, Emitter<ScheduleState> emit) {
+    emit(state.copyWith(selectedDay: DateTime(event.day.year, event.day.month, event.day.day)));
   }
 
-  Future<void> _load(
-    Emitter<ScheduleState> emit, {
-    required bool showLoading,
-  }) async {
+  Future<void> _load(Emitter<ScheduleState> emit, {required bool showLoading}) async {
     if (showLoading) {
       emit(state.copyWith(status: ScheduleStatus.loading, clearError: true));
     }
@@ -79,22 +61,12 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         ),
       );
     } catch (_) {
-      emit(
-        state.copyWith(
-          status: ScheduleStatus.failure,
-          errorMessage: 'Не удалось загрузить расписание',
-        ),
-      );
+      emit(state.copyWith(status: ScheduleStatus.failure, errorMessage: 'Не удалось загрузить расписание'));
     }
   }
 
-  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(
-    List<LessonModel> lessons,
-  ) async {
-    final programIds = lessons
-        .map((lesson) => lesson.programId)
-        .where((id) => id.isNotEmpty)
-        .toSet();
+  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(List<LessonModel> lessons) async {
+    final programIds = lessons.map((lesson) => lesson.programId).where((id) => id.isNotEmpty).toSet();
 
     final programsById = <String, ProgramModel>{};
 
@@ -106,7 +78,7 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
       final program = ProgramModel.fromJson({...data, 'id': doc.id});
 
-      programsById[program.uuid] = program;
+      programsById[program.id] = program;
     }
 
     return programsById;

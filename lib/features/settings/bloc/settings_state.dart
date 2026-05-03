@@ -28,9 +28,7 @@ class SettingsState extends Equatable {
     bool clearLocalAvatar = false,
   }) {
     return SettingsState(
-      localAvatarPath: clearLocalAvatar
-          ? null
-          : (localAvatarPath ?? this.localAvatarPath),
+      localAvatarPath: clearLocalAvatar ? null : (localAvatarPath ?? this.localAvatarPath),
       busy: busy ?? this.busy,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       hasUnsavedChanges: hasUnsavedChanges ?? this.hasUnsavedChanges,
@@ -40,12 +38,5 @@ class SettingsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        localAvatarPath,
-        busy,
-        errorMessage,
-        hasUnsavedChanges,
-        allowPop,
-        savedName,
-      ];
+  List<Object?> get props => [localAvatarPath, busy, errorMessage, hasUnsavedChanges, allowPop, savedName];
 }

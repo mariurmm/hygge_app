@@ -3,19 +3,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
+import 'package:hygge_app/core/router/route_names.dart';
 
 Widget notificationIconButton() {
   return Builder(
     builder: (context) => IconButton(
-      onPressed: () => context.go('/home/notifications'),
+      onPressed: () => context.go(RouteNames.notifications),
       icon: SvgPicture.asset(
         AssetPaths.notificationIcon,
         width: AppConstants.notificationButtonSize,
         height: AppConstants.notificationButtonSize,
-        colorFilter: const ColorFilter.mode(
-          Colors.white,
-          BlendMode.srcIn,
-        ),
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
       ),
     ),
   );

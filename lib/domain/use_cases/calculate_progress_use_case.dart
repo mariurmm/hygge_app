@@ -24,8 +24,7 @@ class CalculateProgressUseCase {
 
   ProgressResult call(int completedThisMonth) {
     final left = (goal - completedThisMonth).clamp(0, goal);
-    final percent =
-        ((completedThisMonth / goal) * 100).clamp(0, 100).toInt();
+    final percent = ((completedThisMonth / goal) * 100).clamp(0, 100).toInt();
     return ProgressResult(
       completedThisMonth: completedThisMonth,
       sessionsLeftToNextStage: left,

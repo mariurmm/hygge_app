@@ -3,12 +3,7 @@ import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 
-enum ProgramDetailsStatus {
-  initial,
-  loading,
-  loaded,
-  error,
-}
+enum ProgramDetailsStatus { initial, loading, loaded, error }
 
 class ProgramDetailsState extends Equatable {
   final ProgramDetailsStatus status;
@@ -33,11 +28,7 @@ class ProgramDetailsState extends Equatable {
   });
 
   factory ProgramDetailsState.initial() {
-    return ProgramDetailsState(
-      program: ProgramModel.empty,
-      lesson: LessonModel.empty,
-      master: MasterModel.empty,
-    );
+    return ProgramDetailsState(program: ProgramModel.empty, lesson: LessonModel.empty, master: MasterModel.empty);
   }
 
   ProgramDetailsState copyWith({
@@ -61,13 +52,5 @@ class ProgramDetailsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        status,
-        program,
-        lesson,
-        master,
-        isFavourite,
-        isBooking,
-        errorMessage,
-      ];
+  List<Object?> get props => [status, program, lesson, master, isFavourite, isBooking, errorMessage];
 }

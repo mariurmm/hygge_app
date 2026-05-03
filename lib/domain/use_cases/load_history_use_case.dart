@@ -4,10 +4,7 @@ import 'package:hygge_app/domain/use_cases/map_class_to_lesson_use_case.dart';
 
 /// Result returned by [LoadHistoryUseCase].
 class HistoryResult {
-  const HistoryResult({
-    required this.completedThisMonth,
-    this.recentLesson,
-  });
+  const HistoryResult({required this.completedThisMonth, this.recentLesson});
 
   /// Number of bookings whose date falls in the current calendar month.
   final int completedThisMonth;
@@ -23,11 +20,9 @@ class HistoryResult {
 ///   2. Counts bookings within the current calendar month.
 ///   3. Maps the most-recent booking's class into a [LessonModel].
 class LoadHistoryUseCase {
-  const LoadHistoryUseCase({
-    required BookingRepository bookingRepository,
-    required MapClassToLessonUseCase mapLesson,
-  })  : _bookingRepo = bookingRepository,
-        _mapLesson = mapLesson;
+  const LoadHistoryUseCase({required BookingRepository bookingRepository, required MapClassToLessonUseCase mapLesson})
+    : _bookingRepo = bookingRepository,
+      _mapLesson = mapLesson;
 
   final BookingRepository _bookingRepo;
   final MapClassToLessonUseCase _mapLesson;
@@ -37,8 +32,7 @@ class LoadHistoryUseCase {
     final now = DateTime.now();
 
     final completedThisMonth = bookings
-        .where((b) =>
-            b.datetime.year == now.year && b.datetime.month == now.month)
+        .where((b) => b.datetime.year == now.year && b.datetime.month == now.month)
         .length;
 
     LessonModel? recentLesson;
@@ -46,9 +40,6 @@ class LoadHistoryUseCase {
       recentLesson = await _mapLesson(bookings.first.classId);
     }
 
-    return HistoryResult(
-      completedThisMonth: completedThisMonth,
-      recentLesson: recentLesson,
-    );
+    return HistoryResult(completedThisMonth: completedThisMonth, recentLesson: recentLesson);
   }
 }

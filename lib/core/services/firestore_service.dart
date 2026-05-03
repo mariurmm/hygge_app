@@ -23,18 +23,11 @@ class FirestoreService {
   /// только переданные поля (остальные не трогаются).
   Future<void> saveUser(String uid, Map<String, dynamic> data) async {
     try {
-      await _firestore
-          .collection(CollectionNames.users)
-          .doc(uid)
-          .set(data, SetOptions(merge: true));
+      await _firestore.collection(CollectionNames.users).doc(uid).set(data, SetOptions(merge: true));
 
       AppLogger.info('Firestore: пользователь $uid сохранён');
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'Firestore: ошибка сохранения пользователя $uid',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Firestore: ошибка сохранения пользователя $uid', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -57,11 +50,7 @@ class FirestoreService {
 
       return doc.data();
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'Firestore: ошибка получения пользователя $uid',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Firestore: ошибка получения пользователя $uid', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -72,11 +61,7 @@ class FirestoreService {
       await _firestore.collection(CollectionNames.users).doc(uid).delete();
       AppLogger.info('Firestore: пользователь $uid удалён');
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'Firestore: ошибка удаления пользователя $uid',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Firestore: ошибка удаления пользователя $uid', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }

@@ -48,36 +48,32 @@ final class ProfileState extends Equatable {
     ProgramModel? recentSessionProgram,
     MasterModel? recentSessionMaster,
     bool? isHistoryLoading,
-  }) =>
-      ProfileState(
-        status: status ?? this.status,
-        isPremium: isPremium ?? this.isPremium,
-        displayName: displayName ?? this.displayName,
-        travelProgressPercent:
-            travelProgressPercent ?? this.travelProgressPercent,
-        sessionsCompletedThisMonth:
-            sessionsCompletedThisMonth ?? this.sessionsCompletedThisMonth,
-        sessionsLeftToNextStage:
-            sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
-        goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
-        recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
-        recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,
-        recentSessionMaster: recentSessionMaster ?? this.recentSessionMaster,
-        isHistoryLoading: isHistoryLoading ?? this.isHistoryLoading,
-      );
+  }) => ProfileState(
+    status: status ?? this.status,
+    isPremium: isPremium ?? this.isPremium,
+    displayName: displayName ?? this.displayName,
+    travelProgressPercent: travelProgressPercent ?? this.travelProgressPercent,
+    sessionsCompletedThisMonth: sessionsCompletedThisMonth ?? this.sessionsCompletedThisMonth,
+    sessionsLeftToNextStage: sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
+    goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
+    recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
+    recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,
+    recentSessionMaster: recentSessionMaster ?? this.recentSessionMaster,
+    isHistoryLoading: isHistoryLoading ?? this.isHistoryLoading,
+  );
 
   @override
   List<Object?> get props => [
-        status,
-        isPremium,
-        displayName,
-        travelProgressPercent,
-        sessionsCompletedThisMonth,
-        sessionsLeftToNextStage,
-        goalSessionsTotal,
-        recentSessionLesson,
-        recentSessionProgram,
-        recentSessionMaster,
-        isHistoryLoading,
-      ];
+    status,
+    isPremium,
+    displayName,
+    travelProgressPercent,
+    sessionsCompletedThisMonth,
+    sessionsLeftToNextStage,
+    goalSessionsTotal,
+    recentSessionLesson,
+    recentSessionProgram,
+    recentSessionMaster,
+    isHistoryLoading,
+  ];
 }

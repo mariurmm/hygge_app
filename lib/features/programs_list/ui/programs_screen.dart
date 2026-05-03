@@ -15,9 +15,7 @@ class ProgramsScreen extends StatelessWidget {
       child: BlocBuilder<ProgramsBloc, ProgramsState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context).tabPrograms),
-            ),
+            appBar: AppBar(title: Text(AppLocalizations.of(context).tabPrograms)),
             body: Padding(
               padding: const EdgeInsets.only(bottom: 24),
               child: ProgrammList(

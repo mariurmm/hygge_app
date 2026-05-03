@@ -11,11 +11,7 @@ class ScheduleProgressCard extends StatelessWidget {
   final int percent;
   final String description;
 
-  const ScheduleProgressCard({
-    super.key,
-    required this.percent,
-    required this.description,
-  });
+  const ScheduleProgressCard({super.key, required this.percent, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +19,14 @@ class ScheduleProgressCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: AppConstants.programsBlurSigma,
-          sigmaY: AppConstants.programsBlurSigma,
-        ),
+        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
         child: Container(
           width: AppConstants.scheduleCardWidth,
           height: AppConstants.scheduleCardHeight,
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
             borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
           ),
           padding: const EdgeInsets.all(14),
           child: Column(
@@ -78,10 +68,7 @@ class ScheduleProgressCard extends StatelessWidget {
                                   gradient: const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
-                                    colors: [
-                                      AppColors.progressFillStart,
-                                      AppColors.progressFillEnd,
-                                    ],
+                                    colors: [AppColors.progressFillStart, AppColors.progressFillEnd],
                                   ),
                                 ),
                               ),

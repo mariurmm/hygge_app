@@ -27,23 +27,16 @@ class AppState extends Equatable {
   /// Текущий пользователь.
   final UserModel user;
 
-  const AppState({
-    required this.status,
-    this.user = UserModel.empty,
-  });
+  const AppState({required this.status, this.user = UserModel.empty});
 
   /// Начальное состояние — статус неизвестен.
-  const AppState.unknown()
-      : status = AppStatus.unknown,
-        user = UserModel.empty;
+  const AppState.unknown() : status = AppStatus.unknown, user = UserModel.empty;
 
   /// Пользователь авторизован.
   const AppState.authenticated(this.user) : status = AppStatus.authenticated;
 
   /// Пользователь не авторизован.
-  const AppState.unauthenticated()
-      : status = AppStatus.unauthenticated,
-        user = UserModel.empty;
+  const AppState.unauthenticated() : status = AppStatus.unauthenticated, user = UserModel.empty;
 
   @override
   List<Object?> get props => [status, user];

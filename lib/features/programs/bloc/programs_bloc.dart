@@ -26,16 +26,11 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
     on<ProgramsFilterChanged>(_onFilterChanged);
   }
 
-  Future<void> _onInitialized(
-    ProgramsInitialized event,
-    Emitter<ProgramsState> emit,
-  ) async {
+  Future<void> _onInitialized(ProgramsInitialized event, Emitter<ProgramsState> emit) async {
     try {
       final programs = await _repository.fetchPrograms();
       debugPrint('PROGRAMS COUNT: ${programs.length}');
-      debugPrint(
-        'PROGRAMS: ${programs.map((e) => '${e.uuid} / ${e.title} / ${e.category}').toList()}',
-      );
+      debugPrint('PROGRAMS: ${programs.map((e) => '${e.id} / ${e.title} / ${e.category}').toList()}');
       final nearestLessonsByProgramId = await _fetchNearestLessons(programs);
       final mastersById = await _fetchMasters(programs);
 
@@ -47,40 +42,26 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
         ),
       );
     } catch (_) {
-      emit(
-        state.copyWith(
-          allPrograms: const [],
-          nearestLessonsByProgramId: const {},
-          mastersById: const {},
-        ),
-      );
+      emit(state.copyWith(allPrograms: const [], nearestLessonsByProgramId: const {}, mastersById: const {}));
     }
   }
 
-  Future<void> _onFilterChanged(
-    ProgramsFilterChanged event,
-    Emitter<ProgramsState> emit,
-  ) async {
-    if (event.filterIndex < 0 ||
-        event.filterIndex >= ProgramFilter.values.length) {
+  Future<void> _onFilterChanged(ProgramsFilterChanged event, Emitter<ProgramsState> emit) async {
+    if (event.filterIndex < 0 || event.filterIndex >= ProgramFilter.values.length) {
       return;
     }
 
-    emit(
-      state.copyWith(selectedFilter: ProgramFilter.values[event.filterIndex]),
-    );
+    emit(state.copyWith(selectedFilter: ProgramFilter.values[event.filterIndex]));
   }
 
-  Future<Map<String, LessonModel>> _fetchNearestLessons(
-    List<ProgramModel> programs,
-  ) async {
+  Future<Map<String, LessonModel>> _fetchNearestLessons(List<ProgramModel> programs) async {
     final now = Timestamp.fromDate(DateTime.now());
     final result = <String, LessonModel>{};
 
     for (final program in programs) {
       final snapshot = await _firestore
           .collection('lessons')
-          .where('programId', isEqualTo: program.uuid)
+          .where('programId', isEqualTo: program.id)
           .where('startDate', isGreaterThanOrEqualTo: now)
           .orderBy('startDate')
           .limit(1)
@@ -91,31 +72,26 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
       final doc = snapshot.docs.first;
       final lesson = LessonModel.fromJson({...doc.data(), 'id': doc.id});
 
-      result[program.uuid] = lesson;
+      result[program.id] = lesson;
     }
 
     return result;
   }
 
-  Future<Map<String, MasterModel>> _fetchMasters(
-    List<ProgramModel> programs,
-  ) async {
-    final masterIds = programs
-        .map((program) => program.masterId)
-        .where((id) => id.isNotEmpty)
-        .toSet();
+  Future<Map<String, MasterModel>> _fetchMasters(List<ProgramModel> programs) async {
+    final trainerIds = programs.map((program) => program.trainerId).where((id) => id.isNotEmpty).toSet();
 
     final result = <String, MasterModel>{};
 
-    for (final masterId in masterIds) {
-      final doc = await _firestore.collection('masters').doc(masterId).get();
+    for (final trainerId in trainerIds) {
+      final doc = await _firestore.collection('masters').doc(trainerId).get();
       final data = doc.data();
 
       if (!doc.exists || data == null) continue;
 
       final master = MasterModel.fromJson({...data, 'id': doc.id});
 
-      result[master.uuid] = master;
+      result[master.id] = master;
     }
 
     return result;

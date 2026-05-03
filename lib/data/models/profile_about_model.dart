@@ -51,12 +51,7 @@ class ProfileAboutModel {
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
-  bool get isEmpty =>
-      companyName.isEmpty &&
-      description.isEmpty &&
-      address.isEmpty &&
-      phone.isEmpty &&
-      email.isEmpty;
+  bool get isEmpty => companyName.isEmpty && description.isEmpty && address.isEmpty && phone.isEmpty && email.isEmpty;
 
   // ── Factories ─────────────────────────────────────────────────────────────
 
@@ -67,34 +62,34 @@ class ProfileAboutModel {
     }
 
     return ProfileAboutModel(
-      companyName:  str('companyName'),
-      description:  str('description'),
-      address:      str('address'),
+      companyName: str('companyName'),
+      description: str('description'),
+      address: str('address'),
       workingHours: str('workingHours'),
-      phone:        str('phone'),
-      email:        str('email'),
-      website:      str('website'),
-      instagram:    str('instagram'),
-      facebook:     str('facebook'),
-      telegram:     str('telegram'),
-      whatsapp:     str('whatsapp'),
-      youTube:      str('youTube'),
+      phone: str('phone'),
+      email: str('email'),
+      website: str('website'),
+      instagram: str('instagram'),
+      facebook: str('facebook'),
+      telegram: str('telegram'),
+      whatsapp: str('whatsapp'),
+      youTube: str('youTube'),
     );
   }
 
   static const ProfileAboutModel empty = ProfileAboutModel(
-    companyName:  '',
-    description:  '',
-    address:      '',
+    companyName: '',
+    description: '',
+    address: '',
     workingHours: '',
-    phone:        '',
-    email:        '',
-    website:      '',
-    instagram:    '',
-    facebook:     '',
-    telegram:     '',
-    whatsapp:     '',
-    youTube:      '',
+    phone: '',
+    email: '',
+    website: '',
+    instagram: '',
+    facebook: '',
+    telegram: '',
+    whatsapp: '',
+    youTube: '',
   );
 
   // ── copyWith ──────────────────────────────────────────────────────────────
@@ -114,17 +109,17 @@ class ProfileAboutModel {
     String? workingHours,
   }) {
     return ProfileAboutModel(
-      companyName:  companyName  ?? this.companyName,
-      description:  description  ?? this.description,
-      address:      address      ?? this.address,
-      phone:        phone        ?? this.phone,
-      email:        email        ?? this.email,
-      website:      website      ?? this.website,
-      instagram:    instagram    ?? this.instagram,
-      facebook:     facebook     ?? this.facebook,
-      telegram:     telegram     ?? this.telegram,
-      whatsapp:     whatsapp     ?? this.whatsapp,
-      youTube:      youTube      ?? this.youTube,
+      companyName: companyName ?? this.companyName,
+      description: description ?? this.description,
+      address: address ?? this.address,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      website: website ?? this.website,
+      instagram: instagram ?? this.instagram,
+      facebook: facebook ?? this.facebook,
+      telegram: telegram ?? this.telegram,
+      whatsapp: whatsapp ?? this.whatsapp,
+      youTube: youTube ?? this.youTube,
       workingHours: workingHours ?? this.workingHours,
     );
   }
@@ -135,29 +130,38 @@ class ProfileAboutModel {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ProfileAboutModel &&
-          companyName  == other.companyName  &&
-          description  == other.description  &&
-          address      == other.address      &&
-          phone        == other.phone        &&
-          email        == other.email        &&
-          website      == other.website      &&
-          instagram    == other.instagram    &&
-          facebook     == other.facebook     &&
-          telegram     == other.telegram     &&
-          whatsapp     == other.whatsapp     &&
-          youTube      == other.youTube      &&
+          companyName == other.companyName &&
+          description == other.description &&
+          address == other.address &&
+          phone == other.phone &&
+          email == other.email &&
+          website == other.website &&
+          instagram == other.instagram &&
+          facebook == other.facebook &&
+          telegram == other.telegram &&
+          whatsapp == other.whatsapp &&
+          youTube == other.youTube &&
           workingHours == other.workingHours;
 
   @override
   int get hashCode => Object.hashAll([
-        companyName,  description,  address,
-        phone,        email,        website,
-        instagram,    facebook,     telegram,
-        whatsapp,     youTube,      workingHours,
-      ]);
+    companyName,
+    description,
+    address,
+    phone,
+    email,
+    website,
+    instagram,
+    facebook,
+    telegram,
+    whatsapp,
+    youTube,
+    workingHours,
+  ]);
 
   @override
-  String toString() => 'ProfileAboutModel('
+  String toString() =>
+      'ProfileAboutModel('
       'companyName: $companyName, '
       'email: $email, '
       'phone: $phone)';

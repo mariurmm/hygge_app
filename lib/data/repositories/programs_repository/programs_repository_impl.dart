@@ -4,25 +4,18 @@ import 'package:hygge_app/data/models/program_model.dart';
 
 import 'programs_repository.dart';
 
-class ProgramsRepositoryImpl
-    with RepositoryExecutorMixin
-    implements ProgramsRepository {
-  ProgramsRepositoryImpl({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+class ProgramsRepositoryImpl with RepositoryExecutorMixin implements ProgramsRepository {
+  ProgramsRepositoryImpl({FirebaseFirestore? firestore}) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
 
-  CollectionReference<Map<String, dynamic>> get _programs =>
-      _firestore.collection('programs');
+  CollectionReference<Map<String, dynamic>> get _programs => _firestore.collection('programs');
 
   @override
   Future<List<ProgramModel>> fetchPrograms({int? limit}) => execute(
     actionName: 'ProgramsRepository.fetchPrograms',
     action: () async {
-      Query<Map<String, dynamic>> query = _programs.where(
-        'isActive',
-        isEqualTo: true,
-      );
+      Query<Map<String, dynamic>> query = _programs.where('isActive', isEqualTo: true);
 
       if (limit != null) query = query.limit(limit);
 
@@ -33,10 +26,7 @@ class ProgramsRepositoryImpl
 
   @override
   Stream<List<ProgramModel>> watchPrograms({int? limit}) {
-    Query<Map<String, dynamic>> query = _programs.where(
-      'isActive',
-      isEqualTo: true,
-    );
+    Query<Map<String, dynamic>> query = _programs.where('isActive', isEqualTo: true);
 
     if (limit != null) query = query.limit(limit);
 
@@ -66,9 +56,8 @@ class ProgramsRepositoryImpl
     return ProgramModel.fromJson({...data, 'uuid': data['uuid'] ?? doc.id});
   }
 
-  Function _onStreamError(String actionName) =>
-      (Object error, StackTrace st) {
-        logError(actionName, error, st);
-        throw error;
-      };
+  Function _onStreamError(String actionName) => (Object error, StackTrace st) {
+    logError(actionName, error, st);
+    throw error;
+  };
 }

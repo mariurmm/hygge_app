@@ -13,8 +13,7 @@ import 'package:hygge_app/domain/use_cases/calculate_progress_use_case.dart';
 import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
 import 'package:hygge_app/domain/use_cases/map_class_to_lesson_use_case.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
-import 'package:hygge_app/features/app/bloc/app_state.dart'
-    show AppState, AppStatus;
+import 'package:hygge_app/features/app/bloc/app_state.dart' show AppState, AppStatus;
 import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_about_section.dart';
@@ -39,9 +38,7 @@ class ProfileTab extends StatelessWidget {
         return ProfileBloc(
           loadHistory: LoadHistoryUseCase(
             bookingRepository: BookingRepository(),
-            mapLesson: MapClassToLessonUseCase(
-              scheduleRepository: scheduleRepo,
-            ),
+            mapLesson: MapClassToLessonUseCase(scheduleRepository: scheduleRepo),
           ),
           calculateProgress: const CalculateProgressUseCase(),
           user: context.read<AppBloc>().state.user,
@@ -75,12 +72,7 @@ class ProfileTab extends StatelessWidget {
               extendBodyBehindAppBar: true,
               body: Stack(
                 children: [
-                  Positioned.fill(
-                    child: Image.asset(
-                      AssetPaths.homeBackground,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  Positioned.fill(child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover)),
                   SafeArea(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,10 +80,7 @@ class ProfileTab extends StatelessWidget {
                         ProgramsHeader(
                           trailing: IconButton(
                             padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                              minWidth: 44,
-                              minHeight: 44,
-                            ),
+                            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
                             onPressed: () => context.push(RouteNames.settings),
                             icon: Image.asset(
                               AssetPaths.settingsIcon,
@@ -108,121 +97,72 @@ class ProfileTab extends StatelessWidget {
 
                         Expanded(
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.only(
-                              bottom: AppConstants.profileCardsBottomInset,
-                            ),
+                            padding: const EdgeInsets.only(bottom: AppConstants.profileCardsBottomInset),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal:
-                                        AppPaddings.profileScreenHorizontal,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        state.isPremium
-                                            ? loc.profileStatusPremium
-                                            : loc.profileStatusStandard,
+                                        state.isPremium ? loc.profileStatusPremium : loc.profileStatusStandard,
                                         style: AppTextStyles.programsSubtitle,
                                       ),
 
-                                      const SizedBox(
-                                        height:
-                                            AppSpacings.profileStatusNameGap,
-                                      ),
+                                      const SizedBox(height: AppSpacings.profileStatusNameGap),
 
-                                      Text(
-                                        state.displayName,
-                                        style: AppTextStyles.programsHeading,
-                                      ),
+                                      Text(state.displayName, style: AppTextStyles.programsHeading),
 
-                                      const SizedBox(
-                                        height: AppSpacings.profileNameCardGap,
-                                      ),
+                                      const SizedBox(height: AppSpacings.profileNameCardGap),
 
                                       ProfileAccountSubscriptionCard(
-                                        onTap: () => context.push(
-                                          RouteNames.subscription,
-                                        ),
+                                        onTap: () => context.push(RouteNames.subscription),
                                       ),
 
-                                      const SizedBox(
-                                        height:
-                                            AppSpacings.profileCardsVerticalGap,
-                                      ),
+                                      const SizedBox(height: AppSpacings.profileCardsVerticalGap),
 
                                       ProfileMonthlyTravelCard(
                                         percent: state.travelProgressPercent,
-                                        description: loc
-                                            .profileMonthlySessionsCompleted(
-                                              state.sessionsCompletedThisMonth,
-                                            ),
-                                        leftSessionsLine: loc
-                                            .profileSessionsLeftToStage(
-                                              state.sessionsLeftToNextStage,
-                                            ),
-                                        goalLine: loc.profileGoalSessions(
-                                          state.goalSessionsTotal,
+                                        description: loc.profileMonthlySessionsCompleted(
+                                          state.sessionsCompletedThisMonth,
                                         ),
+                                        leftSessionsLine: loc.profileSessionsLeftToStage(state.sessionsLeftToNextStage),
+                                        goalLine: loc.profileGoalSessions(state.goalSessionsTotal),
                                       ),
                                     ],
                                   ),
                                 ),
 
-                                ProfileFavouritesSection(),
+                                const ProfileFavouritesSection(),
 
-                                const SizedBox(
-                                  height: AppSpacings.profileCardsVerticalGap,
-                                ),
+                                const SizedBox(height: AppSpacings.profileCardsVerticalGap),
 
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal:
-                                        AppPaddings.profileScreenHorizontal,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      ProfileHistoryHeader(
-                                        onViewAll: () =>
-                                            context.push(RouteNames.history),
-                                      ),
+                                      ProfileHistoryHeader(onViewAll: () => context.push(RouteNames.history)),
 
-                                      const SizedBox(
-                                        height: AppSpacings
-                                            .profileHistoryLinkCardGap,
-                                      ),
+                                      const SizedBox(height: AppSpacings.profileHistoryLinkCardGap),
 
                                       if (state.isHistoryLoading)
                                         const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 16),
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                                color: Colors.white),
-                                          ),
+                                          padding: EdgeInsets.symmetric(vertical: 16),
+                                          child: Center(child: CircularProgressIndicator(color: Colors.white)),
                                         )
-                                      else if (state.recentSessionProgram !=
-                                          null)
+                                      else if (state.recentSessionProgram != null)
                                         ProgrammCard(
                                           type: ProgrammCardType.big,
                                           program: state.recentSessionProgram!,
                                           lesson: state.recentSessionLesson,
                                           master: state.recentSessionMaster,
-                                          timingOverlayLabel: state
-                                              .recentSessionLesson
-                                              ?.historyWhenLabel(now),
+                                          timingOverlayLabel: state.recentSessionLesson?.historyWhenLabel(now),
                                         ),
 
-                                      const SizedBox(
-                                        height:
-                                            AppSpacings.profileCardsVerticalGap,
-                                      ),
+                                      const SizedBox(height: AppSpacings.profileCardsVerticalGap),
 
                                       const ProfileAboutSection(),
                                     ],

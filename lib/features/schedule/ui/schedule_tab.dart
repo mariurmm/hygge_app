@@ -24,9 +24,7 @@ final class ScheduleTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ScheduleBloc>(
-      create: (_) =>
-          ScheduleBloc(repository: UpcomingLessonRepositoryImpl())
-            ..add(const ScheduleStarted()),
+      create: (_) => ScheduleBloc(repository: UpcomingLessonRepositoryImpl())..add(const ScheduleStarted()),
       child: const _ScheduleView(),
     );
   }
@@ -45,9 +43,7 @@ final class _ScheduleView extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
-          ),
+          Positioned.fill(child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover)),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,9 +54,7 @@ final class _ScheduleView extends StatelessWidget {
                     builder: (BuildContext context, ScheduleState state) {
                       return RefreshIndicator.adaptive(
                         onRefresh: () async {
-                          context.read<ScheduleBloc>().add(
-                            const ScheduleRefreshRequested(),
-                          );
+                          context.read<ScheduleBloc>().add(const ScheduleRefreshRequested());
                         },
                         child: _ScheduleContent(state: state, loc: loc),
                       );
@@ -85,33 +79,21 @@ final class _ScheduleContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String locale = Localizations.localeOf(context).toLanguageTag();
-    final String selectedDateLabel = DateFormat.yMMMMEEEEd(
-      locale,
-    ).format(state.selectedDay);
+    final String selectedDateLabel = DateFormat.yMMMMEEEEd(locale).format(state.selectedDay);
     final int percent = (state.progress * 100).round();
     final List<LessonModel> selectedLessons = state.selectedDayLessons;
 
     return ListView(
-      padding: const EdgeInsets.only(
-        bottom: AppConstants.scheduleCardsBottomInset,
-      ),
+      padding: const EdgeInsets.only(bottom: AppConstants.scheduleCardsBottomInset),
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppPaddings.scheduleScreenHorizontal,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppPaddings.scheduleScreenHorizontal),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                loc.scheduleTitle,
-                style: AppTextStyles.scheduleSectionTitle,
-              ),
+              Text(loc.scheduleTitle, style: AppTextStyles.scheduleSectionTitle),
               const SizedBox(height: AppSpacings.programsLeadGap),
-              Text(
-                loc.scheduleMonthlyDescription(selectedDateLabel),
-                style: AppTextStyles.scheduleDescription,
-              ),
+              Text(loc.scheduleMonthlyDescription(selectedDateLabel), style: AppTextStyles.scheduleDescription),
             ],
           ),
         ),
@@ -124,15 +106,8 @@ final class _ScheduleContent extends StatelessWidget {
         ),
         const SizedBox(height: AppPaddings.defaultPadding),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppPaddings.scheduleScreenHorizontal,
-          ),
-          child: _ScheduleBody(
-            state: state,
-            loc: loc,
-            percent: percent,
-            selectedLessons: selectedLessons,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppPaddings.scheduleScreenHorizontal),
+          child: _ScheduleBody(state: state, loc: loc, percent: percent, selectedLessons: selectedLessons),
         ),
       ],
     );
@@ -145,12 +120,7 @@ final class _ScheduleBody extends StatelessWidget {
   final int percent;
   final List<LessonModel> selectedLessons;
 
-  const _ScheduleBody({
-    required this.state,
-    required this.loc,
-    required this.percent,
-    required this.selectedLessons,
-  });
+  const _ScheduleBody({required this.state, required this.loc, required this.percent, required this.selectedLessons});
 
   @override
   Widget build(BuildContext context) {
@@ -171,16 +141,10 @@ final class _ScheduleBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          loc.scheduleSignedTitle,
-          style: AppTextStyles.scheduleCalendarTitle,
-        ),
+        Text(loc.scheduleSignedTitle, style: AppTextStyles.scheduleCalendarTitle),
         const SizedBox(height: AppPaddings.defaultPadding),
         if (selectedLessons.isEmpty)
-          ScheduleEmptyState(
-            title: loc.scheduleEmptyTitle,
-            description: loc.scheduleEmptyDescription,
-          )
+          ScheduleEmptyState(title: loc.scheduleEmptyTitle, description: loc.scheduleEmptyDescription)
         else
           ...selectedLessons.map((LessonModel lesson) {
             final program = state.programsById[lesson.programId];
@@ -190,13 +154,9 @@ final class _ScheduleBody extends StatelessWidget {
             }
 
             return Padding(
-              padding: const EdgeInsets.only(
-                bottom: AppSpacings.programsCardsGap,
-              ),
+              padding: const EdgeInsets.only(bottom: AppSpacings.programsCardsGap),
               child: ScheduleProgramCard(
-                ritual: program.ritual.isNotEmpty
-                    ? program.ritual
-                    : loc.scheduleProgramFallback,
+                ritual: program.ritual.isNotEmpty ? program.ritual : loc.scheduleProgramFallback,
                 title: program.title,
                 timeRange: lesson.scheduleTimeRange(),
                 whenLabel: lesson.scheduleDayLabel(state.today),
@@ -205,10 +165,7 @@ final class _ScheduleBody extends StatelessWidget {
           }),
         ScheduleProgressCard(
           percent: percent,
-          description: loc.scheduleProgressDescription(
-            state.completedSessions,
-            state.totalSessions,
-          ),
+          description: loc.scheduleProgressDescription(state.completedSessions, state.totalSessions),
         ),
       ],
     );

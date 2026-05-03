@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/utils/parse_utils.dart';
+
 class ClassModel extends Equatable {
   final String id;
   final String title;
   final String type;
-  final DateTime datetime;
+  final DateTime startDate;
   final int durationMinutes;
   final String trainerId;
   final int maxParticipants;
@@ -18,7 +20,7 @@ class ClassModel extends Equatable {
     required this.id,
     required this.title,
     required this.type,
-    required this.datetime,
+    required this.startDate,
     required this.durationMinutes,
     required this.trainerId,
     required this.maxParticipants,
@@ -29,29 +31,28 @@ class ClassModel extends Equatable {
 
   bool get isFull => currentParticipants >= maxParticipants;
 
-  DateTime get endTime => datetime.add(Duration(minutes: durationMinutes));
+  DateTime get endTime => startDate.add(Duration(minutes: durationMinutes));
 
   String get timeRange {
     final f = DateFormat('H:mm', 'ru');
-    return '${f.format(datetime)} – ${f.format(endTime)}';
+    return '${f.format(startDate)} – ${f.format(endTime)}';
   }
 
   String dayLabel(DateTime today) {
     final t = DateTime(today.year, today.month, today.day);
-    final d = DateTime(datetime.year, datetime.month, datetime.day);
+    final d = DateTime(startDate.year, startDate.month, startDate.day);
     if (d == t) return 'Сегодня';
     if (d == t.add(const Duration(days: 1))) return 'Завтра';
     return DateFormat('d MMM', 'ru').format(d);
   }
 
-  DateTime get calendarDay =>
-      DateTime(datetime.year, datetime.month, datetime.day);
+  DateTime get calendarDay => DateTime(startDate.year, startDate.month, startDate.day);
 
   static final ClassModel empty = ClassModel(
     id: '',
     title: '',
     type: '',
-    datetime: DateTime.fromMillisecondsSinceEpoch(0),
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
     durationMinutes: 0,
     trainerId: '',
     maxParticipants: 0,
@@ -65,35 +66,34 @@ class ClassModel extends Equatable {
       id: id ?? json['id'] as String? ?? '',
       title: json['title'] as String? ?? '',
       type: json['type'] as String? ?? '',
-      datetime: _parseDate(json['datetime']),
-      durationMinutes: _parseInt(json['durationMinutes']),
+      startDate: ParseUtils.parseDate(json['datetime']),
+      durationMinutes: ParseUtils.parseInt(json['durationMinutes']),
       trainerId: json['trainerId'] as String? ?? '',
-      maxParticipants: _parseInt(json['maxParticipants']),
-      currentParticipants: _parseInt(json['currentParticipants']),
-      price: _parseDouble(json['price']),
-      isIncludedInSubscription:
-          json['isIncludedInSubscription'] as bool? ?? true,
+      maxParticipants: ParseUtils.parseInt(json['maxParticipants']),
+      currentParticipants: ParseUtils.parseInt(json['currentParticipants']),
+      price: ParseUtils.parseDouble(json['price']),
+      isIncludedInSubscription: json['isIncludedInSubscription'] as bool? ?? true,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'type': type,
-        'datetime': Timestamp.fromDate(datetime),
-        'durationMinutes': durationMinutes,
-        'trainerId': trainerId,
-        'maxParticipants': maxParticipants,
-        'currentParticipants': currentParticipants,
-        'price': price,
-        'isIncludedInSubscription': isIncludedInSubscription,
-      };
+    'id': id,
+    'title': title,
+    'type': type,
+    'datetime': Timestamp.fromDate(startDate),
+    'durationMinutes': durationMinutes,
+    'trainerId': trainerId,
+    'maxParticipants': maxParticipants,
+    'currentParticipants': currentParticipants,
+    'price': price,
+    'isIncludedInSubscription': isIncludedInSubscription,
+  };
 
   ClassModel copyWith({
     String? id,
     String? title,
     String? type,
-    DateTime? datetime,
+    DateTime? startDate,
     int? durationMinutes,
     String? trainerId,
     int? maxParticipants,
@@ -105,48 +105,27 @@ class ClassModel extends Equatable {
       id: id ?? this.id,
       title: title ?? this.title,
       type: type ?? this.type,
-      datetime: datetime ?? this.datetime,
+      startDate: startDate ?? this.startDate,
       durationMinutes: durationMinutes ?? this.durationMinutes,
       trainerId: trainerId ?? this.trainerId,
       maxParticipants: maxParticipants ?? this.maxParticipants,
       currentParticipants: currentParticipants ?? this.currentParticipants,
       price: price ?? this.price,
-      isIncludedInSubscription:
-          isIncludedInSubscription ?? this.isIncludedInSubscription,
+      isIncludedInSubscription: isIncludedInSubscription ?? this.isIncludedInSubscription,
     );
-  }
-
-  static DateTime _parseDate(dynamic value) {
-    if (value is Timestamp) return value.toDate();
-    if (value is DateTime) return value;
-    if (value is String && value.isNotEmpty) {
-      return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
-    }
-    return DateTime.fromMillisecondsSinceEpoch(0);
-  }
-
-  static int _parseInt(dynamic value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
-  static double _parseDouble(dynamic value) {
-    if (value is num) return value.toDouble();
-    return double.tryParse(value?.toString() ?? '') ?? 0;
   }
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        type,
-        datetime,
-        durationMinutes,
-        trainerId,
-        maxParticipants,
-        currentParticipants,
-        price,
-        isIncludedInSubscription,
-      ];
+    id,
+    title,
+    type,
+    startDate,
+    durationMinutes,
+    trainerId,
+    maxParticipants,
+    currentParticipants,
+    price,
+    isIncludedInSubscription,
+  ];
 }

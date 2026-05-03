@@ -7,7 +7,7 @@ import '../../data/repositories/booking_repository.dart';
 import '../../data/repositories/schedule_repository.dart';
 import '../../data/repositories/subscription_repository.dart';
 import '../../features/app/bloc/app_bloc.dart';
-import '../../features/app_shelll/app_shell.dart';
+import '../../features/app_shell/app_shell.dart';
 import '../../features/booking/cubit/booking_cubit.dart';
 import '../../features/home/bloc/home_cubit.dart';
 import '../../features/home/ui/home_tab.dart';
@@ -41,56 +41,35 @@ class AppRouter {
         ),
 
         // ── Login ────────────────────────────────────────────
-        GoRoute(
-          name: RouteNames.loginName,
-          path: RouteNames.login,
-          builder: (context, state) => const LoginScreen(),
-        ),
+        GoRoute(name: RouteNames.loginName, path: RouteNames.login, builder: (context, state) => const LoginScreen()),
 
         // ── ShellRoute ────────────────────────────────────────
         ShellRoute(
           pageBuilder: (context, state, child) {
-            final userId =
-                context.read<AppBloc>().state.user.uid;
+            final userId = context.read<AppBloc>().state.user.uid;
 
             return CustomTransitionPage(
               key: state.pageKey,
               child: MultiBlocProvider(
                 providers: [
                   BlocProvider<ScheduleCubit>(
-                    create: (_) => ScheduleCubit(
-                      scheduleRepo: scheduleRepo,
-                      bookingRepo: bookingRepo,
-                      userId: userId,
-                    ),
+                    create: (_) => ScheduleCubit(scheduleRepo: scheduleRepo, bookingRepo: bookingRepo, userId: userId),
                   ),
                   BlocProvider<BookingCubit>(
-                    create: (_) => BookingCubit(
-                      bookingRepo: bookingRepo,
-                      subscriptionRepo: subscriptionRepo,
-                      userId: userId,
-                    ),
+                    create: (_) =>
+                        BookingCubit(bookingRepo: bookingRepo, subscriptionRepo: subscriptionRepo, userId: userId),
                   ),
                   BlocProvider<SubscriptionCubit>(
-                    create: (_) => SubscriptionCubit(
-                      repository: subscriptionRepo,
-                      userId: userId,
-                    ),
+                    create: (_) => SubscriptionCubit(repository: subscriptionRepo, userId: userId),
                   ),
-                  BlocProvider<HomeCubit>(
-                    create: (ctx) => HomeCubit(
-                      upcomingRepo: ctx.read(),
-                    ),
-                  ),
+                  BlocProvider<HomeCubit>(create: (ctx) => HomeCubit(upcomingRepo: ctx.read())),
                   BlocProvider<NotificationsBloc>(
-                    create: (_) => NotificationsBloc()
-                      ..add(const NotificationsInitialized()),
+                    create: (_) => NotificationsBloc()..add(const NotificationsInitialized()),
                   ),
                 ],
                 child: AppShell(child: child),
               ),
-              transitionsBuilder: (context, animation, _, child) =>
-                  FadeTransition(opacity: animation, child: child),
+              transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
               transitionDuration: const Duration(milliseconds: 200),
             );
           },
@@ -101,8 +80,7 @@ class AppRouter {
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
                 child: const MainTab(),
-                transitionsBuilder: (context, animation, _, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
@@ -113,8 +91,7 @@ class AppRouter {
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
                 child: const ProgramsTab(),
-                transitionsBuilder: (context, animation, _, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
@@ -125,8 +102,7 @@ class AppRouter {
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
                 child: const ScheduleTab(),
-                transitionsBuilder: (context, animation, _, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
@@ -137,8 +113,7 @@ class AppRouter {
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
                 child: const ProfileTab(),
-                transitionsBuilder: (context, animation, _, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
@@ -152,8 +127,7 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const HistoryScreen(),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
@@ -164,8 +138,7 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const SettingsScreen(),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
@@ -176,8 +149,7 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const SizedBox.shrink(),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
@@ -188,22 +160,15 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const AccountSubscriptionPage(),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
-
       ],
 
       // ── 404 ───────────────────────────────────────────────
       errorBuilder: (context, state) => Scaffold(
-        body: Center(
-          child: Text(
-            'Страница не найдена: ${state.uri}',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
+        body: Center(child: Text('Страница не найдена: ${state.uri}', style: Theme.of(context).textTheme.bodyLarge)),
       ),
     );
   }

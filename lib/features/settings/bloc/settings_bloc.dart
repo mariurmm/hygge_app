@@ -15,23 +15,19 @@ class SettingsBloc extends Cubit<SettingsState> {
   final TextEditingController nameController;
   final TextEditingController emailController;
 
-  SettingsBloc({
-    required AuthRepository authRepository,
-    required AppBloc appBloc,
-    required UserModel user,
-  })  : _authRepository = authRepository,
-        _appBloc = appBloc,
-        nameController = TextEditingController(text: user.displayName),
-        emailController = TextEditingController(text: user.email),
-        super(SettingsState(savedName: user.displayName)) {
+  SettingsBloc({required AuthRepository authRepository, required AppBloc appBloc, required UserModel user})
+    : _authRepository = authRepository,
+      _appBloc = appBloc,
+      nameController = TextEditingController(text: user.displayName),
+      emailController = TextEditingController(text: user.email),
+      super(SettingsState(savedName: user.displayName)) {
     nameController.addListener(_onNameChanged);
   }
 
   // ── Unsaved-changes tracking ──────────────────────────────────────────────
 
   void _onNameChanged() {
-    final hasChanges =
-        nameController.text.trim() != state.savedName.trim();
+    final hasChanges = nameController.text.trim() != state.savedName.trim();
     if (hasChanges != state.hasUnsavedChanges) {
       emit(state.copyWith(hasUnsavedChanges: hasChanges));
     }
@@ -56,10 +52,7 @@ class SettingsBloc extends Cubit<SettingsState> {
   Future<void> persistProfileFields() async {
     emit(state.copyWith(busy: true, clearError: true));
     try {
-      await _authRepository.updateUserProfileFields(
-        displayName: nameController.text,
-        email: emailController.text,
-      );
+      await _authRepository.updateUserProfileFields(displayName: nameController.text, email: emailController.text);
       _appBloc.add(const AppUserRefreshRequested());
       emit(state.copyWith(busy: false));
     } catch (e) {
@@ -72,10 +65,7 @@ class SettingsBloc extends Cubit<SettingsState> {
     if (state.busy) return;
     await persistProfileFields();
     if (state.errorMessage == null) {
-      emit(state.copyWith(
-        savedName: nameController.text.trim(),
-        hasUnsavedChanges: false,
-      ));
+      emit(state.copyWith(savedName: nameController.text.trim(), hasUnsavedChanges: false));
     }
   }
 

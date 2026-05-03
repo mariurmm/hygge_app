@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../core/utils/parse_utils.dart';
+
 class SubscriptionModel extends Equatable {
   final String id;
   final String userId;
@@ -41,23 +43,23 @@ class SubscriptionModel extends Equatable {
     return SubscriptionModel(
       id: json['id'] as String? ?? '',
       userId: json['userId'] as String? ?? '',
-      totalSessions: _parseInt(json['totalSessions']),
-      usedSessions: _parseInt(json['usedSessions']),
-      startDate: _parseDate(json['startDate']),
-      endDate: _parseDate(json['endDate']),
+      totalSessions: ParseUtils.parseInt(json['totalSessions']),
+      usedSessions: ParseUtils.parseInt(json['usedSessions']),
+      startDate: ParseUtils.parseDate(json['startDate']),
+      endDate: ParseUtils.parseDate(json['endDate']),
       isActive: json['isActive'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'totalSessions': totalSessions,
-        'usedSessions': usedSessions,
-        'startDate': Timestamp.fromDate(startDate),
-        'endDate': Timestamp.fromDate(endDate),
-        'isActive': isActive,
-      };
+    'id': id,
+    'userId': userId,
+    'totalSessions': totalSessions,
+    'usedSessions': usedSessions,
+    'startDate': Timestamp.fromDate(startDate),
+    'endDate': Timestamp.fromDate(endDate),
+    'isActive': isActive,
+  };
 
   SubscriptionModel copyWith({
     String? id,
@@ -79,22 +81,6 @@ class SubscriptionModel extends Equatable {
     );
   }
 
-  static DateTime _parseDate(dynamic value) {
-    if (value is Timestamp) return value.toDate();
-    if (value is DateTime) return value;
-    if (value is String && value.isNotEmpty) {
-      return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
-    }
-    return DateTime.fromMillisecondsSinceEpoch(0);
-  }
-
-  static int _parseInt(dynamic value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
   @override
-  List<Object?> get props =>
-      [id, userId, totalSessions, usedSessions, startDate, endDate, isActive];
+  List<Object?> get props => [id, userId, totalSessions, usedSessions, startDate, endDate, isActive];
 }

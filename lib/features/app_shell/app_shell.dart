@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/constants/app_animations.dart';
 import '../../core/constants/app_constants.dart';
 
 class AppShell extends StatefulWidget {
@@ -16,8 +17,7 @@ class AppShell extends StatefulWidget {
   State<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell>
-    with SingleTickerProviderStateMixin {
+class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late Animation<double> _animation;
   int _lastIndex = 0;
@@ -26,12 +26,9 @@ class _AppShellState extends State<AppShell>
   void initState() {
     super.initState();
 
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
+    _animationController = AnimationController(vsync: this, duration: kNavAnimationDuration);
 
-    _animation = ConstantTween<double>(0.0).animate(_animationController);
+    _animation = ConstantTween<double>(kNavOpacityHidden).animate(_animationController);
   }
 
   int _currentIndex(BuildContext context) {
@@ -57,16 +54,10 @@ class _AppShellState extends State<AppShell>
 
     HapticFeedback.mediumImpact();
 
-    _animation =
-        Tween<double>(
-          begin: _lastIndex.toDouble(),
-          end: index.toDouble(),
-        ).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: Curves.easeOutQuart,
-          ),
-        );
+    _animation = Tween<double>(
+      begin: _lastIndex.toDouble(),
+      end: index.toDouble(),
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutQuart));
 
     _animationController.forward(from: 0);
     _lastIndex = index;
@@ -103,28 +94,14 @@ class _AppShellState extends State<AppShell>
 
     if (selectedIndex != _lastIndex && !_animationController.isAnimating) {
       _lastIndex = selectedIndex;
-      _animation = ConstantTween<double>(
-        selectedIndex.toDouble(),
-      ).animate(_animationController);
+      _animation = ConstantTween<double>(selectedIndex.toDouble()).animate(_animationController);
     }
 
     final tabs = [
-      _TabItem(
-        iconPath: 'assets/svg/home.svg',
-        index: AppConstants.mainTabIndex,
-      ),
-      _TabItem(
-        iconPath: 'assets/svg/programs.svg',
-        index: AppConstants.programsTabIndex,
-      ),
-      _TabItem(
-        iconPath: 'assets/svg/schedule.svg',
-        index: AppConstants.scheduleTabIndex,
-      ),
-      _TabItem(
-        iconPath: 'assets/svg/profile.svg',
-        index: AppConstants.profileTabIndex,
-      ),
+      const _TabItem(iconPath: 'assets/svg/home.svg', index: AppConstants.mainTabIndex),
+      const _TabItem(iconPath: 'assets/svg/programs.svg', index: AppConstants.programsTabIndex),
+      const _TabItem(iconPath: 'assets/svg/schedule.svg', index: AppConstants.scheduleTabIndex),
+      const _TabItem(iconPath: 'assets/svg/profile.svg', index: AppConstants.profileTabIndex),
     ];
 
     return Scaffold(
@@ -175,15 +152,12 @@ class _FloatingNavBar extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final sectionWidth = constraints.maxWidth / tabs.length;
-        final stretch = (currentIndexValue - targetIndex).abs().clamp(0.0, 1.0);
+        final stretch = (currentIndexValue - targetIndex).abs().clamp(kNavOpacityHidden, kNavOpacityVisible);
 
         final highlightWidth = (sectionWidth * 0.85) + (30.0 * stretch);
         final highlightHeight = 48.0 - (4.0 * stretch);
 
-        final highlightLeft =
-            (sectionWidth * currentIndexValue) +
-            (sectionWidth / 2) -
-            (highlightWidth / 2);
+        final highlightLeft = (sectionWidth * currentIndexValue) + (sectionWidth / 2) - (highlightWidth / 2);
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(35),
@@ -194,10 +168,7 @@ class _FloatingNavBar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(255, 255, 255, 0.22),
                 borderRadius: BorderRadius.circular(35),
-                border: Border.all(
-                  color: const Color.fromRGBO(255, 255, 255, 0.35),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color.fromRGBO(255, 255, 255, 0.35), width: 1),
               ),
               child: Stack(
                 children: [
@@ -210,21 +181,11 @@ class _FloatingNavBar extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
                         gradient: LinearGradient(
-                          colors: [
-                            colorWithOpacity(Colors.white, 0.25),
-                            colorWithOpacity(Colors.white, 0.10),
-                          ],
+                          colors: [colorWithOpacity(Colors.white, 0.25), colorWithOpacity(Colors.white, 0.10)],
                         ),
-                        border: Border.all(
-                          color: colorWithOpacity(Colors.white, 0.3),
-                          width: 0.8,
-                        ),
+                        border: Border.all(color: colorWithOpacity(Colors.white, 0.3), width: 0.8),
                         boxShadow: [
-                          BoxShadow(
-                            color: colorWithOpacity(Colors.white, 0.15),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
+                          BoxShadow(color: colorWithOpacity(Colors.white, 0.15), blurRadius: 20, spreadRadius: 2),
                         ],
                       ),
                     ),
@@ -232,7 +193,7 @@ class _FloatingNavBar extends StatelessWidget {
                   Row(
                     children: tabs.map((tab) {
                       final distance = (currentIndexValue - tab.index).abs();
-                      final t = (1.0 - distance).clamp(0.0, 1.0);
+                      final t = (kNavOpacityVisible - distance).clamp(kNavOpacityHidden, kNavOpacityVisible);
 
                       return Expanded(
                         child: GestureDetector(
@@ -246,11 +207,7 @@ class _FloatingNavBar extends StatelessWidget {
                                 width: 24,
                                 height: 24,
                                 colorFilter: ColorFilter.mode(
-                                  Color.lerp(
-                                    Colors.white.withValues(alpha: 0.5),
-                                    Colors.white,
-                                    t,
-                                  )!,
+                                  Color.lerp(Colors.white.withValues(alpha: 0.5), Colors.white, t)!,
                                   BlendMode.srcIn,
                                 ),
                               ),

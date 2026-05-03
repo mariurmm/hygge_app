@@ -53,8 +53,7 @@ class AuthRepository {
   Future<UserModel> signInWithGoogle() async {
     try {
       // 1. Вход через Google.
-      final UserCredential? credential =
-          await _authService.signInWithGoogle();
+      final UserCredential? credential = await _authService.signInWithGoogle();
 
       // Пользователь отменил вход.
       if (credential?.user == null) return UserModel.empty;
@@ -68,27 +67,16 @@ class AuthRepository {
       AppLogger.info('AuthRepository: вход выполнен — ${user.email}');
       return user;
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'AuthRepository: ошибка входа через Google',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('AuthRepository: ошибка входа через Google', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }
 
   /// Сохранить имя и email в Firestore и обновить отображаемое имя в Auth.
-  Future<void> updateUserProfileFields({
-    required String displayName,
-    required String email,
-  }) async {
+  Future<void> updateUserProfileFields({required String displayName, required String email}) async {
     final User? fb = _authService.currentUser;
     if (fb == null) return;
-    await _firestoreService.saveUser(fb.uid, {
-      'uid': fb.uid,
-      'displayName': displayName.trim(),
-      'email': email.trim(),
-    });
+    await _firestoreService.saveUser(fb.uid, {'uid': fb.uid, 'displayName': displayName.trim(), 'email': email.trim()});
     final trimmed = displayName.trim();
     if (trimmed.isNotEmpty) {
       await fb.updateDisplayName(trimmed);
@@ -131,11 +119,7 @@ class AuthRepository {
       await _authService.signOut();
       AppLogger.info('AuthRepository: пользователь вышел');
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'AuthRepository: ошибка выхода',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('AuthRepository: ошибка выхода', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }

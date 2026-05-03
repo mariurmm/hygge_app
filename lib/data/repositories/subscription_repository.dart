@@ -47,10 +47,7 @@ class SubscriptionRepository {
   /// Сохранить FCM токен в документ пользователя.
   Future<void> saveFcmToken(String userId, String token) async {
     try {
-      await _firestore
-          .collection(CollectionNames.users)
-          .doc(userId)
-          .set({'fcmToken': token}, SetOptions(merge: true));
+      await _firestore.collection(CollectionNames.users).doc(userId).set({'fcmToken': token}, SetOptions(merge: true));
     } catch (e, st) {
       AppLogger.error('SubscriptionRepository: ошибка saveFcmToken', error: e, stackTrace: st);
     }

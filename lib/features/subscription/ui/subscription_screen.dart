@@ -35,9 +35,7 @@ class SubscriptionScreen extends StatelessWidget {
           BlocBuilder<SubscriptionCubit, SubscriptionState>(
             builder: (context, state) {
               if (state.status == SubscriptionStatus.initial) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                );
+                return const Center(child: CircularProgressIndicator(color: Colors.white));
               }
               if (state.subscription == null) {
                 return _EmptySubscription();
@@ -60,9 +58,7 @@ class _SubscriptionContent extends StatelessWidget {
     final sub = state.subscription!;
     final dateFormat = DateFormat('d MMMM yyyy', 'ru');
     final remaining = sub.remainingSessions;
-    final progress = sub.totalSessions > 0
-        ? sub.usedSessions / sub.totalSessions
-        : 0.0;
+    final progress = sub.totalSessions > 0 ? sub.usedSessions / sub.totalSessions : 0.0;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -78,11 +74,9 @@ class _SubscriptionContent extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Занятий осталось',
-                          style: AppTextStyles.scheduleCardLabel),
+                      Text('Занятий осталось', style: AppTextStyles.scheduleCardLabel),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           color: sub.isValid
                               ? AppColors.primary.withValues(alpha: 0.7)
@@ -91,8 +85,7 @@ class _SubscriptionContent extends StatelessWidget {
                         ),
                         child: Text(
                           sub.isValid ? 'Активен' : 'Истёк',
-                          style: AppTextStyles.label
-                              .copyWith(color: Colors.white),
+                          style: AppTextStyles.label.copyWith(color: Colors.white),
                         ),
                       ),
                     ],
@@ -106,10 +99,7 @@ class _SubscriptionContent extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    'из ${sub.totalSessions}',
-                    style: AppTextStyles.scheduleCardLabel,
-                  ),
+                  Text('из ${sub.totalSessions}', style: AppTextStyles.scheduleCardLabel),
                   const SizedBox(height: 20),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -117,20 +107,13 @@ class _SubscriptionContent extends StatelessWidget {
                       value: progress,
                       minHeight: 8,
                       backgroundColor: Colors.white.withValues(alpha: 0.2),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.progressFillStart),
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppColors.progressFillStart),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _InfoRow(
-                    label: 'Действует до',
-                    value: dateFormat.format(sub.endDate),
-                  ),
+                  _InfoRow(label: 'Действует до', value: dateFormat.format(sub.endDate)),
                   const SizedBox(height: 8),
-                  _InfoRow(
-                    label: 'Начало',
-                    value: dateFormat.format(sub.startDate),
-                  ),
+                  _InfoRow(label: 'Начало', value: dateFormat.format(sub.startDate)),
                 ],
               ),
             ),
@@ -139,14 +122,12 @@ class _SubscriptionContent extends StatelessWidget {
               _GlassCard(
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline,
-                        color: AppColors.terracotta, size: 20),
+                    const Icon(Icons.info_outline, color: AppColors.terracotta, size: 20),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         'Абонемент истёк. Обратитесь к администратору для продления.',
-                        style: AppTextStyles.bodySmall
-                            .copyWith(color: Colors.white70),
+                        style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                       ),
                     ),
                   ],
@@ -169,14 +150,9 @@ class _EmptySubscription extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.card_membership,
-                  color: Colors.white54, size: 48),
+              const Icon(Icons.card_membership, color: Colors.white54, size: 48),
               const SizedBox(height: 16),
-              Text(
-                'Абонемент не найден',
-                style: AppTextStyles.scheduleCalendarTitle,
-                textAlign: TextAlign.center,
-              ),
+              Text('Абонемент не найден', style: AppTextStyles.scheduleCalendarTitle, textAlign: TextAlign.center),
               const SizedBox(height: 8),
               Text(
                 'Для приобретения абонемента обратитесь к администратору студии.',
@@ -206,12 +182,8 @@ class _GlassCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius:
-                BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
           ),
           child: child,
         ),
@@ -231,9 +203,7 @@ class _InfoRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: AppTextStyles.scheduleCardLabel),
-        Text(value,
-            style: AppTextStyles.scheduleCardLabel
-                .copyWith(color: Colors.white)),
+        Text(value, style: AppTextStyles.scheduleCardLabel.copyWith(color: Colors.white)),
       ],
     );
   }

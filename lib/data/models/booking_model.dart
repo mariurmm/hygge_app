@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../core/utils/parse_utils.dart';
+
 enum BookingStatus { pending, confirmed, cancelled }
 
 class BookingModel extends Equatable {
@@ -40,20 +42,20 @@ class BookingModel extends Equatable {
       id: id ?? json['id'] as String? ?? '',
       userId: json['userId'] as String? ?? '',
       classId: json['classId'] as String? ?? '',
-      datetime: _parseDate(json['datetime']),
+      datetime: ParseUtils.parseDate(json['datetime']),
       status: _parseStatus(json['status']),
       notificationSent: json['notificationSent'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'classId': classId,
-        'datetime': Timestamp.fromDate(datetime),
-        'status': status.name,
-        'notificationSent': notificationSent,
-      };
+    'id': id,
+    'userId': userId,
+    'classId': classId,
+    'datetime': Timestamp.fromDate(datetime),
+    'status': status.name,
+    'notificationSent': notificationSent,
+  };
 
   BookingModel copyWith({
     String? id,
@@ -73,15 +75,6 @@ class BookingModel extends Equatable {
     );
   }
 
-  static DateTime _parseDate(dynamic value) {
-    if (value is Timestamp) return value.toDate();
-    if (value is DateTime) return value;
-    if (value is String && value.isNotEmpty) {
-      return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
-    }
-    return DateTime.fromMillisecondsSinceEpoch(0);
-  }
-
   static BookingStatus _parseStatus(dynamic value) {
     switch (value as String?) {
       case 'confirmed':
@@ -94,6 +87,5 @@ class BookingModel extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, userId, classId, datetime, status, notificationSent];
+  List<Object?> get props => [id, userId, classId, datetime, status, notificationSent];
 }

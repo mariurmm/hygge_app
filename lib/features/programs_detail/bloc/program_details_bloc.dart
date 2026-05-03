@@ -5,26 +5,22 @@ import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_
 import 'program_details_event.dart';
 import 'program_details_state.dart';
 
-class ProgramDetailsBloc
-    extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
+class ProgramDetailsBloc extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
   final FavouritesRepository _favouritesRepository;
   final UpcomingLessonRepository _bookingRepository;
 
   ProgramDetailsBloc({
     required FavouritesRepository favouritesRepository,
     required UpcomingLessonRepository bookingRepository,
-  })  : _favouritesRepository = favouritesRepository,
-        _bookingRepository = bookingRepository,
-        super(ProgramDetailsState.initial()) {
+  }) : _favouritesRepository = favouritesRepository,
+       _bookingRepository = bookingRepository,
+       super(ProgramDetailsState.initial()) {
     on<ProgramDetailsStarted>(_onStarted);
     on<ProgramDetailsFavouriteToggled>(_onFavouriteToggled);
     on<ProgramDetailsBooked>(_onBooked);
   }
 
-  Future<void> _onStarted(
-    ProgramDetailsStarted event,
-    Emitter<ProgramDetailsState> emit,
-  ) async {
+  Future<void> _onStarted(ProgramDetailsStarted event, Emitter<ProgramDetailsState> emit) async {
     emit(
       state.copyWith(
         status: ProgramDetailsStatus.loaded,
@@ -37,7 +33,7 @@ class ProgramDetailsBloc
 
     try {
       final favouriteIds = await _favouritesRepository.fetchFavouriteIds();
-      final isFavourite = favouriteIds.contains(event.program.uuid);
+      final isFavourite = favouriteIds.contains(event.program.id);
 
       emit(
         state.copyWith(
@@ -61,61 +57,27 @@ class ProgramDetailsBloc
     }
   }
 
-  Future<void> _onFavouriteToggled(
-    ProgramDetailsFavouriteToggled event,
-    Emitter<ProgramDetailsState> emit,
-  ) async {
+  Future<void> _onFavouriteToggled(ProgramDetailsFavouriteToggled event, Emitter<ProgramDetailsState> emit) async {
     final nextValue = !state.isFavourite;
 
-    emit(
-      state.copyWith(
-        isFavourite: nextValue,
-        errorMessage: null,
-      ),
-    );
+    emit(state.copyWith(isFavourite: nextValue, errorMessage: null));
 
     try {
-      await _favouritesRepository.setFavourite(
-        programId: event.program.uuid,
-        isFavourite: nextValue,
-      );
+      await _favouritesRepository.setFavourite(programId: event.program.id, isFavourite: nextValue);
     } catch (_) {
-      emit(
-        state.copyWith(
-          isFavourite: !nextValue,
-          errorMessage: 'Не удалось обновить избранное',
-        ),
-      );
+      emit(state.copyWith(isFavourite: !nextValue, errorMessage: 'Не удалось обновить избранное'));
     }
   }
 
-  Future<void> _onBooked(
-    ProgramDetailsBooked event,
-    Emitter<ProgramDetailsState> emit,
-  ) async {
-    emit(
-      state.copyWith(
-        isBooking: true,
-        errorMessage: null,
-      ),
-    );
+  Future<void> _onBooked(ProgramDetailsBooked event, Emitter<ProgramDetailsState> emit) async {
+    emit(state.copyWith(isBooking: true, errorMessage: null));
 
     try {
       await _bookingRepository.bookProgram(event.lesson);
 
-      emit(
-        state.copyWith(
-          isBooking: false,
-          errorMessage: null,
-        ),
-      );
+      emit(state.copyWith(isBooking: false, errorMessage: null));
     } catch (_) {
-      emit(
-        state.copyWith(
-          isBooking: false,
-          errorMessage: 'Не удалось записаться на занятие',
-        ),
-      );
+      emit(state.copyWith(isBooking: false, errorMessage: 'Не удалось записаться на занятие'));
     }
   }
 }
