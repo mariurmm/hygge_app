@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/features/home/bloc/home_bloc.dart';
+import 'package:hygge_app/features/home/bloc/home_cubit.dart';
 import 'package:hygge_app/features/home/bloc/home_state.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
@@ -15,7 +15,7 @@ class UpcomingProgramsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    return BlocBuilder<HomeBloc, HomeState>(
+    return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         if (state.isLoading) {
           return const Padding(
@@ -30,17 +30,12 @@ class UpcomingProgramsList extends StatelessWidget {
               horizontal: AppPaddings.programsScreenHorizontal,
               vertical: AppSpacings.scheduleSignedTitleGap,
             ),
-            child: Text(
-              loc.homeUpcomingPrograms,
-              style: AppTextStyles.programsSubtitle,
-            ),
+            child: Text(loc.homeUpcomingPrograms, style: AppTextStyles.programsSubtitle),
           );
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppPaddings.programsScreenHorizontal,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
           child: Column(
             children: List.generate(state.lessons.length, (index) {
               final lesson = state.lessons[index];
@@ -56,7 +51,7 @@ class UpcomingProgramsList extends StatelessWidget {
                   type: ProgrammCardType.big,
                   program: program,
                   lesson: lesson,
-                  master: state.mastersById[program.masterId],
+                  master: state.mastersById[program.trainerId],
                 ),
               );
             }),

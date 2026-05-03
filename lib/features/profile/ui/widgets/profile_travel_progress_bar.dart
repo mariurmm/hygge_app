@@ -37,10 +37,7 @@ class ProfileTravelProgressBar extends StatelessWidget {
                         gradient: const LinearGradient(
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
-                          colors: [
-                            AppColors.progressFillStart,
-                            AppColors.progressFillEnd,
-                          ],
+                          colors: [AppColors.progressFillStart, AppColors.progressFillEnd],
                         ),
                       ),
                     ),

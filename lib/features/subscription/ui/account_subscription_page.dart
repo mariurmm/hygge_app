@@ -20,9 +20,7 @@ class AccountSubscriptionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          AccountSubscriptionBloc(repository: UserRepositoryImpl())
-            ..add(const AccountSubscriptionStarted()),
+      create: (_) => AccountSubscriptionBloc(repository: UserRepositoryImpl())..add(const AccountSubscriptionStarted()),
       child: const AccountSubscriptionView(),
     );
   }
@@ -96,97 +94,75 @@ class AccountSubscriptionView extends StatelessWidget {
 
           SafeArea(
             bottom: false,
-            child:
-                BlocBuilder<AccountSubscriptionBloc, AccountSubscriptionState>(
-                  builder: (context, state) {
-                    if (state.status == AccountSubscriptionStatus.loading) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      );
-                    }
+            child: BlocBuilder<AccountSubscriptionBloc, AccountSubscriptionState>(
+              builder: (context, state) {
+                if (state.status == AccountSubscriptionStatus.loading) {
+                  return const Center(child: CircularProgressIndicator(color: Colors.white));
+                }
 
-                    if (state.status == AccountSubscriptionStatus.failure) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            state.errorMessage ?? _t(context, 'error'),
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.programsSubtitle,
-                          ),
-                        ),
-                      );
-                    }
-
-                    final user = state.user;
-
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.only(
-                        bottom: AppConstants.profileCardsBottomInset,
+                if (state.status == AccountSubscriptionStatus.failure) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        state.errorMessage ?? _t(context, 'error'),
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.programsSubtitle,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppPaddings.profileScreenHorizontal,
+                    ),
+                  );
+                }
+
+                final user = state.user;
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: AppConstants.profileCardsBottomInset),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _InnerHeader(onBack: () => Navigator.of(context).pop()),
+
+                        const SizedBox(height: 18),
+
+                        Text(_t(context, 'page'), style: AppTextStyles.programsHeading),
+
+                        const SizedBox(height: AppSpacings.profileNameCardGap),
+
+                        _AccountGlassCard(name: user.displayName, email: user.email, photoUrl: user.photoUrl),
+
+                        const SizedBox(height: AppSpacings.profileCardsVerticalGap),
+
+                        _SubscriptionGlassCard(
+                          subscription: user.subscription,
+                          currentPlanLabel: _t(context, 'currentPlan'),
+                          freeLabel: _t(context, 'free'),
+                          premiumActiveText: _t(context, 'premiumActive'),
+                          freeActiveText: _t(context, 'freeActive'),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _InnerHeader(
-                              onBack: () => Navigator.of(context).pop(),
-                            ),
 
-                            const SizedBox(height: 18),
+                        const SizedBox(height: AppSpacings.profileCardsVerticalGap),
 
-                            Text(
-                              _t(context, 'page'),
-                              style: AppTextStyles.programsHeading,
-                            ),
-
-                            const SizedBox(
-                              height: AppSpacings.profileNameCardGap,
-                            ),
-
-                            _AccountGlassCard(
-                              name: user.displayName,
-                              email: user.email,
-                              photoUrl: user.photoUrl,
-                            ),
-
-                            const SizedBox(
-                              height: AppSpacings.profileCardsVerticalGap,
-                            ),
-
-                            _SubscriptionGlassCard(
-                              subscription: user.subscription,
-                              currentPlanLabel: _t(context, 'currentPlan'),
-                              freeLabel: _t(context, 'free'),
-                              premiumActiveText: _t(context, 'premiumActive'),
-                              freeActiveText: _t(context, 'freeActive'),
-                            ),
-
-                            const SizedBox(
-                              height: AppSpacings.profileCardsVerticalGap,
-                            ),
-
-                            _ActionGlassTile(
-                              title: _t(context, 'manageTitle'),
-                              subtitle: _t(context, 'manageSubtitle'),
-                              onTap: () {},
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            _ActionGlassTile(
-                              title: _t(context, 'historyTitle'),
-                              subtitle: _t(context, 'historySubtitle'),
-                              onTap: () {},
-                            ),
-                          ],
+                        _ActionGlassTile(
+                          title: _t(context, 'manageTitle'),
+                          subtitle: _t(context, 'manageSubtitle'),
+                          onTap: () {},
                         ),
-                      ),
-                    );
-                  },
-                ),
+
+                        const SizedBox(height: 12),
+
+                        _ActionGlassTile(
+                          title: _t(context, 'historyTitle'),
+                          subtitle: _t(context, 'historySubtitle'),
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -213,18 +189,12 @@ class _InnerHeader extends StatelessWidget {
               AssetPaths.arrowBackPng,
               width: AppConstants.programsHeaderIconSize,
               height: AppConstants.programsHeaderIconSize,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: AppConstants.programsHeaderIconSize,
-              ),
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.arrow_back, color: Colors.white, size: AppConstants.programsHeaderIconSize),
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            'hygge concept',
-            style: AppTextStyles.programsLogo.copyWith(fontSize: 20),
-          ),
+          Text('hygge concept', style: AppTextStyles.programsLogo.copyWith(fontSize: 20)),
         ],
       ),
     );
@@ -236,11 +206,7 @@ class _AccountGlassCard extends StatelessWidget {
   final String email;
   final String photoUrl;
 
-  const _AccountGlassCard({
-    required this.name,
-    required this.email,
-    required this.photoUrl,
-  });
+  const _AccountGlassCard({required this.name, required this.email, required this.photoUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -253,12 +219,8 @@ class _AccountGlassCard extends StatelessWidget {
           CircleAvatar(
             radius: 32,
             backgroundColor: AppColors.programsCardMedia,
-            backgroundImage: photoUrl.isNotEmpty
-                ? NetworkImage(photoUrl)
-                : null,
-            child: photoUrl.isEmpty
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
+            backgroundImage: photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null,
+            child: photoUrl.isEmpty ? const Icon(Icons.person, color: Colors.white) : null,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -277,9 +239,7 @@ class _AccountGlassCard extends StatelessWidget {
                   email,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.programsCardDescription.copyWith(
-                    fontSize: 14,
-                  ),
+                  style: AppTextStyles.programsCardDescription.copyWith(fontSize: 14),
                 ),
               ],
             ),
@@ -308,7 +268,7 @@ class _SubscriptionGlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPremium = subscription?.isNotEmpty == true;
-    final title = subscription?.title ?? freeLabel;
+    final title = (subscription != null && subscription!.isNotEmpty) ? currentPlanLabel : freeLabel;
 
     return GlassRoundedPanel(
       width: double.infinity,
@@ -319,15 +279,9 @@ class _SubscriptionGlassCard extends StatelessWidget {
         children: [
           Text(currentPlanLabel, style: AppTextStyles.settingsLabel16Light),
           const SizedBox(height: 10),
-          Text(
-            title,
-            style: AppTextStyles.programsHeading.copyWith(fontSize: 24),
-          ),
+          Text(title, style: AppTextStyles.programsHeading.copyWith(fontSize: 24)),
           const SizedBox(height: 10),
-          Text(
-            isPremium ? premiumActiveText : freeActiveText,
-            style: AppTextStyles.programsCardDescription,
-          ),
+          Text(isPremium ? premiumActiveText : freeActiveText, style: AppTextStyles.programsCardDescription),
         ],
       ),
     );
@@ -339,11 +293,7 @@ class _ActionGlassTile extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
 
-  const _ActionGlassTile({
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+  const _ActionGlassTile({required this.title, required this.subtitle, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -371,9 +321,7 @@ class _ActionGlassTile extends StatelessWidget {
                         subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.programsCardDescription.copyWith(
-                          fontSize: 14,
-                        ),
+                        style: AppTextStyles.programsCardDescription.copyWith(fontSize: 14),
                       ),
                     ],
                   ),

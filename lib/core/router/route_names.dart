@@ -11,9 +11,9 @@ class RouteNames {
   static const String schedule = '/home/schedule'; // «Расписание»
   static const String history = '/home/history'; // История программ (с профиля)
   static const String settings = '/home/settings'; // Настройки профиля
-  static const String homeShell =
-      '/homeShell'; // Роут для оболочки с BottomNavigationBar
+  static const String homeShell = '/homeShell'; // Роут для оболочки с BottomNavigationBar
   static const String notifications = '/home/notifications'; // Уведомления
+  static const String subscription = '/home/subscription'; // Мой абонемент
 
   // ── Имена (names) — используем в GoRoute(name: ...) ──────────
   static const String splashName = 'splash';
@@ -27,4 +27,5 @@ class RouteNames {
   static const String appShellName = 'appShell';
 
   static const String notificationsName = 'notifications';
+  static const String subscriptionName = 'subscription';
 }

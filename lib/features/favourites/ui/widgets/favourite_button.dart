@@ -23,9 +23,7 @@ class FavouriteButton extends StatelessWidget {
               return ScaleTransition(scale: animation, child: child);
             },
             child: Icon(
-              isFavourite
-                  ? Icons.favorite_rounded
-                  : Icons.favorite_border_rounded,
+              isFavourite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
               key: ValueKey<bool>(isFavourite),
               color: isFavourite ? AppColors.terracotta : Colors.white70,
               size: 22,

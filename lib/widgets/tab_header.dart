@@ -15,9 +15,7 @@ class ProgramsHeader extends StatelessWidget {
     return SizedBox(
       height: AppConstants.appHeaderHeight,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppPaddings.programsHeaderHorizontal,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsHeaderHorizontal),
         child: Row(
           children: [
             // LEFT SIDE
@@ -36,11 +34,7 @@ class ProgramsHeader extends StatelessWidget {
                   const SizedBox(width: 8),
 
                   Flexible(
-                    child: Text(
-                      'hy.gge concept',
-                      style: AppTextStyles.programsLogo,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    child: Text('hy.gge concept', style: AppTextStyles.programsLogo, overflow: TextOverflow.ellipsis),
                   ),
                 ],
               ),

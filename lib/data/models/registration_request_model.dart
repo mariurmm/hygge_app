@@ -42,12 +42,7 @@ class RegistrationRequestModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'password': password,
-    };
+    return {'firstName': firstName, 'lastName': lastName, 'email': email, 'password': password};
   }
 
   @override

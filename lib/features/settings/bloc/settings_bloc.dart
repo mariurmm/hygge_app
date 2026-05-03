@@ -15,15 +15,28 @@ class SettingsBloc extends Cubit<SettingsState> {
   final TextEditingController nameController;
   final TextEditingController emailController;
 
-  SettingsBloc({
-    required AuthRepository authRepository,
-    required AppBloc appBloc,
-    required UserModel user,
-  }) : _authRepository = authRepository,
-       _appBloc = appBloc,
-       nameController = TextEditingController(text: user.displayName),
-       emailController = TextEditingController(text: user.email),
-       super(const SettingsState());
+  SettingsBloc({required AuthRepository authRepository, required AppBloc appBloc, required UserModel user})
+    : _authRepository = authRepository,
+      _appBloc = appBloc,
+      nameController = TextEditingController(text: user.displayName),
+      emailController = TextEditingController(text: user.email),
+      super(SettingsState(savedName: user.displayName)) {
+    nameController.addListener(_onNameChanged);
+  }
+
+  // ── Unsaved-changes tracking ──────────────────────────────────────────────
+
+  void _onNameChanged() {
+    final hasChanges = nameController.text.trim() != state.savedName.trim();
+    if (hasChanges != state.hasUnsavedChanges) {
+      emit(state.copyWith(hasUnsavedChanges: hasChanges));
+    }
+  }
+
+  /// Allows a programmatic pop to succeed even when there are unsaved changes.
+  void setAllowPop() => emit(state.copyWith(allowPop: true));
+
+  // ── Persistence ───────────────────────────────────────────────────────────
 
   Future<void> pickAvatarFromGallery() async {
     final picker = ImagePicker();
@@ -39,16 +52,20 @@ class SettingsBloc extends Cubit<SettingsState> {
   Future<void> persistProfileFields() async {
     emit(state.copyWith(busy: true, clearError: true));
     try {
-      await _authRepository.updateUserProfileFields(
-        displayName: nameController.text,
-        email: emailController.text,
-      );
-      // Уведомляем AppBloc, чтобы он перечитал актуальные данные из Firebase.
-      // Это необходимо, так как updateDisplayName не триггерит authStateChanges.
+      await _authRepository.updateUserProfileFields(displayName: nameController.text, email: emailController.text);
       _appBloc.add(const AppUserRefreshRequested());
       emit(state.copyWith(busy: false));
     } catch (e) {
       emit(state.copyWith(busy: false, errorMessage: e.toString()));
+    }
+  }
+
+  /// Persists the profile and, on success, clears the unsaved-changes flag.
+  Future<void> save() async {
+    if (state.busy) return;
+    await persistProfileFields();
+    if (state.errorMessage == null) {
+      emit(state.copyWith(savedName: nameController.text.trim(), hasUnsavedChanges: false));
     }
   }
 
@@ -73,6 +90,7 @@ class SettingsBloc extends Cubit<SettingsState> {
 
   @override
   Future<void> close() {
+    nameController.removeListener(_onNameChanged);
     nameController.dispose();
     emailController.dispose();
     return super.close();

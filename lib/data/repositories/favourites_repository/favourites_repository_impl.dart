@@ -1,26 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/utils/repository_executor.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 
 import 'favourites_repository.dart';
 
-class FavouritesRepositoryImpl
-    with RepositoryExecutorMixin
-    implements FavouritesRepository {
-  FavouritesRepositoryImpl({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+class FavouritesRepositoryImpl with RepositoryExecutorMixin implements FavouritesRepository {
+  FavouritesRepositoryImpl({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
 
   String? get _uid => _auth.currentUser?.uid;
 
-  CollectionReference<Map<String, dynamic>> get _programs =>
-      _firestore.collection('programs');
+  CollectionReference<Map<String, dynamic>> get _programs => _firestore.collection('programs');
 
   CollectionReference<Map<String, dynamic>> _favourites(String uid) =>
       _firestore.collection('users').doc(uid).collection('favourites');
@@ -38,68 +33,59 @@ class FavouritesRepositoryImpl
 
   @override
   Future<Set<String>> fetchFavouriteIds() => execute(
-        actionName: 'FavouritesRepository.fetchFavouriteIds',
-        action: () async {
-          final uid = _uid;
-          if (uid == null) return <String>{};
+    actionName: 'FavouritesRepository.fetchFavouriteIds',
+    action: () async {
+      final uid = _uid;
+      if (uid == null) return <String>{};
 
-          final snapshot = await _favourites(uid).get();
-          return snapshot.docs.map((d) => d.id).toSet();
-        },
-      );
-
-  @override
-  Future<void> setFavourite({
-    required String programId,
-    required bool isFavourite,
-  }) => execute(
-        actionName: 'FavouritesRepository.setFavourite',
-        action: () async {
-          final uid = _uid;
-          if (uid == null || programId.isEmpty) return;
-
-          final ref = _favourites(uid).doc(programId);
-
-          if (isFavourite) {
-            await ref.set(
-              {
-                'programId': programId,
-                'createdAt': FieldValue.serverTimestamp(),
-              },
-              SetOptions(merge: true),
-            );
-          } else {
-            await ref.delete();
-          }
-        },
-      );
+      final snapshot = await _favourites(uid).get();
+      return snapshot.docs.map((d) => d.id).toSet();
+    },
+  );
 
   @override
-  Future<List<LessonModel>> fetchFavouritePrograms() => execute(
-        actionName: 'FavouritesRepository.fetchFavouritePrograms',
-        action: () async {
-          final uid = _uid;
-          if (uid == null) return const <LessonModel>[];
+  Future<void> setFavourite({required String programId, required bool isFavourite}) => execute(
+    actionName: 'FavouritesRepository.setFavourite',
+    action: () async {
+      final uid = _uid;
+      if (uid == null || programId.isEmpty) return;
 
-          final snapshot = await _favourites(uid).get();
-          final result = <LessonModel>[];
+      final ref = _favourites(uid).doc(programId);
 
-          for (final doc in snapshot.docs) {
-            final programDoc = await _programs.doc(doc.id).get();
-            if (programDoc.exists && programDoc.data() != null) {
-              result.add(_lessonFromDoc(programDoc));
-            }
-          }
+      if (isFavourite) {
+        await ref.set({'programId': programId, 'createdAt': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+      } else {
+        await ref.delete();
+      }
+    },
+  );
 
-          return result;
-        },
-      );
+  @override
+  Future<List<ProgramModel>> fetchFavouritePrograms() => execute(
+    actionName: 'FavouritesRepository.fetchFavouritePrograms',
+    action: () async {
+      final uid = _uid;
+      if (uid == null) return const <ProgramModel>[];
+
+      final snapshot = await _favourites(uid).get();
+      final result = <ProgramModel>[];
+
+      for (final doc in snapshot.docs) {
+        final programDoc = await _programs.doc(doc.id).get();
+        if (programDoc.exists && programDoc.data() != null) {
+          result.add(_programFromDoc(programDoc));
+        }
+      }
+
+      return result;
+    },
+  );
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  LessonModel _lessonFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  ProgramModel _programFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
-    return LessonModel.fromJson({...data, 'uuid': data['uuid'] ?? doc.id});
+    return ProgramModel.fromJson({...data, 'uuid': data['uuid'] ?? doc.id});
   }
 
   Function _onStreamError(String actionName) =>

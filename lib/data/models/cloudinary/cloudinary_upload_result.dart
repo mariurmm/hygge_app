@@ -32,23 +32,15 @@ final class CloudinaryUploadResult extends Equatable {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'publicId': publicId,
-        'secureUrl': secureUrl,
-        'originalFilename': originalFilename,
-        'bytes': bytes,
-        'width': width,
-        'height': height,
-        'format': format,
-      };
+    'publicId': publicId,
+    'secureUrl': secureUrl,
+    'originalFilename': originalFilename,
+    'bytes': bytes,
+    'width': width,
+    'height': height,
+    'format': format,
+  };
 
   @override
-  List<Object?> get props => <Object?>[
-        publicId,
-        secureUrl,
-        originalFilename,
-        bytes,
-        width,
-        height,
-        format,
-      ];
+  List<Object?> get props => <Object?>[publicId, secureUrl, originalFilename, bytes, width, height, format];
 }

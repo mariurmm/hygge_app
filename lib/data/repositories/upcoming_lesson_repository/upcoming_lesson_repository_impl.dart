@@ -5,28 +5,21 @@ import 'package:hygge_app/data/models/lesson_model.dart';
 
 import 'upcoming_lesson_repository.dart';
 
-class UpcomingLessonRepositoryImpl
-    with RepositoryExecutorMixin
-    implements UpcomingLessonRepository {
-  UpcomingLessonRepositoryImpl({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
-       _auth = auth ?? FirebaseAuth.instance;
+class UpcomingLessonRepositoryImpl with RepositoryExecutorMixin implements UpcomingLessonRepository {
+  UpcomingLessonRepositoryImpl({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
 
   String? get _uid => _auth.currentUser?.uid;
 
-  CollectionReference<Map<String, dynamic>> get _programs =>
-      _firestore.collection('programs');
+  CollectionReference<Map<String, dynamic>> get _programs => _firestore.collection('programs');
 
-  CollectionReference<Map<String, dynamic>> get _upcomingPrograms =>
-      _firestore.collection('upcoming_programs');
+  CollectionReference<Map<String, dynamic>> get _upcomingPrograms => _firestore.collection('upcoming_programs');
 
-  CollectionReference<Map<String, dynamic>> get _lessons =>
-      _firestore.collection('lessons');
+  CollectionReference<Map<String, dynamic>> get _lessons => _firestore.collection('lessons');
 
   CollectionReference<Map<String, dynamic>> _bookings(String uid) =>
       _firestore.collection('users').doc(uid).collection('bookings');
@@ -35,13 +28,10 @@ class UpcomingLessonRepositoryImpl
   Future<List<LessonModel>> fetchUpcomingPrograms({int? limit}) => execute(
     actionName: 'UpcomingLessonRepository.fetchUpcomingPrograms',
     action: () async {
-      final snapshot = await _upcomingPrograms
-          .where('isVisible', isEqualTo: true)
-          .get();
+      final snapshot = await _upcomingPrograms.where('isVisible', isEqualTo: true).get();
 
-      final items =
-          snapshot.docs.map(_lessonFromDoc).where((p) => p.isNotEmpty).toList()
-            ..sort((a, b) => a.startDate.compareTo(b.startDate));
+      final items = snapshot.docs.map(_lessonFromDoc).where((p) => p.isNotEmpty).toList()
+        ..sort((a, b) => a.startDate.compareTo(b.startDate));
 
       return limit != null ? items.take(limit).toList() : items;
     },
@@ -53,40 +43,30 @@ class UpcomingLessonRepositoryImpl
         .where('isVisible', isEqualTo: true)
         .snapshots()
         .map((snapshot) {
-          final items =
-              snapshot.docs
-                  .map(_lessonFromDoc)
-                  .where((p) => p.isNotEmpty)
-                  .toList()
-                ..sort((a, b) => a.startDate.compareTo(b.startDate));
+          final items = snapshot.docs.map(_lessonFromDoc).where((p) => p.isNotEmpty).toList()
+            ..sort((a, b) => a.startDate.compareTo(b.startDate));
 
           return limit != null ? items.take(limit).toList() : items;
         })
-        .handleError(
-          _onStreamError('UpcomingLessonRepository.watchUpcomingPrograms'),
-        );
+        .handleError(_onStreamError('UpcomingLessonRepository.watchUpcomingPrograms'));
   }
 
   @override
-  Future<List<LessonModel>> fetchLessonsByProgramId(String programId) =>
-      execute(
-        actionName: 'UpcomingLessonRepository.fetchLessonsByProgramId',
-        action: () async {
-          if (programId.isEmpty) return const <LessonModel>[];
+  Future<List<LessonModel>> fetchLessonsByProgramId(String programId) => execute(
+    actionName: 'UpcomingLessonRepository.fetchLessonsByProgramId',
+    action: () async {
+      if (programId.isEmpty) return const <LessonModel>[];
 
-          final snapshot = await _lessons
-              .where('programId', isEqualTo: programId)
-              .orderBy('startDate')
-              .get();
+      final snapshot = await _lessons.where('programId', isEqualTo: programId).orderBy('startDate').get();
 
-          final result = <LessonModel>[];
-          for (final doc in snapshot.docs) {
-            final lesson = await _lessonWithProgramData(doc);
-            if (lesson != null) result.add(lesson);
-          }
-          return result;
-        },
-      );
+      final result = <LessonModel>[];
+      for (final doc in snapshot.docs) {
+        final lesson = await _lessonWithProgramData(doc);
+        if (lesson != null) result.add(lesson);
+      }
+      return result;
+    },
+  );
 
   @override
   Future<List<LessonModel>> fetchUpcomingLessons({int limit = 10}) => execute(
@@ -94,11 +74,7 @@ class UpcomingLessonRepositoryImpl
     action: () async {
       final now = Timestamp.fromDate(DateTime.now());
 
-      final snapshot = await _lessons
-          .where('startDate', isGreaterThan: now)
-          .orderBy('startDate')
-          .limit(limit)
-          .get();
+      final snapshot = await _lessons.where('startDate', isGreaterThan: now).orderBy('startDate').limit(limit).get();
 
       final result = <LessonModel>[];
       for (final doc in snapshot.docs) {
@@ -139,10 +115,10 @@ class UpcomingLessonRepositoryImpl
       final uid = _uid;
       if (uid == null) return;
 
-      await _bookings(uid).doc(lesson.uuid).set({
-        'lessonId': lesson.uuid,
+      await _bookings(uid).doc(lesson.id).set({
+        'lessonId': lesson.id,
         'programId': lesson.programId,
-        'masterId': lesson.masterId,
+        'masterId': lesson.trainerId,
         'status': 'booked',
         'bookedAt': FieldValue.serverTimestamp(),
         'lesson': lesson.toJson(),
@@ -157,10 +133,7 @@ class UpcomingLessonRepositoryImpl
       final uid = _uid;
       if (uid == null || bookingId.isEmpty) return;
 
-      await _bookings(uid).doc(bookingId).update({
-        'status': 'cancelled',
-        'cancelledAt': FieldValue.serverTimestamp(),
-      });
+      await _bookings(uid).doc(bookingId).update({'status': 'cancelled', 'cancelledAt': FieldValue.serverTimestamp()});
     },
   );
 
@@ -171,26 +144,18 @@ class UpcomingLessonRepositoryImpl
     return LessonModel.fromJson({...data, 'uuid': data['uuid'] ?? doc.id});
   }
 
-  Future<LessonModel?> _lessonWithProgramData(
-    QueryDocumentSnapshot<Map<String, dynamic>> lessonDoc,
-  ) async {
+  Future<LessonModel?> _lessonWithProgramData(QueryDocumentSnapshot<Map<String, dynamic>> lessonDoc) async {
     final lessonData = lessonDoc.data();
     final programId = lessonData['programId'] as String?;
 
     if (programId == null || programId.isEmpty) {
-      return LessonModel.fromJson({
-        ...lessonData,
-        'uuid': lessonData['uuid'] ?? lessonDoc.id,
-      });
+      return LessonModel.fromJson({...lessonData, 'uuid': lessonData['uuid'] ?? lessonDoc.id});
     }
 
     final programDoc = await _programs.doc(programId).get();
 
     if (!programDoc.exists || programDoc.data() == null) {
-      return LessonModel.fromJson({
-        ...lessonData,
-        'uuid': lessonData['uuid'] ?? lessonDoc.id,
-      });
+      return LessonModel.fromJson({...lessonData, 'uuid': lessonData['uuid'] ?? lessonDoc.id});
     }
 
     final programData = programDoc.data()!;
@@ -208,9 +173,7 @@ class UpcomingLessonRepositoryImpl
     });
   }
 
-  Future<LessonModel?> _lessonFromBooking(
-    QueryDocumentSnapshot<Map<String, dynamic>> doc,
-  ) async {
+  Future<LessonModel?> _lessonFromBooking(QueryDocumentSnapshot<Map<String, dynamic>> doc) async {
     final data = doc.data();
 
     if (data['lesson'] is Map) {
@@ -220,8 +183,7 @@ class UpcomingLessonRepositoryImpl
       });
     }
 
-    final programId =
-        data['programId'] as String? ?? data['lessonId'] as String?;
+    final programId = data['programId'] as String? ?? data['lessonId'] as String?;
 
     if (programId == null || programId.isEmpty) return null;
 

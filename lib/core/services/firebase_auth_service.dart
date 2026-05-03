@@ -13,7 +13,6 @@ import '../utils/logger.dart';
 /// 2. Логирование и обработка ошибок в одном месте.
 /// 3. Тестирование — проще подменить один сервис, чем весь Firebase.
 
-
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
@@ -33,7 +32,7 @@ class FirebaseAuthService {
   /// Запускает флоу входа через Google (v7 event-based API).
   Future<UserCredential?> signInWithGoogle() async {
     final serverClientId = dotenv.env['SERVER_CLIENT_ID'];
-    if(serverClientId == null){
+    if (serverClientId == null) {
       throw Exception('Server client is empty!');
     }
     await initialize(serverClientId: serverClientId);
@@ -47,15 +46,10 @@ class FirebaseAuthService {
           switch (event) {
             case GoogleSignInAuthenticationEventSignIn():
               final idToken = event.user.authentication.idToken;
-              final credential = GoogleAuthProvider.credential(
-                idToken: idToken,
-              );
-              final userCredential =
-                  await _auth.signInWithCredential(credential);
+              final credential = GoogleAuthProvider.credential(idToken: idToken);
+              final userCredential = await _auth.signInWithCredential(credential);
 
-              AppLogger.info(
-                'Google Sign-In: успешный вход — ${userCredential.user?.email}',
-              );
+              AppLogger.info('Google Sign-In: успешный вход — ${userCredential.user?.email}');
               if (!completer.isCompleted) {
                 completer.complete(userCredential);
               }
@@ -67,11 +61,7 @@ class FirebaseAuthService {
               }
           }
         } catch (error, stackTrace) {
-          AppLogger.error(
-            'Google Sign-In: ошибка при обработке',
-            error: error,
-            stackTrace: stackTrace,
-          );
+          AppLogger.error('Google Sign-In: ошибка при обработке', error: error, stackTrace: stackTrace);
           if (!completer.isCompleted) {
             completer.completeError(error);
           }
@@ -79,13 +69,13 @@ class FirebaseAuthService {
           await subscription.cancel();
         }
       },
-      onError: (Object error) {
+      onError: (Object error) async {
         // Ошибки стрима (включая GoogleSignInException)
         AppLogger.error('Google Sign-In: ошибка', error: error);
         if (!completer.isCompleted) {
           completer.completeError(error);
         }
-        subscription.cancel();
+        await subscription.cancel();
       },
     );
 
@@ -104,17 +94,10 @@ class FirebaseAuthService {
 
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        _auth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
+      await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
       AppLogger.info('Sign Out: пользователь вышел');
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'Sign Out: ошибка при выходе',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Sign Out: ошибка при выходе', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }

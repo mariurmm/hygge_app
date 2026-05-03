@@ -1,41 +1,42 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/utils/parse_utils.dart';
+
 class LessonModel extends Equatable {
-  final String uuid;
+  final String id;
   final String programId;
-  final String masterId;
+  final String trainerId;
   final DateTime startDate;
-  final DateTime finishDate;
+  final DateTime endDate;
   final bool isBookable;
 
   const LessonModel({
-    required this.uuid,
+    required this.id,
     required this.programId,
-    this.masterId = '',
+    this.trainerId = '',
     required this.startDate,
-    required this.finishDate,
+    required this.endDate,
     this.isBookable = true,
   });
 
   static final LessonModel empty = LessonModel(
-    uuid: '',
+    id: '',
     programId: '',
-    masterId: '',
+    trainerId: '',
     startDate: DateTime.fromMillisecondsSinceEpoch(0),
-    finishDate: DateTime.fromMillisecondsSinceEpoch(0),
+    endDate: DateTime.fromMillisecondsSinceEpoch(0),
     isBookable: false,
   );
 
-  DateTime get calendarDay =>
-      DateTime(startDate.year, startDate.month, startDate.day);
+  DateTime get calendarDay => DateTime(startDate.year, startDate.month, startDate.day);
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
   String scheduleTimeRange({String locale = 'ru'}) {
     final formatter = DateFormat('H:mm', locale);
-    return '${formatter.format(startDate)} - ${formatter.format(finishDate)}';
+    return '${formatter.format(startDate)} - ${formatter.format(endDate)}';
   }
 
   String scheduleDayLabel(DateTime today, {String locale = 'ru'}) {
@@ -65,44 +66,24 @@ class LessonModel extends Equatable {
 
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
-      uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
+      id: json['uuid'] as String? ?? json['id'] as String? ?? '',
       programId: json['programId'] as String? ?? '',
-      masterId: json['masterId'] as String? ?? '',
-      startDate: _parseDate(json['startDate'] ?? json['availableFrom']),
-      finishDate: _parseDate(
-        json['finishDate'] ?? json['endDate'] ?? json['availableTo'],
-      ),
+      trainerId: json['masterId'] as String? ?? '',
+      startDate: ParseUtils.parseDate(json['startDate'] ?? json['availableFrom']),
+      endDate: ParseUtils.parseDate(json['finishDate'] ?? json['endDate'] ?? json['availableTo']),
       isBookable: json['isBookable'] as bool? ?? true,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'uuid': uuid,
+      'uuid': id,
       'programId': programId,
-      'masterId': masterId,
+      'masterId': trainerId,
       'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
+      'finishDate': endDate.toIso8601String(),
       'isBookable': isBookable,
     };
-  }
-
-  static DateTime _parseDate(dynamic value) {
-    if (value is DateTime) return value;
-
-    if (value is String && value.isNotEmpty) {
-      return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
-    }
-
-    if (value is int) {
-      return DateTime.fromMillisecondsSinceEpoch(value);
-    }
-
-    try {
-      return (value as dynamic).toDate() as DateTime;
-    } catch (_) {
-      return DateTime.fromMillisecondsSinceEpoch(0);
-    }
   }
 
   static String _todayLabel(String locale) {
@@ -130,12 +111,5 @@ class LessonModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-    uuid,
-    programId,
-    masterId,
-    startDate,
-    finishDate,
-    isBookable,
-  ];
+  List<Object?> get props => [id, programId, trainerId, startDate, endDate, isBookable];
 }

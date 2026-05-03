@@ -21,12 +21,9 @@ class ProgramsTab extends StatelessWidget {
     return BlocProvider<ProgramsBloc>(
       create: (_) => ProgramsBloc()..add(const ProgramsInitialized()),
       child: BlocListener<ProgramsBloc, ProgramsState>(
-        listenWhen: (previous, current) =>
-            previous.allPrograms != current.allPrograms,
+        listenWhen: (previous, current) => previous.allPrograms != current.allPrograms,
         listener: (context, state) {
-          context.read<FavouritesBloc>().add(
-            FavouritesLessonsRegistered(state.allPrograms),
-          );
+          context.read<FavouritesBloc>().add(FavouritesLessonsRegistered(state.allPrograms));
         },
         child: BlocBuilder<ProgramsBloc, ProgramsState>(
           builder: (context, state) {
@@ -49,12 +46,7 @@ class ProgramsTab extends StatelessWidget {
               extendBodyBehindAppBar: true,
               body: Stack(
                 children: <Widget>[
-                  Positioned.fill(
-                    child: Image.asset(
-                      AssetPaths.homeBackground,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  Positioned.fill(child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover)),
                   SafeArea(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,82 +54,54 @@ class ProgramsTab extends StatelessWidget {
                         const ProgramsHeader(),
                         Expanded(
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.only(
-                              bottom: AppConstants.programsCardsBottomInset,
-                            ),
+                            padding: const EdgeInsets.only(bottom: AppConstants.programsCardsBottomInset),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal:
-                                        AppPaddings.programsScreenHorizontal,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Text(
-                                        loc.programsHeading,
-                                        style: AppTextStyles.programsHeading,
-                                      ),
-                                      const SizedBox(
-                                        height: AppSpacings.programsLeadGap,
-                                      ),
-                                      Text(
-                                        loc.programsDescription,
-                                        style: AppTextStyles.programsSubtitle,
-                                      ),
+                                      Text(loc.programsHeading, style: AppTextStyles.programsHeading),
+                                      const SizedBox(height: AppSpacings.programsLeadGap),
+                                      Text(loc.programsDescription, style: AppTextStyles.programsSubtitle),
                                     ],
                                   ),
                                 ),
 
-                                const SizedBox(
-                                  height: AppSpacings.programsBodyGap,
-                                ),
+                                const SizedBox(height: AppSpacings.programsBodyGap),
 
                                 SizedBox(
                                   height: AppConstants.programsFilterHeight,
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal:
-                                          AppPaddings.programsScreenHorizontal,
+                                      horizontal: AppPaddings.programsScreenHorizontal,
                                     ),
                                     itemCount: filterLabels.length,
-                                    separatorBuilder: (_, __) => const SizedBox(
-                                      width: AppSpacings.programsFiltersGap,
-                                    ),
+                                    separatorBuilder: (_, __) => const SizedBox(width: AppSpacings.programsFiltersGap),
                                     itemBuilder: (context, index) {
                                       return ProgramFilterButton(
                                         label: filterLabels[index],
-                                        isSelected:
-                                            state.selectedFilter.index == index,
+                                        isSelected: state.selectedFilter.index == index,
                                         isAllPrograms: index == 0,
                                         onTap: () {
-                                          context
-                                              .read<ProgramsBloc>()
-                                              .selectFilter(index);
+                                          context.read<ProgramsBloc>().add(ProgramsFilterChanged(index));
                                         },
                                       );
                                     },
                                   ),
                                 ),
 
-                                const SizedBox(
-                                  height: AppSpacings.programsFiltersGap,
-                                ),
+                                const SizedBox(height: AppSpacings.programsFiltersGap),
 
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal:
-                                        AppPaddings.programsScreenHorizontal,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
                                   child: ProgrammList(
                                     type: ProgrammCardType.big,
                                     programs: state.visiblePrograms,
-                                    lessonsByProgramId:
-                                        state.nearestLessonsByProgramId,
+                                    lessonsByProgramId: state.nearestLessonsByProgramId,
                                     mastersById: state.mastersById,
                                   ),
                                 ),

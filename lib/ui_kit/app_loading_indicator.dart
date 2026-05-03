@@ -12,10 +12,7 @@ class AppLoadingIndicator extends StatelessWidget {
   /// Размер индикатора (ширина и высота).
   final double size;
 
-  const AppLoadingIndicator({
-    super.key,
-    this.size = 36,
-  });
+  const AppLoadingIndicator({super.key, this.size = 36});
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +25,7 @@ class AppLoadingIndicator extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CircularProgressIndicator(
-        strokeWidth: 3,
-        color: primaryColor,
-      ),
+      child: CircularProgressIndicator(strokeWidth: 3, color: primaryColor),
     );
   }
 }

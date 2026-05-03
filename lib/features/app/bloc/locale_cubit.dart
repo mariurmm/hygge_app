@@ -10,7 +10,7 @@ class LocaleCubit extends Cubit<Locale?> {
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     final tag = prefs.getString(_key);
-    if (tag != null) emit(Locale(tag));
+    emit(tag != null ? Locale(tag) : const Locale('ru'));
   }
 
   Future<void> setLocale(Locale locale) async {

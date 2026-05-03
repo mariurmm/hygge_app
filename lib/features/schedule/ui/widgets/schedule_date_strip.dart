@@ -5,11 +5,7 @@ class ScheduleDateStrip extends StatefulWidget {
   final DateTime selectedDay;
   final ValueChanged<DateTime> onDateSelected;
 
-  const ScheduleDateStrip({
-    super.key,
-    required this.selectedDay,
-    required this.onDateSelected,
-  });
+  const ScheduleDateStrip({super.key, required this.selectedDay, required this.onDateSelected});
 
   @override
   State<ScheduleDateStrip> createState() => _ScheduleDateStripState();
@@ -27,10 +23,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
   }
 
   int _selectedIndex() {
-    return widget.selectedDay
-        .difference(_today)
-        .inDays
-        .clamp(0, _visibleDaysCount - 1);
+    return widget.selectedDay.difference(_today).inDays.clamp(0, _visibleDaysCount - 1);
   }
 
   @override
@@ -51,11 +44,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
     if (!DateUtils.isSameDay(oldWidget.selectedDay, widget.selectedDay)) {
       final index = _selectedIndex();
 
-      _controller.animateTo(
-        index * _itemWidth,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _controller.animateTo(index * _itemWidth, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
   }
 
@@ -79,9 +68,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
               width: 70,
               margin: const EdgeInsets.symmetric(horizontal: 6),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF9E5135).withAlpha(180)
-                    : Colors.white.withAlpha(25),
+                color: isSelected ? const Color(0xFF9E5135).withAlpha(180) : Colors.white.withAlpha(25),
                 borderRadius: BorderRadius.circular(22),
               ),
               child: Column(
@@ -89,11 +76,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
                 children: [
                   Text(
                     DateFormat('E', 'ru_RU').format(day).toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 11,
-                      height: 1,
-                      color: isSelected ? Colors.white : Colors.white60,
-                    ),
+                    style: TextStyle(fontSize: 11, height: 1, color: isSelected ? Colors.white : Colors.white60),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -101,9 +84,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
                     style: TextStyle(
                       fontSize: 22,
                       height: 1,
-                      fontWeight: isSelected
-                          ? FontWeight.w700
-                          : FontWeight.w400,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                       color: Colors.white,
                     ),
                   ),

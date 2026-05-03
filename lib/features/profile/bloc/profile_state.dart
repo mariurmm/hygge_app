@@ -1,6 +1,7 @@
-
-
-part of 'profile_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/data/models/program_model.dart';
 
 const int _goalSessionsTotal = 15;
 
@@ -17,7 +18,8 @@ final class ProfileState extends Equatable {
     this.goalSessionsTotal = _goalSessionsTotal,
     this.recentSessionLesson,
     this.recentSessionProgram,
-this.recentSessionMaster,
+    this.recentSessionMaster,
+    this.isHistoryLoading = false,
   });
 
   final ProfileStatus status;
@@ -29,7 +31,8 @@ this.recentSessionMaster,
   final int goalSessionsTotal;
   final LessonModel? recentSessionLesson;
   final ProgramModel? recentSessionProgram;
-final MasterModel? recentSessionMaster;
+  final MasterModel? recentSessionMaster;
+  final bool isHistoryLoading;
 
   bool get isLoading => status == ProfileStatus.loading;
 
@@ -43,35 +46,34 @@ final MasterModel? recentSessionMaster;
     int? goalSessionsTotal,
     LessonModel? recentSessionLesson,
     ProgramModel? recentSessionProgram,
-MasterModel? recentSessionMaster,
-  }) =>
-      ProfileState(
-        status: status ?? this.status,
-        isPremium: isPremium ?? this.isPremium,
-        displayName: displayName ?? this.displayName,
-        travelProgressPercent:
-            travelProgressPercent ?? this.travelProgressPercent,
-        sessionsCompletedThisMonth:
-            sessionsCompletedThisMonth ?? this.sessionsCompletedThisMonth,
-        sessionsLeftToNextStage:
-            sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
-        goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
-        recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
-        recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,
-        recentSessionMaster: recentSessionMaster ?? this.recentSessionMaster,
-      );
+    MasterModel? recentSessionMaster,
+    bool? isHistoryLoading,
+  }) => ProfileState(
+    status: status ?? this.status,
+    isPremium: isPremium ?? this.isPremium,
+    displayName: displayName ?? this.displayName,
+    travelProgressPercent: travelProgressPercent ?? this.travelProgressPercent,
+    sessionsCompletedThisMonth: sessionsCompletedThisMonth ?? this.sessionsCompletedThisMonth,
+    sessionsLeftToNextStage: sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
+    goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
+    recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
+    recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,
+    recentSessionMaster: recentSessionMaster ?? this.recentSessionMaster,
+    isHistoryLoading: isHistoryLoading ?? this.isHistoryLoading,
+  );
 
   @override
   List<Object?> get props => [
-        status,
-        isPremium,
-        displayName,
-        travelProgressPercent,
-        sessionsCompletedThisMonth,
-        sessionsLeftToNextStage,
-        goalSessionsTotal,
-        recentSessionLesson,
-        recentSessionProgram,
-recentSessionMaster,
-      ];
+    status,
+    isPremium,
+    displayName,
+    travelProgressPercent,
+    sessionsCompletedThisMonth,
+    sessionsLeftToNextStage,
+    goalSessionsTotal,
+    recentSessionLesson,
+    recentSessionProgram,
+    recentSessionMaster,
+    isHistoryLoading,
+  ];
 }

@@ -30,21 +30,15 @@ final class ScheduleState extends Equatable {
     return ScheduleState(today: today, selectedDay: today);
   }
 
-  List<LessonModel> get allLessons => <LessonModel>[
-    ...bookedLessons,
-    ...completedLessons,
-  ];
+  List<LessonModel> get allLessons => <LessonModel>[...bookedLessons, ...completedLessons];
 
   int get completedSessions => completedLessons.length;
 
   int get totalSessions => bookedLessons.length + completedLessons.length;
 
-  double get progress =>
-      totalSessions == 0 ? 0 : completedSessions / totalSessions;
+  double get progress => totalSessions == 0 ? 0 : completedSessions / totalSessions;
 
-  Set<DateTime> get scheduledDates => bookedLessons
-      .map((LessonModel lesson) => _dayOnly(lesson.calendarDay))
-      .toSet();
+  Set<DateTime> get scheduledDates => bookedLessons.map((LessonModel lesson) => _dayOnly(lesson.calendarDay)).toSet();
 
   List<LessonModel> get selectedDayLessons {
     final DateTime selected = _dayOnly(selectedDay);
@@ -53,9 +47,7 @@ final class ScheduleState extends Equatable {
         .where((LessonModel lesson) => _dayOnly(lesson.calendarDay) == selected)
         .toList(growable: false);
 
-    return lessons..sort(
-      (LessonModel a, LessonModel b) => a.startDate.compareTo(b.startDate),
-    );
+    return lessons..sort((LessonModel a, LessonModel b) => a.startDate.compareTo(b.startDate));
   }
 
   bool get hasSelectedDayLessons => selectedDayLessons.isNotEmpty;
@@ -81,8 +73,7 @@ final class ScheduleState extends Equatable {
     );
   }
 
-  static DateTime _dayOnly(DateTime value) =>
-      DateTime(value.year, value.month, value.day);
+  static DateTime _dayOnly(DateTime value) => DateTime(value.year, value.month, value.day);
 
   @override
   List<Object?> get props => <Object?>[

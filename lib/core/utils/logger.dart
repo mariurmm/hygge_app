@@ -2,13 +2,7 @@ import 'package:logger/logger.dart';
 
 class AppLogger {
   static final Logger _logger = Logger(
-    printer: PrettyPrinter(
-      methodCount: 1,
-      errorMethodCount: 5,
-      lineLength: 80,
-      colors: true,
-      printEmojis: true,
-    ),
+    printer: PrettyPrinter(methodCount: 1, errorMethodCount: 5, lineLength: 80, colors: true, printEmojis: true),
   );
 
   /// Информационное сообщение
@@ -22,16 +16,8 @@ class AppLogger {
   }
 
   /// Ошибка
-  static void error(
-    String message, {
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    _logger.e(
-      message,
-      error: error,
-      stackTrace: stackTrace,
-    );
+  static void error(String message, {Object? error, StackTrace? stackTrace}) {
+    _logger.e(message, error: error, stackTrace: stackTrace);
   }
 
   /// Debug (полезно для разработки)

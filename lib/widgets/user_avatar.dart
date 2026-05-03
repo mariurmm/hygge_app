@@ -31,11 +31,7 @@ class UserAvatar extends StatelessWidget {
   /// Можно передать другое значение для уменьшенной версии (например, в списке).
   final double radius;
 
-  const UserAvatar({
-    super.key,
-    required this.photoUrl,
-    this.radius = AppConstants.avatarRadius,
-  });
+  const UserAvatar({super.key, required this.photoUrl, this.radius = AppConstants.avatarRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +46,7 @@ class UserAvatar extends StatelessWidget {
       backgroundImage: photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null,
       // Если фото нет — показываем иконку-заглушку.
       // Размер иконки равен радиусу аватара, чтобы смотрелось пропорционально.
-      child: photoUrl.isEmpty
-          ? Icon(
-              Icons.person,
-              size: radius,
-              color: colorScheme.onSurfaceVariant,
-            )
-          : null,
+      child: photoUrl.isEmpty ? Icon(Icons.person, size: radius, color: colorScheme.onSurfaceVariant) : null,
     );
   }
 }

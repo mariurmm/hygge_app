@@ -21,9 +21,7 @@ class HistoryScreen extends StatelessWidget {
     final loc = AppLocalizations.of(context);
 
     return BlocProvider(
-      create: (_) =>
-          HistoryBloc(repository: UpcomingLessonRepositoryImpl())
-            ..add(const HistoryLoadRequested()),
+      create: (_) => HistoryBloc(repository: UpcomingLessonRepositoryImpl())..add(const HistoryLoadRequested()),
       child: BlocBuilder<HistoryBloc, HistoryState>(
         builder: (context, state) {
           final now = DateTime.now();
@@ -34,12 +32,7 @@ class HistoryScreen extends StatelessWidget {
             extendBodyBehindAppBar: true,
             body: Stack(
               children: [
-                Positioned.fill(
-                  child: Image.asset(
-                    AssetPaths.homeBackground,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                Positioned.fill(child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover)),
                 SafeArea(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,72 +40,46 @@ class HistoryScreen extends StatelessWidget {
                       ProgramsHeader(
                         leading: IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 40,
-                            minHeight: 40,
-                          ),
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
+                          constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 22),
                           onPressed: () => context.pop(),
                         ),
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.only(
-                            bottom: AppConstants.profileCardsBottomInset,
-                          ),
+                          padding: const EdgeInsets.only(bottom: AppConstants.profileCardsBottomInset),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppPaddings.profileScreenHorizontal,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  loc.historyTitle,
-                                  style: AppTextStyles.programsHeading,
-                                ),
-                                const SizedBox(
-                                  height: AppSpacings.programsLeadGap,
-                                ),
-                                Text(
-                                  loc.historySubtitle,
-                                  style: AppTextStyles.programsSubtitle,
-                                ),
-                                const SizedBox(
-                                  height: AppSpacings.profileHistoryLinkCardGap,
-                                ),
+                                Text(loc.historyTitle, style: AppTextStyles.programsHeading),
+                                const SizedBox(height: AppSpacings.programsLeadGap),
+                                Text(loc.historySubtitle, style: AppTextStyles.programsSubtitle),
+                                const SizedBox(height: AppSpacings.profileHistoryLinkCardGap),
 
                                 ListView.separated(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: state.lessons.length,
-                                  separatorBuilder: (_, __) => const SizedBox(
-                                    height: AppSpacings.programsCardsGap,
-                                  ),
+                                  separatorBuilder: (_, __) => const SizedBox(height: AppSpacings.programsCardsGap),
                                   itemBuilder: (context, index) {
                                     final lesson = state.lessons[index];
-                                    final program =
-                                        state.programsById[lesson.programId];
+                                    final program = state.programsById[lesson.programId];
 
                                     if (program == null) {
                                       return const SizedBox.shrink();
                                     }
 
-                                    final master =
-                                        state.mastersById[program.masterId];
+                                    final master = state.mastersById[program.trainerId];
 
                                     return ProgrammCard(
-                                      key: ValueKey(lesson.uuid),
+                                      key: ValueKey(lesson.id),
                                       type: ProgrammCardType.big,
                                       program: program,
                                       lesson: lesson,
                                       master: master,
-                                      timingOverlayLabel: lesson
-                                          .historyWhenLabel(now),
+                                      timingOverlayLabel: lesson.historyWhenLabel(now),
                                     );
                                   },
                                 ),

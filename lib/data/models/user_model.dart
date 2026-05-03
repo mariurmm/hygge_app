@@ -28,31 +28,19 @@ class UserModel extends Equatable {
     this.subscription,
   });
 
-  static const UserModel empty = UserModel(
-    uid: '',
-    displayName: '',
-    email: '',
-    photoUrl: '',
-    subscription: null,
-  );
+  static const UserModel empty = UserModel(uid: '', displayName: '', email: '', photoUrl: '', subscription: null);
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  factory UserModel.fromJson(
-    Map<String, dynamic> json, {
-    String locale = 'ru',
-  }) {
+  factory UserModel.fromJson(Map<String, dynamic> json, {String locale = 'ru'}) {
     return UserModel(
       uid: json['uid'] as String? ?? json['id'] as String? ?? '',
       displayName: json['displayName'] as String? ?? '',
       email: json['email'] as String? ?? '',
       photoUrl: json['photoUrl'] as String? ?? '',
       subscription: json['subscription'] is Map
-          ? SubscriptionModel.fromJson(
-              Map<String, dynamic>.from(json['subscription'] as Map),
-              locale: locale,
-            )
+          ? SubscriptionModel.fromJson(Map<String, dynamic>.from(json['subscription'] as Map))
           : null,
     );
   }

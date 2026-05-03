@@ -26,9 +26,7 @@ class ProfileFavouritesSection extends StatelessWidget {
           children: [
             const SizedBox(height: AppSpacings.profileHistorySectionTop),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppPaddings.profileScreenHorizontal,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
               child: Text(
                 loc.profileFavouritesSectionTitle,
                 style: AppTextStyles.programsHeading.copyWith(fontSize: 24),
@@ -39,19 +37,13 @@ class ProfileFavouritesSection extends StatelessWidget {
               height: 184,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppPaddings.profileScreenHorizontal,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
                 itemCount: programs.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(width: AppSpacings.programsCardsGap),
+                separatorBuilder: (_, __) => const SizedBox(width: AppSpacings.programsCardsGap),
                 itemBuilder: (context, index) {
                   final ProgramModel program = programs[index];
 
-                  return ProgrammCard(
-                    type: ProgrammCardType.small,
-                    program: program,
-                  );
+                  return ProgrammCard(type: ProgrammCardType.small, program: program);
                 },
               ),
             ),

@@ -10,17 +10,13 @@ class SplashDotsLoader extends StatefulWidget {
   State<SplashDotsLoader> createState() => _SplashDotsLoaderState();
 }
 
-class _SplashDotsLoaderState extends State<SplashDotsLoader>
-    with SingleTickerProviderStateMixin {
+class _SplashDotsLoaderState extends State<SplashDotsLoader> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))..repeat();
   }
 
   @override
@@ -37,28 +33,18 @@ class _SplashDotsLoaderState extends State<SplashDotsLoader>
         mainAxisSize: MainAxisSize.min,
         children: List.generate(AppConstants.splashDotCount, (i) {
           final double sin = math
-              .sin(
-                ((_controller.value - i / AppConstants.splashDotCount) % 1.0) *
-                    math.pi,
-              )
+              .sin(((_controller.value - i / AppConstants.splashDotCount) % 1.0) * math.pi)
               .clamp(0.0, 1.0);
           return Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppConstants.splashDotSpacing,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppConstants.splashDotSpacing),
             child: Opacity(
-              opacity: AppConstants.splashDotOpacityMin +
-                  AppConstants.splashDotOpacityRange * sin,
+              opacity: AppConstants.splashDotOpacityMin + AppConstants.splashDotOpacityRange * sin,
               child: Transform.scale(
-                scale: AppConstants.splashDotScaleMin +
-                    AppConstants.splashDotScaleRange * sin,
+                scale: AppConstants.splashDotScaleMin + AppConstants.splashDotScaleRange * sin,
                 child: Container(
                   width: AppConstants.splashDotSize,
                   height: AppConstants.splashDotSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.lightBrown,
-                  ),
+                  decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBrown),
                 ),
               ),
             ),

@@ -8,24 +8,16 @@ import '../models/user_model.dart';
 
 /// Репозиторий авторизации — координирует работу сервисов.
 ///
-/// Это **синглтон**: один экземпляр на всё приложение.
-/// Доступ через [AuthRepository.instance].
-///
 /// Зачем репозиторий, если есть сервисы?
 /// Сервис знает только про свой источник (Auth или Firestore).
 /// Репозиторий **координирует** несколько сервисов:
 ///   1. Входит через Google (FirebaseAuthService).
 ///   2. Сохраняет профиль в Firestore (FirestoreService).
 ///   3. Возвращает единую модель [UserModel].
+///
+/// Единственный экземпляр регистрируется в main.dart через [RepositoryProvider]
+/// и доступен везде через context.read&lt;AuthRepository&gt;().
 class AuthRepository {
-  // ── Синглтон ─────────────────────────────────────────────────
-
-  /// Приватный конструктор — нельзя создать снаружи.
-  AuthRepository._();
-
-  /// Единственный экземпляр репозитория.
-  static final AuthRepository instance = AuthRepository._();
-
   // ── Сервисы ──────────────────────────────────────────────────
 
   final FirebaseAuthService _authService = FirebaseAuthService();
@@ -61,8 +53,7 @@ class AuthRepository {
   Future<UserModel> signInWithGoogle() async {
     try {
       // 1. Вход через Google.
-      final UserCredential? credential =
-          await _authService.signInWithGoogle();
+      final UserCredential? credential = await _authService.signInWithGoogle();
 
       // Пользователь отменил вход.
       if (credential?.user == null) return UserModel.empty;
@@ -76,27 +67,16 @@ class AuthRepository {
       AppLogger.info('AuthRepository: вход выполнен — ${user.email}');
       return user;
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'AuthRepository: ошибка входа через Google',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('AuthRepository: ошибка входа через Google', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }
 
   /// Сохранить имя и email в Firestore и обновить отображаемое имя в Auth.
-  Future<void> updateUserProfileFields({
-    required String displayName,
-    required String email,
-  }) async {
+  Future<void> updateUserProfileFields({required String displayName, required String email}) async {
     final User? fb = _authService.currentUser;
     if (fb == null) return;
-    await _firestoreService.saveUser(fb.uid, {
-      'uid': fb.uid,
-      'displayName': displayName.trim(),
-      'email': email.trim(),
-    });
+    await _firestoreService.saveUser(fb.uid, {'uid': fb.uid, 'displayName': displayName.trim(), 'email': email.trim()});
     final trimmed = displayName.trim();
     if (trimmed.isNotEmpty) {
       await fb.updateDisplayName(trimmed);
@@ -139,11 +119,7 @@ class AuthRepository {
       await _authService.signOut();
       AppLogger.info('AuthRepository: пользователь вышел');
     } catch (error, stackTrace) {
-      AppLogger.error(
-        'AuthRepository: ошибка выхода',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('AuthRepository: ошибка выхода', error: error, stackTrace: stackTrace);
       rethrow;
     }
   }

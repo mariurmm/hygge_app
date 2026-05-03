@@ -1,15 +1,6 @@
 part of 'programs_bloc.dart';
 
-enum ProgramFilter {
-  all,
-  meditation,
-  yoga,
-  outdoor,
-  ceremony,
-  masterClass,
-  lecture,
-  authorTour,
-}
+enum ProgramFilter { all, meditation, yoga, outdoor, ceremony, masterClass, lecture, authorTour }
 
 class ProgramsState extends Equatable {
   final List<ProgramModel> allPrograms;
@@ -30,19 +21,13 @@ class ProgramsState extends Equatable {
     return allPrograms
         .where((program) {
           return switch (selectedFilter) {
-            ProgramFilter.meditation =>
-              program.category == ProgramCategory.meditation,
+            ProgramFilter.meditation => program.category == ProgramCategory.meditation,
             ProgramFilter.yoga => program.category == ProgramCategory.yoga,
-            ProgramFilter.outdoor =>
-              program.category == ProgramCategory.outdoor,
-            ProgramFilter.ceremony =>
-              program.category == ProgramCategory.ceremony,
-            ProgramFilter.masterClass =>
-              program.category == ProgramCategory.masterClass,
-            ProgramFilter.lecture =>
-              program.category == ProgramCategory.lecture,
-            ProgramFilter.authorTour =>
-              program.category == ProgramCategory.authorTour,
+            ProgramFilter.outdoor => program.category == ProgramCategory.outdoor,
+            ProgramFilter.ceremony => program.category == ProgramCategory.ceremony,
+            ProgramFilter.masterClass => program.category == ProgramCategory.masterClass,
+            ProgramFilter.lecture => program.category == ProgramCategory.lecture,
+            ProgramFilter.authorTour => program.category == ProgramCategory.authorTour,
             ProgramFilter.all => true,
           };
         })
@@ -58,17 +43,11 @@ class ProgramsState extends Equatable {
     return ProgramsState(
       allPrograms: allPrograms ?? this.allPrograms,
       selectedFilter: selectedFilter ?? this.selectedFilter,
-      nearestLessonsByProgramId:
-          nearestLessonsByProgramId ?? this.nearestLessonsByProgramId,
+      nearestLessonsByProgramId: nearestLessonsByProgramId ?? this.nearestLessonsByProgramId,
       mastersById: mastersById ?? this.mastersById,
     );
   }
 
   @override
-  List<Object?> get props => [
-    allPrograms,
-    selectedFilter,
-    nearestLessonsByProgramId,
-    mastersById,
-  ];
+  List<Object?> get props => [allPrograms, selectedFilter, nearestLessonsByProgramId, mastersById];
 }

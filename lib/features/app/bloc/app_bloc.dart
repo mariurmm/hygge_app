@@ -32,9 +32,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // Подписываемся на стрим авторизации.
     // Каждый раз, когда пользователь входит/выходит,
     // стрим присылает нового [UserModel].
-    _authSubscription = _authRepository.authStateChanges.listen((
-      UserModel user,
-    ) {
+    _authSubscription = _authRepository.authStateChanges.listen((UserModel user) {
       add(AppAuthStateChanged(user));
     });
   }
@@ -51,10 +49,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   /// Обработчик: пользователь нажал «Выйти».
-  Future<void> _onSignOutRequested(
-    AppSignOutRequested event,
-    Emitter<AppState> emit,
-  ) async {
+  Future<void> _onSignOutRequested(AppSignOutRequested event, Emitter<AppState> emit) async {
     await _authRepository.signOut();
     // Стрим authStateChanges сам пришлёт AppAuthStateChanged(empty),
     // поэтому emit здесь не нужен.
@@ -65,10 +60,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   /// Вызывается после сохранения настроек профиля, так как
   /// [updateDisplayName] не триггерит стрим [authStateChanges].
   /// Перечитывает актуальные данные из Firebase Auth и обновляет [AppState].
-  Future<void> _onUserRefreshRequested(
-    AppUserRefreshRequested event,
-    Emitter<AppState> emit,
-  ) async {
+  Future<void> _onUserRefreshRequested(AppUserRefreshRequested event, Emitter<AppState> emit) async {
     await _authRepository.reloadCurrentUser();
     final UserModel user = _authRepository.currentUser;
     if (user.isNotEmpty) {

@@ -1,8 +1,58 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ── Пользователи ──────────────────────────────────────────────
+    // Только сам пользователь читает и обновляет свои данные
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Абонементы ────────────────────────────────────────────────
+    // Создаёт/редактирует только администратор (через Firebase Console / Admin SDK)
+    // Клиент только читает свой абонемент
+    match /subscriptions/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false; // только Admin SDK (Cloud Functions)
+    }
+
+    // ── Занятия ───────────────────────────────────────────────────
+    // Расписание видят все авторизованные пользователи
+    // Изменение currentParticipants — только через Admin SDK
+    match /classes/{classId} {
+      allow read: if request.auth != null;
+      allow write: if false; // только Admin SDK (Cloud Functions)
+    }
+
+    // ── Брони ─────────────────────────────────────────────────────
+    // Пользователь видит только свои брони
+    // Создаёт бронь сам пользователь
+    // Статус (confirmed/cancelled) обновляет только Admin SDK
+    match /bookings/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      match /userBookings/{bookingId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+
+        // Создание брони — только свои данные
+        allow create: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.status == 'pending'
+          && request.resource.data.classId is string
+          && request.resource.data.datetime is timestamp;
+
+        // Пользователь может отменить свою бронь (только status → cancelled)
+        allow update: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.status == 'cancelled'
+          && resource.data.status in ['pending', 'confirmed']
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      }
+    }
+
+    // ── Очередь авто-подтверждений (internal, только Admin SDK) ───
+    match /_autoConfirmQueue/{docId} {
+      allow read, write: if false;
     }
   }
 }

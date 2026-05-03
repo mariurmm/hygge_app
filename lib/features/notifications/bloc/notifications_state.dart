@@ -13,8 +13,7 @@ class NotificationsState extends Equatable {
 
   bool get hasUnread => unreadCount > 0;
 
-  NotificationsState copyWith({List<NotificationItem>? items}) =>
-      NotificationsState(items: items ?? this.items);
+  NotificationsState copyWith({List<NotificationItem>? items}) => NotificationsState(items: items ?? this.items);
 
   @override
   List<Object?> get props => [items];

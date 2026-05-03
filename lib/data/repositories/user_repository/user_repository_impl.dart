@@ -5,8 +5,7 @@ import 'user_repository.dart';
 
 /// Implementation of [UserRepository] using Firebase Auth.
 class UserRepositoryImpl implements UserRepository {
-  UserRepositoryImpl({FirebaseAuth? auth})
-      : _auth = auth ?? FirebaseAuth.instance;
+  UserRepositoryImpl({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
 
   final FirebaseAuth _auth;
 

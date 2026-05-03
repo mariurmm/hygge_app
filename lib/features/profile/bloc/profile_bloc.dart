@@ -1,129 +1,82 @@
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/master_model.dart';
-import 'package:hygge_app/data/models/program_model.dart';
+import 'package:hygge_app/core/constants/app_defaults.dart';
+import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/user_model.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
+import 'package:hygge_app/domain/use_cases/calculate_progress_use_case.dart';
+import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
+import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 
-part 'profile_event.dart';
-part 'profile_state.dart';
+class ProfileBloc extends Cubit<ProfileState> {
+  final LoadHistoryUseCase _loadHistoryUseCase;
+  final CalculateProgressUseCase _calculateProgressUseCase;
+  final ProgramsRepositoryImpl _programsRepo;
 
-class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({
-    required UpcomingLessonRepository repository,
-    FirebaseFirestore? firestore,
+    required LoadHistoryUseCase loadHistory,
+    required CalculateProgressUseCase calculateProgress,
+    ProgramsRepositoryImpl? programsRepo,
     UserModel? user,
-  }) : _repository = repository,
-       _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _loadHistoryUseCase = loadHistory,
+       _calculateProgressUseCase = calculateProgress,
+       _programsRepo = programsRepo ?? ProgramsRepositoryImpl(),
        super(_initialState(user)) {
-    on<ProfileLoadRequested>(_onLoadRequested);
-    on<ProfileUserSynced>(_onUserSynced);
+    _loadHistory(user?.uid ?? '');
   }
 
-  final UpcomingLessonRepository _repository;
-  final FirebaseFirestore _firestore;
-
-  static const int _goalSessionsTotal = 15;
-  static const String _completedStatus = 'completed';
-  static const String _fallbackName = 'Пользователь';
-
   static ProfileState _initialState(UserModel? user) {
+    final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty ? user.displayName : kDefaultUserName;
+
     return ProfileState(
-      displayName: _resolveName(user),
       isPremium: _hasActiveSubscription(user),
+      displayName: name,
+      travelProgressPercent: 0,
+      sessionsCompletedThisMonth: 0,
+      sessionsLeftToNextStage: 0,
+      goalSessionsTotal: 15,
+      isHistoryLoading: true,
     );
   }
 
-  Future<void> _onLoadRequested(
-    ProfileLoadRequested event,
-    Emitter<ProfileState> emit,
-  ) async {
-    emit(state.copyWith(status: ProfileStatus.loading));
+  void syncUser(UserModel user) {
+    emit(
+      state.copyWith(
+        displayName: user.isNotEmpty && user.displayName.isNotEmpty ? user.displayName : state.displayName,
+        isPremium: _hasActiveSubscription(user),
+      ),
+    );
+    _loadHistory(user.uid);
+  }
 
+  Future<void> _loadHistory(String userId) async {
+    if (userId.isEmpty) {
+      emit(state.copyWith(isHistoryLoading: false));
+      return;
+    }
     try {
-      final completed = await _repository.fetchBookings(
-        status: _completedStatus,
-      );
+      final history = await _loadHistoryUseCase(userId);
+      final progress = _calculateProgressUseCase(history.completedThisMonth);
 
-      final count = completed.length;
-      final progress = _goalSessionsTotal == 0
-          ? 0
-          : ((count / _goalSessionsTotal) * 100).round().clamp(0, 100);
-
-      final recentLesson = completed.isNotEmpty ? completed.last : null;
-      final recentProgram = recentLesson == null
-          ? null
-          : await _fetchProgramById(recentLesson.programId);
-
-      final recentMaster = recentProgram == null
-          ? null
-          : await _fetchMasterById(
-              recentLesson?.masterId.isNotEmpty == true
-                  ? recentLesson!.masterId
-                  : recentProgram.masterId,
-            );
+      final lesson = history.recentLesson;
+      final program = lesson != null && lesson.programId.isNotEmpty
+          ? await _programsRepo.fetchProgramById(lesson.programId)
+          : null;
 
       emit(
         state.copyWith(
-          status: ProfileStatus.success,
-          sessionsCompletedThisMonth: count,
-          goalSessionsTotal: _goalSessionsTotal,
-          sessionsLeftToNextStage: (_goalSessionsTotal - count).clamp(
-            0,
-            _goalSessionsTotal,
-          ),
-          travelProgressPercent: progress,
-          recentSessionLesson: recentLesson,
-          recentSessionProgram: recentProgram,
-          recentSessionMaster: recentMaster,
+          sessionsCompletedThisMonth: progress.completedThisMonth,
+          sessionsLeftToNextStage: progress.sessionsLeftToNextStage,
+          goalSessionsTotal: progress.goalSessionsTotal,
+          travelProgressPercent: progress.travelProgressPercent,
+          recentSessionLesson: lesson,
+          recentSessionProgram: program,
+          isHistoryLoading: false,
         ),
       );
-    } on Exception {
-      emit(state.copyWith(status: ProfileStatus.failure));
+    } catch (e, st) {
+      AppLogger.error('History load failed', error: e, stackTrace: st);
+      emit(state.copyWith(isHistoryLoading: false, status: ProfileStatus.failure));
     }
-  }
-
-  void _onUserSynced(ProfileUserSynced event, Emitter<ProfileState> emit) {
-    emit(
-      state.copyWith(
-        displayName: _resolveName(event.user),
-        isPremium: _hasActiveSubscription(event.user),
-      ),
-    );
-
-    add(const ProfileLoadRequested());
-  }
-
-  Future<ProgramModel?> _fetchProgramById(String programId) async {
-    if (programId.isEmpty) return null;
-
-    final doc = await _firestore.collection('programs').doc(programId).get();
-    final data = doc.data();
-
-    if (!doc.exists || data == null) return null;
-
-    return ProgramModel.fromJson({...data, 'id': doc.id});
-  }
-
-  Future<MasterModel?> _fetchMasterById(String masterId) async {
-    if (masterId.isEmpty) return null;
-
-    final doc = await _firestore.collection('masters').doc(masterId).get();
-    final data = doc.data();
-
-    if (!doc.exists || data == null) return null;
-
-    return MasterModel.fromJson({...data, 'id': doc.id});
-  }
-
-  static String _resolveName(UserModel? user) {
-    if (user == null || user.isEmpty) return _fallbackName;
-
-    return user.displayName.trim().isNotEmpty
-        ? user.displayName.trim()
-        : _fallbackName;
   }
 
   static bool _hasActiveSubscription(UserModel? user) {
@@ -131,7 +84,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final sub = user.subscription;
     if (sub == null || sub.isEmpty) return false;
-
-    return sub.finishDate.isAfter(DateTime.now());
+    return sub.endDate.isAfter(DateTime.now());
   }
 }

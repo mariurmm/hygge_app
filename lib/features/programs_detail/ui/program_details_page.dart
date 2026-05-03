@@ -24,27 +24,15 @@ class ProgramDetailsPage extends StatelessWidget {
   final LessonModel lesson;
   final MasterModel master;
 
-  const ProgramDetailsPage({
-    super.key,
-    required this.program,
-    required this.lesson,
-    required this.master,
-  });
+  const ProgramDetailsPage({super.key, required this.program, required this.lesson, required this.master});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProgramDetailsBloc>(
-      create: (_) =>
-          ProgramDetailsBloc(
-            favouritesRepository: FavouritesRepositoryImpl(),
-            bookingRepository: UpcomingLessonRepositoryImpl(),
-          )..add(
-            ProgramDetailsStarted(
-              program: program,
-              lesson: lesson,
-              master: master,
-            ),
-          ),
+      create: (_) => ProgramDetailsBloc(
+        favouritesRepository: FavouritesRepositoryImpl(),
+        bookingRepository: UpcomingLessonRepositoryImpl(),
+      )..add(ProgramDetailsStarted(program: program, lesson: lesson, master: master)),
       child: const ProgramDetailsView(),
     );
   }
@@ -120,95 +108,46 @@ class ProgramDetailsView extends StatelessWidget {
                 SafeArea(
                   bottom: false,
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                      bottom: AppConstants.profileCardsBottomInset,
-                    ),
+                    padding: const EdgeInsets.only(bottom: AppConstants.profileCardsBottomInset),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppPaddings.profileScreenHorizontal,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: AppPaddings.profileScreenHorizontal),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _InnerHeader(
-                            onBack: () => Navigator.of(context).pop(),
-                          ),
+                          _InnerHeader(onBack: () => Navigator.of(context).pop()),
                           const SizedBox(height: 18),
-                          Text(
-                            program.title,
-                            style: AppTextStyles.programsHeading,
-                          ),
+                          Text(program.title, style: AppTextStyles.programsHeading),
                           if (program.ritual.isNotEmpty) ...[
                             const SizedBox(height: 10),
-                            Text(
-                              program.ritual,
-                              style: AppTextStyles.programsSubtitle,
-                            ),
+                            Text(program.ritual, style: AppTextStyles.programsSubtitle),
                           ],
-                          const SizedBox(
-                            height: AppSpacings.profileNameCardGap,
-                          ),
+                          const SizedBox(height: AppSpacings.profileNameCardGap),
                           _GlassCard(
                             height: 150,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _InfoRow(
-                                  label: _t(context, 'price'),
-                                  value:
-                                      '${program.price.toStringAsFixed(0)} ₸',
-                                ),
-                                _InfoRow(
-                                  label: _t(context, 'time'),
-                                  value: lesson.scheduleTimeRange(),
-                                ),
-                                _InfoRow(
-                                  label: _t(context, 'date'),
-                                  value: lesson.scheduleDayLabel(
-                                    DateTime.now(),
-                                  ),
-                                ),
+                                _InfoRow(label: _t(context, 'price'), value: '${program.price.toStringAsFixed(0)} ₸'),
+                                _InfoRow(label: _t(context, 'time'), value: lesson.scheduleTimeRange()),
+                                _InfoRow(label: _t(context, 'date'), value: lesson.scheduleDayLabel(DateTime.now())),
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          Text(
-                            _t(context, 'description'),
-                            style: AppTextStyles.programsHeading.copyWith(
-                              fontSize: 22,
-                            ),
-                          ),
+                          const SizedBox(height: AppSpacings.profileCardsVerticalGap),
+                          Text(_t(context, 'description'), style: AppTextStyles.programsHeading.copyWith(fontSize: 22)),
                           const SizedBox(height: 12),
                           _GlassCard(
                             height: 170,
                             child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text(
-                                program.text,
-                                style: AppTextStyles.programsCardDescription,
-                              ),
+                              child: Text(program.text, style: AppTextStyles.programsCardDescription),
                             ),
                           ),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          Text(
-                            _t(context, 'master'),
-                            style: AppTextStyles.programsHeading.copyWith(
-                              fontSize: 22,
-                            ),
-                          ),
+                          const SizedBox(height: AppSpacings.profileCardsVerticalGap),
+                          Text(_t(context, 'master'), style: AppTextStyles.programsHeading.copyWith(fontSize: 22)),
                           const SizedBox(height: 12),
-                          _MasterGlassCard(
-                            name: master.fullName,
-                            bio: master.bio,
-                            avatarUrl: master.avatarUrl,
-                          ),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
+                          _MasterGlassCard(name: master.fullName, bio: master.bio, photoUrl: master.photoUrl),
+                          const SizedBox(height: AppSpacings.profileCardsVerticalGap),
                           Row(
                             children: [
                               Expanded(
@@ -223,34 +162,17 @@ class ProgramDetailsView extends StatelessWidget {
                                                     return;
                                                   }
 
-                                                  context
-                                                      .read<
-                                                        ProgramDetailsBloc
-                                                      >()
-                                                      .add(
-                                                        ProgramDetailsBooked(
-                                                          lesson,
-                                                        ),
-                                                      );
+                                                  context.read<ProgramDetailsBloc>().add(ProgramDetailsBooked(lesson));
                                                 },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: AppColors.primary,
                                             foregroundColor: Colors.white,
-                                            disabledBackgroundColor: AppColors
-                                                .primary
-                                                .withValues(alpha: 0.55),
-                                            disabledForegroundColor: Colors
-                                                .white
-                                                .withValues(alpha: 0.75),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
-                                            ),
+                                            disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.55),
+                                            disabledForegroundColor: Colors.white.withValues(alpha: 0.75),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                                           ),
                                           child: Text(
-                                            state.isBooking
-                                                ? _t(context, 'booking')
-                                                : _t(context, 'book'),
+                                            state.isBooking ? _t(context, 'booking') : _t(context, 'book'),
                                             style: AppTextStyles.button,
                                           ),
                                         )
@@ -258,21 +180,14 @@ class ProgramDetailsView extends StatelessWidget {
                                           height: 54,
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(
-                                            color: AppColors
-                                                .profileAccountCardFill,
-                                            borderRadius: BorderRadius.circular(
-                                              24,
-                                            ),
+                                            color: AppColors.profileAccountCardFill,
+                                            borderRadius: BorderRadius.circular(24),
                                           ),
                                           child: Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            ).comingSoon,
-                                            style: AppTextStyles.button
-                                                .copyWith(
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.8),
-                                                ),
+                                            AppLocalizations.of(context).comingSoon,
+                                            style: AppTextStyles.button.copyWith(
+                                              color: Colors.white.withValues(alpha: 0.8),
+                                            ),
                                           ),
                                         ),
                                 ),
@@ -284,9 +199,7 @@ class ProgramDetailsView extends StatelessWidget {
                                 child: _FavouriteButton(
                                   isFavourite: state.isFavourite,
                                   onTap: () {
-                                    context.read<ProgramDetailsBloc>().add(
-                                      ProgramDetailsFavouriteToggled(program),
-                                    );
+                                    context.read<ProgramDetailsBloc>().add(ProgramDetailsFavouriteToggled(program));
                                   },
                                 ),
                               ),
@@ -326,18 +239,12 @@ class _InnerHeader extends StatelessWidget {
               AssetPaths.arrowBackPng,
               width: AppConstants.programsHeaderIconSize,
               height: AppConstants.programsHeaderIconSize,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: AppConstants.programsHeaderIconSize,
-              ),
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.arrow_back, color: Colors.white, size: AppConstants.programsHeaderIconSize),
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            'hygge concept',
-            style: AppTextStyles.programsLogo.copyWith(fontSize: 20),
-          ),
+          Text('hygge concept', style: AppTextStyles.programsLogo.copyWith(fontSize: 20)),
         ],
       ),
     );
@@ -352,12 +259,7 @@ class _GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassRoundedPanel(
-      width: double.infinity,
-      height: height,
-      padding: const EdgeInsets.all(18),
-      child: child,
-    );
+    return GlassRoundedPanel(width: double.infinity, height: height, padding: const EdgeInsets.all(18), child: child);
   }
 }
 
@@ -374,11 +276,7 @@ class _InfoRow extends StatelessWidget {
       children: [
         Text(label, style: AppTextStyles.settingsLabel16Light),
         Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: AppTextStyles.settingsInput16Medium,
-          ),
+          child: Text(value, textAlign: TextAlign.right, style: AppTextStyles.settingsInput16Medium),
         ),
       ],
     );
@@ -388,13 +286,9 @@ class _InfoRow extends StatelessWidget {
 class _MasterGlassCard extends StatelessWidget {
   final String name;
   final String bio;
-  final String avatarUrl;
+  final String photoUrl;
 
-  const _MasterGlassCard({
-    required this.name,
-    required this.bio,
-    required this.avatarUrl,
-  });
+  const _MasterGlassCard({required this.name, required this.bio, required this.photoUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -407,12 +301,8 @@ class _MasterGlassCard extends StatelessWidget {
           CircleAvatar(
             radius: 32,
             backgroundColor: AppColors.programsCardMedia,
-            backgroundImage: avatarUrl.isNotEmpty
-                ? NetworkImage(avatarUrl)
-                : null,
-            child: avatarUrl.isEmpty
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
+            backgroundImage: photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null,
+            child: photoUrl.isEmpty ? const Icon(Icons.person, color: Colors.white) : null,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -426,9 +316,7 @@ class _MasterGlassCard extends StatelessWidget {
                     bio,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.programsCardDescription.copyWith(
-                      fontSize: 14,
-                    ),
+                    style: AppTextStyles.programsCardDescription.copyWith(fontSize: 14),
                   ),
                 ),
               ],
@@ -454,10 +342,7 @@ class _FavouriteButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
-        child: Icon(
-          isFavourite ? Icons.favorite : Icons.favorite_border,
-          color: Colors.white,
-        ),
+        child: Icon(isFavourite ? Icons.favorite : Icons.favorite_border, color: Colors.white),
       ),
     );
   }

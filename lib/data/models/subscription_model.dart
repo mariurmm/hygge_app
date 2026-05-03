@@ -1,105 +1,86 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-import 'localized_value.dart';
+import '../../core/utils/parse_utils.dart';
 
-/// Модель абонемента.
 class SubscriptionModel extends Equatable {
-  /// Уникальный идентификатор.
-  final String uuid;
-
-  /// Название абонемента.
-  final String title;
-
-  /// Стоимость.
-  final double price;
-
-  /// Дата начала.
+  final String id;
+  final String userId;
+  final int totalSessions;
+  final int usedSessions;
   final DateTime startDate;
-
-  /// Дата окончания.
-  final DateTime finishDate;
-
-  /// Количество занятий.
-  final int lessonsCount;
+  final DateTime endDate;
+  final bool isActive;
 
   const SubscriptionModel({
-    required this.uuid,
-    required this.title,
-    required this.price,
+    required this.id,
+    required this.userId,
+    required this.totalSessions,
+    required this.usedSessions,
     required this.startDate,
-    required this.finishDate,
-    required this.lessonsCount,
+    required this.endDate,
+    required this.isActive,
   });
 
+  int get remainingSessions => totalSessions - usedSessions;
+  bool get isExpired => endDate.isBefore(DateTime.now());
+  bool get isValid => isActive && !isExpired && remainingSessions > 0;
+
   static final SubscriptionModel empty = SubscriptionModel(
-    uuid: '',
-    title: '',
-    price: 0,
+    id: '',
+    userId: '',
+    totalSessions: 0,
+    usedSessions: 0,
     startDate: DateTime.fromMillisecondsSinceEpoch(0),
-    finishDate: DateTime.fromMillisecondsSinceEpoch(0),
-    lessonsCount: 0,
+    endDate: DateTime.fromMillisecondsSinceEpoch(0),
+    isActive: false,
   );
 
   bool get isEmpty => this == empty;
-  bool get isNotEmpty => this != empty;
+  bool get isNotEmpty => !isEmpty;
 
-  factory SubscriptionModel.fromJson(
-    Map<String, dynamic> json, {
-    String locale = LocalizedValue.defaultLocale,
-  }) {
+  factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
     return SubscriptionModel(
-      uuid: json['uuid'] as String? ?? json['id'] as String? ?? '',
-      title: LocalizedValue.read(json['title'], locale: locale),
-      price: _parseDouble(json['price']),
-      startDate: _parseDate(json['startDate']),
-      finishDate: _parseDate(json['finishDate']),
-      lessonsCount: _parseInt(json['lessonsCount']),
+      id: json['id'] as String? ?? '',
+      userId: json['userId'] as String? ?? '',
+      totalSessions: ParseUtils.parseInt(json['totalSessions']),
+      usedSessions: ParseUtils.parseInt(json['usedSessions']),
+      startDate: ParseUtils.parseDate(json['startDate']),
+      endDate: ParseUtils.parseDate(json['endDate']),
+      isActive: json['isActive'] as bool? ?? false,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'uuid': uuid,
-      'title': title,
-      'price': price,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'lessonsCount': lessonsCount,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'userId': userId,
+    'totalSessions': totalSessions,
+    'usedSessions': usedSessions,
+    'startDate': Timestamp.fromDate(startDate),
+    'endDate': Timestamp.fromDate(endDate),
+    'isActive': isActive,
+  };
 
-  static DateTime _parseDate(dynamic value) {
-    if (value is DateTime) return value;
-    if (value is String && value.isNotEmpty) {
-      return DateTime.tryParse(value) ?? DateTime.fromMillisecondsSinceEpoch(0);
-    }
-    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
-
-    try {
-      return (value as dynamic).toDate() as DateTime;
-    } catch (_) {
-      return DateTime.fromMillisecondsSinceEpoch(0);
-    }
-  }
-
-  static double _parseDouble(dynamic value) {
-    if (value is num) return value.toDouble();
-    return double.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
-  static int _parseInt(dynamic value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '') ?? 0;
+  SubscriptionModel copyWith({
+    String? id,
+    String? userId,
+    int? totalSessions,
+    int? usedSessions,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? isActive,
+  }) {
+    return SubscriptionModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      totalSessions: totalSessions ?? this.totalSessions,
+      usedSessions: usedSessions ?? this.usedSessions,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      isActive: isActive ?? this.isActive,
+    );
   }
 
   @override
-  List<Object?> get props => [
-    uuid,
-    title,
-    price,
-    startDate,
-    finishDate,
-    lessonsCount,
-  ];
+  List<Object?> get props => [id, userId, totalSessions, usedSessions, startDate, endDate, isActive];
 }
