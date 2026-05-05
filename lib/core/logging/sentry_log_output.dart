@@ -10,6 +10,8 @@ class SentryLogOutput extends LogOutput {
   void output(OutputEvent event) {
     _console.output(event);
     if (event.level.index >= Level.error.index) {
+      //Sentry.captureMessage returns a future that is intentionally not awaited
+      // because LogOutput.output() is synchronous.
       // ignore: discarded_futures
       Sentry.captureMessage(event.lines.join('\n'), level: SentryLevel.error);
     }

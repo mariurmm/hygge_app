@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
@@ -22,8 +23,6 @@ import 'package:hygge_app/features/settings/ui/settings_screen.dart';
 import 'package:hygge_app/features/splash/ui/splash_screen.dart';
 import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
 import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
-
-import 'route_names.dart';
 
 class AppRouter {
   static GoRouter create() {

@@ -12,24 +12,22 @@ import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/features/programs_detail/bloc/program_details_bloc.dart';
+import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
+import 'package:hygge_app/features/programs_detail/bloc/program_details_state.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
 
-import '../bloc/program_details_bloc.dart';
-import '../bloc/program_details_event.dart';
-import '../bloc/program_details_state.dart';
-
 class ProgramDetailsPage extends StatelessWidget {
-  final ProgramModel program;
-  final LessonModel lesson;
-  final MasterModel master;
-
   const ProgramDetailsPage({
-    super.key,
     required this.program,
     required this.lesson,
     required this.master,
+    super.key,
   });
+  final ProgramModel program;
+  final LessonModel lesson;
+  final MasterModel master;
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +102,9 @@ class ProgramDetailsView extends StatelessWidget {
       ),
       child: BlocBuilder<ProgramDetailsBloc, ProgramDetailsState>(
         builder: (context, state) {
-          final ProgramModel program = state.program;
-          final LessonModel lesson = state.lesson;
-          final MasterModel master = state.master;
+          final program = state.program;
+          final lesson = state.lesson;
+          final master = state.master;
 
           return Scaffold(
             backgroundColor: AppColors.background,
@@ -308,9 +306,8 @@ class ProgramDetailsView extends StatelessWidget {
 }
 
 class _InnerHeader extends StatelessWidget {
-  final VoidCallback onBack;
-
   const _InnerHeader({required this.onBack});
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -345,10 +342,9 @@ class _InnerHeader extends StatelessWidget {
 }
 
 class _GlassCard extends StatelessWidget {
+  const _GlassCard({required this.height, required this.child});
   final double height;
   final Widget child;
-
-  const _GlassCard({required this.height, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -362,10 +358,9 @@ class _GlassCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
   final String label;
   final String value;
-
-  const _InfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -386,15 +381,14 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _MasterGlassCard extends StatelessWidget {
-  final String name;
-  final String bio;
-  final String photoUrl;
-
   const _MasterGlassCard({
     required this.name,
     required this.bio,
     required this.photoUrl,
   });
+  final String name;
+  final String bio;
+  final String photoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -441,10 +435,9 @@ class _MasterGlassCard extends StatelessWidget {
 }
 
 class _FavouriteButton extends StatelessWidget {
+  const _FavouriteButton({required this.isFavourite, required this.onTap});
   final bool isFavourite;
   final VoidCallback onTap;
-
-  const _FavouriteButton({required this.isFavourite, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

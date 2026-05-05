@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hygge_app/core/theme/app_colors.dart' show AppColors;
 
 /// Индикатор загрузки — используется на сплэше, при входе и т.д.
 ///
@@ -9,10 +10,10 @@ import 'package:flutter/material.dart';
 /// а не из [AppColors] напрямую — так он автоматически подстроится
 /// под текущую тему (светлую, тёмную или кастомную).
 class AppLoadingIndicator extends StatelessWidget {
+  const AppLoadingIndicator({super.key, this.size = 36});
+
   /// Размер индикатора (ширина и высота).
   final double size;
-
-  const AppLoadingIndicator({super.key, this.size = 36});
 
   @override
   Widget build(BuildContext context) {

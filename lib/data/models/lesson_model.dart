@@ -1,9 +1,31 @@
 import 'package:equatable/equatable.dart';
+import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:intl/intl.dart';
 
-import '../../core/utils/parse_utils.dart';
-
 class LessonModel extends Equatable {
+  const LessonModel({
+    required this.id,
+    required this.programId,
+    required this.startDate,
+    required this.endDate,
+    this.trainerId = '',
+    this.isBookable = true,
+  });
+
+  factory LessonModel.fromJson(Map<String, dynamic> json) {
+    return LessonModel(
+      id: json['uuid'] as String? ?? json['id'] as String? ?? '',
+      programId: json['programId'] as String? ?? '',
+      trainerId: json['masterId'] as String? ?? '',
+      startDate: ParseUtils.parseDate(
+        json['startDate'] ?? json['availableFrom'],
+      ),
+      endDate: ParseUtils.parseDate(
+        json['finishDate'] ?? json['endDate'] ?? json['availableTo'],
+      ),
+      isBookable: json['isBookable'] as bool? ?? true,
+    );
+  }
   final String id;
   final String programId;
   final String trainerId;
@@ -11,19 +33,9 @@ class LessonModel extends Equatable {
   final DateTime endDate;
   final bool isBookable;
 
-  const LessonModel({
-    required this.id,
-    required this.programId,
-    this.trainerId = '',
-    required this.startDate,
-    required this.endDate,
-    this.isBookable = true,
-  });
-
   static final LessonModel empty = LessonModel(
     id: '',
     programId: '',
-    trainerId: '',
     startDate: DateTime.fromMillisecondsSinceEpoch(0),
     endDate: DateTime.fromMillisecondsSinceEpoch(0),
     isBookable: false,
@@ -63,21 +75,6 @@ class LessonModel extends Equatable {
     if (lessonDay == today) return '${_todayLabel(locale)} $time';
 
     return '${DateFormat('d MMM', locale).format(lessonDay)} $time';
-  }
-
-  factory LessonModel.fromJson(Map<String, dynamic> json) {
-    return LessonModel(
-      id: json['uuid'] as String? ?? json['id'] as String? ?? '',
-      programId: json['programId'] as String? ?? '',
-      trainerId: json['masterId'] as String? ?? '',
-      startDate: ParseUtils.parseDate(
-        json['startDate'] ?? json['availableFrom'],
-      ),
-      endDate: ParseUtils.parseDate(
-        json['finishDate'] ?? json['endDate'] ?? json['availableTo'],
-      ),
-      isBookable: json['isBookable'] as bool? ?? true,
-    );
   }
 
   Map<String, dynamic> toJson() {

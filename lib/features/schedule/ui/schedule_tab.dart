@@ -13,10 +13,9 @@ import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
 import 'package:hygge_app/features/schedule/ui/widgets/schedule_date_strip.dart';
 import 'package:hygge_app/features/schedule/ui/widgets/schedule_empty_state.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 import 'package:intl/intl.dart';
-
-import '../../../l10n/generated/app_localizations.dart';
 
 final class ScheduleTab extends StatelessWidget {
   const ScheduleTab({super.key});
@@ -37,7 +36,7 @@ final class _ScheduleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations loc = AppLocalizations.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -77,19 +76,18 @@ final class _ScheduleView extends StatelessWidget {
 }
 
 final class _ScheduleContent extends StatelessWidget {
+  const _ScheduleContent({required this.state, required this.loc});
   final ScheduleState state;
   final AppLocalizations loc;
 
-  const _ScheduleContent({required this.state, required this.loc});
-
   @override
   Widget build(BuildContext context) {
-    final String locale = Localizations.localeOf(context).toLanguageTag();
-    final String selectedDateLabel = DateFormat.yMMMMEEEEd(
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final selectedDateLabel = DateFormat.yMMMMEEEEd(
       locale,
     ).format(state.selectedDay);
-    final int percent = (state.progress * 100).round();
-    final List<LessonModel> selectedLessons = state.selectedDayLessons;
+    final percent = (state.progress * 100).round();
+    final selectedLessons = state.selectedDayLessons;
 
     return ListView(
       padding: const EdgeInsets.only(
@@ -140,17 +138,16 @@ final class _ScheduleContent extends StatelessWidget {
 }
 
 final class _ScheduleBody extends StatelessWidget {
-  final ScheduleState state;
-  final AppLocalizations loc;
-  final int percent;
-  final List<LessonModel> selectedLessons;
-
   const _ScheduleBody({
     required this.state,
     required this.loc,
     required this.percent,
     required this.selectedLessons,
   });
+  final ScheduleState state;
+  final AppLocalizations loc;
+  final int percent;
+  final List<LessonModel> selectedLessons;
 
   @override
   Widget build(BuildContext context) {

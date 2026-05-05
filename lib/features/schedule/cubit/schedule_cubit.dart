@@ -2,22 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart' show Equatable;
+import 'package:hygge_app/data/models/class_model.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
+import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:intl/intl.dart';
-
-import '../../../data/models/class_model.dart';
-import '../../../data/repositories/booking_repository.dart';
-import '../../../data/repositories/schedule_repository.dart';
 
 part 'schedule_state.dart';
 
 class ScheduleCubit extends Cubit<ScheduleState> {
-  final ScheduleRepository _scheduleRepo;
-  final BookingRepository _bookingRepo;
-  final String userId;
-
-  StreamSubscription<List<ClassModel>>? _classesSub;
-  StreamSubscription<List<ClassModel>>? _monthSub;
-
   ScheduleCubit({
     required ScheduleRepository scheduleRepo,
     required BookingRepository bookingRepo,
@@ -26,13 +18,19 @@ class ScheduleCubit extends Cubit<ScheduleState> {
        _bookingRepo = bookingRepo,
        super(
          ScheduleState(
-           visibleMonth: DateTime(DateTime.now().year, DateTime.now().month, 1),
+           visibleMonth: DateTime(DateTime.now().year, DateTime.now().month),
            today: DateTime.now(),
          ),
        ) {
     _subscribeUpcoming();
     _subscribeMonth(state.visibleMonth);
   }
+  final ScheduleRepository _scheduleRepo;
+  final BookingRepository _bookingRepo;
+  final String userId;
+
+  StreamSubscription<List<ClassModel>>? _classesSub;
+  StreamSubscription<List<ClassModel>>? _monthSub;
 
   void _subscribeUpcoming() {
     _classesSub?.cancel();
@@ -54,14 +52,14 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
   void nextMonth() {
     final d = state.visibleMonth;
-    final next = DateTime(d.year, d.month + 1, 1);
+    final next = DateTime(d.year, d.month + 1);
     emit(state.copyWith(visibleMonth: next));
     _subscribeMonth(next);
   }
 
   void previousMonth() {
     final d = state.visibleMonth;
-    final prev = DateTime(d.year, d.month - 1, 1);
+    final prev = DateTime(d.year, d.month - 1);
     emit(state.copyWith(visibleMonth: prev));
     _subscribeMonth(prev);
   }
@@ -70,7 +68,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
       DateFormat('LLLL yyyy', locale).format(month);
 
   List<DateTime?> calendarCells(DateTime month) {
-    final first = DateTime(month.year, month.month, 1);
+    final first = DateTime(month.year, month.month);
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
     final leading = first.weekday - 1;
     final cells = <DateTime?>[];

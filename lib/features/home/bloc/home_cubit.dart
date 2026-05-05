@@ -4,12 +4,9 @@ import 'package:hygge_app/data/repositories/programs_repository/programs_reposit
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 
-import 'home_state.dart';
+import 'package:hygge_app/features/home/bloc/home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final UpcomingLessonRepository _upcomingRepo;
-  final ProgramsRepository _programsRepo;
-
   HomeCubit({
     required UpcomingLessonRepository upcomingRepo,
     ProgramsRepository? programsRepo,
@@ -18,9 +15,11 @@ class HomeCubit extends Cubit<HomeState> {
        super(const HomeState()) {
     loadUpcoming();
   }
+  final UpcomingLessonRepository _upcomingRepo;
+  final ProgramsRepository _programsRepo;
 
   Future<void> loadUpcoming() async {
-    emit(state.copyWith(isLoading: true, error: null));
+    emit(state.copyWith(isLoading: true));
     try {
       final lessons = await _upcomingRepo.fetchBookings(status: 'booked');
 

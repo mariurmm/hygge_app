@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import '../../../../l10n/generated/app_localizations.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProfileHistoryHeader extends StatelessWidget {
+  const ProfileHistoryHeader({required this.onViewAll, super.key});
   final VoidCallback onViewAll;
-
-  const ProfileHistoryHeader({super.key, required this.onViewAll});
 
   @override
   Widget build(BuildContext context) {

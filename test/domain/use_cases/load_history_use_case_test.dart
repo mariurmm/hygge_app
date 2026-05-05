@@ -12,15 +12,16 @@ import 'package:hygge_app/domain/use_cases/map_class_to_lesson_use_case.dart';
 // ---------------------------------------------------------------------------
 
 class _FakeBookingRepository implements BookingRepository {
-  final List<BookingModel> history;
-
   const _FakeBookingRepository(this.history);
+
+  final List<BookingModel> history;
 
   @override
   Future<List<BookingModel>> getBookingHistory(String userId) async => history;
 
   @override
-  Future<BookingModel?> getBookingForClass(String userId, String classId) async =>
+  Future<BookingModel?> getBookingForClass(
+      String userId, String classId) async =>
       null;
 
   @override
@@ -66,10 +67,10 @@ class _FakeScheduleRepository implements ScheduleRepository {
 // Subclasses MapClassToLessonUseCase but overrides `call` to return a fixed
 // value — avoids any Firestore access while still satisfying the type.
 class _StubMapLesson extends MapClassToLessonUseCase {
-  final LessonModel? stub;
-
   _StubMapLesson(this.stub)
       : super(scheduleRepository: _FakeScheduleRepository());
+
+  final LessonModel? stub;
 
   @override
   Future<LessonModel?> call(String classId) async => stub;

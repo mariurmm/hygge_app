@@ -1,6 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import 'env_keys.dart';
+import 'package:hygge_app/core/config/env_keys.dart';
 
 final class CloudinaryConfig {
   const CloudinaryConfig({
@@ -9,19 +8,11 @@ final class CloudinaryConfig {
     required this.avatarFolder,
   });
 
-  final String cloudName;
-  final String uploadPreset;
-  final String avatarFolder;
-
-  Uri get unsignedImageUploadUri =>
-      Uri.https('api.cloudinary.com', '/v1_1/$cloudName/image/upload');
-
   factory CloudinaryConfig.fromEnv() {
-    final String cloudName =
-        dotenv.env[EnvKeys.cloudinaryCloudName]?.trim() ?? '';
-    final String uploadPreset =
+    final cloudName = dotenv.env[EnvKeys.cloudinaryCloudName]?.trim() ?? '';
+    final uploadPreset =
         dotenv.env[EnvKeys.cloudinaryUploadPreset]?.trim() ?? '';
-    final String avatarFolder =
+    final avatarFolder =
         dotenv.env[EnvKeys.cloudinaryAvatarFolder]?.trim() ??
         'hygge/users/avatars';
 
@@ -40,6 +31,13 @@ final class CloudinaryConfig {
       avatarFolder: avatarFolder,
     );
   }
+
+  final String cloudName;
+  final String uploadPreset;
+  final String avatarFolder;
+
+  Uri get unsignedImageUploadUri =>
+      Uri.https('api.cloudinary.com', '/v1_1/$cloudName/image/upload');
 }
 
 final class CloudinaryConfigException implements Exception {

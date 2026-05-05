@@ -2,20 +2,19 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
-import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ScheduleProgressCard extends StatelessWidget {
-  final int percent;
-  final String description;
-
   const ScheduleProgressCard({
-    super.key,
     required this.percent,
     required this.description,
+    super.key,
   });
+  final int percent;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +34,7 @@ class ScheduleProgressCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.scheduleCardRadius,
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           padding: const EdgeInsets.all(14),
           child: Column(
@@ -84,8 +80,6 @@ class ScheduleProgressCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(999),
                                   gradient: const LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
                                     colors: [
                                       AppColors.progressFillStart,
                                       AppColors.progressFillEnd,
@@ -109,7 +103,7 @@ class ScheduleProgressCard extends StatelessWidget {
               const SizedBox(height: AppSpacings.scheduleProgressDescGap),
               Text(
                 description,
-                style: AppTextStyles.scheduleCardLabel.copyWith(height: 1.0),
+                style: AppTextStyles.scheduleCardLabel.copyWith(height: 1),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

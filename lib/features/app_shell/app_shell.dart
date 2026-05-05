@@ -5,13 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_animations.dart';
-import '../../core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/app_animations.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
 
 class AppShell extends StatefulWidget {
+  const AppShell({required this.child, super.key});
   final Widget child;
-
-  const AppShell({super.key, required this.child});
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -77,16 +76,12 @@ class _AppShellState extends State<AppShell>
     switch (index) {
       case AppConstants.mainTabIndex:
         context.go('/home/main');
-        break;
       case AppConstants.programsTabIndex:
         context.go('/home/programs');
-        break;
       case AppConstants.scheduleTabIndex:
         context.go('/home/schedule');
-        break;
       case AppConstants.profileTabIndex:
         context.go('/home/profile');
-        break;
     }
   }
 
@@ -159,12 +154,6 @@ class _AppShellState extends State<AppShell>
 }
 
 class _FloatingNavBar extends StatelessWidget {
-  final List<_TabItem> tabs;
-  final double currentIndexValue;
-  final int targetIndex;
-  final ValueChanged<int> onTabTapped;
-  final Color Function(Color, double) colorWithOpacity;
-
   const _FloatingNavBar({
     required this.tabs,
     required this.currentIndexValue,
@@ -172,6 +161,11 @@ class _FloatingNavBar extends StatelessWidget {
     required this.onTabTapped,
     required this.colorWithOpacity,
   });
+  final List<_TabItem> tabs;
+  final double currentIndexValue;
+  final int targetIndex;
+  final ValueChanged<int> onTabTapped;
+  final Color Function(Color, double) colorWithOpacity;
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +196,6 @@ class _FloatingNavBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(35),
                 border: Border.all(
                   color: const Color.fromRGBO(255, 255, 255, 0.35),
-                  width: 1,
                 ),
               ),
               child: Stack(
@@ -280,8 +273,7 @@ class _FloatingNavBar extends StatelessWidget {
 }
 
 class _TabItem {
+  const _TabItem({required this.iconPath, required this.index});
   final String iconPath;
   final int index;
-
-  const _TabItem({required this.iconPath, required this.index});
 }

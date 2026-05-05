@@ -16,7 +16,8 @@ class _FakeBookingRepository implements BookingRepository {
   bool createCalled = false;
 
   @override
-  Future<BookingModel?> getBookingForClass(String userId, String classId) async =>
+  Future<BookingModel?> getBookingForClass(
+      String userId, String classId) async =>
       bookingToReturn;
 
   @override
@@ -89,7 +90,7 @@ final _baseBooking = BookingModel(
   id: 'booking-42',
   userId: 'user-1',
   classId: 'class-1',
-  datetime: DateTime(2025, 1, 1),
+  datetime: DateTime(2025),
   status: BookingStatus.pending,
   notificationSent: false,
 );
@@ -99,7 +100,7 @@ final _activeSubscription = SubscriptionModel(
   userId: 'user-1',
   totalSessions: 10,
   usedSessions: 2,
-  startDate: DateTime(2026, 1, 1),
+  startDate: DateTime(2026),
   endDate: DateTime(2027, 12, 31),
   isActive: true,
 );
@@ -128,9 +129,9 @@ void main() {
     test('emits cancelConfirmationRequired when existingBooking is set', () {
       final cubit = _makeCubit();
       // Seed existing booking into state via checkBookingStatus path (sync).
-      cubit.emit(cubit.state.copyWith(existingBooking: _baseBooking));
-
-      cubit.requestCancelBooking();
+      cubit
+        ..emit(cubit.state.copyWith(existingBooking: _baseBooking))
+        ..requestCancelBooking();
 
       expect(
         cubit.state.status,

@@ -9,7 +9,8 @@ import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 abstract class NotificationRepository {
   /// Watch user notifications as a stream.
   ///
-  /// Returns a stream of notification lists ordered by creation date (newest first).
+  ///Returns a stream of notification lists ordered by creation date (newest
+  ///first).
   Stream<List<NotificationItem>> watchNotifications();
 
   /// Mark a specific notification as read.

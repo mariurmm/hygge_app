@@ -36,7 +36,7 @@ class _SplashDotsLoaderState extends State<SplashDotsLoader>
       builder: (_, __) => Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(AppConstants.splashDotCount, (i) {
-          final double sin = math
+          final sin = math
               .sin(
                 ((_controller.value - i / AppConstants.splashDotCount) % 1.0) *
                     math.pi,

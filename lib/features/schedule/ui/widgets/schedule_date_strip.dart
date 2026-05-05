@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ScheduleDateStrip extends StatefulWidget {
-  final DateTime selectedDay;
-  final ValueChanged<DateTime> onDateSelected;
-
   const ScheduleDateStrip({
-    super.key,
     required this.selectedDay,
     required this.onDateSelected,
+    super.key,
   });
+  final DateTime selectedDay;
+  final ValueChanged<DateTime> onDateSelected;
 
   @override
   State<ScheduleDateStrip> createState() => _ScheduleDateStripState();

@@ -9,9 +9,9 @@ import 'package:hygge_app/domain/use_cases/map_class_to_lesson_use_case.dart';
 // ---------------------------------------------------------------------------
 
 class _FakeScheduleRepository implements ScheduleRepository {
-  final ClassModel? classToReturn;
-
   const _FakeScheduleRepository({this.classToReturn});
+
+  final ClassModel? classToReturn;
 
   @override
   Future<ClassModel?> getClass(String classId) async => classToReturn;
@@ -37,7 +37,7 @@ void main() {
     id: 'cls-1',
     title: 'Morning Yoga',
     type: 'yoga',
-    startDate: DateTime(2026, 5, 10, 9, 0),
+    startDate: DateTime(2026, 5, 10, 9),
     durationMinutes: 60,
     trainerId: 'trainer-1',
     maxParticipants: 10,
@@ -67,8 +67,8 @@ void main() {
 
     test('endDate = startDate + durationMinutes', () {
       final lesson = useCase.fromClass(baseClass);
-      expect(lesson.startDate, DateTime(2026, 5, 10, 9, 0));
-      expect(lesson.endDate, DateTime(2026, 5, 10, 10, 0));
+      expect(lesson.startDate, DateTime(2026, 5, 10, 9));
+      expect(lesson.endDate, DateTime(2026, 5, 10, 10));
     });
 
     test('programId is empty string', () {
@@ -86,7 +86,7 @@ void main() {
   group('MapClassToLessonUseCase.call', () {
     test('returns null when class not found in Firestore', () async {
       const useCase = MapClassToLessonUseCase(
-        scheduleRepository: _FakeScheduleRepository(classToReturn: null),
+        scheduleRepository: _FakeScheduleRepository(),
       );
       expect(await useCase('missing-id'), isNull);
     });

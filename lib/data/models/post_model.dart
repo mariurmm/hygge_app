@@ -1,37 +1,15 @@
 import 'package:equatable/equatable.dart';
 
-import 'localized_value.dart';
+import 'package:hygge_app/data/models/localized_value.dart';
 
 /// Модель поста.
 class PostModel extends Equatable {
-  /// Уникальный идентификатор.
-  final String uuid;
-
-  /// Заголовок поста.
-  final String title;
-
-  /// Текст поста.
-  final String text;
-
-  /// Ссылка на изображение.
-  final String imageUrl;
-
   const PostModel({
     required this.uuid,
     required this.title,
     required this.text,
     required this.imageUrl,
   });
-
-  static const PostModel empty = PostModel(
-    uuid: '',
-    title: '',
-    text: '',
-    imageUrl: '',
-  );
-
-  bool get isEmpty => this == empty;
-  bool get isNotEmpty => this != empty;
 
   factory PostModel.fromJson(
     Map<String, dynamic> json, {
@@ -44,6 +22,28 @@ class PostModel extends Equatable {
       imageUrl: json['imageUrl'] as String? ?? '',
     );
   }
+
+  /// Уникальный идентификатор.
+  final String uuid;
+
+  /// Заголовок поста.
+  final String title;
+
+  /// Текст поста.
+  final String text;
+
+  /// Ссылка на изображение.
+  final String imageUrl;
+
+  static const PostModel empty = PostModel(
+    uuid: '',
+    title: '',
+    text: '',
+    imageUrl: '',
+  );
+
+  bool get isEmpty => this == empty;
+  bool get isNotEmpty => this != empty;
 
   Map<String, dynamic> toJson() {
     return {'uuid': uuid, 'title': title, 'text': text, 'imageUrl': imageUrl};

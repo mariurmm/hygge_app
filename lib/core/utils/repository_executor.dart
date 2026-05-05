@@ -11,11 +11,14 @@ import 'package:hygge_app/core/utils/logger.dart';
 ///
 /// Usage:
 /// ```dart
-/// class UserRepositoryImpl with RepositoryExecutorMixin implements UserRepository {
+/// class UserRepositoryImpl
+///     with RepositoryExecutorMixin
+///     implements UserRepository {
 ///   @override
 ///   Future<UserEntity> getUser(String id) => execute(
 ///         action: () async {
-///           final snapshot = await _firestore.collection('users').doc(id).get();
+///           final snapshot =
+///               await _firestore.collection('users').doc(id).get();
 ///           if (!snapshot.exists) {
 ///             throw const NotFoundFailure(message: 'User not found');
 ///           }

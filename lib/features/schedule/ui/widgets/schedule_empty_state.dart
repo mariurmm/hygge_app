@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 final class ScheduleEmptyState extends StatelessWidget {
-  final String title;
-  final String description;
-
   const ScheduleEmptyState({
-    super.key,
     required this.title,
     required this.description,
+    super.key,
   });
+  final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {

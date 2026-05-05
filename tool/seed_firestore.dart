@@ -1,3 +1,4 @@
+// Seeding tool uses print for user-facing progress output.
 // ignore_for_file: avoid_print
 import 'dart:io';
 
@@ -5,7 +6,10 @@ void main(List<String> args) async {
   if (args.isEmpty) {
     print('Usage: dart run tool/seed_firestore.dart <userId>');
     print('');
-    print('  userId — your Firebase Auth UID (find it in Firebase Console → Authentication → Users)');
+    print(
+      '  userId — your Firebase Auth UID '
+      '(find it in Firebase Console → Authentication → Users)',
+    );
     exit(1);
   }
 
@@ -21,7 +25,10 @@ void main(List<String> args) async {
     print('ERROR: service_account.json not found at $serviceAccountPath');
     print('');
     print('Download it from:');
-    print('  Firebase Console → Project Settings → Service accounts → Generate new private key');
+    print(
+      '  Firebase Console → Project Settings → '
+      'Service accounts → Generate new private key',
+    );
     print('  Save as: service_account.json in project root');
     exit(1);
   }
@@ -42,11 +49,14 @@ void main(List<String> args) async {
   final inThreeDays = now.add(const Duration(days: 3));
   final inFourteenDays = now.add(const Duration(days: 14));
 
-  final yogaDatetime = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 8, 0);
-  final meditationDatetime = DateTime(inThreeDays.year, inThreeDays.month, inThreeDays.day, 19, 0);
-  final retreatDatetime = DateTime(inFourteenDays.year, inFourteenDays.month, inFourteenDays.day, 7, 0);
+  final yogaDatetime = DateTime(
+      tomorrow.year, tomorrow.month, tomorrow.day, 8);
+  final meditationDatetime = DateTime(
+      inThreeDays.year, inThreeDays.month, inThreeDays.day, 19);
+  final retreatDatetime = DateTime(
+      inFourteenDays.year, inFourteenDays.month, inFourteenDays.day, 7);
 
-  final subscriptionStart = DateTime(now.year, now.month, 1);
+  final subscriptionStart = DateTime(now.year, now.month);
   final subscriptionEnd = subscriptionStart.add(const Duration(days: 30));
 
   final jsCode = '''
@@ -145,8 +155,6 @@ seed().then(() => process.exit(0)).catch((err) => {
       'node',
       ['.seed_tmp.js'],
       workingDirectory: functionsDir,
-      stdoutEncoding: const SystemEncoding(),
-      stderrEncoding: const SystemEncoding(),
     );
 
     if (result.stdout.toString().isNotEmpty) {

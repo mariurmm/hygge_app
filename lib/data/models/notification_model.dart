@@ -2,11 +2,6 @@ import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 
 class NotificationModel {
-  final String id;
-  final NotificationType type;
-  final DateTime date;
-  final bool isRead;
-
   NotificationModel({
     required this.id,
     required this.type,
@@ -22,6 +17,10 @@ class NotificationModel {
       isRead: json['isRead'] as bool? ?? false,
     );
   }
+  final String id;
+  final NotificationType type;
+  final DateTime date;
+  final bool isRead;
 
   Map<String, dynamic> toJson() {
     return {

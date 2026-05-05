@@ -6,22 +6,11 @@ import 'package:hygge_app/data/models/program_model.dart';
 enum ProgramDetailsStatus { initial, loading, loaded, error }
 
 class ProgramDetailsState extends Equatable {
-  final ProgramDetailsStatus status;
-
-  final ProgramModel program;
-  final LessonModel lesson;
-  final MasterModel master;
-
-  final bool isFavourite;
-  final bool isBooking;
-
-  final String? errorMessage;
-
   const ProgramDetailsState({
-    this.status = ProgramDetailsStatus.initial,
     required this.program,
     required this.lesson,
     required this.master,
+    this.status = ProgramDetailsStatus.initial,
     this.isFavourite = false,
     this.isBooking = false,
     this.errorMessage,
@@ -34,6 +23,16 @@ class ProgramDetailsState extends Equatable {
       master: MasterModel.empty,
     );
   }
+  final ProgramDetailsStatus status;
+
+  final ProgramModel program;
+  final LessonModel lesson;
+  final MasterModel master;
+
+  final bool isFavourite;
+  final bool isBooking;
+
+  final String? errorMessage;
 
   ProgramDetailsState copyWith({
     ProgramDetailsStatus? status,

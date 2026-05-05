@@ -2,19 +2,14 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:hygge_app/data/models/user_model.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_event.dart';
 import 'package:hygge_app/features/settings/bloc/settings_state.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SettingsBloc extends Cubit<SettingsState> {
-  final AuthRepository _authRepository;
-  final AppBloc _appBloc;
-  final TextEditingController nameController;
-  final TextEditingController emailController;
-
   SettingsBloc({
     required AuthRepository authRepository,
     required AppBloc appBloc,
@@ -26,6 +21,10 @@ class SettingsBloc extends Cubit<SettingsState> {
        super(SettingsState(savedName: user.displayName)) {
     nameController.addListener(_onNameChanged);
   }
+  final AuthRepository _authRepository;
+  final AppBloc _appBloc;
+  final TextEditingController nameController;
+  final TextEditingController emailController;
 
   // ── Unsaved-changes tracking ──────────────────────────────────────────────
 
@@ -43,7 +42,7 @@ class SettingsBloc extends Cubit<SettingsState> {
 
   Future<void> pickAvatarFromGallery() async {
     final picker = ImagePicker();
-    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    final file = await picker.pickImage(source: ImageSource.gallery);
     if (file == null) return;
     emit(state.copyWith(localAvatarPath: file.path, clearError: true));
   }
@@ -61,7 +60,7 @@ class SettingsBloc extends Cubit<SettingsState> {
       );
       _appBloc.add(const AppUserRefreshRequested());
       emit(state.copyWith(busy: false));
-    } catch (e) {
+    } on Object catch (e) {
       emit(state.copyWith(busy: false, errorMessage: e.toString()));
     }
   }
@@ -101,8 +100,9 @@ class SettingsBloc extends Cubit<SettingsState> {
 
   @override
   Future<void> close() {
-    nameController.removeListener(_onNameChanged);
-    nameController.dispose();
+    nameController
+      ..removeListener(_onNameChanged)
+      ..dispose();
     emailController.dispose();
     return super.close();
   }

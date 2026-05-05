@@ -7,12 +7,11 @@ import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import '../../../../l10n/generated/app_localizations.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProfileAccountSubscriptionCard extends StatelessWidget {
-  final VoidCallback? onTap;
-
   const ProfileAccountSubscriptionCard({super.key, this.onTap});
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +35,7 @@ class ProfileAccountSubscriptionCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                   AppConstants.scheduleCardRadius,
                 ),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  width: AppConstants.programsBorderWidth,
-                ),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
               child: Stack(
                 children: [

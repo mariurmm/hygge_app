@@ -12,27 +12,24 @@ class FavouritesWatchStarted extends FavouritesEvent {
 }
 
 class FavouritesToggled extends FavouritesEvent {
-  final String uuid;
-
   const FavouritesToggled(this.uuid);
+  final String uuid;
 
   @override
   List<Object?> get props => [uuid];
 }
 
 class FavouritesLessonsRegistered extends FavouritesEvent {
-  final List<ProgramModel> programs;
-
   const FavouritesLessonsRegistered(this.programs);
+  final List<ProgramModel> programs;
 
   @override
   List<Object?> get props => [programs];
 }
 
 class _FavouriteIdsUpdated extends FavouritesEvent {
-  final Set<String> ids;
-
   const _FavouriteIdsUpdated(this.ids);
+  final Set<String> ids;
 
   @override
   List<Object?> get props => [ids];

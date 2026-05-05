@@ -24,7 +24,6 @@ class ProgramsScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 24),
               child: ProgrammList(
                 type: ProgrammCardType.big,
-                scrollDirection: Axis.vertical,
                 programs: state.visiblePrograms,
                 lessonsByProgramId: state.nearestLessonsByProgramId,
                 mastersById: state.mastersById,

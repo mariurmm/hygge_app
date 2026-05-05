@@ -3,14 +3,11 @@ import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
-import 'program_details_event.dart';
-import 'program_details_state.dart';
+import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
+import 'package:hygge_app/features/programs_detail/bloc/program_details_state.dart';
 
 class ProgramDetailsBloc
     extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
-  final FavouritesRepository _favouritesRepository;
-  final UpcomingLessonRepository _bookingRepository;
-
   ProgramDetailsBloc({
     required FavouritesRepository favouritesRepository,
     required UpcomingLessonRepository bookingRepository,
@@ -21,6 +18,8 @@ class ProgramDetailsBloc
     on<ProgramDetailsFavouriteToggled>(_onFavouriteToggled);
     on<ProgramDetailsBooked>(_onBooked);
   }
+  final FavouritesRepository _favouritesRepository;
+  final UpcomingLessonRepository _bookingRepository;
 
   Future<void> _onStarted(
     ProgramDetailsStarted event,
@@ -32,7 +31,6 @@ class ProgramDetailsBloc
         program: event.program,
         lesson: event.lesson,
         master: event.master,
-        errorMessage: null,
       ),
     );
 
@@ -47,7 +45,6 @@ class ProgramDetailsBloc
           lesson: event.lesson,
           master: event.master,
           isFavourite: isFavourite,
-          errorMessage: null,
         ),
       );
     } on Exception catch (e, st) {
@@ -73,7 +70,7 @@ class ProgramDetailsBloc
   ) async {
     final nextValue = !state.isFavourite;
 
-    emit(state.copyWith(isFavourite: nextValue, errorMessage: null));
+    emit(state.copyWith(isFavourite: nextValue));
 
     try {
       await _favouritesRepository.setFavourite(
@@ -99,11 +96,11 @@ class ProgramDetailsBloc
     ProgramDetailsBooked event,
     Emitter<ProgramDetailsState> emit,
   ) async {
-    emit(state.copyWith(isBooking: true, errorMessage: null));
+    emit(state.copyWith(isBooking: true));
 
     try {
       await _bookingRepository.bookProgram(event.lesson);
-      emit(state.copyWith(isBooking: false, errorMessage: null));
+      emit(state.copyWith(isBooking: false));
     } on Exception catch (e, st) {
       AppLogger.error(
         'ProgramDetailsBloc: ошибка бронирования',

@@ -6,7 +6,7 @@ final class FirebaseSeed {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   static Future<void> seedInitialData() async {
-    final WriteBatch batch = _firestore.batch();
+    final batch = _firestore.batch();
 
     _seedMasters(batch);
     _seedPrograms(batch);
@@ -16,11 +16,9 @@ final class FirebaseSeed {
   }
 
   static void _seedMasters(WriteBatch batch) {
-    const String masterId = 'aigerim_amantaeva_001';
+    const masterId = 'aigerim_amantaeva_001';
 
-    final DocumentReference<Map<String, dynamic>> ref = _firestore
-        .collection('masters')
-        .doc(masterId);
+    final ref = _firestore.collection('masters').doc(masterId);
 
     batch.set(ref, {
       'uuid': masterId,
@@ -28,11 +26,25 @@ final class FirebaseSeed {
       'lastName': {'ru': 'Амантаева', 'en': 'Amantaeva', 'kk': 'Амантаева'},
       'bio': {
         'ru':
-            'Айгерим Амантаева — со-основатель Hygge Concept и сертифицированный преподаватель Хатха-йоги и Аштанга-виньясы. Обучалась в Институте Йоги «Pradnaya» по программе Yoga Vidya Gurukul, India; Boston Yoga Union, Massachusetts, USA; Lino Miele Workshop, Kerala, India.',
+            'Айгерим Амантаева — со-основатель Hygge Concept и '
+            'сертифицированный преподаватель Хатха-йоги и Аштанга-виньясы. '
+            'Обучалась в Институте Йоги «Pradnaya» по программе Yoga Vidya '
+            'Gurukul, India; Boston Yoga Union, Massachusetts, USA; '
+            'Lino Miele Workshop, Kerala, India.',
         'en':
-            'Aigerim Amantaeva is a co-founder of Hygge Concept and a certified Hatha Yoga and Ashtanga Vinyasa teacher. She studied at the Pradnaya Yoga Institute under the Yoga Vidya Gurukul program in India, Boston Yoga Union in Massachusetts, USA, and the Lino Miele Workshop in Kerala, India.',
+            'Aigerim Amantaeva is a co-founder of Hygge Concept and a '
+            'certified Hatha Yoga and Ashtanga Vinyasa teacher. She studied '
+            'at the Pradnaya Yoga Institute under the Yoga Vidya Gurukul '
+            'program in India, Boston Yoga Union in Massachusetts, USA, and '
+            'the Lino Miele Workshop in Kerala, India.',
         'kk':
-            'Айгерім Амантаева — Hygge Concept жобасының тең құрылтайшысы және Хатха-йога мен Аштанга виньяса бойынша сертификатталған нұсқаушы. Ол Үндістандағы Yoga Vidya Gurukul бағдарламасы бойынша «Pradnaya» Йога институтында, АҚШ-тың Массачусетс штатындағы Boston Yoga Union орталығында және Үндістанның Керала штатындағы Lino Miele Workshop бағдарламасында білім алған.',
+            'Айгерім Амантаева — Hygge Concept жобасының тең құрылтайшысы '
+            'және Хатха-йога мен Аштанга виньяса бойынша сертификатталған '
+            'нұсқаушы. Ол Үндістандағы Yoga Vidya Gurukul бағдарламасы '
+            'бойынша «Pradnaya» Йога институтында, АҚШ-тың Массачусетс '
+            'штатындағы Boston Yoga Union орталығында және Үндістанның '
+            'Керала штатындағы Lino Miele Workshop бағдарламасында '
+            'білім алған.',
       },
       'avatarUrl':
           'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_AIGERIM_AVATAR_URL.jpg',
@@ -40,12 +52,10 @@ final class FirebaseSeed {
   }
 
   static void _seedPrograms(WriteBatch batch) {
-    const String programId = 'hatha_yoga_aigerim_001';
-    const String masterId = 'aigerim_amantaeva_001';
+    const programId = 'hatha_yoga_aigerim_001';
+    const masterId = 'aigerim_amantaeva_001';
 
-    final DocumentReference<Map<String, dynamic>> ref = _firestore
-        .collection('programs')
-        .doc(programId);
+    final ref = _firestore.collection('programs').doc(programId);
 
     batch.set(ref, {
       'uuid': programId,
@@ -68,20 +78,29 @@ final class FirebaseSeed {
       },
       'text': {
         'ru':
-            'Сбалансированная программа Хатха-йоги для развития гибкости, устойчивости, дыхания и внутренней концентрации. Подходит для тех, кто хочет мягко войти в практику и укрепить тело через осознанное движение.',
+            'Сбалансированная программа Хатха-йоги для развития гибкости, '
+            'устойчивости, дыхания и внутренней концентрации. Подходит для '
+            'тех, кто хочет мягко войти в практику и укрепить тело через '
+            'осознанное движение.',
         'en':
-            'A balanced Hatha Yoga program focused on flexibility, stability, breathing, and inner concentration. Suitable for those who want to enter the practice gently and strengthen the body through mindful movement.',
+            'A balanced Hatha Yoga program focused on flexibility, stability, '
+            'breathing, and inner concentration. Suitable for those who want '
+            'to enter the practice gently and strengthen the body through '
+            'mindful movement.',
         'kk':
-            'Икемділікті, тұрақтылықты, тыныс алуды және ішкі зейінді дамытуға бағытталған теңгерімді Хатха-йога бағдарламасы. Тәжірибеге жұмсақ кірісіп, саналы қозғалыс арқылы денені нығайтқысы келетіндерге қолайлы.',
+            'Икемділікті, тұрақтылықты, тыныс алуды және ішкі зейінді '
+            'дамытуға бағытталған теңгерімді Хатха-йога бағдарламасы. '
+            'Тәжірибеге жұмсақ кірісіп, саналы қозғалыс арқылы денені '
+            'нығайтқысы келетіндерге қолайлы.',
       },
     });
   }
 
   static void _seedLessons(WriteBatch batch) {
-    const String programId = 'hatha_yoga_aigerim_001';
-    const String masterId = 'aigerim_amantaeva_001';
+    const programId = 'hatha_yoga_aigerim_001';
+    const masterId = 'aigerim_amantaeva_001';
 
-    final List<Map<String, dynamic>> lessons = <Map<String, dynamic>>[
+    final lessons = <Map<String, dynamic>>[
       {
         'uuid': 'hatha_yoga_aigerim_001_2026_05_05_0800',
         'programId': programId,
@@ -108,12 +127,10 @@ final class FirebaseSeed {
       },
     ];
 
-    for (final Map<String, dynamic> lesson in lessons) {
-      final String lessonId = lesson['uuid'] as String;
+    for (final lesson in lessons) {
+      final lessonId = lesson['uuid'] as String;
 
-      final DocumentReference<Map<String, dynamic>> ref = _firestore
-          .collection('lessons')
-          .doc(lessonId);
+      final ref = _firestore.collection('lessons').doc(lessonId);
 
       batch.set(ref, lesson);
     }

@@ -33,7 +33,7 @@ abstract class UpcomingLessonRepository {
 
   /// Fetch user bookings (reservations for lessons).
   ///
-  /// [status] - optional filter by booking status (e.g., 'booked', 'completed').
+  ///[status] - optional filter by booking status (e.g., 'booked', 'completed').
   /// Returns a list of [LessonModel] representing booked lessons.
   Future<List<LessonModel>> fetchBookings({String? status});
 

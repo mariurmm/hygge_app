@@ -8,11 +8,10 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/subscription_model.dart';
 import 'package:hygge_app/data/repositories/user_repository/user_repository.dart';
+import 'package:hygge_app/features/subscription/bloc/account_subscription_bloc.dart';
+import 'package:hygge_app/features/subscription/bloc/account_subscription_event.dart';
+import 'package:hygge_app/features/subscription/bloc/account_subscription_state.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
-
-import '../bloc/account_subscription_bloc.dart';
-import '../bloc/account_subscription_event.dart';
-import '../bloc/account_subscription_state.dart';
 
 class AccountSubscriptionPage extends StatelessWidget {
   const AccountSubscriptionPage({super.key});
@@ -195,9 +194,8 @@ class AccountSubscriptionView extends StatelessWidget {
 }
 
 class _InnerHeader extends StatelessWidget {
-  final VoidCallback onBack;
-
   const _InnerHeader({required this.onBack});
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -232,15 +230,14 @@ class _InnerHeader extends StatelessWidget {
 }
 
 class _AccountGlassCard extends StatelessWidget {
-  final String name;
-  final String email;
-  final String photoUrl;
-
   const _AccountGlassCard({
     required this.name,
     required this.email,
     required this.photoUrl,
   });
+  final String name;
+  final String email;
+  final String photoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -291,12 +288,6 @@ class _AccountGlassCard extends StatelessWidget {
 }
 
 class _SubscriptionGlassCard extends StatelessWidget {
-  final SubscriptionModel? subscription;
-  final String currentPlanLabel;
-  final String freeLabel;
-  final String premiumActiveText;
-  final String freeActiveText;
-
   const _SubscriptionGlassCard({
     required this.subscription,
     required this.currentPlanLabel,
@@ -304,10 +295,15 @@ class _SubscriptionGlassCard extends StatelessWidget {
     required this.premiumActiveText,
     required this.freeActiveText,
   });
+  final SubscriptionModel? subscription;
+  final String currentPlanLabel;
+  final String freeLabel;
+  final String premiumActiveText;
+  final String freeActiveText;
 
   @override
   Widget build(BuildContext context) {
-    final isPremium = subscription?.isNotEmpty == true;
+    final isPremium = subscription?.isNotEmpty ?? false;
     final title = (subscription != null && subscription!.isNotEmpty)
         ? currentPlanLabel
         : freeLabel;
@@ -337,15 +333,14 @@ class _SubscriptionGlassCard extends StatelessWidget {
 }
 
 class _ActionGlassTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
   const _ActionGlassTile({
     required this.title,
     required this.subtitle,
     required this.onTap,
   });
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

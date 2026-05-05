@@ -4,22 +4,21 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ScheduleCalendar extends StatelessWidget {
-  final String monthLabel;
-  final List<DateTime?> cells;
-  final DateTime today;
-  final Set<DateTime> scheduledDates;
-  final VoidCallback onPrev;
-  final VoidCallback onNext;
-
   const ScheduleCalendar({
-    super.key,
     required this.monthLabel,
     required this.cells,
     required this.today,
     required this.scheduledDates,
     required this.onPrev,
     required this.onNext,
+    super.key,
   });
+  final String monthLabel;
+  final List<DateTime?> cells;
+  final DateTime today;
+  final Set<DateTime> scheduledDates;
+  final VoidCallback onPrev;
+  final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/core/utils/external_links.dart';
-import '../../../../l10n/generated/app_localizations.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProfileAboutSection extends StatelessWidget {
   const ProfileAboutSection({super.key});
@@ -55,15 +55,14 @@ class ProfileAboutSection extends StatelessWidget {
 }
 
 class _LinkRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
   const _LinkRow({
     required this.icon,
     required this.label,
     required this.onTap,
   });
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -117,13 +116,15 @@ class _LinkRow extends StatelessWidget {
 //         _LinkRow(
 //           icon: Icons.phone_outlined,
 //           label: AppConstants.profileContactPhoneDisplay,
-//           onTap: () => launchExternalUrl(AppConstants.profileContactPhoneUri),
+//           onTap: () =>
+//               launchExternalUrl(AppConstants.profileContactPhoneUri),
 //         ),
 //         const SizedBox(height: AppSpacings.scheduleCardTextGapV),
 //         _LinkRow(
 //           icon: Icons.email_outlined,
 //           label: AppConstants.profileContactEmail,
-//           onTap: () => launchExternalUrl(AppConstants.profileContactEmailUri),
+//           onTap: () =>
+//               launchExternalUrl(AppConstants.profileContactEmailUri),
 //         ),
 //         const SizedBox(height: AppSpacings.scheduleCardTextGapV),
 //         _LinkRow(
@@ -136,7 +137,8 @@ class _LinkRow extends StatelessWidget {
 //         _LinkRow(
 //           icon: Icons.camera_alt_outlined,
 //           label: '@hy.gge.specialty.bar',
-//           onTap: () => launchExternalUrl(AppConstants.profileInstagramBarUrl),
+//           onTap: () =>
+//               launchExternalUrl(AppConstants.profileInstagramBarUrl),
 //         ),
 //         const SizedBox(height: AppSpacings.scheduleCardTextGapV),
 //         _LinkRow(

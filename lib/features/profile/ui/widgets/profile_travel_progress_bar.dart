@@ -3,9 +3,8 @@ import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 
 class ProfileTravelProgressBar extends StatelessWidget {
+  const ProfileTravelProgressBar({required this.percent, super.key});
   final int percent;
-
-  const ProfileTravelProgressBar({super.key, required this.percent});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +34,6 @@ class ProfileTravelProgressBar extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(999),
                         gradient: const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
                           colors: [
                             AppColors.progressFillStart,
                             AppColors.progressFillEnd,

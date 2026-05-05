@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../core/constants/app_constants.dart';
-import '../core/constants/asset_paths.dart';
-import '../l10n/generated/app_localizations.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 /// Кнопка «Войти через Google» — стилизована по гайдлайнам Google.
 ///
@@ -13,17 +13,17 @@ import '../l10n/generated/app_localizations.dart';
 /// Стили текста и цвета берутся из [Theme], а не из захардкоженных
 /// значений — так кнопка корректно адаптируется к любой теме.
 class GoogleSignInButton extends StatelessWidget {
+  const GoogleSignInButton({
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  });
+
   /// Колбэк при нажатии.
   final VoidCallback? onPressed;
 
   /// Показывать ли индикатор загрузки.
   final bool isLoading;
-
-  const GoogleSignInButton({
-    super.key,
-    required this.onPressed,
-    this.isLoading = false,
-  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,16 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/router/app_router.dart';
+import 'package:hygge_app/core/theme/app_theme.dart';
+import 'package:hygge_app/data/repositories/auth_repository.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
+import 'package:hygge_app/features/app/bloc/app_bloc.dart';
+import 'package:hygge_app/features/app/bloc/locale_cubit.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
-
-import '../../../core/constants/app_constants.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../data/repositories/auth_repository.dart';
-import '../../../l10n/generated/app_localizations.dart';
-import '../bloc/app_bloc.dart';
-import '../bloc/locale_cubit.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

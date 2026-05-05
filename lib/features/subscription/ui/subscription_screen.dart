@@ -2,13 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
+import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/asset_paths.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../cubit/subscription_cubit.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
@@ -55,8 +54,8 @@ class SubscriptionScreen extends StatelessWidget {
 }
 
 class _SubscriptionContent extends StatelessWidget {
-  final SubscriptionState state;
   const _SubscriptionContent({required this.state});
+  final SubscriptionState state;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +155,8 @@ class _SubscriptionContent extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Абонемент истёк. Обратитесь к администратору для продления.',
+                        'Абонемент истёк. Обратитесь к администратору'
+                        ' для продления.',
                         style: AppTextStyles.bodySmall.copyWith(
                           color: Colors.white70,
                         ),
@@ -195,7 +195,8 @@ class _EmptySubscription extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Для приобретения абонемента обратитесь к администратору студии.',
+                'Для приобретения абонемента обратитесь к'
+                ' администратору студии.',
                 style: AppTextStyles.scheduleCardLabel,
                 textAlign: TextAlign.center,
               ),
@@ -208,8 +209,8 @@ class _EmptySubscription extends StatelessWidget {
 }
 
 class _GlassCard extends StatelessWidget {
-  final Widget child;
   const _GlassCard({required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -225,10 +226,7 @@ class _GlassCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.scheduleCardRadius,
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,
         ),
@@ -238,9 +236,9 @@ class _GlassCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
   final String label;
   final String value;
-  const _InfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {

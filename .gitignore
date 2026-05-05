@@ -6,8 +6,7 @@ service_account.json
 # ============================================================
 # FVM
 # ============================================================
-.fvm/versions/
-.fvm/flutter_sdk
+.fvm/
 
 # ============================================================
 # Flutter / Dart
@@ -115,10 +114,10 @@ ios/Podfile.lock
 *.iws
 
 # VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/
+
+# Claude Code
+.claude/
 
 # Vim
 *.swp

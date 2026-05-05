@@ -12,7 +12,7 @@ import 'package:hygge_app/features/settings/bloc/settings_state.dart';
 class _FakeAuthRepository implements AuthRepository {
   bool updateCalled = false;
   bool deleteCalled = false;
-  Object? updateError;
+  Exception? updateError;
 
   @override
   Future<void> updateUserProfileFields({
@@ -145,19 +145,22 @@ void main() {
   });
 
   group('save()', () {
-    test('on success: clears hasUnsavedChanges and updates savedName', () async {
-      bloc.nameController.text = 'New Name';
-      await Future.microtask(() {});
-      expect(bloc.state.hasUnsavedChanges, isTrue);
+    test(
+      'on success: clears hasUnsavedChanges and updates savedName',
+      () async {
+        bloc.nameController.text = 'New Name';
+        await Future.microtask(() {});
+        expect(bloc.state.hasUnsavedChanges, isTrue);
 
-      await bloc.save();
+        await bloc.save();
 
-      expect(fakeAuth.updateCalled, isTrue);
-      expect(bloc.state.hasUnsavedChanges, isFalse);
-      expect(bloc.state.savedName, 'New Name');
-      expect(bloc.state.busy, isFalse);
-      expect(bloc.state.errorMessage, isNull);
-    });
+        expect(fakeAuth.updateCalled, isTrue);
+        expect(bloc.state.hasUnsavedChanges, isFalse);
+        expect(bloc.state.savedName, 'New Name');
+        expect(bloc.state.busy, isFalse);
+        expect(bloc.state.errorMessage, isNull);
+      },
+    );
 
     test('on error: keeps hasUnsavedChanges and sets errorMessage', () async {
       fakeAuth.updateError = Exception('network error');

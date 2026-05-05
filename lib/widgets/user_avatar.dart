@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
 
 /// Аватар пользователя — переиспользуемый виджет.
 ///
@@ -20,6 +20,12 @@ import '../core/constants/app_constants.dart';
 /// UserAvatar(photoUrl: user.photoUrl, radius: 32)
 /// ```
 class UserAvatar extends StatelessWidget {
+  const UserAvatar({
+    required this.photoUrl,
+    super.key,
+    this.radius = AppConstants.avatarRadius,
+  });
+
   /// URL фото пользователя.
   ///
   /// Если строка пустая — отображается иконка-заглушка.
@@ -28,14 +34,9 @@ class UserAvatar extends StatelessWidget {
   /// Радиус круглого аватара.
   ///
   /// По умолчанию используется [AppConstants.avatarRadius].
-  /// Можно передать другое значение для уменьшенной версии (например, в списке).
+  /// Можно передать другое значение для уменьшенной версии
+  /// (например, в списке).
   final double radius;
-
-  const UserAvatar({
-    super.key,
-    required this.photoUrl,
-    this.radius = AppConstants.avatarRadius,
-  });
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,7 @@ class ProfileFavouritesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations loc = AppLocalizations.of(context);
+    final loc = AppLocalizations.of(context);
 
     return BlocSelector<FavouritesBloc, FavouritesState, List<ProgramModel>>(
       selector: (state) => state.favouritePrograms,
@@ -46,7 +46,7 @@ class ProfileFavouritesSection extends StatelessWidget {
                 separatorBuilder: (_, __) =>
                     const SizedBox(width: AppSpacings.programsCardsGap),
                 itemBuilder: (context, index) {
-                  final ProgramModel program = programs[index];
+                  final program = programs[index];
 
                   return ProgrammCard(
                     type: ProgrammCardType.small,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'app_colors.dart';
-import 'app_text_styles.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
+import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 /// Тема приложения (пока только светлая).
 ///
@@ -17,9 +17,7 @@ class AppTheme {
       // ── Цветовая схема ───────────────────────────────────────
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
-        onPrimary: AppColors.onPrimary,
         secondary: AppColors.secondary,
-        onSecondary: AppColors.onSecondary,
         surface: AppColors.surface,
         error: AppColors.error,
       ),
@@ -30,8 +28,6 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        centerTitle: true,
-        elevation: 0,
       ),
 
       // ── Кнопки ───────────────────────────────────────────────

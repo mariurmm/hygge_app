@@ -16,7 +16,7 @@ class HistoryResult {
 /// Loads the user's booking history and enriches it with class details.
 ///
 /// Orchestrates [BookingRepository] + [MapClassToLessonUseCase]:
-///   1. Fetches all bookings for [userId].
+///   1. Fetches all bookings for userId.
 ///   2. Counts bookings within the current calendar month.
 ///   3. Maps the most-recent booking's class into a [LessonModel].
 class LoadHistoryUseCase {

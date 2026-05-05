@@ -14,9 +14,6 @@ part 'programs_event.dart';
 part 'programs_state.dart';
 
 class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
-  final ProgramsRepository _repository;
-  final FirebaseFirestore _firestore;
-
   ProgramsBloc({
     required ProgramsRepository repository,
     FirebaseFirestore? firestore,
@@ -26,6 +23,8 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
     on<ProgramsInitialized>(_onInitialized);
     on<ProgramsFilterChanged>(_onFilterChanged);
   }
+  final ProgramsRepository _repository;
+  final FirebaseFirestore _firestore;
 
   Future<void> _onInitialized(
     ProgramsInitialized event,

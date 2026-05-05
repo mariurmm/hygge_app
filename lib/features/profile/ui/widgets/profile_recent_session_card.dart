@@ -7,14 +7,13 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ProfileRecentSessionCard extends StatelessWidget {
-  final String timingLabel;
-  final String imageAssetPath;
-
   const ProfileRecentSessionCard({
-    super.key,
     required this.timingLabel,
     required this.imageAssetPath,
+    super.key,
   });
+  final String timingLabel;
+  final String imageAssetPath;
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +32,7 @@ class ProfileRecentSessionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.scheduleCardRadius,
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Stack(
             fit: StackFit.expand,

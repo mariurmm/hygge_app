@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../data/models/user_model.dart';
+import 'package:hygge_app/data/models/user_model.dart';
+import 'package:hygge_app/features/app/bloc/app_bloc.dart' show AppBloc;
+import 'package:hygge_app/features/app/bloc/app_state.dart' show AppState;
 
 /// События (events) для [AppBloc].
 ///
@@ -17,10 +19,10 @@ abstract class AppEvent extends Equatable {
 ///
 /// Отправляется автоматически при подписке на `authStateChanges`.
 class AppAuthStateChanged extends AppEvent {
+  const AppAuthStateChanged(this.user);
+
   /// Новый пользователь (или [UserModel.empty] при выходе).
   final UserModel user;
-
-  const AppAuthStateChanged(this.user);
 
   @override
   List<Object?> get props => [user];

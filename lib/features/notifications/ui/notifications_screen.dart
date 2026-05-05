@@ -58,9 +58,8 @@ class _NotificationsView extends StatelessWidget {
                       leading: IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
-                          minWidth:
-                              40, //в AppConstants сделай переменной, типа IconButtonMinSiz
-                          minHeight: 40, //такие это хардкод, так нельзя
+                          minWidth: AppConstants.notificationIconSize,
+                          minHeight: AppConstants.notificationIconSize,
                         ),
                         icon: const Icon(
                           Icons.arrow_back_ios_new_rounded,

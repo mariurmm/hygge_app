@@ -1,19 +1,20 @@
 // lib/features/notifications/ui/widgets/notification_tile.dart
 
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 import 'package:intl/intl.dart';
 
 class NotificationTile extends StatelessWidget {
   const NotificationTile({
-    super.key,
     required this.item,
     required this.onTap,
     required this.onDismiss,
+    super.key,
   });
 
   final NotificationItem item;
@@ -46,7 +47,6 @@ class NotificationTile extends StatelessWidget {
                   color: Colors.white.withValues(
                     alpha: item.isRead ? 0.1 : 0.2,
                   ),
-                  width: AppConstants.programsBorderWidth,
                 ),
               ),
               child: Row(

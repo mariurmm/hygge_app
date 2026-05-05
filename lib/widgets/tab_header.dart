@@ -5,10 +5,9 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ProgramsHeader extends StatelessWidget {
+  const ProgramsHeader({super.key, this.leading, this.trailing});
   final Widget? leading;
   final Widget? trailing;
-
-  const ProgramsHeader({super.key, this.leading, this.trailing});
 
   @override
   Widget build(BuildContext context) {

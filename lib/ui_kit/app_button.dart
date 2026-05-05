@@ -17,6 +17,63 @@ import 'package:flutter/material.dart';
 /// Стили берутся из [Theme], а не из констант — так кнопки автоматически
 /// адаптируются при смене темы (светлая/тёмная).
 class AppButton extends StatelessWidget {
+  /// Дефолтный конструктор — эквивалент [AppButton.primary].
+  ///
+  /// Оставлен для обратной совместимости: если в коде уже есть
+  /// `AppButton(text: ..., onPressed: ...)`, он продолжит работать.
+  const AppButton({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  }) : _variant = _AppButtonVariant.primary;
+
+  // ── Именованные конструкторы ──────────────────────────────────
+
+  /// Основное действие — кнопка с заливкой основным цветом (primary).
+  ///
+  /// Используйте для главных действий на экране:
+  /// сохранить, отправить, подтвердить.
+  const AppButton.primary({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  }) : _variant = _AppButtonVariant.primary;
+
+  /// Второстепенное действие — кнопка с обводкой, без заливки.
+  ///
+  /// Используйте для альтернативных действий:
+  /// отмена, назад, «может быть позже».
+  const AppButton.secondary({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  }) : _variant = _AppButtonVariant.secondary;
+
+  /// Текстовая кнопка — без фона и обводки.
+  ///
+  /// Используйте для малозаметных действий:
+  /// «пропустить», «подробнее», ссылки в тексте.
+  const AppButton.text({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  }) : _variant = _AppButtonVariant.text;
+
+  /// Опасное действие — кнопка красного цвета (error).
+  ///
+  /// Используйте для деструктивных действий:
+  /// удалить аккаунт, выйти, отменить подписку.
+  const AppButton.danger({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  }) : _variant = _AppButtonVariant.danger;
+
   /// Текст на кнопке.
   final String text;
 
@@ -28,63 +85,6 @@ class AppButton extends StatelessWidget {
 
   /// Вариант оформления кнопки (определяет цвета и стиль).
   final _AppButtonVariant _variant;
-
-  // ── Именованные конструкторы ──────────────────────────────────
-
-  /// Основное действие — кнопка с заливкой основным цветом (primary).
-  ///
-  /// Используйте для главных действий на экране:
-  /// сохранить, отправить, подтвердить.
-  const AppButton.primary({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  }) : _variant = _AppButtonVariant.primary;
-
-  /// Второстепенное действие — кнопка с обводкой, без заливки.
-  ///
-  /// Используйте для альтернативных действий:
-  /// отмена, назад, «может быть позже».
-  const AppButton.secondary({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  }) : _variant = _AppButtonVariant.secondary;
-
-  /// Текстовая кнопка — без фона и обводки.
-  ///
-  /// Используйте для малозаметных действий:
-  /// «пропустить», «подробнее», ссылки в тексте.
-  const AppButton.text({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  }) : _variant = _AppButtonVariant.text;
-
-  /// Опасное действие — кнопка красного цвета (error).
-  ///
-  /// Используйте для деструктивных действий:
-  /// удалить аккаунт, выйти, отменить подписку.
-  const AppButton.danger({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  }) : _variant = _AppButtonVariant.danger;
-
-  /// Дефолтный конструктор — эквивалент [AppButton.primary].
-  ///
-  /// Оставлен для обратной совместимости: если в коде уже есть
-  /// `AppButton(text: ..., onPressed: ...)`, он продолжит работать.
-  const AppButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  }) : _variant = _AppButtonVariant.primary;
 
   @override
   Widget build(BuildContext context) {

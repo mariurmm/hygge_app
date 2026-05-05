@@ -26,8 +26,6 @@ part 'profile_about_model.g.dart';
 /// ```
 @freezed
 abstract class ProfileAboutModel with _$ProfileAboutModel {
-  const ProfileAboutModel._();
-
   const factory ProfileAboutModel({
     @Default('') String companyName,
     @Default('') String description,
@@ -42,6 +40,7 @@ abstract class ProfileAboutModel with _$ProfileAboutModel {
     @Default('') String youTube,
     @Default('') String workingHours,
   }) = _ProfileAboutModel;
+  const ProfileAboutModel._();
 
   factory ProfileAboutModel.fromJson(Map<String, dynamic> json) =>
       _$ProfileAboutModelFromJson(json);

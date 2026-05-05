@@ -10,9 +10,6 @@ import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
 part 'schedule_event.dart';
 
 final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
-  final UpcomingLessonRepository _repository;
-  final FirebaseFirestore _firestore;
-
   ScheduleBloc({
     required UpcomingLessonRepository repository,
     FirebaseFirestore? firestore,
@@ -23,6 +20,8 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     on<ScheduleRefreshRequested>(_onRefreshRequested);
     on<ScheduleDaySelected>(_onScheduleDaySelected);
   }
+  final UpcomingLessonRepository _repository;
+  final FirebaseFirestore _firestore;
 
   Future<void> _onStarted(
     ScheduleStarted event,

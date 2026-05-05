@@ -9,10 +9,6 @@ import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 
 class ProfileBloc extends Cubit<ProfileState> {
-  final LoadHistoryUseCase _loadHistoryUseCase;
-  final CalculateProgressUseCase _calculateProgressUseCase;
-  final ProgramsRepository _programsRepo;
-
   ProfileBloc({
     required LoadHistoryUseCase loadHistory,
     required CalculateProgressUseCase calculateProgress,
@@ -24,6 +20,9 @@ class ProfileBloc extends Cubit<ProfileState> {
        super(_initialState(user)) {
     _loadHistory(user?.uid ?? '');
   }
+  final LoadHistoryUseCase _loadHistoryUseCase;
+  final CalculateProgressUseCase _calculateProgressUseCase;
+  final ProgramsRepository _programsRepo;
 
   static ProfileState _initialState(UserModel? user) {
     final name = user != null && user.isNotEmpty && user.displayName.isNotEmpty
@@ -33,10 +32,7 @@ class ProfileBloc extends Cubit<ProfileState> {
     return ProfileState(
       isPremium: _hasActiveSubscription(user),
       displayName: name,
-      travelProgressPercent: 0,
-      sessionsCompletedThisMonth: 0,
       sessionsLeftToNextStage: 0,
-      goalSessionsTotal: 15,
       isHistoryLoading: true,
     );
   }

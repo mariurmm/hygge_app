@@ -1,21 +1,20 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hygge_app/core/constants/app_constants.dart';
+import 'package:hygge_app/core/constants/asset_paths.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
+import 'package:hygge_app/core/theme/app_text_styles.dart';
+import 'package:hygge_app/data/models/class_model.dart';
+import 'package:hygge_app/features/booking/cubit/booking_cubit.dart';
+import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/asset_paths.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../data/models/class_model.dart';
-import '../../subscription/cubit/subscription_cubit.dart';
-import '../cubit/booking_cubit.dart';
-
 class ClassDetailScreen extends StatefulWidget {
+  const ClassDetailScreen({required this.classModel, super.key});
   final ClassModel classModel;
-
-  const ClassDetailScreen({super.key, required this.classModel});
 
   @override
   State<ClassDetailScreen> createState() => _ClassDetailScreenState();
@@ -109,7 +108,8 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Это выездное мероприятие. Запись через администратора.',
+                              'Это выездное мероприятие. Запись через'
+                              ' администратора.',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: Colors.white70,
                               ),
@@ -165,7 +165,8 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                               style: AppTextStyles.scheduleCalendarTitle,
                             ),
                             content: Text(
-                              'Вы уверены, что хотите отменить запись на «${classModel.title}»?',
+                              'Вы уверены, что хотите отменить запись'
+                              ' на «${classModel.title}»?',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: Colors.white70,
                               ),
@@ -192,8 +193,12 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                             ],
                           ),
                         );
-                        if (confirmed == true && context.mounted) {
-                          context.read<BookingCubit>().cancelBooking(bookingId);
+                        if ((confirmed ?? false) && context.mounted) {
+                          unawaited(
+                            context.read<BookingCubit>().cancelBooking(
+                              bookingId,
+                            ),
+                          );
                         }
                         return;
                       }
@@ -251,15 +256,14 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
 }
 
 class _BookButton extends StatelessWidget {
-  final ClassModel classModel;
-  final BookingState bookingState;
-  final VoidCallback? onCancelTap;
-
   const _BookButton({
     required this.classModel,
     required this.bookingState,
     this.onCancelTap,
   });
+  final ClassModel classModel;
+  final BookingState bookingState;
+  final VoidCallback? onCancelTap;
 
   @override
   Widget build(BuildContext context) {
@@ -335,10 +339,7 @@ class _BookButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                   AppConstants.scheduleCardRadius,
                 ),
-                side: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  width: AppConstants.programsBorderWidth,
-                ),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
               ),
             ),
             child: isLoading
@@ -370,7 +371,6 @@ class _BookButton extends StatelessWidget {
               foregroundColor: AppColors.terracotta,
               side: BorderSide(
                 color: AppColors.terracotta.withValues(alpha: 0.6),
-                width: AppConstants.programsBorderWidth,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
@@ -390,8 +390,8 @@ class _BookButton extends StatelessWidget {
 }
 
 class _GlassCard extends StatelessWidget {
-  final Widget child;
   const _GlassCard({required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -407,10 +407,7 @@ class _GlassCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.scheduleCardRadius,
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,
         ),
@@ -420,9 +417,9 @@ class _GlassCard extends StatelessWidget {
 }
 
 class _DetailRow extends StatelessWidget {
+  const _DetailRow({required this.icon, required this.label});
   final IconData icon;
   final String label;
-  const _DetailRow({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {

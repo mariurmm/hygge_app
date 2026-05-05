@@ -15,24 +15,23 @@ import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProgrammCard extends StatelessWidget {
+  const ProgrammCard({
+    required this.type,
+    required this.program,
+    super.key,
+    this.lesson,
+    this.master,
+    this.timingOverlayLabel,
+  });
   final ProgrammCardType type;
   final ProgramModel program;
   final LessonModel? lesson;
   final MasterModel? master;
   final String? timingOverlayLabel;
 
-  const ProgrammCard({
-    super.key,
-    required this.type,
-    required this.program,
-    this.lesson,
-    this.master,
-    this.timingOverlayLabel,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations loc = AppLocalizations.of(context);
+    final loc = AppLocalizations.of(context);
 
     return GestureDetector(
       onTap: () => _openDetails(context),
@@ -66,17 +65,16 @@ class ProgrammCard extends StatelessWidget {
 }
 
 class _BigProgramCard extends StatelessWidget {
-  final ProgramModel program;
-  final LessonModel? lesson;
-  final String? timingOverlayLabel;
-  final AppLocalizations loc;
-
   const _BigProgramCard({
     required this.program,
     required this.lesson,
     required this.timingOverlayLabel,
     required this.loc,
   });
+  final ProgramModel program;
+  final LessonModel? lesson;
+  final String? timingOverlayLabel;
+  final AppLocalizations loc;
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +93,7 @@ class _BigProgramCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.programsCardRadius,
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,15 +162,14 @@ class _BigProgramCard extends StatelessWidget {
 }
 
 class _SmallProgramCard extends StatelessWidget {
-  final ProgramModel program;
-  final LessonModel? lesson;
-  final AppLocalizations loc;
-
   const _SmallProgramCard({
     required this.program,
     required this.lesson,
     required this.loc,
   });
+  final ProgramModel program;
+  final LessonModel? lesson;
+  final AppLocalizations loc;
 
   @override
   Widget build(BuildContext context) {
@@ -232,13 +226,12 @@ class _SmallProgramCard extends StatelessWidget {
 }
 
 class _ProgramMedia extends StatelessWidget {
-  final ProgramModel program;
-  final String? timingOverlayLabel;
-
   const _ProgramMedia({
     required this.program,
     required this.timingOverlayLabel,
   });
+  final ProgramModel program;
+  final String? timingOverlayLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -289,9 +282,8 @@ class _ProgramMedia extends StatelessWidget {
 }
 
 class _SmallProgramMedia extends StatelessWidget {
-  final ProgramModel program;
-
   const _SmallProgramMedia({required this.program});
+  final ProgramModel program;
 
   @override
   Widget build(BuildContext context) {
@@ -307,9 +299,8 @@ class _SmallProgramMedia extends StatelessWidget {
 }
 
 class _ProgramImage extends StatelessWidget {
-  final String imageUrl;
-
   const _ProgramImage({required this.imageUrl});
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +324,7 @@ class _ProgramImage extends StatelessWidget {
 class _ProgramImageFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: AppColors.programsCardMedia.withValues(alpha: 0.95),
       child: const Center(
         child: Icon(Icons.play_circle_outline, color: Colors.white70, size: 28),
@@ -347,7 +338,7 @@ String _durationLabel(LessonModel? lesson, AppLocalizations loc) {
     return loc.minutesLabel(AppConstants.programsDefaultDurationMin);
   }
 
-  final int mins = lesson.endDate.difference(lesson.startDate).inMinutes;
+  final mins = lesson.endDate.difference(lesson.startDate).inMinutes;
 
   if (mins > 0) return loc.minutesLabel(mins);
 

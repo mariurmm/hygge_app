@@ -3,15 +3,14 @@ part of 'subscription_cubit.dart';
 enum SubscriptionStatus { initial, loaded, error }
 
 class SubscriptionState extends Equatable {
-  final SubscriptionStatus status;
-  final SubscriptionModel? subscription;
-  final String? error;
-
   const SubscriptionState({
     this.status = SubscriptionStatus.initial,
     this.subscription,
     this.error,
   });
+  final SubscriptionStatus status;
+  final SubscriptionModel? subscription;
+  final String? error;
 
   bool get hasActiveSubscription =>
       subscription != null && subscription!.isValid;

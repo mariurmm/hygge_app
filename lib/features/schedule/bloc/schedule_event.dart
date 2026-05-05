@@ -16,9 +16,8 @@ final class ScheduleRefreshRequested extends ScheduleEvent {
 }
 
 final class ScheduleDaySelected extends ScheduleEvent {
-  final DateTime day;
-
   const ScheduleDaySelected(this.day);
+  final DateTime day;
 
   @override
   List<Object?> get props => <Object?>[day];

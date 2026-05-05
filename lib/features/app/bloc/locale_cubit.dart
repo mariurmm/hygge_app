@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocaleCubit extends Cubit<Locale?> {
-  static const _key = 'app_locale';
-
   LocaleCubit() : super(null);
+  static const _key = 'app_locale';
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();

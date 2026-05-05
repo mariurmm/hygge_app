@@ -16,7 +16,7 @@ import 'package:hygge_app/features/settings/bloc/settings_bloc.dart';
 import 'package:hygge_app/features/settings/bloc/settings_state.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
-import '../../../widgets/tab_header.dart';
+import 'package:hygge_app/widgets/tab_header.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -45,7 +45,7 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-// ─── Main View ────────────────────────────────────────────────────────────────
+// ─── Main View ───────────────────────────────────────────────────────────────
 
 // _SettingsView is a StatelessWidget — all unsaved-changes/saving state lives
 // in SettingsBloc (hasUnsavedChanges, allowPop, savedName, busy).
@@ -255,7 +255,7 @@ class _SettingsView extends StatelessWidget {
   }
 }
 
-// ─── Section Label ────────────────────────────────────────────────────────────
+// ─── Section Label ───────────────────────────────────────────────────────────
 
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel({required this.label});
@@ -276,7 +276,7 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-// ─── Avatar ───────────────────────────────────────────────────────────────────
+// ─── Avatar ──────────────────────────────────────────────────────────────────
 
 class _AvatarSection extends StatelessWidget {
   const _AvatarSection({
@@ -331,7 +331,7 @@ class _AvatarSection extends StatelessWidget {
   }
 }
 
-// ─── Editable Input Field ─────────────────────────────────────────────────────
+// ─── Editable Input Field ────────────────────────────────────────────────────
 
 class _InputField extends StatelessWidget {
   const _InputField({
@@ -397,7 +397,7 @@ class _InputField extends StatelessWidget {
   }
 }
 
-// ─── Readonly Field (email) ───────────────────────────────────────────────────
+// ─── Readonly Field (email) ──────────────────────────────────────────────────
 
 class _ReadonlyField extends StatelessWidget {
   const _ReadonlyField({required this.label, required this.controller});
@@ -444,7 +444,7 @@ class _ReadonlyField extends StatelessWidget {
   }
 }
 
-// ─── Action Row ───────────────────────────────────────────────────────────────
+// ─── Action Row ──────────────────────────────────────────────────────────────
 
 class _ActionRow extends StatelessWidget {
   const _ActionRow({
@@ -498,7 +498,7 @@ class _ActionRow extends StatelessWidget {
   }
 }
 
-// ─── Language helpers ─────────────────────────────────────────────────────────
+// ─── Language helpers ────────────────────────────────────────────────────────
 
 String _languageFlag(String code) => switch (code) {
   'ru' => '🇷🇺',
@@ -506,7 +506,7 @@ String _languageFlag(String code) => switch (code) {
   _ => '🇬🇧',
 };
 
-// ─── Language Picker ──────────────────────────────────────────────────────────
+// ─── Language Picker ─────────────────────────────────────────────────────────
 
 class _LanguagePickerSheet extends StatelessWidget {
   const _LanguagePickerSheet();

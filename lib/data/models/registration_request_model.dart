@@ -2,6 +2,22 @@ import 'package:equatable/equatable.dart';
 
 /// Модель запроса на регистрацию.
 class RegistrationRequestModel extends Equatable {
+  const RegistrationRequestModel({
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.password,
+  });
+
+  factory RegistrationRequestModel.fromJson(Map<String, dynamic> json) {
+    return RegistrationRequestModel(
+      firstName: json['firstName'] as String? ?? '',
+      lastName: json['lastName'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      password: json['password'] as String? ?? '',
+    );
+  }
+
   /// Имя пользователя.
   final String firstName;
 
@@ -14,13 +30,6 @@ class RegistrationRequestModel extends Equatable {
   /// Пароль пользователя.
   final String password;
 
-  const RegistrationRequestModel({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.password,
-  });
-
   /// Пустая модель.
   static const RegistrationRequestModel empty = RegistrationRequestModel(
     firstName: '',
@@ -31,15 +40,6 @@ class RegistrationRequestModel extends Equatable {
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
-
-  factory RegistrationRequestModel.fromJson(Map<String, dynamic> json) {
-    return RegistrationRequestModel(
-      firstName: json['firstName'] as String? ?? '',
-      lastName: json['lastName'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      password: json['password'] as String? ?? '',
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {

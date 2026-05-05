@@ -2,18 +2,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/repositories/user_repository/user_repository.dart';
 
-import 'account_subscription_event.dart';
-import 'account_subscription_state.dart';
+import 'package:hygge_app/features/subscription/bloc/account_subscription_event.dart';
+import 'package:hygge_app/features/subscription/bloc/account_subscription_state.dart';
 
 class AccountSubscriptionBloc
     extends Bloc<AccountSubscriptionEvent, AccountSubscriptionState> {
-  final UserRepository _repository;
-
   AccountSubscriptionBloc({required UserRepository repository})
     : _repository = repository,
       super(const AccountSubscriptionState()) {
     on<AccountSubscriptionStarted>(_onStarted);
   }
+  final UserRepository _repository;
 
   Future<void> _onStarted(
     AccountSubscriptionStarted event,

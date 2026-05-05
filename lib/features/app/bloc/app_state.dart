@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../data/models/user_model.dart';
+import 'package:hygge_app/data/models/user_model.dart';
+import 'package:hygge_app/features/app/bloc/app_bloc.dart' show AppBloc;
 
 /// Состояния (states) для [AppBloc].
 ///
@@ -21,12 +22,6 @@ enum AppStatus {
 
 /// Состояние приложения.
 class AppState extends Equatable {
-  /// Текущий статус авторизации.
-  final AppStatus status;
-
-  /// Текущий пользователь.
-  final UserModel user;
-
   const AppState({required this.status, this.user = UserModel.empty});
 
   /// Начальное состояние — статус неизвестен.
@@ -39,6 +34,12 @@ class AppState extends Equatable {
   const AppState.unauthenticated()
     : status = AppStatus.unauthenticated,
       user = UserModel.empty;
+
+  /// Текущий статус авторизации.
+  final AppStatus status;
+
+  /// Текущий пользователь.
+  final UserModel user;
 
   @override
   List<Object?> get props => [status, user];

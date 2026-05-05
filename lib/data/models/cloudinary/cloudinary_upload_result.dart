@@ -11,14 +11,6 @@ final class CloudinaryUploadResult extends Equatable {
     required this.format,
   });
 
-  final String publicId;
-  final String secureUrl;
-  final String originalFilename;
-  final int bytes;
-  final int width;
-  final int height;
-  final String format;
-
   factory CloudinaryUploadResult.fromJson(Map<String, dynamic> json) {
     return CloudinaryUploadResult(
       publicId: json['public_id'] as String? ?? '',
@@ -30,6 +22,14 @@ final class CloudinaryUploadResult extends Equatable {
       format: json['format'] as String? ?? '',
     );
   }
+
+  final String publicId;
+  final String secureUrl;
+  final String originalFilename;
+  final int bytes;
+  final int width;
+  final int height;
+  final String format;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'publicId': publicId,

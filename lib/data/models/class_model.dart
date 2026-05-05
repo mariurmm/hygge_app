@@ -1,21 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:intl/intl.dart';
 
-import '../../core/utils/parse_utils.dart';
-
 class ClassModel extends Equatable {
-  final String id;
-  final String title;
-  final String type;
-  final DateTime startDate;
-  final int durationMinutes;
-  final String trainerId;
-  final int maxParticipants;
-  final int currentParticipants;
-  final double price;
-  final bool isIncludedInSubscription;
-
   const ClassModel({
     required this.id,
     required this.title,
@@ -28,6 +16,32 @@ class ClassModel extends Equatable {
     required this.price,
     required this.isIncludedInSubscription,
   });
+
+  factory ClassModel.fromJson(Map<String, dynamic> json, {String? id}) {
+    return ClassModel(
+      id: id ?? json['id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      type: json['type'] as String? ?? '',
+      startDate: ParseUtils.parseDate(json['datetime']),
+      durationMinutes: ParseUtils.parseInt(json['durationMinutes']),
+      trainerId: json['trainerId'] as String? ?? '',
+      maxParticipants: ParseUtils.parseInt(json['maxParticipants']),
+      currentParticipants: ParseUtils.parseInt(json['currentParticipants']),
+      price: ParseUtils.parseDouble(json['price']),
+      isIncludedInSubscription:
+          json['isIncludedInSubscription'] as bool? ?? true,
+    );
+  }
+  final String id;
+  final String title;
+  final String type;
+  final DateTime startDate;
+  final int durationMinutes;
+  final String trainerId;
+  final int maxParticipants;
+  final int currentParticipants;
+  final double price;
+  final bool isIncludedInSubscription;
 
   bool get isFull => currentParticipants >= maxParticipants;
 
@@ -61,22 +75,6 @@ class ClassModel extends Equatable {
     price: 0,
     isIncludedInSubscription: true,
   );
-
-  factory ClassModel.fromJson(Map<String, dynamic> json, {String? id}) {
-    return ClassModel(
-      id: id ?? json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      type: json['type'] as String? ?? '',
-      startDate: ParseUtils.parseDate(json['datetime']),
-      durationMinutes: ParseUtils.parseInt(json['durationMinutes']),
-      trainerId: json['trainerId'] as String? ?? '',
-      maxParticipants: ParseUtils.parseInt(json['maxParticipants']),
-      currentParticipants: ParseUtils.parseInt(json['currentParticipants']),
-      price: ParseUtils.parseDouble(json['price']),
-      isIncludedInSubscription:
-          json['isIncludedInSubscription'] as bool? ?? true,
-    );
-  }
 
   Map<String, dynamic> toJson() => {
     'id': id,

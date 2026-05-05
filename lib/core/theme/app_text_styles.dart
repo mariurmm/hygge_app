@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_colors.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
 
 /// Стили текста, используемые в приложении.
 ///

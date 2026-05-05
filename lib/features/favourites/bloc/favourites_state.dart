@@ -1,13 +1,12 @@
 part of 'favourites_bloc.dart';
 
 class FavouritesState extends Equatable {
-  final Set<String> favouriteIds;
-  final List<ProgramModel> allPrograms;
-
   const FavouritesState({
     this.favouriteIds = const {},
     this.allPrograms = const [],
   });
+  final Set<String> favouriteIds;
+  final List<ProgramModel> allPrograms;
 
   bool isFavourite(String programId) {
     return favouriteIds.contains(programId);

@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 
 class AppLogger {
   static final Logger _logger = Logger(
-    printer: PrettyPrinter(lineLength: 80, colors: true, printEmojis: true),
+    printer: PrettyPrinter(),
     output: SentryLogOutput(),
   );
 

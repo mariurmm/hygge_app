@@ -10,18 +10,17 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ScheduleProgramCard extends StatelessWidget {
-  final String ritual;
-  final String title;
-  final String timeRange;
-  final String whenLabel;
-
   const ScheduleProgramCard({
-    super.key,
     required this.ritual,
     required this.title,
     required this.timeRange,
     required this.whenLabel,
+    super.key,
   });
+  final String ritual;
+  final String title;
+  final String timeRange;
+  final String whenLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +39,7 @@ class ScheduleProgramCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.scheduleCardRadius,
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: AppConstants.programsBorderWidth,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [

@@ -6,20 +6,19 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ProgramFilterButton extends StatelessWidget {
+  const ProgramFilterButton({
+    required this.label,
+    required this.isSelected,
+    required this.isAllPrograms,
+    required this.onTap,
+    super.key,
+  });
   final String label;
   final bool isSelected;
 
   /// Индекс 0 — «Все программы» (другая палитра выбранного состояния).
   final bool isAllPrograms;
   final VoidCallback onTap;
-
-  const ProgramFilterButton({
-    super.key,
-    required this.label,
-    required this.isSelected,
-    required this.isAllPrograms,
-    required this.onTap,
-  });
 
   Color _backgroundColor() {
     if (!isSelected) return AppColors.programsFilterUnselected;
@@ -47,10 +46,7 @@ class ProgramFilterButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                 AppConstants.programsFilterRadius,
               ),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.28),
-                width: AppConstants.programsBorderWidth,
-              ),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.28)),
             ),
             child: Text(label, style: AppTextStyles.programsFilter),
           ),

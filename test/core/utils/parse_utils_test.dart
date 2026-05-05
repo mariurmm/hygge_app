@@ -20,8 +20,8 @@ void main() {
     });
 
     test('converts a millisecond int to DateTime', () {
-      final ms = DateTime(2024, 1, 1).millisecondsSinceEpoch;
-      expect(ParseUtils.parseDate(ms), DateTime(2024, 1, 1));
+      final ms = DateTime(2024).millisecondsSinceEpoch;
+      expect(ParseUtils.parseDate(ms), DateTime(2024));
     });
 
     test('returns epoch for null', () {
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('returns a custom fallback for non-numeric input', () {
-      expect(ParseUtils.parseDouble('bad', fallback: -1.0), -1.0);
+      expect(ParseUtils.parseDouble('bad', fallback: -1), -1.0);
     });
   });
 }

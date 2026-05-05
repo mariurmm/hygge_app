@@ -1,25 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'subscription_model.dart';
+import 'package:hygge_app/data/models/subscription_model.dart';
 
 /// Модель пользователя.
 class UserModel extends Equatable {
-  /// Уникальный идентификатор (совпадает с uid в FirebaseAuth).
-  final String uid;
-
-  /// Отображаемое имя.
-  final String displayName;
-
-  /// Email пользователя.
-  final String email;
-
-  /// URL аватара.
-  final String photoUrl;
-
-  /// Активный абонемент пользователя.
-  final SubscriptionModel? subscription;
-
   const UserModel({
     required this.uid,
     required this.displayName,
@@ -28,21 +13,7 @@ class UserModel extends Equatable {
     this.subscription,
   });
 
-  static const UserModel empty = UserModel(
-    uid: '',
-    displayName: '',
-    email: '',
-    photoUrl: '',
-    subscription: null,
-  );
-
-  bool get isEmpty => this == empty;
-  bool get isNotEmpty => this != empty;
-
-  factory UserModel.fromJson(
-    Map<String, dynamic> json, {
-    String locale = 'ru',
-  }) {
+  factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       uid: json['uid'] as String? ?? json['id'] as String? ?? '',
       displayName: json['displayName'] as String? ?? '',
@@ -62,9 +33,33 @@ class UserModel extends Equatable {
       displayName: user.displayName ?? '',
       email: user.email ?? '',
       photoUrl: user.photoURL ?? '',
-      subscription: null,
     );
   }
+
+  /// Уникальный идентификатор (совпадает с uid в FirebaseAuth).
+  final String uid;
+
+  /// Отображаемое имя.
+  final String displayName;
+
+  /// Email пользователя.
+  final String email;
+
+  /// URL аватара.
+  final String photoUrl;
+
+  /// Активный абонемент пользователя.
+  final SubscriptionModel? subscription;
+
+  static const UserModel empty = UserModel(
+    uid: '',
+    displayName: '',
+    email: '',
+    photoUrl: '',
+  );
+
+  bool get isEmpty => this == empty;
+  bool get isNotEmpty => this != empty;
 
   Map<String, dynamic> toJson() {
     return {

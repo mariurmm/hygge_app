@@ -12,17 +12,16 @@ enum ProgramFilter {
 }
 
 class ProgramsState extends Equatable {
-  final List<ProgramModel> allPrograms;
-  final ProgramFilter selectedFilter;
-  final Map<String, LessonModel> nearestLessonsByProgramId;
-  final Map<String, MasterModel> mastersById;
-
   const ProgramsState({
     this.allPrograms = const [],
     this.selectedFilter = ProgramFilter.all,
     this.nearestLessonsByProgramId = const {},
     this.mastersById = const {},
   });
+  final List<ProgramModel> allPrograms;
+  final ProgramFilter selectedFilter;
+  final Map<String, LessonModel> nearestLessonsByProgramId;
+  final Map<String, MasterModel> mastersById;
 
   List<ProgramModel> get visiblePrograms {
     if (selectedFilter == ProgramFilter.all) return allPrograms;

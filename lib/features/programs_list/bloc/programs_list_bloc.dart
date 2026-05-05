@@ -11,10 +11,9 @@ abstract class ProgramsListState {}
 class ProgramsListLoadingState extends ProgramsListState {}
 
 class ProgramsListLoadedState extends ProgramsListState {
+  ProgramsListLoadedState({required this.lessons, this.favoriteIds = const {}});
   final List<ProgramModel> lessons;
   final Set<String> favoriteIds;
-
-  ProgramsListLoadedState({required this.lessons, this.favoriteIds = const {}});
 
   ProgramsListLoadedState copyWith({
     List<ProgramModel>? lessons,

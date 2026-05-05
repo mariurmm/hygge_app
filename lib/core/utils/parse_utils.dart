@@ -28,14 +28,16 @@ class ParseUtils {
     }
   }
 
-  /// Converts [num] or a numeric [String] to [int]. Returns [fallback] on failure.
+  /// Converts [num] or a numeric [String] to [int].
+  /// Returns [fallback] on failure.
   static int parseInt(dynamic value, {int fallback = 0}) {
     if (value is int) return value;
     if (value is num) return value.toInt();
     return int.tryParse(value?.toString() ?? '') ?? fallback;
   }
 
-  /// Converts [num] or a numeric [String] to [double]. Returns [fallback] on failure.
+  /// Converts [num] or a numeric [String] to [double].
+  /// Returns [fallback] on failure.
   static double parseDouble(dynamic value, {double fallback = 0.0}) {
     if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '') ?? fallback;

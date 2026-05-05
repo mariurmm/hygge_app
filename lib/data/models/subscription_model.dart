@@ -1,17 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../core/utils/parse_utils.dart';
+import 'package:hygge_app/core/utils/parse_utils.dart';
 
 class SubscriptionModel extends Equatable {
-  final String id;
-  final String userId;
-  final int totalSessions;
-  final int usedSessions;
-  final DateTime startDate;
-  final DateTime endDate;
-  final bool isActive;
-
   const SubscriptionModel({
     required this.id,
     required this.userId,
@@ -21,6 +13,25 @@ class SubscriptionModel extends Equatable {
     required this.endDate,
     required this.isActive,
   });
+
+  factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
+    return SubscriptionModel(
+      id: json['id'] as String? ?? '',
+      userId: json['userId'] as String? ?? '',
+      totalSessions: ParseUtils.parseInt(json['totalSessions']),
+      usedSessions: ParseUtils.parseInt(json['usedSessions']),
+      startDate: ParseUtils.parseDate(json['startDate']),
+      endDate: ParseUtils.parseDate(json['endDate']),
+      isActive: json['isActive'] as bool? ?? false,
+    );
+  }
+  final String id;
+  final String userId;
+  final int totalSessions;
+  final int usedSessions;
+  final DateTime startDate;
+  final DateTime endDate;
+  final bool isActive;
 
   int get remainingSessions => totalSessions - usedSessions;
   bool get isExpired => endDate.isBefore(DateTime.now());
@@ -38,18 +49,6 @@ class SubscriptionModel extends Equatable {
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => !isEmpty;
-
-  factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
-    return SubscriptionModel(
-      id: json['id'] as String? ?? '',
-      userId: json['userId'] as String? ?? '',
-      totalSessions: ParseUtils.parseInt(json['totalSessions']),
-      usedSessions: ParseUtils.parseInt(json['usedSessions']),
-      startDate: ParseUtils.parseDate(json['startDate']),
-      endDate: ParseUtils.parseDate(json['endDate']),
-      isActive: json['isActive'] as bool? ?? false,
-    );
-  }
 
   Map<String, dynamic> toJson() => {
     'id': id,

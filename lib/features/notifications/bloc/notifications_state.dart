@@ -4,9 +4,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 
 class NotificationsState extends Equatable {
-  final List<NotificationItem> items;
-
   const NotificationsState({this.items = const []});
+  final List<NotificationItem> items;
 
   /// Непрочитанных уведомлений (для бейджа на иконке).
   int get unreadCount => items.where((n) => !n.isRead).length;

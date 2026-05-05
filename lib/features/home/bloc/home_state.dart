@@ -4,6 +4,13 @@ import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 
 final class HomeState extends Equatable {
+  const HomeState({
+    this.lessons = const [],
+    this.isLoading = false,
+    this.error,
+    this.programsById = const {},
+    this.mastersById = const {},
+  });
   final List<LessonModel> lessons;
   final bool isLoading;
   final String? error;
@@ -13,14 +20,6 @@ final class HomeState extends Equatable {
 
   /// masterId → MasterModel
   final Map<String, MasterModel> mastersById;
-
-  const HomeState({
-    this.lessons = const [],
-    this.isLoading = false,
-    this.error,
-    this.programsById = const {},
-    this.mastersById = const {},
-  });
 
   HomeState copyWith({
     List<LessonModel>? lessons,

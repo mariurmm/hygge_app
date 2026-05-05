@@ -1,47 +1,21 @@
 import 'package:equatable/equatable.dart';
 
-import '../../core/utils/parse_utils.dart';
-import 'localized_value.dart';
-import 'program_category.dart';
+import 'package:hygge_app/core/utils/parse_utils.dart';
+import 'package:hygge_app/data/models/localized_value.dart';
+import 'package:hygge_app/data/models/program_category.dart';
 
 class ProgramModel extends Equatable {
-  final String id;
-  final ProgramCategory category;
-  final String ritual;
-  final String title;
-  final String text;
-  final String imageUrl;
-  final double price;
-  final String trainerId;
-  final bool isBookable;
-
   const ProgramModel({
     required this.id,
     required this.category,
-    this.ritual = '',
     required this.title,
     required this.text,
-    this.imageUrl = '',
     required this.price,
     required this.trainerId,
+    this.ritual = '',
+    this.imageUrl = '',
     this.isBookable = true,
   });
-
-  static const ProgramModel empty = ProgramModel(
-    id: '',
-    category: ProgramCategory.yoga,
-    ritual: '',
-    title: '',
-    text: '',
-    imageUrl: '',
-    price: 0,
-    trainerId: '',
-    isBookable: false,
-  );
-
-  bool get isEmpty => this == empty;
-  bool get isNotEmpty => this != empty;
-  String get description => text;
 
   factory ProgramModel.fromJson(
     Map<String, dynamic> json, {
@@ -59,6 +33,29 @@ class ProgramModel extends Equatable {
       isBookable: json['isBookable'] as bool? ?? true,
     );
   }
+  final String id;
+  final ProgramCategory category;
+  final String ritual;
+  final String title;
+  final String text;
+  final String imageUrl;
+  final double price;
+  final String trainerId;
+  final bool isBookable;
+
+  static const ProgramModel empty = ProgramModel(
+    id: '',
+    category: ProgramCategory.yoga,
+    title: '',
+    text: '',
+    price: 0,
+    trainerId: '',
+    isBookable: false,
+  );
+
+  bool get isEmpty => this == empty;
+  bool get isNotEmpty => this != empty;
+  String get description => text;
 
   Map<String, dynamic> toJson() {
     return {

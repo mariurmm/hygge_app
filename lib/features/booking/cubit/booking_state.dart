@@ -14,15 +14,14 @@ enum BookingCubitStatus {
 }
 
 class BookingState extends Equatable {
-  final BookingCubitStatus status;
-  final String? message;
-  final BookingModel? existingBooking;
-
   const BookingState({
     this.status = BookingCubitStatus.idle,
     this.message,
     this.existingBooking,
   });
+  final BookingCubitStatus status;
+  final String? message;
+  final BookingModel? existingBooking;
 
   static const _absent = Object();
 

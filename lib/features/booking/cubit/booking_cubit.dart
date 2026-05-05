@@ -1,18 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../data/models/booking_model.dart';
-import '../../../data/models/class_model.dart';
-import '../../../data/repositories/booking_repository.dart';
-import '../../../data/repositories/subscription_repository.dart';
+import 'package:hygge_app/data/models/booking_model.dart';
+import 'package:hygge_app/data/models/class_model.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
+import 'package:hygge_app/data/repositories/subscription_repository.dart';
 
 part 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
-  final BookingRepository _bookingRepo;
-  final SubscriptionRepository _subscriptionRepo;
-  final String userId;
-
   BookingCubit({
     required BookingRepository bookingRepo,
     required SubscriptionRepository subscriptionRepo,
@@ -20,6 +16,9 @@ class BookingCubit extends Cubit<BookingState> {
   }) : _bookingRepo = bookingRepo,
        _subscriptionRepo = subscriptionRepo,
        super(const BookingState());
+  final BookingRepository _bookingRepo;
+  final SubscriptionRepository _subscriptionRepo;
+  final String userId;
 
   Future<void> bookClass(ClassModel classModel) async {
     emit(state.copyWith(status: BookingCubitStatus.loading));
@@ -87,7 +86,7 @@ class BookingCubit extends Cubit<BookingState> {
           message: 'Вы записаны на «${classModel.title}»',
         ),
       );
-    } catch (e) {
+    } on Object catch (e) {
       emit(
         state.copyWith(
           status: BookingCubitStatus.error,
@@ -119,7 +118,7 @@ class BookingCubit extends Cubit<BookingState> {
           message: 'Запись отменена',
         ),
       );
-    } catch (e) {
+    } on Object catch (e) {
       emit(
         state.copyWith(
           status: BookingCubitStatus.error,

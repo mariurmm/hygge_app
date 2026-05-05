@@ -1,13 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class SettingsState extends Equatable {
-  final String? localAvatarPath;
-  final bool busy;
-  final String? errorMessage;
-  final bool hasUnsavedChanges;
-  final bool allowPop;
-  final String savedName;
-
   const SettingsState({
     this.localAvatarPath,
     this.busy = false,
@@ -16,6 +9,12 @@ class SettingsState extends Equatable {
     this.allowPop = false,
     this.savedName = '',
   });
+  final String? localAvatarPath;
+  final bool busy;
+  final String? errorMessage;
+  final bool hasUnsavedChanges;
+  final bool allowPop;
+  final String savedName;
 
   SettingsState copyWith({
     String? localAvatarPath,

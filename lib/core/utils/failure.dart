@@ -19,7 +19,7 @@ abstract class Failure implements Exception {
   String toString() => '$runtimeType(code: $code, message: $message)';
 }
 
-// ── Concrete failures ─────────────────────────────────────────────────────────
+// ── Concrete failures ────────────────────────────────────────────────────────
 
 class AuthFailure extends Failure {
   const AuthFailure({

@@ -4,9 +4,8 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 
 class FavouriteButton extends StatelessWidget {
+  const FavouriteButton({required this.programId, super.key});
   final String programId;
-
-  const FavouriteButton({super.key, required this.programId});
 
   @override
   Widget build(BuildContext context) {

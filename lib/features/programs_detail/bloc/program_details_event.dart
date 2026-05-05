@@ -11,33 +11,30 @@ abstract class ProgramDetailsEvent extends Equatable {
 }
 
 class ProgramDetailsStarted extends ProgramDetailsEvent {
-  final ProgramModel program;
-  final LessonModel lesson;
-  final MasterModel master;
-
   const ProgramDetailsStarted({
     required this.program,
     required this.lesson,
     required this.master,
   });
+  final ProgramModel program;
+  final LessonModel lesson;
+  final MasterModel master;
 
   @override
   List<Object?> get props => [program, lesson, master];
 }
 
 class ProgramDetailsBooked extends ProgramDetailsEvent {
-  final LessonModel lesson;
-
   const ProgramDetailsBooked(this.lesson);
+  final LessonModel lesson;
 
   @override
   List<Object?> get props => [lesson];
 }
 
 class ProgramDetailsFavouriteToggled extends ProgramDetailsEvent {
-  final ProgramModel program;
-
   const ProgramDetailsFavouriteToggled(this.program);
+  final ProgramModel program;
 
   @override
   List<Object?> get props => [program];

@@ -7,21 +7,20 @@ enum NotificationType { reminder, news, booking, system }
 
 @immutable
 class NotificationItem extends Equatable {
+  const NotificationItem({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.createdAt,
+    required this.type,
+    this.isRead = false,
+  });
   final String id;
   final String title;
   final String body;
   final DateTime createdAt;
   final bool isRead;
   final NotificationType type;
-
-  const NotificationItem({
-    required this.id,
-    required this.title,
-    required this.body,
-    required this.createdAt,
-    this.isRead = false,
-    required this.type,
-  });
 
   NotificationItem copyWith({bool? isRead}) => NotificationItem(
     id: id,

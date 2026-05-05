@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:hygge_app/core/constants/app_constants.dart';
-import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
+import 'package:hygge_app/core/router/route_names.dart';
+import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
-import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/features/home/bloc/home_cubit.dart';
 import 'package:hygge_app/features/home/bloc/home_state.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
+import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
-import 'package:hygge_app/core/router/route_names.dart';
-import '../../../l10n/generated/app_localizations.dart';
 
 class MainTab extends StatelessWidget {
   const MainTab({super.key});

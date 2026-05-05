@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
-import '../../../core/router/route_names.dart';
-import '../../../core/utils/logger.dart';
-import '../../../data/repositories/auth_repository.dart';
-import '../../../features/app/bloc/app_bloc.dart';
-import '../../../features/app/bloc/app_state.dart';
-import '../../../l10n/generated/app_localizations.dart';
+import 'package:hygge_app/core/router/route_names.dart';
+import 'package:hygge_app/core/utils/logger.dart';
+import 'package:hygge_app/data/repositories/auth_repository.dart';
+import 'package:hygge_app/features/app/bloc/app_bloc.dart';
+import 'package:hygge_app/features/app/bloc/app_state.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 /// Экран входа — Hygge Concept.
 ///
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AuthRepository>().signInWithGoogle();
       // Навигация произойдёт через BlocListener ниже.
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       AppLogger.error(
         'LoginScreen: ошибка входа',
         error: error,
@@ -211,7 +211,6 @@ class _GoogleSignInButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(35),
                 border: Border.all(
                   color: const Color.fromRGBO(255, 255, 255, 0.35),
-                  width: 1,
                 ),
               ),
               alignment: Alignment.center,

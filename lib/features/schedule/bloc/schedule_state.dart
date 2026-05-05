@@ -5,14 +5,6 @@ import 'package:hygge_app/data/models/program_model.dart';
 enum ScheduleStatus { initial, loading, success, failure }
 
 final class ScheduleState extends Equatable {
-  final ScheduleStatus status;
-  final DateTime today;
-  final DateTime selectedDay;
-  final List<LessonModel> bookedLessons;
-  final List<LessonModel> completedLessons;
-  final String? errorMessage;
-  final Map<String, ProgramModel> programsById;
-
   const ScheduleState({
     required this.today,
     required this.selectedDay,
@@ -24,11 +16,18 @@ final class ScheduleState extends Equatable {
   });
 
   factory ScheduleState.initial() {
-    final DateTime now = DateTime.now();
-    final DateTime today = _dayOnly(now);
+    final now = DateTime.now();
+    final today = _dayOnly(now);
 
     return ScheduleState(today: today, selectedDay: today);
   }
+  final ScheduleStatus status;
+  final DateTime today;
+  final DateTime selectedDay;
+  final List<LessonModel> bookedLessons;
+  final List<LessonModel> completedLessons;
+  final String? errorMessage;
+  final Map<String, ProgramModel> programsById;
 
   List<LessonModel> get allLessons => <LessonModel>[
     ...bookedLessons,
@@ -47,9 +46,9 @@ final class ScheduleState extends Equatable {
       .toSet();
 
   List<LessonModel> get selectedDayLessons {
-    final DateTime selected = _dayOnly(selectedDay);
+    final selected = _dayOnly(selectedDay);
 
-    final List<LessonModel> lessons = bookedLessons
+    final lessons = bookedLessons
         .where((LessonModel lesson) => _dayOnly(lesson.calendarDay) == selected)
         .toList(growable: false);
 

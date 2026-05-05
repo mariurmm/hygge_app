@@ -1,18 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../core/utils/parse_utils.dart';
+import 'package:hygge_app/core/utils/parse_utils.dart';
 
 enum BookingStatus { pending, confirmed, cancelled }
 
 class BookingModel extends Equatable {
-  final String id;
-  final String userId;
-  final String classId;
-  final DateTime datetime;
-  final BookingStatus status;
-  final bool notificationSent;
-
   const BookingModel({
     required this.id,
     required this.userId,
@@ -21,6 +14,23 @@ class BookingModel extends Equatable {
     required this.status,
     required this.notificationSent,
   });
+
+  factory BookingModel.fromJson(Map<String, dynamic> json, {String? id}) {
+    return BookingModel(
+      id: id ?? json['id'] as String? ?? '',
+      userId: json['userId'] as String? ?? '',
+      classId: json['classId'] as String? ?? '',
+      datetime: ParseUtils.parseDate(json['datetime']),
+      status: _parseStatus(json['status']),
+      notificationSent: json['notificationSent'] as bool? ?? false,
+    );
+  }
+  final String id;
+  final String userId;
+  final String classId;
+  final DateTime datetime;
+  final BookingStatus status;
+  final bool notificationSent;
 
   bool get isPending => status == BookingStatus.pending;
   bool get isConfirmed => status == BookingStatus.confirmed;
@@ -36,17 +46,6 @@ class BookingModel extends Equatable {
   );
 
   bool get isEmpty => this == empty;
-
-  factory BookingModel.fromJson(Map<String, dynamic> json, {String? id}) {
-    return BookingModel(
-      id: id ?? json['id'] as String? ?? '',
-      userId: json['userId'] as String? ?? '',
-      classId: json['classId'] as String? ?? '',
-      datetime: ParseUtils.parseDate(json['datetime']),
-      status: _parseStatus(json['status']),
-      notificationSent: json['notificationSent'] as bool? ?? false,
-    );
-  }
 
   Map<String, dynamic> toJson() => {
     'id': id,

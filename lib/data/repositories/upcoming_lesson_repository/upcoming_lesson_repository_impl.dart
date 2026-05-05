@@ -164,7 +164,7 @@ class UpcomingLessonRepositoryImpl
     },
   );
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
   LessonModel _lessonFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};

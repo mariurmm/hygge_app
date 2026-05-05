@@ -4,10 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/user_model.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
+import 'package:hygge_app/features/app/bloc/app_event.dart';
+import 'package:hygge_app/features/app/bloc/app_state.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-import 'app_event.dart';
-import 'app_state.dart';
 
 /// Глобальный BLoC авторизации.
 ///
@@ -17,11 +16,6 @@ import 'app_state.dart';
 /// Живёт на уровне всего приложения (оборачивает MaterialApp),
 /// поэтому любой экран может прочитать текущего пользователя.
 class AppBloc extends Bloc<AppEvent, AppState> {
-  final AuthRepository _authRepository;
-
-  /// Подписка на стрим авторизации.
-  late final StreamSubscription<UserModel> _authSubscription;
-
   AppBloc({required AuthRepository authRepository})
     : _authRepository = authRepository,
       super(const AppState.unknown()) {
@@ -39,6 +33,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       add(AppAuthStateChanged(user));
     });
   }
+  final AuthRepository _authRepository;
+
+  /// Подписка на стрим авторизации.
+  late final StreamSubscription<UserModel> _authSubscription;
 
   /// Обработчик: изменился статус авторизации.
   void _onAuthStateChanged(AppAuthStateChanged event, Emitter<AppState> emit) {
@@ -70,14 +68,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   /// Обработчик: принудительное обновление профиля пользователя.
   ///
   /// Вызывается после сохранения настроек профиля, так как
-  /// [updateDisplayName] не триггерит стрим [authStateChanges].
+  /// `updateDisplayName` не триггерит стрим `authStateChanges`.
   /// Перечитывает актуальные данные из Firebase Auth и обновляет [AppState].
   Future<void> _onUserRefreshRequested(
     AppUserRefreshRequested event,
     Emitter<AppState> emit,
   ) async {
     await _authRepository.reloadCurrentUser();
-    final UserModel user = _authRepository.currentUser;
+    final user = _authRepository.currentUser;
     if (user.isNotEmpty) {
       AppLogger.info('AppBloc: профиль обновлён — ${user.displayName}');
       emit(AppState.authenticated(user));
