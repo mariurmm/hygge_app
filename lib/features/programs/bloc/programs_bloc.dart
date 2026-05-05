@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_category.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository_impl.dart';
 
 part 'programs_event.dart';
 part 'programs_state.dart';
@@ -18,19 +17,23 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
   final ProgramsRepository _repository;
   final FirebaseFirestore _firestore;
 
-  ProgramsBloc({ProgramsRepository? repository, FirebaseFirestore? firestore})
-    : _repository = repository ?? ProgramsRepositoryImpl(),
-      _firestore = firestore ?? FirebaseFirestore.instance,
-      super(const ProgramsState()) {
+  ProgramsBloc({
+    required ProgramsRepository repository,
+    FirebaseFirestore? firestore,
+  }) : _repository = repository,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       super(const ProgramsState()) {
     on<ProgramsInitialized>(_onInitialized);
     on<ProgramsFilterChanged>(_onFilterChanged);
   }
 
-  Future<void> _onInitialized(ProgramsInitialized event, Emitter<ProgramsState> emit) async {
+  Future<void> _onInitialized(
+    ProgramsInitialized event,
+    Emitter<ProgramsState> emit,
+  ) async {
     try {
       final programs = await _repository.fetchPrograms();
-      debugPrint('PROGRAMS COUNT: ${programs.length}');
-      debugPrint('PROGRAMS: ${programs.map((e) => '${e.id} / ${e.title} / ${e.category}').toList()}');
+      AppLogger.debug('ProgramsBloc: загружено ${programs.length} программ');
       final nearestLessonsByProgramId = await _fetchNearestLessons(programs);
       final mastersById = await _fetchMasters(programs);
 
@@ -41,20 +44,39 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
           mastersById: mastersById,
         ),
       );
-    } catch (_) {
-      emit(state.copyWith(allPrograms: const [], nearestLessonsByProgramId: const {}, mastersById: const {}));
+    } on Exception catch (e, st) {
+      AppLogger.error(
+        'ProgramsBloc: ошибка загрузки программ',
+        error: e,
+        stackTrace: st,
+      );
+      emit(
+        state.copyWith(
+          allPrograms: const [],
+          nearestLessonsByProgramId: const {},
+          mastersById: const {},
+        ),
+      );
     }
   }
 
-  Future<void> _onFilterChanged(ProgramsFilterChanged event, Emitter<ProgramsState> emit) async {
-    if (event.filterIndex < 0 || event.filterIndex >= ProgramFilter.values.length) {
+  Future<void> _onFilterChanged(
+    ProgramsFilterChanged event,
+    Emitter<ProgramsState> emit,
+  ) async {
+    if (event.filterIndex < 0 ||
+        event.filterIndex >= ProgramFilter.values.length) {
       return;
     }
 
-    emit(state.copyWith(selectedFilter: ProgramFilter.values[event.filterIndex]));
+    emit(
+      state.copyWith(selectedFilter: ProgramFilter.values[event.filterIndex]),
+    );
   }
 
-  Future<Map<String, LessonModel>> _fetchNearestLessons(List<ProgramModel> programs) async {
+  Future<Map<String, LessonModel>> _fetchNearestLessons(
+    List<ProgramModel> programs,
+  ) async {
     final now = Timestamp.fromDate(DateTime.now());
     final result = <String, LessonModel>{};
 
@@ -78,8 +100,13 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
     return result;
   }
 
-  Future<Map<String, MasterModel>> _fetchMasters(List<ProgramModel> programs) async {
-    final trainerIds = programs.map((program) => program.trainerId).where((id) => id.isNotEmpty).toSet();
+  Future<Map<String, MasterModel>> _fetchMasters(
+    List<ProgramModel> programs,
+  ) async {
+    final trainerIds = programs
+        .map((program) => program.trainerId)
+        .where((id) => id.isNotEmpty)
+        .toSet();
 
     final result = <String, MasterModel>{};
 

@@ -97,11 +97,15 @@ class AppConstants {
   static const String profileContactPhoneDisplay = '+7(777)-777-77-77';
   static const String profileContactPhoneUri = 'tel:+77777777777';
   static const String profileContactEmail = 'hy.gge_concept@gmail.com';
-  static const String profileContactEmailUri = 'mailto:hy.gge_concept@gmail.com';
-  static const String profileInstagramConceptUrl = 'https://www.instagram.com/hy.gge.concept/';
-  static const String profileInstagramBarUrl = 'https://www.instagram.com/hy.gge.specialty.bar/';
+  static const String profileContactEmailUri =
+      'mailto:hy.gge_concept@gmail.com';
+  static const String profileInstagramConceptUrl =
+      'https://www.instagram.com/hy.gge.concept/';
+  static const String profileInstagramBarUrl =
+      'https://www.instagram.com/hy.gge.specialty.bar/';
   static const String profileMapAddress = 'Казахстан, Алматы, ул. Зенкова, 17';
-  static const String profileMapUrl = 'https://maps.app.goo.gl/4bk3WANmFhNcCwXF7';
+  static const String profileMapUrl =
+      'https://maps.app.goo.gl/4bk3WANmFhNcCwXF7';
 
   static const double notificationButtonSize = 24;
 

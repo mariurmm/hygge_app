@@ -49,14 +49,38 @@ dependencies:
   image_picker: ^1.2.2 # Выбор фото из галереи или камеры
   http: ^1.6.0
 
+  # Code generation annotations
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.11.0
+
+  # Dependency injection
+  get_it: ^8.0.2
+  injectable: ^3.0.0
+
+  # Error reporting
+  sentry_flutter: ^8.12.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0 # Правила линтера — помогает писать чистый код
+  flutter_lints: ^5.0.0
+  very_good_analysis: ^7.0.0
+
+  # Code generation
+  build_runner: ^2.15.0
+  freezed: ^3.2.5
+  json_serializable: ^6.13.2
+
+  # DI code generation
+  injectable_generator: ^3.0.2
 
   # Генерация иконки и сплэш-экрана
-  flutter_native_splash: ^2.4.7 # Экран загрузки при запуске приложения
-  flutter_launcher_icons: ^0.14.4 # Генерация иконки приложения для Android и iOS
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
+
+dependency_overrides:
+  flutter_gen_core: 5.13.0+1
+  flutter_gen_runner: 5.13.0+1
 
 flutter_launcher_icons:
   android: true

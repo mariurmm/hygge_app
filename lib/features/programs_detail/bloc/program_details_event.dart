@@ -15,7 +15,11 @@ class ProgramDetailsStarted extends ProgramDetailsEvent {
   final LessonModel lesson;
   final MasterModel master;
 
-  const ProgramDetailsStarted({required this.program, required this.lesson, required this.master});
+  const ProgramDetailsStarted({
+    required this.program,
+    required this.lesson,
+    required this.master,
+  });
 
   @override
   List<Object?> get props => [program, lesson, master];

@@ -43,14 +43,18 @@ class ProgrammCard extends StatelessWidget {
           timingOverlayLabel: timingOverlayLabel,
           loc: loc,
         ),
-        ProgrammCardType.small => _SmallProgramCard(program: program, lesson: lesson, loc: loc),
+        ProgrammCardType.small => _SmallProgramCard(
+          program: program,
+          lesson: lesson,
+          loc: loc,
+        ),
       },
     );
   }
 
   void _openDetails(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) => ProgramDetailsPage(
           program: program,
           lesson: lesson ?? LessonModel.empty,
@@ -79,19 +83,30 @@ class _BigProgramCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: AppConstants.programsBlurSigma,
+          sigmaY: AppConstants.programsBlurSigma,
+        ),
         child: Container(
           width: AppConstants.programsCardWidth,
           height: AppConstants.programsCardHeight,
           decoration: BoxDecoration(
             color: AppColors.programsCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
+            borderRadius: BorderRadius.circular(
+              AppConstants.programsCardRadius,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: AppConstants.programsBorderWidth,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ProgramMedia(program: program, timingOverlayLabel: timingOverlayLabel),
+              _ProgramMedia(
+                program: program,
+                timingOverlayLabel: timingOverlayLabel,
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
@@ -108,7 +123,9 @@ class _BigProgramCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              program.title.isNotEmpty ? program.title : loc.programCardDefaultTitle,
+                              program.title.isNotEmpty
+                                  ? program.title
+                                  : loc.programCardDefaultTitle,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.programsCardTitle,
@@ -129,7 +146,9 @@ class _BigProgramCard extends StatelessWidget {
                       const SizedBox(height: AppSpacings.programsCardTitleGap),
                       Expanded(
                         child: Text(
-                          program.text.isNotEmpty ? program.text : loc.programCardDefaultDescription,
+                          program.text.isNotEmpty
+                              ? program.text
+                              : loc.programCardDefaultDescription,
                           maxLines: 4,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.programsCardDescription,
@@ -152,14 +171,21 @@ class _SmallProgramCard extends StatelessWidget {
   final LessonModel? lesson;
   final AppLocalizations loc;
 
-  const _SmallProgramCard({required this.program, required this.lesson, required this.loc});
+  const _SmallProgramCard({
+    required this.program,
+    required this.lesson,
+    required this.loc,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: AppConstants.programsBlurSigma,
+          sigmaY: AppConstants.programsBlurSigma,
+        ),
         child: Container(
           width: 150,
           height: 170,
@@ -178,10 +204,14 @@ class _SmallProgramCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      program.title.isNotEmpty ? program.title : loc.programCardDefaultTitle,
+                      program.title.isNotEmpty
+                          ? program.title
+                          : loc.programCardDefaultTitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.programsCardTitle.copyWith(fontSize: 14),
+                      style: AppTextStyles.programsCardTitle.copyWith(
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -205,12 +235,17 @@ class _ProgramMedia extends StatelessWidget {
   final ProgramModel program;
   final String? timingOverlayLabel;
 
-  const _ProgramMedia({required this.program, required this.timingOverlayLabel});
+  const _ProgramMedia({
+    required this.program,
+    required this.timingOverlayLabel,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(AppConstants.programsCardRadius)),
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(AppConstants.programsCardRadius),
+      ),
       child: SizedBox(
         height: AppConstants.programsCardMediaHeight,
         child: Stack(
@@ -224,7 +259,10 @@ class _ProgramMedia extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.black.withValues(alpha: 0.35), Colors.black.withValues(alpha: 0.45)],
+                      colors: [
+                        Colors.black.withValues(alpha: 0.35),
+                        Colors.black.withValues(alpha: 0.45),
+                      ],
                     ),
                   ),
                 ),
@@ -232,10 +270,17 @@ class _ProgramMedia extends StatelessWidget {
               Positioned(
                 left: AppPaddings.profileRecentSessionTimeLeft,
                 top: AppPaddings.profileRecentSessionTimeTop,
-                child: Text(timingOverlayLabel!, style: AppTextStyles.scheduleCardLabel),
+                child: Text(
+                  timingOverlayLabel!,
+                  style: AppTextStyles.scheduleCardLabel,
+                ),
               ),
             ],
-            Positioned(right: 14, top: 14, child: FavouriteButton(programId: program.id)),
+            Positioned(
+              right: 14,
+              top: 14,
+              child: FavouriteButton(programId: program.id),
+            ),
           ],
         ),
       ),
@@ -290,7 +335,9 @@ class _ProgramImageFallback extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.programsCardMedia.withValues(alpha: 0.95),
-      child: const Center(child: Icon(Icons.play_circle_outline, color: Colors.white70, size: 28)),
+      child: const Center(
+        child: Icon(Icons.play_circle_outline, color: Colors.white70, size: 28),
+      ),
     );
   }
 }

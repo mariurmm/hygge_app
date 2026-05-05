@@ -14,7 +14,10 @@ class ProfileAboutSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(loc.profileAboutTitle, style: AppTextStyles.programsHeading.copyWith(fontSize: 24)),
+        Text(
+          loc.profileAboutTitle,
+          style: AppTextStyles.programsHeading.copyWith(fontSize: 24),
+        ),
         const SizedBox(height: AppSpacings.programsLeadGap),
         _LinkRow(
           icon: Icons.phone_outlined,
@@ -31,7 +34,8 @@ class ProfileAboutSection extends StatelessWidget {
         _LinkRow(
           icon: Icons.camera_alt_outlined,
           label: '@hy.gge_concept',
-          onTap: () => launchExternalUrl(AppConstants.profileInstagramConceptUrl),
+          onTap: () =>
+              launchExternalUrl(AppConstants.profileInstagramConceptUrl),
         ),
         const SizedBox(height: AppSpacings.scheduleCardTextGapV),
         _LinkRow(
@@ -55,7 +59,11 @@ class _LinkRow extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _LinkRow({required this.icon, required this.label, required this.onTap});
+  const _LinkRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

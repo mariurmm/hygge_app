@@ -28,7 +28,11 @@ class ProgramDetailsState extends Equatable {
   });
 
   factory ProgramDetailsState.initial() {
-    return ProgramDetailsState(program: ProgramModel.empty, lesson: LessonModel.empty, master: MasterModel.empty);
+    return ProgramDetailsState(
+      program: ProgramModel.empty,
+      lesson: LessonModel.empty,
+      master: MasterModel.empty,
+    );
   }
 
   ProgramDetailsState copyWith({
@@ -52,5 +56,13 @@ class ProgramDetailsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, program, lesson, master, isFavourite, isBooking, errorMessage];
+  List<Object?> get props => [
+    status,
+    program,
+    lesson,
+    master,
+    isFavourite,
+    isBooking,
+    errorMessage,
+  ];
 }

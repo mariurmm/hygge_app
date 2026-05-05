@@ -18,7 +18,9 @@ final class FirebaseSeed {
   static void _seedMasters(WriteBatch batch) {
     const String masterId = 'aigerim_amantaeva_001';
 
-    final DocumentReference<Map<String, dynamic>> ref = _firestore.collection('masters').doc(masterId);
+    final DocumentReference<Map<String, dynamic>> ref = _firestore
+        .collection('masters')
+        .doc(masterId);
 
     batch.set(ref, {
       'uuid': masterId,
@@ -32,7 +34,8 @@ final class FirebaseSeed {
         'kk':
             'Айгерім Амантаева — Hygge Concept жобасының тең құрылтайшысы және Хатха-йога мен Аштанга виньяса бойынша сертификатталған нұсқаушы. Ол Үндістандағы Yoga Vidya Gurukul бағдарламасы бойынша «Pradnaya» Йога институтында, АҚШ-тың Массачусетс штатындағы Boston Yoga Union орталығында және Үндістанның Керала штатындағы Lino Miele Workshop бағдарламасында білім алған.',
       },
-      'avatarUrl': 'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_AIGERIM_AVATAR_URL.jpg',
+      'avatarUrl':
+          'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_AIGERIM_AVATAR_URL.jpg',
     });
   }
 
@@ -40,7 +43,9 @@ final class FirebaseSeed {
     const String programId = 'hatha_yoga_aigerim_001';
     const String masterId = 'aigerim_amantaeva_001';
 
-    final DocumentReference<Map<String, dynamic>> ref = _firestore.collection('programs').doc(programId);
+    final DocumentReference<Map<String, dynamic>> ref = _firestore
+        .collection('programs')
+        .doc(programId);
 
     batch.set(ref, {
       'uuid': programId,
@@ -49,13 +54,18 @@ final class FirebaseSeed {
       'price': 3500,
       'isActive': true,
       'isBookable': true,
-      'imageUrl': 'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_HATHA_YOGA_IMAGE_URL.jpg',
+      'imageUrl':
+          'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_HATHA_YOGA_IMAGE_URL.jpg',
       'ritual': {
         'ru': 'Практика осознанного движения',
         'en': 'Mindful Movement Practice',
         'kk': 'Саналы қозғалыс тәжірибесі',
       },
-      'title': {'ru': 'Хатха-йога с Айгерим', 'en': 'Hatha Yoga with Aigerim', 'kk': 'Айгеріммен Хатха-йога'},
+      'title': {
+        'ru': 'Хатха-йога с Айгерим',
+        'en': 'Hatha Yoga with Aigerim',
+        'kk': 'Айгеріммен Хатха-йога',
+      },
       'text': {
         'ru':
             'Сбалансированная программа Хатха-йоги для развития гибкости, устойчивости, дыхания и внутренней концентрации. Подходит для тех, кто хочет мягко войти в практику и укрепить тело через осознанное движение.',
@@ -101,7 +111,9 @@ final class FirebaseSeed {
     for (final Map<String, dynamic> lesson in lessons) {
       final String lessonId = lesson['uuid'] as String;
 
-      final DocumentReference<Map<String, dynamic>> ref = _firestore.collection('lessons').doc(lessonId);
+      final DocumentReference<Map<String, dynamic>> ref = _firestore
+          .collection('lessons')
+          .doc(lessonId);
 
       batch.set(ref, lesson);
     }

@@ -29,7 +29,8 @@ class LessonModel extends Equatable {
     isBookable: false,
   );
 
-  DateTime get calendarDay => DateTime(startDate.year, startDate.month, startDate.day);
+  DateTime get calendarDay =>
+      DateTime(startDate.year, startDate.month, startDate.day);
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
@@ -69,8 +70,12 @@ class LessonModel extends Equatable {
       id: json['uuid'] as String? ?? json['id'] as String? ?? '',
       programId: json['programId'] as String? ?? '',
       trainerId: json['masterId'] as String? ?? '',
-      startDate: ParseUtils.parseDate(json['startDate'] ?? json['availableFrom']),
-      endDate: ParseUtils.parseDate(json['finishDate'] ?? json['endDate'] ?? json['availableTo']),
+      startDate: ParseUtils.parseDate(
+        json['startDate'] ?? json['availableFrom'],
+      ),
+      endDate: ParseUtils.parseDate(
+        json['finishDate'] ?? json['endDate'] ?? json['availableTo'],
+      ),
       isBookable: json['isBookable'] as bool? ?? true,
     );
   }
@@ -111,5 +116,12 @@ class LessonModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, programId, trainerId, startDate, endDate, isBookable];
+  List<Object?> get props => [
+    id,
+    programId,
+    trainerId,
+    startDate,
+    endDate,
+    isBookable,
+  ];
 }

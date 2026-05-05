@@ -26,7 +26,10 @@ class GlassRoundedPanel extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: AppConstants.programsBlurSigma,
+          sigmaY: AppConstants.programsBlurSigma,
+        ),
         child: Container(
           width: width,
           height: height,
@@ -34,7 +37,10 @@ class GlassRoundedPanel extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.profileAccountCardFill,
             borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.28), width: AppConstants.programsBorderWidth),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.28),
+              width: AppConstants.programsBorderWidth,
+            ),
           ),
           child: child,
         ),

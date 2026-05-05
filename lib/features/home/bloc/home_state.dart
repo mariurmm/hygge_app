@@ -39,5 +39,11 @@ final class HomeState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [lessons, isLoading, error, programsById, mastersById];
+  List<Object?> get props => [
+    lessons,
+    isLoading,
+    error,
+    programsById,
+    mastersById,
+  ];
 }

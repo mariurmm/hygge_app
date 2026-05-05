@@ -53,8 +53,10 @@ final class ProfileState extends Equatable {
     isPremium: isPremium ?? this.isPremium,
     displayName: displayName ?? this.displayName,
     travelProgressPercent: travelProgressPercent ?? this.travelProgressPercent,
-    sessionsCompletedThisMonth: sessionsCompletedThisMonth ?? this.sessionsCompletedThisMonth,
-    sessionsLeftToNextStage: sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
+    sessionsCompletedThisMonth:
+        sessionsCompletedThisMonth ?? this.sessionsCompletedThisMonth,
+    sessionsLeftToNextStage:
+        sessionsLeftToNextStage ?? this.sessionsLeftToNextStage,
     goalSessionsTotal: goalSessionsTotal ?? this.goalSessionsTotal,
     recentSessionLesson: recentSessionLesson ?? this.recentSessionLesson,
     recentSessionProgram: recentSessionProgram ?? this.recentSessionProgram,

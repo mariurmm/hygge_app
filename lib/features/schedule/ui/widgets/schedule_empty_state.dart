@@ -6,7 +6,11 @@ final class ScheduleEmptyState extends StatelessWidget {
   final String title;
   final String description;
 
-  const ScheduleEmptyState({super.key, required this.title, required this.description});
+  const ScheduleEmptyState({
+    super.key,
+    required this.title,
+    required this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +20,26 @@ final class ScheduleEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(CupertinoIcons.calendar_badge_minus, size: 54, color: Colors.white.withValues(alpha: 0.28)),
+            Icon(
+              CupertinoIcons.calendar_badge_minus,
+              size: 54,
+              color: Colors.white.withValues(alpha: 0.28),
+            ),
             const SizedBox(height: 14),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: AppTextStyles.scheduleCalendarTitle.copyWith(color: Colors.white.withValues(alpha: 0.82)),
+              style: AppTextStyles.scheduleCalendarTitle.copyWith(
+                color: Colors.white.withValues(alpha: 0.82),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               description,
               textAlign: TextAlign.center,
-              style: AppTextStyles.scheduleDescription.copyWith(color: Colors.white.withValues(alpha: 0.48)),
+              style: AppTextStyles.scheduleDescription.copyWith(
+                color: Colors.white.withValues(alpha: 0.48),
+              ),
             ),
           ],
         ),

@@ -48,14 +48,21 @@ class ScheduleCalendar extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: cells.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, childAspectRatio: 1.3),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            childAspectRatio: 1.3,
+          ),
           itemBuilder: (context, index) {
             final day = cells[index];
             if (day == null) {
               return const SizedBox.shrink();
             }
             final normalizedDay = DateTime(day.year, day.month, day.day);
-            final normalizedToday = DateTime(today.year, today.month, today.day);
+            final normalizedToday = DateTime(
+              today.year,
+              today.month,
+              today.day,
+            );
             final isToday = normalizedDay == normalizedToday;
             final isScheduled = scheduledDates.contains(normalizedDay);
 
@@ -64,7 +71,9 @@ class ScheduleCalendar extends StatelessWidget {
                 : isScheduled
                 ? AppColors.terracotta.withValues(alpha: 0.28)
                 : Colors.transparent;
-            final textColor = isToday ? Colors.white : Colors.white.withValues(alpha: 0.9);
+            final textColor = isToday
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.9);
 
             return Center(
               child: Container(
@@ -76,11 +85,18 @@ class ScheduleCalendar extends StatelessWidget {
                   border: isToday
                       ? Border.all(color: Colors.white.withValues(alpha: 0.65))
                       : isScheduled
-                      ? Border.all(color: AppColors.terracotta.withValues(alpha: 0.9))
+                      ? Border.all(
+                          color: AppColors.terracotta.withValues(alpha: 0.9),
+                        )
                       : null,
                 ),
                 child: Center(
-                  child: Text('${day.day}', style: AppTextStyles.scheduleDate.copyWith(color: textColor)),
+                  child: Text(
+                    '${day.day}',
+                    style: AppTextStyles.scheduleDate.copyWith(
+                      color: textColor,
+                    ),
+                  ),
                 ),
               ),
             );

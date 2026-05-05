@@ -10,10 +10,12 @@ part 'history_event.dart';
 part 'history_state.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
-  HistoryBloc({required UpcomingLessonRepository repository, FirebaseFirestore? firestore})
-    : _repository = repository,
-      _firestore = firestore ?? FirebaseFirestore.instance,
-      super(const HistoryState()) {
+  HistoryBloc({
+    required UpcomingLessonRepository repository,
+    FirebaseFirestore? firestore,
+  }) : _repository = repository,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       super(const HistoryState()) {
     on<HistoryLoadRequested>(_onLoadRequested);
   }
 
@@ -22,7 +24,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   static const String _completedStatus = 'completed';
 
-  Future<void> _onLoadRequested(HistoryLoadRequested event, Emitter<HistoryState> emit) async {
+  Future<void> _onLoadRequested(
+    HistoryLoadRequested event,
+    Emitter<HistoryState> emit,
+  ) async {
     emit(state.copyWith(status: HistoryStatus.loading));
 
     try {
@@ -44,8 +49,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     }
   }
 
-  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(List<LessonModel> lessons) async {
-    final programIds = lessons.map((lesson) => lesson.programId).where((id) => id.isNotEmpty).toSet();
+  Future<Map<String, ProgramModel>> _fetchProgramsByLessons(
+    List<LessonModel> lessons,
+  ) async {
+    final programIds = lessons
+        .map((lesson) => lesson.programId)
+        .where((id) => id.isNotEmpty)
+        .toSet();
 
     final result = <String, ProgramModel>{};
 
@@ -63,8 +73,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     return result;
   }
 
-  Future<Map<String, MasterModel>> _fetchMastersByPrograms(Iterable<ProgramModel> programs) async {
-    final trainerIds = programs.map((program) => program.trainerId).where((id) => id.isNotEmpty).toSet();
+  Future<Map<String, MasterModel>> _fetchMastersByPrograms(
+    Iterable<ProgramModel> programs,
+  ) async {
+    final trainerIds = programs
+        .map((program) => program.trainerId)
+        .where((id) => id.isNotEmpty)
+        .toSet();
 
     final result = <String, MasterModel>{};
 

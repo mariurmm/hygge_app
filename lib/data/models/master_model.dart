@@ -28,7 +28,13 @@ class MasterModel extends Equatable {
   });
 
   /// Пустая модель.
-  static const MasterModel empty = MasterModel(id: '', firstName: '', lastName: '', bio: '', photoUrl: '');
+  static const MasterModel empty = MasterModel(
+    id: '',
+    firstName: '',
+    lastName: '',
+    bio: '',
+    photoUrl: '',
+  );
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
@@ -36,7 +42,10 @@ class MasterModel extends Equatable {
   /// Полное имя.
   String get fullName => '$firstName $lastName'.trim();
 
-  factory MasterModel.fromJson(Map<String, dynamic> json, {String locale = LocalizedValue.defaultLocale}) {
+  factory MasterModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
     return MasterModel(
       id: json['uuid'] as String? ?? json['id'] as String? ?? '',
       firstName: LocalizedValue.read(json['firstName'], locale: locale),
@@ -47,7 +56,13 @@ class MasterModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() {
-    return {'uuid': id, 'firstName': firstName, 'lastName': lastName, 'bio': bio, 'avatarUrl': photoUrl};
+    return {
+      'uuid': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'bio': bio,
+      'avatarUrl': photoUrl,
+    };
   }
 
   @override

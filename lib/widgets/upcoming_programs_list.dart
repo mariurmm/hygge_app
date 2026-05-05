@@ -30,12 +30,17 @@ class UpcomingProgramsList extends StatelessWidget {
               horizontal: AppPaddings.programsScreenHorizontal,
               vertical: AppSpacings.scheduleSignedTitleGap,
             ),
-            child: Text(loc.homeUpcomingPrograms, style: AppTextStyles.programsSubtitle),
+            child: Text(
+              loc.homeUpcomingPrograms,
+              style: AppTextStyles.programsSubtitle,
+            ),
           );
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppPaddings.programsScreenHorizontal,
+          ),
           child: Column(
             children: List.generate(state.lessons.length, (index) {
               final lesson = state.lessons[index];

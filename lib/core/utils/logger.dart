@@ -1,8 +1,10 @@
+import 'package:hygge_app/core/logging/sentry_log_output.dart';
 import 'package:logger/logger.dart';
 
 class AppLogger {
   static final Logger _logger = Logger(
-    printer: PrettyPrinter(methodCount: 1, errorMethodCount: 5, lineLength: 80, colors: true, printEmojis: true),
+    printer: PrettyPrinter(lineLength: 80, colors: true, printEmojis: true),
+    output: SentryLogOutput(),
   );
 
   /// Информационное сообщение

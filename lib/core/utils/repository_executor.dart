@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hygge_app/core/utils/failure.dart';
+import 'package:hygge_app/core/utils/logger.dart';
 
 /// Mixin that decouples repository implementations from the boilerplate of
 /// try/catch + logging + error mapping.
@@ -25,11 +26,14 @@ import 'package:hygge_app/core/utils/failure.dart';
 /// }
 /// ```
 mixin RepositoryExecutorMixin {
-  /// Override in the concrete repository to plug in your logger
-  /// (Crashlytics, Sentry, Talker, etc.). Default — debugPrint.
+  /// Override in the concrete repository to plug in your logger.
   @protected
   void logError(String actionName, Object error, StackTrace stackTrace) {
-    debugPrint('[$runtimeType] $actionName failed: $error\n$stackTrace');
+    AppLogger.error(
+      '[$runtimeType] $actionName failed',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
   /// Wraps an async [action], logs any exception and rethrows it as a
@@ -38,7 +42,10 @@ mixin RepositoryExecutorMixin {
   /// [actionName] is used purely for log readability — pass something like
   /// `'UserRepository.getUser'`.
   @protected
-  Future<T> execute<T>({required Future<T> Function() action, required String actionName}) async {
+  Future<T> execute<T>({
+    required Future<T> Function() action,
+    required String actionName,
+  }) async {
     try {
       return await action();
     } on Failure {
@@ -51,10 +58,18 @@ mixin RepositoryExecutorMixin {
       throw _mapFirebaseException(e, st);
     } on SocketException catch (e, st) {
       logError(actionName, e, st);
-      throw NetworkFailure(message: 'No internet connection', cause: e, stackTrace: st);
+      throw NetworkFailure(
+        message: 'No internet connection',
+        cause: e,
+        stackTrace: st,
+      );
     } on TimeoutException catch (e, st) {
       logError(actionName, e, st);
-      throw NetworkFailure(message: 'Request timed out', cause: e, stackTrace: st);
+      throw NetworkFailure(
+        message: 'Request timed out',
+        cause: e,
+        stackTrace: st,
+      );
     } catch (e, st) {
       logError(actionName, e, st);
       throw UnknownFailure(message: e.toString(), cause: e, stackTrace: st);
@@ -66,7 +81,12 @@ mixin RepositoryExecutorMixin {
   // ---------------------------------------------------------------------------
 
   Failure _mapAuthException(FirebaseAuthException e, StackTrace st) {
-    return AuthFailure(message: e.message ?? 'Authentication error', code: e.code, cause: e, stackTrace: st);
+    return AuthFailure(
+      message: e.message ?? 'Authentication error',
+      code: e.code,
+      cause: e,
+      stackTrace: st,
+    );
   }
 
   Failure _mapFirebaseException(FirebaseException e, StackTrace st) {
@@ -89,7 +109,12 @@ mixin RepositoryExecutorMixin {
         cause: e,
         stackTrace: st,
       ),
-      _ => ServerFailure(message: e.message ?? 'Server error', code: e.code, cause: e, stackTrace: st),
+      _ => ServerFailure(
+        message: e.message ?? 'Server error',
+        code: e.code,
+        cause: e,
+        stackTrace: st,
+      ),
     };
   }
 }

@@ -35,7 +35,10 @@ class ProgrammList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (programs.isEmpty) {
-      return Text(AppLocalizations.of(context).noAvailableLessons, style: AppTextStyles.settingsLabel16Light);
+      return Text(
+        AppLocalizations.of(context).noAvailableLessons,
+        style: AppTextStyles.settingsLabel16Light,
+      );
     }
 
     if (scrollDirection == Axis.horizontal) {
@@ -45,7 +48,8 @@ class ProgrammList extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemCount: programs.length,
           padding: const EdgeInsets.only(right: AppSpacings.programsCardsGap),
-          separatorBuilder: (_, __) => const SizedBox(width: AppSpacings.programsCardsGap),
+          separatorBuilder: (_, __) =>
+              const SizedBox(width: AppSpacings.programsCardsGap),
           itemBuilder: (context, index) {
             final ProgramModel program = programs[index];
 
@@ -64,7 +68,8 @@ class ProgrammList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: programs.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacings.programsCardsGap),
+      separatorBuilder: (_, __) =>
+          const SizedBox(height: AppSpacings.programsCardsGap),
       itemBuilder: (context, index) {
         final ProgramModel program = programs[index];
 

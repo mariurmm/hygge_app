@@ -14,8 +14,17 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
 
   final AuthRepository _authRepository;
 
-  Future<void> _onStarted(SplashStarted event, Emitter<SplashState> emit) async {
-    await Future.delayed(const Duration(seconds: AppConstants.splashDelaySeconds));
-    emit(_authRepository.isLoggedIn ? const SplashAuthenticated() : const SplashUnauthenticated());
+  Future<void> _onStarted(
+    SplashStarted event,
+    Emitter<SplashState> emit,
+  ) async {
+    await Future<void>.delayed(
+      const Duration(seconds: AppConstants.splashDelaySeconds),
+    );
+    emit(
+      _authRepository.isLoggedIn
+          ? const SplashAuthenticated()
+          : const SplashUnauthenticated(),
+    );
   }
 }

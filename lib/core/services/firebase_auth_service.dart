@@ -3,16 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hygge_app/core/utils/logger.dart';
+import 'package:injectable/injectable.dart';
 
-import '../utils/logger.dart';
-
-/// Обёртка над [FirebaseAuth] и [GoogleSignIn].
-///
-/// Зачем нужна обёртка, а не прямые вызовы?
-/// 1. Если Firebase заменится другим сервисом — меняем только этот файл.
-/// 2. Логирование и обработка ошибок в одном месте.
-/// 3. Тестирование — проще подменить один сервис, чем весь Firebase.
-
+@lazySingleton
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
@@ -29,7 +23,6 @@ class FirebaseAuthService {
     _initialized = true;
   }
 
-  /// Запускает флоу входа через Google (v7 event-based API).
   Future<UserCredential?> signInWithGoogle() async {
     final serverClientId = dotenv.env['SERVER_CLIENT_ID'];
     if (serverClientId == null) {
@@ -46,22 +39,31 @@ class FirebaseAuthService {
           switch (event) {
             case GoogleSignInAuthenticationEventSignIn():
               final idToken = event.user.authentication.idToken;
-              final credential = GoogleAuthProvider.credential(idToken: idToken);
-              final userCredential = await _auth.signInWithCredential(credential);
+              final credential = GoogleAuthProvider.credential(
+                idToken: idToken,
+              );
+              final userCredential = await _auth.signInWithCredential(
+                credential,
+              );
 
-              AppLogger.info('Google Sign-In: успешный вход — ${userCredential.user?.email}');
+              AppLogger.info(
+                'Google Sign-In: успешный вход — ${userCredential.user?.email}',
+              );
               if (!completer.isCompleted) {
                 completer.complete(userCredential);
               }
 
             case GoogleSignInAuthenticationEventSignOut():
-              // Пользователь вышел — возвращаем null
               if (!completer.isCompleted) {
                 completer.complete(null);
               }
           }
         } catch (error, stackTrace) {
-          AppLogger.error('Google Sign-In: ошибка при обработке', error: error, stackTrace: stackTrace);
+          AppLogger.error(
+            'Google Sign-In: ошибка при обработке',
+            error: error,
+            stackTrace: stackTrace,
+          );
           if (!completer.isCompleted) {
             completer.completeError(error);
           }
@@ -69,22 +71,24 @@ class FirebaseAuthService {
           await subscription.cancel();
         }
       },
-      onError: (Object error) async {
-        // Ошибки стрима (включая GoogleSignInException)
-        AppLogger.error('Google Sign-In: ошибка', error: error);
+      onError: (Object error, StackTrace stackTrace) async {
+        AppLogger.error(
+          'Google Sign-In: ошибка',
+          error: error,
+          stackTrace: stackTrace,
+        );
         if (!completer.isCompleted) {
-          completer.completeError(error);
+          completer.completeError(error, stackTrace);
         }
         await subscription.cancel();
       },
     );
 
-    _googleSignIn.authenticate();
+    unawaited(_googleSignIn.authenticate());
 
     return completer.future;
   }
 
-  /// Удаление текущего пользователя из Firebase Auth.
   Future<void> deleteCurrentUser() async {
     final user = _auth.currentUser;
     if (user == null) return;
@@ -97,7 +101,11 @@ class FirebaseAuthService {
       await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
       AppLogger.info('Sign Out: пользователь вышел');
     } catch (error, stackTrace) {
-      AppLogger.error('Sign Out: ошибка при выходе', error: error, stackTrace: stackTrace);
+      AppLogger.error(
+        'Sign Out: ошибка при выходе',
+        error: error,
+        stackTrace: stackTrace,
+      );
       rethrow;
     }
   }

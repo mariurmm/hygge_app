@@ -46,7 +46,8 @@ class ClassModel extends Equatable {
     return DateFormat('d MMM', 'ru').format(d);
   }
 
-  DateTime get calendarDay => DateTime(startDate.year, startDate.month, startDate.day);
+  DateTime get calendarDay =>
+      DateTime(startDate.year, startDate.month, startDate.day);
 
   static final ClassModel empty = ClassModel(
     id: '',
@@ -72,7 +73,8 @@ class ClassModel extends Equatable {
       maxParticipants: ParseUtils.parseInt(json['maxParticipants']),
       currentParticipants: ParseUtils.parseInt(json['currentParticipants']),
       price: ParseUtils.parseDouble(json['price']),
-      isIncludedInSubscription: json['isIncludedInSubscription'] as bool? ?? true,
+      isIncludedInSubscription:
+          json['isIncludedInSubscription'] as bool? ?? true,
     );
   }
 
@@ -111,7 +113,8 @@ class ClassModel extends Equatable {
       maxParticipants: maxParticipants ?? this.maxParticipants,
       currentParticipants: currentParticipants ?? this.currentParticipants,
       price: price ?? this.price,
-      isIncludedInSubscription: isIncludedInSubscription ?? this.isIncludedInSubscription,
+      isIncludedInSubscription:
+          isIncludedInSubscription ?? this.isIncludedInSubscription,
     );
   }
 

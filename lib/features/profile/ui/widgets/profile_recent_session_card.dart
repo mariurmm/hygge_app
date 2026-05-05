@@ -10,21 +10,33 @@ class ProfileRecentSessionCard extends StatelessWidget {
   final String timingLabel;
   final String imageAssetPath;
 
-  const ProfileRecentSessionCard({super.key, required this.timingLabel, required this.imageAssetPath});
+  const ProfileRecentSessionCard({
+    super.key,
+    required this.timingLabel,
+    required this.imageAssetPath,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: AppConstants.programsBlurSigma,
+          sigmaY: AppConstants.programsBlurSigma,
+        ),
         child: Container(
           width: AppConstants.profileCardWidth,
           height: AppConstants.profileRecentHistoryCardHeight,
           decoration: BoxDecoration(
             color: AppColors.programsCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: AppConstants.programsBorderWidth,
+            ),
           ),
           child: Stack(
             fit: StackFit.expand,
@@ -33,7 +45,8 @@ class ProfileRecentSessionCard extends StatelessWidget {
                 child: Image.asset(
                   imageAssetPath,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(color: AppColors.programsCardMedia),
+                  errorBuilder: (_, __, ___) =>
+                      Container(color: AppColors.programsCardMedia),
                 ),
               ),
               Positioned.fill(
@@ -42,7 +55,10 @@ class ProfileRecentSessionCard extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.black.withValues(alpha: 0.35), Colors.black.withValues(alpha: 0.55)],
+                      colors: [
+                        Colors.black.withValues(alpha: 0.35),
+                        Colors.black.withValues(alpha: 0.55),
+                      ],
                     ),
                   ),
                 ),
@@ -50,7 +66,10 @@ class ProfileRecentSessionCard extends StatelessWidget {
               Positioned(
                 left: AppPaddings.profileRecentSessionTimeLeft,
                 top: AppPaddings.profileRecentSessionTimeTop,
-                child: Text(timingLabel, style: AppTextStyles.scheduleCardLabel),
+                child: Text(
+                  timingLabel,
+                  style: AppTextStyles.scheduleCardLabel,
+                ),
               ),
             ],
           ),

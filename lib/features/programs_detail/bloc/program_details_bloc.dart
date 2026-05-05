@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 
 import 'program_details_event.dart';
 import 'program_details_state.dart';
 
-class ProgramDetailsBloc extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
+class ProgramDetailsBloc
+    extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
   final FavouritesRepository _favouritesRepository;
   final UpcomingLessonRepository _bookingRepository;
 
@@ -20,7 +22,10 @@ class ProgramDetailsBloc extends Bloc<ProgramDetailsEvent, ProgramDetailsState> 
     on<ProgramDetailsBooked>(_onBooked);
   }
 
-  Future<void> _onStarted(ProgramDetailsStarted event, Emitter<ProgramDetailsState> emit) async {
+  Future<void> _onStarted(
+    ProgramDetailsStarted event,
+    Emitter<ProgramDetailsState> emit,
+  ) async {
     emit(
       state.copyWith(
         status: ProgramDetailsStatus.loaded,
@@ -45,7 +50,12 @@ class ProgramDetailsBloc extends Bloc<ProgramDetailsEvent, ProgramDetailsState> 
           errorMessage: null,
         ),
       );
-    } catch (_) {
+    } on Exception catch (e, st) {
+      AppLogger.error(
+        'ProgramDetailsBloc: ошибка загрузки избранного',
+        error: e,
+        stackTrace: st,
+      );
       emit(
         state.copyWith(
           status: ProgramDetailsStatus.loaded,
@@ -57,27 +67,55 @@ class ProgramDetailsBloc extends Bloc<ProgramDetailsEvent, ProgramDetailsState> 
     }
   }
 
-  Future<void> _onFavouriteToggled(ProgramDetailsFavouriteToggled event, Emitter<ProgramDetailsState> emit) async {
+  Future<void> _onFavouriteToggled(
+    ProgramDetailsFavouriteToggled event,
+    Emitter<ProgramDetailsState> emit,
+  ) async {
     final nextValue = !state.isFavourite;
 
     emit(state.copyWith(isFavourite: nextValue, errorMessage: null));
 
     try {
-      await _favouritesRepository.setFavourite(programId: event.program.id, isFavourite: nextValue);
-    } catch (_) {
-      emit(state.copyWith(isFavourite: !nextValue, errorMessage: 'Не удалось обновить избранное'));
+      await _favouritesRepository.setFavourite(
+        programId: event.program.id,
+        isFavourite: nextValue,
+      );
+    } on Exception catch (e, st) {
+      AppLogger.error(
+        'ProgramDetailsBloc: ошибка обновления избранного',
+        error: e,
+        stackTrace: st,
+      );
+      emit(
+        state.copyWith(
+          isFavourite: !nextValue,
+          errorMessage: 'Не удалось обновить избранное',
+        ),
+      );
     }
   }
 
-  Future<void> _onBooked(ProgramDetailsBooked event, Emitter<ProgramDetailsState> emit) async {
+  Future<void> _onBooked(
+    ProgramDetailsBooked event,
+    Emitter<ProgramDetailsState> emit,
+  ) async {
     emit(state.copyWith(isBooking: true, errorMessage: null));
 
     try {
       await _bookingRepository.bookProgram(event.lesson);
-
       emit(state.copyWith(isBooking: false, errorMessage: null));
-    } catch (_) {
-      emit(state.copyWith(isBooking: false, errorMessage: 'Не удалось записаться на занятие'));
+    } on Exception catch (e, st) {
+      AppLogger.error(
+        'ProgramDetailsBloc: ошибка бронирования',
+        error: e,
+        stackTrace: st,
+      );
+      emit(
+        state.copyWith(
+          isBooking: false,
+          errorMessage: 'Не удалось записаться на занятие',
+        ),
+      );
     }
   }
 }

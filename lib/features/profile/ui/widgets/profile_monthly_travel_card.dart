@@ -29,13 +29,21 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: AppConstants.programsBlurSigma,
+          sigmaY: AppConstants.programsBlurSigma,
+        ),
         child: Container(
           width: AppConstants.profileCardWidth,
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: AppConstants.programsBorderWidth,
+            ),
           ),
           padding: const EdgeInsets.all(AppPaddings.profileMonthlyCardInner),
           child: Column(
@@ -52,7 +60,9 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: AppSpacings.profileMonthlyTitlePercentGap),
+                  const SizedBox(
+                    width: AppSpacings.profileMonthlyTitlePercentGap,
+                  ),
                   Text('$percent%', style: AppTextStyles.scheduleCardTitle),
                 ],
               ),
@@ -60,7 +70,9 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
               Text(description, style: AppTextStyles.scheduleCardLabel),
               const SizedBox(height: AppSpacings.profileMonthlyDescProgressGap),
               ProfileTravelProgressBar(percent: percent),
-              const SizedBox(height: AppSpacings.profileMonthlyProgressFooterGap),
+              const SizedBox(
+                height: AppSpacings.profileMonthlyProgressFooterGap,
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -68,13 +80,20 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
                     width: AppConstants.profileMonthlyLeftTextMaxWidth,
                     child: Text(
                       leftSessionsLine,
-                      style: AppTextStyles.scheduleCardLabel.copyWith(height: 1.1),
+                      style: AppTextStyles.scheduleCardLabel.copyWith(
+                        height: 1.1,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const SizedBox(width: AppSpacings.profileMonthlyLeftGoalGap),
-                  Expanded(child: Text(goalLine, style: AppTextStyles.scheduleCardLabel)),
+                  Expanded(
+                    child: Text(
+                      goalLine,
+                      style: AppTextStyles.scheduleCardLabel,
+                    ),
+                  ),
                 ],
               ),
             ],

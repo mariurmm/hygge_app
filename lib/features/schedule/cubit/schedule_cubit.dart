@@ -25,7 +25,10 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   }) : _scheduleRepo = scheduleRepo,
        _bookingRepo = bookingRepo,
        super(
-         ScheduleState(visibleMonth: DateTime(DateTime.now().year, DateTime.now().month, 1), today: DateTime.now()),
+         ScheduleState(
+           visibleMonth: DateTime(DateTime.now().year, DateTime.now().month, 1),
+           today: DateTime.now(),
+         ),
        ) {
     _subscribeUpcoming();
     _subscribeMonth(state.visibleMonth);
@@ -35,7 +38,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     _classesSub?.cancel();
     _classesSub = _scheduleRepo.watchUpcomingClasses().listen(
       (classes) => emit(state.copyWith(upcomingClasses: classes)),
-      onError: (e) => emit(state.copyWith(error: e.toString())),
+      onError: (Object e) => emit(state.copyWith(error: e.toString())),
     );
   }
 
@@ -45,7 +48,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         .watchClassesForMonth(month)
         .listen(
           (classes) => emit(state.copyWith(monthClasses: classes)),
-          onError: (e) => emit(state.copyWith(error: e.toString())),
+          onError: (Object e) => emit(state.copyWith(error: e.toString())),
         );
   }
 
@@ -63,7 +66,8 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     _subscribeMonth(prev);
   }
 
-  String monthLabel(DateTime month, [String locale = 'ru']) => DateFormat('LLLL yyyy', locale).format(month);
+  String monthLabel(DateTime month, [String locale = 'ru']) =>
+      DateFormat('LLLL yyyy', locale).format(month);
 
   List<DateTime?> calendarCells(DateTime month) {
     final first = DateTime(month.year, month.month, 1);

@@ -42,5 +42,13 @@ final class CloudinaryUploadResult extends Equatable {
   };
 
   @override
-  List<Object?> get props => <Object?>[publicId, secureUrl, originalFilename, bytes, width, height, format];
+  List<Object?> get props => <Object?>[
+    publicId,
+    secureUrl,
+    originalFilename,
+    bytes,
+    width,
+    height,
+    format,
+  ];
 }

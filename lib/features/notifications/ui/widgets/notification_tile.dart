@@ -9,7 +9,12 @@ import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 import 'package:intl/intl.dart';
 
 class NotificationTile extends StatelessWidget {
-  const NotificationTile({super.key, required this.item, required this.onTap, required this.onDismiss});
+  const NotificationTile({
+    super.key,
+    required this.item,
+    required this.onTap,
+    required this.onDismiss,
+  });
 
   final NotificationItem item;
   final VoidCallback onTap;
@@ -34,9 +39,13 @@ class NotificationTile extends StatelessWidget {
                 color: item.isRead
                     ? AppColors.programsCard.withValues(alpha: 0.5)
                     : AppColors.programsCard.withValues(alpha: 0.82),
-                borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
+                borderRadius: BorderRadius.circular(
+                  AppConstants.programsCardRadius,
+                ),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: item.isRead ? 0.1 : 0.2),
+                  color: Colors.white.withValues(
+                    alpha: item.isRead ? 0.1 : 0.2,
+                  ),
                   width: AppConstants.programsBorderWidth,
                 ),
               ),
@@ -56,7 +65,9 @@ class NotificationTile extends StatelessWidget {
                               child: Text(
                                 item.title,
                                 style: AppTextStyles.programsCardTitle.copyWith(
-                                  color: item.isRead ? Colors.white60 : Colors.white,
+                                  color: item.isRead
+                                      ? Colors.white60
+                                      : Colors.white,
                                 ),
                               ),
                             ),
@@ -66,7 +77,10 @@ class NotificationTile extends StatelessWidget {
                                 width: 8,
                                 height: 8,
                                 margin: const EdgeInsets.only(left: 8, top: 4),
-                                decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.terracotta),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.terracotta,
+                                ),
                               ),
                           ],
                         ),
@@ -74,11 +88,18 @@ class NotificationTile extends StatelessWidget {
                         Text(
                           item.body,
                           style: AppTextStyles.programsCardDescription.copyWith(
-                            color: item.isRead ? Colors.white38 : Colors.white70,
+                            color: item.isRead
+                                ? Colors.white38
+                                : Colors.white70,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(_formatTime(item.createdAt), style: AppTextStyles.label.copyWith(color: Colors.white38)),
+                        Text(
+                          _formatTime(item.createdAt),
+                          style: AppTextStyles.label.copyWith(
+                            color: Colors.white38,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -108,15 +129,27 @@ class _TypeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = switch (type) {
-      NotificationType.reminder => (Icons.access_time_rounded, AppColors.lightBrown),
-      NotificationType.booking => (Icons.event_available_rounded, AppColors.green),
+      NotificationType.reminder => (
+        Icons.access_time_rounded,
+        AppColors.lightBrown,
+      ),
+      NotificationType.booking => (
+        Icons.event_available_rounded,
+        AppColors.green,
+      ),
       NotificationType.news => (Icons.campaign_rounded, AppColors.beige),
-      NotificationType.system => (Icons.info_outline_rounded, AppColors.darkBlue),
+      NotificationType.system => (
+        Icons.info_outline_rounded,
+        AppColors.darkBlue,
+      ),
     };
     return Container(
       width: 40,
       height: 40,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: color.withValues(alpha: 0.2)),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: 0.2),
+      ),
       child: Icon(icon, color: color, size: 20),
     );
   }

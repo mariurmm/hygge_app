@@ -5,7 +5,9 @@ import 'package:hygge_app/data/repositories/schedule_repository.dart';
 /// Maps a single [ClassModel] (from the schedule layer) into a [LessonModel]
 /// (the domain representation used across features).
 class MapClassToLessonUseCase {
-  const MapClassToLessonUseCase({required ScheduleRepository scheduleRepository}) : _scheduleRepo = scheduleRepository;
+  const MapClassToLessonUseCase({
+    required ScheduleRepository scheduleRepository,
+  }) : _scheduleRepo = scheduleRepository;
 
   final ScheduleRepository _scheduleRepo;
 

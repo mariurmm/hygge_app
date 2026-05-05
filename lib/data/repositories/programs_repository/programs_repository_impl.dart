@@ -1,24 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hygge_app/core/utils/repository_executor.dart';
 import 'package:hygge_app/data/models/program_model.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:injectable/injectable.dart';
 
-import 'programs_repository.dart';
-
-class ProgramsRepositoryImpl with RepositoryExecutorMixin implements ProgramsRepository {
-  ProgramsRepositoryImpl({FirebaseFirestore? firestore}) : _firestore = firestore ?? FirebaseFirestore.instance;
+@LazySingleton(as: ProgramsRepository)
+class ProgramsRepositoryImpl
+    with RepositoryExecutorMixin
+    implements ProgramsRepository {
+  ProgramsRepositoryImpl({required FirebaseFirestore firestore})
+    : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
 
-  CollectionReference<Map<String, dynamic>> get _programs => _firestore.collection('programs');
+  CollectionReference<Map<String, dynamic>> get _programs =>
+      _firestore.collection('programs');
 
   @override
   Future<List<ProgramModel>> fetchPrograms({int? limit}) => execute(
     actionName: 'ProgramsRepository.fetchPrograms',
     action: () async {
-      Query<Map<String, dynamic>> query = _programs.where('isActive', isEqualTo: true);
-
+      var query = _programs.where('isActive', isEqualTo: true);
       if (limit != null) query = query.limit(limit);
-
       final snapshot = await query.get();
       return snapshot.docs.map(_programFromDoc).toList();
     },
@@ -26,8 +29,7 @@ class ProgramsRepositoryImpl with RepositoryExecutorMixin implements ProgramsRep
 
   @override
   Stream<List<ProgramModel>> watchPrograms({int? limit}) {
-    Query<Map<String, dynamic>> query = _programs.where('isActive', isEqualTo: true);
-
+    var query = _programs.where('isActive', isEqualTo: true);
     if (limit != null) query = query.limit(limit);
 
     return query
@@ -41,15 +43,11 @@ class ProgramsRepositoryImpl with RepositoryExecutorMixin implements ProgramsRep
     actionName: 'ProgramsRepository.fetchProgramById',
     action: () async {
       if (programId.isEmpty) return null;
-
       final doc = await _programs.doc(programId).get();
       if (!doc.exists || doc.data() == null) return null;
-
       return _programFromDoc(doc);
     },
   );
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
 
   ProgramModel _programFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
@@ -58,6 +56,6 @@ class ProgramsRepositoryImpl with RepositoryExecutorMixin implements ProgramsRep
 
   Function _onStreamError(String actionName) => (Object error, StackTrace st) {
     logError(actionName, error, st);
-    throw error;
+    Error.throwWithStackTrace(error, st);
   };
 }

@@ -43,7 +43,10 @@ class ProgramModel extends Equatable {
   bool get isNotEmpty => this != empty;
   String get description => text;
 
-  factory ProgramModel.fromJson(Map<String, dynamic> json, {String locale = LocalizedValue.defaultLocale}) {
+  factory ProgramModel.fromJson(
+    Map<String, dynamic> json, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
     return ProgramModel(
       id: _readString(json, ['uuid', 'id']),
       category: ProgramCategory.fromJson(json['category'] as String?),
@@ -106,5 +109,15 @@ class ProgramModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, category, ritual, title, text, imageUrl, price, trainerId, isBookable];
+  List<Object?> get props => [
+    id,
+    category,
+    ritual,
+    title,
+    text,
+    imageUrl,
+    price,
+    trainerId,
+    isBookable,
+  ];
 }

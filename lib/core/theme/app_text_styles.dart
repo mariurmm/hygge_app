@@ -78,7 +78,10 @@ class AppTextStyles {
     height: 1.2,
   );
 
-  static final TextStyle programsFilter = bodyLarge.copyWith(fontWeight: FontWeight.w500, color: Colors.white);
+  static final TextStyle programsFilter = bodyLarge.copyWith(
+    fontWeight: FontWeight.w500,
+    color: Colors.white,
+  );
 
   static final TextStyle programsCardTitle = programsFilter;
 
@@ -90,9 +93,15 @@ class AppTextStyles {
 
   static final TextStyle scheduleSectionTitle = programsHeading;
   static final TextStyle scheduleDescription = programsSubtitle;
-  static final TextStyle scheduleCalendarTitle = bodyLarge.copyWith(fontWeight: FontWeight.w500, color: Colors.white);
+  static final TextStyle scheduleCalendarTitle = bodyLarge.copyWith(
+    fontWeight: FontWeight.w500,
+    color: Colors.white,
+  );
   static final TextStyle scheduleDate = bodyLarge.copyWith(color: Colors.white);
-  static final TextStyle scheduleCardLabel = bodyLarge.copyWith(fontWeight: FontWeight.w300, color: Colors.white);
+  static final TextStyle scheduleCardLabel = bodyLarge.copyWith(
+    fontWeight: FontWeight.w300,
+    color: Colors.white,
+  );
   static final TextStyle scheduleCardTitle = bodyLarge.copyWith(
     fontSize: 20,
     fontWeight: FontWeight.w500,
@@ -107,7 +116,9 @@ class AppTextStyles {
   );
 
   // ── Settings screen ────────────────────────────────────────────
-  static final TextStyle settingsHeaderTitle = programsHeading.copyWith(fontSize: 22);
+  static final TextStyle settingsHeaderTitle = programsHeading.copyWith(
+    fontSize: 22,
+  );
 
   static final TextStyle settingsLabel16Light = bodyLarge.copyWith(
     fontSize: 16,
@@ -116,7 +127,9 @@ class AppTextStyles {
     fontFamily: 'CeraPro',
   );
 
-  static final TextStyle settingsInput16Medium = programsFilter.copyWith(fontSize: 16);
+  static final TextStyle settingsInput16Medium = programsFilter.copyWith(
+    fontSize: 16,
+  );
 
   static final TextStyle settingsChangePhoto = settingsLabel16Light.copyWith(
     decoration: TextDecoration.underline,
@@ -130,5 +143,7 @@ class AppTextStyles {
     color: Colors.white,
   );
 
-  static final TextStyle settingsActionDelete = settingsActionWhite.copyWith(color: AppColors.settingsDeleteText);
+  static final TextStyle settingsActionDelete = settingsActionWhite.copyWith(
+    color: AppColors.settingsDeleteText,
+  );
 }

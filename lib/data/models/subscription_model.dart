@@ -82,5 +82,13 @@ class SubscriptionModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, userId, totalSessions, usedSessions, startDate, endDate, isActive];
+  List<Object?> get props => [
+    id,
+    userId,
+    totalSessions,
+    usedSessions,
+    startDate,
+    endDate,
+    isActive,
+  ];
 }

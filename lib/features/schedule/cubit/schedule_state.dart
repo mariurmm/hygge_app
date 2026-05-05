@@ -15,7 +15,8 @@ class ScheduleState extends Equatable {
     this.error,
   });
 
-  Set<DateTime> get scheduledDays => monthClasses.map((c) => c.calendarDay).toSet();
+  Set<DateTime> get scheduledDays =>
+      monthClasses.map((c) => c.calendarDay).toSet();
 
   ScheduleState copyWith({
     DateTime? visibleMonth,
@@ -34,5 +35,11 @@ class ScheduleState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [visibleMonth, today, upcomingClasses, monthClasses, error];
+  List<Object?> get props => [
+    visibleMonth,
+    today,
+    upcomingClasses,
+    monthClasses,
+    error,
+  ];
 }

@@ -8,7 +8,11 @@ class LocalizedValue {
 
   static const String defaultLocale = 'ru';
 
-  static String read(dynamic value, {String locale = defaultLocale, String fallbackLocale = 'en'}) {
+  static String read(
+    dynamic value, {
+    String locale = defaultLocale,
+    String fallbackLocale = 'en',
+  }) {
     if (value == null) return '';
 
     if (value is String) return value;
@@ -33,7 +37,11 @@ class LocalizedValue {
     return '';
   }
 
-  static Map<String, String> write({required String en, required String ru, required String kk}) {
+  static Map<String, String> write({
+    required String en,
+    required String ru,
+    required String kk,
+  }) {
     return {'en': en, 'ru': ru, 'kk': kk};
   }
 }

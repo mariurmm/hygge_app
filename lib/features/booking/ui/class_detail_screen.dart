@@ -58,24 +58,40 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                   const SizedBox(height: 12),
                   Text(classModel.type, style: AppTextStyles.scheduleCardLabel),
                   const SizedBox(height: 4),
-                  Text(classModel.title, style: AppTextStyles.scheduleSectionTitle),
+                  Text(
+                    classModel.title,
+                    style: AppTextStyles.scheduleSectionTitle,
+                  ),
                   const SizedBox(height: 24),
                   _GlassCard(
                     child: Column(
                       children: [
-                        _DetailRow(icon: Icons.calendar_today_outlined, label: dateFormat.format(classModel.startDate)),
+                        _DetailRow(
+                          icon: Icons.calendar_today_outlined,
+                          label: dateFormat.format(classModel.startDate),
+                        ),
                         const SizedBox(height: 12),
-                        _DetailRow(icon: Icons.access_time_outlined, label: classModel.timeRange),
+                        _DetailRow(
+                          icon: Icons.access_time_outlined,
+                          label: classModel.timeRange,
+                        ),
                         const SizedBox(height: 12),
-                        _DetailRow(icon: Icons.timer_outlined, label: '${classModel.durationMinutes} мин'),
+                        _DetailRow(
+                          icon: Icons.timer_outlined,
+                          label: '${classModel.durationMinutes} мин',
+                        ),
                         const SizedBox(height: 12),
                         _DetailRow(
                           icon: Icons.people_outline,
-                          label: '${classModel.currentParticipants} / ${classModel.maxParticipants} участников',
+                          label:
+                              '${classModel.currentParticipants} / ${classModel.maxParticipants} участников',
                         ),
                         if (!classModel.isIncludedInSubscription) ...[
                           const SizedBox(height: 12),
-                          _DetailRow(icon: Icons.attach_money, label: '${classModel.price.toStringAsFixed(0)} ₸'),
+                          _DetailRow(
+                            icon: Icons.attach_money,
+                            label: '${classModel.price.toStringAsFixed(0)} ₸',
+                          ),
                         ],
                       ],
                     ),
@@ -85,12 +101,18 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                     _GlassCard(
                       child: Row(
                         children: [
-                          const Icon(Icons.info_outline, color: Colors.white70, size: 18),
+                          const Icon(
+                            Icons.info_outline,
+                            color: Colors.white70,
+                            size: 18,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
                               'Это выездное мероприятие. Запись через администратора.',
-                              style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: Colors.white70,
+                              ),
                             ),
                           ),
                         ],
@@ -103,12 +125,18 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                           return _GlassCard(
                             child: Row(
                               children: [
-                                const Icon(Icons.card_membership, color: Colors.white70, size: 18),
+                                const Icon(
+                                  Icons.card_membership,
+                                  color: Colors.white70,
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     'Для записи необходим активный абонемент.',
-                                    style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      color: Colors.white70,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -121,29 +149,44 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                   const SizedBox(height: 24),
                   BlocConsumer<BookingCubit, BookingState>(
                     listener: (context, state) async {
-                      if (state.status == BookingCubitStatus.cancelConfirmationRequired) {
+                      if (state.status ==
+                          BookingCubitStatus.cancelConfirmationRequired) {
                         final bookingId = state.existingBooking?.id;
                         if (bookingId == null) return;
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (ctx) => AlertDialog(
                             backgroundColor: AppColors.darkBrown,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            title: Text('Отменить запись?', style: AppTextStyles.scheduleCalendarTitle),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            title: Text(
+                              'Отменить запись?',
+                              style: AppTextStyles.scheduleCalendarTitle,
+                            ),
                             content: Text(
                               'Вы уверены, что хотите отменить запись на «${classModel.title}»?',
-                              style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: Colors.white70,
+                              ),
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(ctx).pop(false),
-                                child: Text('Назад', style: AppTextStyles.button.copyWith(color: Colors.white54)),
+                                child: Text(
+                                  'Назад',
+                                  style: AppTextStyles.button.copyWith(
+                                    color: Colors.white54,
+                                  ),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () => Navigator.of(ctx).pop(true),
                                 child: Text(
                                   'Да, отменить',
-                                  style: AppTextStyles.button.copyWith(color: AppColors.terracotta),
+                                  style: AppTextStyles.button.copyWith(
+                                    color: AppColors.terracotta,
+                                  ),
                                 ),
                               ),
                             ],
@@ -168,13 +211,23 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                       final msg = state.message ?? '';
                       if (msg.isEmpty) return;
                       final isPositive =
-                          state.status == BookingCubitStatus.success || state.status == BookingCubitStatus.cancelled;
+                          state.status == BookingCubitStatus.success ||
+                          state.status == BookingCubitStatus.cancelled;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(msg, style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
-                          backgroundColor: isPositive ? AppColors.primary : AppColors.darkBrown,
+                          content: Text(
+                            msg,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                          backgroundColor: isPositive
+                              ? AppColors.primary
+                              : AppColors.darkBrown,
                           behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       );
                     },
@@ -182,7 +235,8 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                       return _BookButton(
                         classModel: classModel,
                         bookingState: state,
-                        onCancelTap: () => context.read<BookingCubit>().requestCancelBooking(),
+                        onCancelTap: () =>
+                            context.read<BookingCubit>().requestCancelBooking(),
                       );
                     },
                   ),
@@ -201,7 +255,11 @@ class _BookButton extends StatelessWidget {
   final BookingState bookingState;
   final VoidCallback? onCancelTap;
 
-  const _BookButton({required this.classModel, required this.bookingState, this.onCancelTap});
+  const _BookButton({
+    required this.classModel,
+    required this.bookingState,
+    this.onCancelTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -210,14 +268,24 @@ class _BookButton extends StatelessWidget {
     final isExternal = !classModel.isIncludedInSubscription;
 
     if (isExternal) {
-      return _primaryButton(label: 'Запись через администратора', enabled: false, isLoading: false, onPressed: null);
+      return _primaryButton(
+        label: 'Запись через администратора',
+        enabled: false,
+        isLoading: false,
+        onPressed: null,
+      );
     }
 
     if (isBooked) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _primaryButton(label: 'Вы записаны', enabled: false, isLoading: isLoading, onPressed: null),
+          _primaryButton(
+            label: 'Вы записаны',
+            enabled: false,
+            isLoading: isLoading,
+            onPressed: null,
+          ),
           const SizedBox(height: 12),
           _cancelButton(context, isLoading),
         ],
@@ -225,7 +293,12 @@ class _BookButton extends StatelessWidget {
     }
 
     if (classModel.isFull) {
-      return _primaryButton(label: 'Мест нет', enabled: false, isLoading: false, onPressed: null);
+      return _primaryButton(
+        label: 'Мест нет',
+        enabled: false,
+        isLoading: false,
+        onPressed: null,
+      );
     }
 
     return _primaryButton(
@@ -259,15 +332,23 @@ class _BookButton extends StatelessWidget {
               disabledForegroundColor: Colors.white54,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
+                borderRadius: BorderRadius.circular(
+                  AppConstants.scheduleCardRadius,
+                ),
+                side: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  width: AppConstants.programsBorderWidth,
+                ),
               ),
             ),
             child: isLoading
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
                   )
                 : Text(label, style: AppTextStyles.button),
           ),
@@ -291,9 +372,16 @@ class _BookButton extends StatelessWidget {
                 color: AppColors.terracotta.withValues(alpha: 0.6),
                 width: AppConstants.programsBorderWidth,
               ),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  AppConstants.scheduleCardRadius,
+                ),
+              ),
             ),
-            child: Text('Отменить запись', style: AppTextStyles.button.copyWith(color: AppColors.terracotta)),
+            child: Text(
+              'Отменить запись',
+              style: AppTextStyles.button.copyWith(color: AppColors.terracotta),
+            ),
           ),
         ),
       ),
@@ -316,8 +404,13 @@ class _GlassCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: AppConstants.programsBorderWidth,
+            ),
           ),
           child: child,
         ),
@@ -337,7 +430,10 @@ class _DetailRow extends StatelessWidget {
       children: [
         Icon(icon, color: Colors.white70, size: 18),
         const SizedBox(width: 10),
-        Text(label, style: AppTextStyles.scheduleCardLabel.copyWith(color: Colors.white)),
+        Text(
+          label,
+          style: AppTextStyles.scheduleCardLabel.copyWith(color: Colors.white),
+        ),
       ],
     );
   }

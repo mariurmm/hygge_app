@@ -11,13 +11,19 @@ class AuthRequestModel extends Equatable {
   const AuthRequestModel({required this.email, required this.password});
 
   /// Пустая модель.
-  static const AuthRequestModel empty = AuthRequestModel(email: '', password: '');
+  static const AuthRequestModel empty = AuthRequestModel(
+    email: '',
+    password: '',
+  );
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
   factory AuthRequestModel.fromJson(Map<String, dynamic> json) {
-    return AuthRequestModel(email: json['email'] as String? ?? '', password: json['password'] as String? ?? '');
+    return AuthRequestModel(
+      email: json['email'] as String? ?? '',
+      password: json['password'] as String? ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {

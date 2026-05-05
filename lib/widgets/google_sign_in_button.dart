@@ -19,7 +19,11 @@ class GoogleSignInButton extends StatelessWidget {
   /// Показывать ли индикатор загрузки.
   final bool isLoading;
 
-  const GoogleSignInButton({super.key, required this.onPressed, this.isLoading = false});
+  const GoogleSignInButton({
+    super.key,
+    required this.onPressed,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +47,16 @@ class GoogleSignInButton extends StatelessWidget {
           backgroundColor: colorScheme.surface,
           // Цвет обводки — из темы (outline или divider-подобный).
           side: BorderSide(color: colorScheme.outline),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: isLoading
-            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -61,7 +71,10 @@ class GoogleSignInButton extends StatelessWidget {
                   // по размеру и весу для текста на кнопке).
                   Text(
                     loc.signInWithGoogle,
-                    style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onSurface),
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),

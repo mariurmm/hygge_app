@@ -2,20 +2,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/utils/repository_executor.dart';
 import 'package:hygge_app/data/models/program_model.dart';
+import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
+import 'package:injectable/injectable.dart';
 
-import 'favourites_repository.dart';
-
-class FavouritesRepositoryImpl with RepositoryExecutorMixin implements FavouritesRepository {
-  FavouritesRepositoryImpl({FirebaseFirestore? firestore, FirebaseAuth? auth})
-    : _firestore = firestore ?? FirebaseFirestore.instance,
-      _auth = auth ?? FirebaseAuth.instance;
+@LazySingleton(as: FavouritesRepository)
+class FavouritesRepositoryImpl
+    with RepositoryExecutorMixin
+    implements FavouritesRepository {
+  FavouritesRepositoryImpl({
+    required FirebaseFirestore firestore,
+    required FirebaseAuth auth,
+  }) : _firestore = firestore,
+       _auth = auth;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
 
   String? get _uid => _auth.currentUser?.uid;
 
-  CollectionReference<Map<String, dynamic>> get _programs => _firestore.collection('programs');
+  CollectionReference<Map<String, dynamic>> get _programs =>
+      _firestore.collection('programs');
 
   CollectionReference<Map<String, dynamic>> _favourites(String uid) =>
       _firestore.collection('users').doc(uid).collection('favourites');
@@ -44,7 +50,10 @@ class FavouritesRepositoryImpl with RepositoryExecutorMixin implements Favourite
   );
 
   @override
-  Future<void> setFavourite({required String programId, required bool isFavourite}) => execute(
+  Future<void> setFavourite({
+    required String programId,
+    required bool isFavourite,
+  }) => execute(
     actionName: 'FavouritesRepository.setFavourite',
     action: () async {
       final uid = _uid;
@@ -53,7 +62,10 @@ class FavouritesRepositoryImpl with RepositoryExecutorMixin implements Favourite
       final ref = _favourites(uid).doc(programId);
 
       if (isFavourite) {
-        await ref.set({'programId': programId, 'createdAt': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+        await ref.set({
+          'programId': programId,
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
       } else {
         await ref.delete();
       }
@@ -80,8 +92,6 @@ class FavouritesRepositoryImpl with RepositoryExecutorMixin implements Favourite
       return result;
     },
   );
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
 
   ProgramModel _programFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};

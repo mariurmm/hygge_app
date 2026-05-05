@@ -20,9 +20,11 @@ class HistoryResult {
 ///   2. Counts bookings within the current calendar month.
 ///   3. Maps the most-recent booking's class into a [LessonModel].
 class LoadHistoryUseCase {
-  const LoadHistoryUseCase({required BookingRepository bookingRepository, required MapClassToLessonUseCase mapLesson})
-    : _bookingRepo = bookingRepository,
-      _mapLesson = mapLesson;
+  const LoadHistoryUseCase({
+    required BookingRepository bookingRepository,
+    required MapClassToLessonUseCase mapLesson,
+  }) : _bookingRepo = bookingRepository,
+       _mapLesson = mapLesson;
 
   final BookingRepository _bookingRepo;
   final MapClassToLessonUseCase _mapLesson;
@@ -32,7 +34,9 @@ class LoadHistoryUseCase {
     final now = DateTime.now();
 
     final completedThisMonth = bookings
-        .where((b) => b.datetime.year == now.year && b.datetime.month == now.month)
+        .where(
+          (b) => b.datetime.year == now.year && b.datetime.month == now.month,
+        )
         .length;
 
     LessonModel? recentLesson;
@@ -40,6 +44,9 @@ class LoadHistoryUseCase {
       recentLesson = await _mapLesson(bookings.first.classId);
     }
 
-    return HistoryResult(completedThisMonth: completedThisMonth, recentLesson: recentLesson);
+    return HistoryResult(
+      completedThisMonth: completedThisMonth,
+      recentLesson: recentLesson,
+    );
   }
 }

@@ -20,7 +20,9 @@ class SplashScreen extends StatelessWidget {
     final loc = AppLocalizations.of(context);
 
     return BlocProvider(
-      create: (ctx) => SplashBloc(authRepository: ctx.read<AuthRepository>())..add(const SplashStarted()),
+      create: (ctx) =>
+          SplashBloc(authRepository: ctx.read<AuthRepository>())
+            ..add(const SplashStarted()),
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashAuthenticated) context.go(RouteNames.main);

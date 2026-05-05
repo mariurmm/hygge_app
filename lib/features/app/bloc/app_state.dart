@@ -36,7 +36,9 @@ class AppState extends Equatable {
   const AppState.authenticated(this.user) : status = AppStatus.authenticated;
 
   /// Пользователь не авторизован.
-  const AppState.unauthenticated() : status = AppStatus.unauthenticated, user = UserModel.empty;
+  const AppState.unauthenticated()
+    : status = AppStatus.unauthenticated,
+      user = UserModel.empty;
 
   @override
   List<Object?> get props => [status, user];

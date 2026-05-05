@@ -28,14 +28,22 @@ class ScheduleProgramCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: AppConstants.programsBlurSigma, sigmaY: AppConstants.programsBlurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: AppConstants.programsBlurSigma,
+          sigmaY: AppConstants.programsBlurSigma,
+        ),
         child: Container(
           width: AppConstants.scheduleCardWidth,
           height: AppConstants.scheduleCardHeight,
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: AppConstants.programsBorderWidth),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: AppConstants.programsBorderWidth,
+            ),
           ),
           child: Row(
             children: [
@@ -72,7 +80,12 @@ class ScheduleProgramCard extends StatelessWidget {
 
                       const SizedBox(height: AppSpacings.scheduleCardTextGapV),
 
-                      Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTextStyles.scheduleCardTitle),
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.scheduleCardTitle,
+                      ),
 
                       const SizedBox(height: AppSpacings.programsFiltersGap),
 
@@ -87,7 +100,9 @@ class ScheduleProgramCard extends StatelessWidget {
                             ),
                           ),
 
-                          const SizedBox(width: AppSpacings.scheduleCardBottomRowGap),
+                          const SizedBox(
+                            width: AppSpacings.scheduleCardBottomRowGap,
+                          ),
 
                           Flexible(
                             child: Text(

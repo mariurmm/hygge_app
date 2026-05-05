@@ -14,9 +14,11 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   StreamSubscription<SubscriptionModel?>? _sub;
 
-  SubscriptionCubit({required SubscriptionRepository repository, required this.userId})
-    : _repository = repository,
-      super(const SubscriptionState()) {
+  SubscriptionCubit({
+    required SubscriptionRepository repository,
+    required this.userId,
+  }) : _repository = repository,
+       super(const SubscriptionState()) {
     _subscribe();
   }
 
@@ -25,8 +27,18 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     _sub = _repository
         .watchSubscription(userId)
         .listen(
-          (subscription) => emit(state.copyWith(status: SubscriptionStatus.loaded, subscription: subscription)),
-          onError: (e) => emit(state.copyWith(status: SubscriptionStatus.error, error: e.toString())),
+          (subscription) => emit(
+            state.copyWith(
+              status: SubscriptionStatus.loaded,
+              subscription: subscription,
+            ),
+          ),
+          onError: (Object e) => emit(
+            state.copyWith(
+              status: SubscriptionStatus.error,
+              error: e.toString(),
+            ),
+          ),
         );
   }
 
@@ -34,7 +46,9 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     try {
       await _repository.deductSession(userId);
     } catch (e) {
-      emit(state.copyWith(status: SubscriptionStatus.error, error: e.toString()));
+      emit(
+        state.copyWith(status: SubscriptionStatus.error, error: e.toString()),
+      );
     }
   }
 

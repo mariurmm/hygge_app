@@ -7,7 +7,12 @@ class NotificationModel {
   final DateTime date;
   final bool isRead;
 
-  NotificationModel({required this.id, required this.type, required this.date, this.isRead = false});
+  NotificationModel({
+    required this.id,
+    required this.type,
+    required this.date,
+    this.isRead = false,
+  });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
@@ -19,15 +24,28 @@ class NotificationModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'type': type.name, 'date': date.toIso8601String(), 'isRead': isRead};
+    return {
+      'id': id,
+      'type': type.name,
+      'date': date.toIso8601String(),
+      'isRead': isRead,
+    };
   }
 
   NotificationModel copyWith({bool? isRead}) {
-    return NotificationModel(id: id, type: type, date: date, isRead: isRead ?? this.isRead);
+    return NotificationModel(
+      id: id,
+      type: type,
+      date: date,
+      isRead: isRead ?? this.isRead,
+    );
   }
 
   static NotificationType _parseType(dynamic value) {
     final raw = value?.toString();
-    return NotificationType.values.firstWhere((type) => type.name == raw, orElse: () => NotificationType.system);
+    return NotificationType.values.firstWhere(
+      (type) => type.name == raw,
+      orElse: () => NotificationType.system,
+    );
   }
 }

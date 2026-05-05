@@ -40,13 +40,19 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AuthRepository>().signInWithGoogle();
       // Навигация произойдёт через BlocListener ниже.
-    } catch (error) {
-      AppLogger.error('LoginScreen: ошибка входа', error: error);
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'LoginScreen: ошибка входа',
+        error: error,
+        stackTrace: stackTrace,
+      );
 
       if (!mounted) return;
 
       final loc = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.signInError)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.signInError)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -96,7 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const Spacer(),
 
-                  _GoogleSignInButton(label: loc.signInWithGoogle, isLoading: _isLoading, onTap: _onSignInPressed),
+                  _GoogleSignInButton(
+                    label: loc.signInWithGoogle,
+                    isLoading: _isLoading,
+                    onTap: _onSignInPressed,
+                  ),
 
                   const SizedBox(height: 48),
                 ],
@@ -126,8 +136,15 @@ class _HyggeLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppPaddings.defaultPadding),
-      child: Image.asset(AssetPaths.hyggeLogo, width: 500, height: 200, fit: BoxFit.contain),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppPaddings.defaultPadding,
+      ),
+      child: Image.asset(
+        AssetPaths.hyggeLogo,
+        width: 500,
+        height: 200,
+        fit: BoxFit.contain,
+      ),
     );
   }
 }
@@ -154,7 +171,12 @@ class _ChakraIcon extends StatelessWidget {
     //   colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
     // );
 
-    return Image.asset(AssetPaths.chakraIcon, width: 120, height: 120, color: Colors.white);
+    return Image.asset(
+      AssetPaths.chakraIcon,
+      width: 120,
+      height: 120,
+      color: Colors.white,
+    );
   }
 }
 
@@ -162,7 +184,11 @@ class _ChakraIcon extends StatelessWidget {
 ///
 /// При [isLoading] == true показывает индикатор и блокирует повторное нажатие.
 class _GoogleSignInButton extends StatelessWidget {
-  const _GoogleSignInButton({required this.label, required this.isLoading, required this.onTap});
+  const _GoogleSignInButton({
+    required this.label,
+    required this.isLoading,
+    required this.onTap,
+  });
 
   final String label;
   final bool isLoading;
@@ -183,14 +209,20 @@ class _GoogleSignInButton extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(255, 255, 255, 0.24),
                 borderRadius: BorderRadius.circular(35),
-                border: Border.all(color: const Color.fromRGBO(255, 255, 255, 0.35), width: 1),
+                border: Border.all(
+                  color: const Color.fromRGBO(255, 255, 255, 0.35),
+                  width: 1,
+                ),
               ),
               alignment: Alignment.center,
               child: isLoading
                   ? const SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : Text(
                       label,

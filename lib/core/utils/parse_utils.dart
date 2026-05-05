@@ -19,8 +19,11 @@ class ParseUtils {
     // Handles any object with a .toDate() method (e.g. Firestore Timestamp
     // arriving as dynamic when the import is missing).
     try {
+      // Handles any object with a .toDate() method (e.g. Firestore Timestamp
+      // arriving as dynamic when the import is missing).
+      // ignore: avoid_dynamic_calls
       return (value as dynamic).toDate() as DateTime;
-    } catch (_) {
+    } on Object {
       return DateTime.fromMillisecondsSinceEpoch(0);
     }
   }

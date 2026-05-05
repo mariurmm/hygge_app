@@ -87,5 +87,12 @@ class BookingModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, userId, classId, datetime, status, notificationSent];
+  List<Object?> get props => [
+    id,
+    userId,
+    classId,
+    datetime,
+    status,
+    notificationSent,
+  ];
 }

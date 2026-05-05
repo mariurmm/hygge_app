@@ -4,7 +4,23 @@
       "Bash(flutter gen-l10n *)",
       "Bash(flutter analyze *)",
       "Bash(grep -v \"//\\\\|^\\\\s*//\")",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Asus\\\\hygge_app\" -Force)",
+      "Bash(Select-Object Name, FullName)",
+      "Bash(flutter --version)",
+      "Bash(flutter pub *)",
+      "Bash(dart analyze *)",
+      "Bash(grep -oE \"\\\\- [a-z_]+ *$\")",
+      "Bash(dart run *)",
+      "Bash(echo \"EXIT:$?\")",
+      "PowerShell(cd \"C:\\\\Users\\\\Asus\\\\hygge_app\"; flutter pub upgrade 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(cd \"C:\\\\Users\\\\Asus\\\\hygge_app\"; dart run build_runner build --delete-conflicting-outputs 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(cd \"C:\\\\Users\\\\Asus\\\\hygge_app\"; dart run build_runner clean 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(cd \"C:\\\\Users\\\\Asus\\\\hygge_app\"; flutter pub get 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(cd \"C:\\\\Users\\\\Asus\\\\hygge_app\"; dart analyze lib/ 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "Bash(dart format *)",
+      "Bash(flutter build *)",
+      "PowerShell(cd \"C:\\\\Users\\\\Asus\\\\hygge_app\"; dart run build_runner build --delete-conflicting-outputs 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")"
     ]
   }
 }

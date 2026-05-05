@@ -2,7 +2,8 @@
 
 class AssetPaths {
   // ── SVG ────────────────────────────────────────────────────────
-  static const String googleLogo = 'assets/svg/google_logo.svg'; // Логотип Google для кнопки входа.
+  static const String googleLogo =
+      'assets/svg/google_logo.svg'; // Логотип Google для кнопки входа.
   static const String splashLogo = 'assets/splash_logo.png'; //splash icon
   static const String hyggeLogo = 'assets/png/hyggelogo.png';
   static const String programsLogo = 'assets/svg/programs.svg';

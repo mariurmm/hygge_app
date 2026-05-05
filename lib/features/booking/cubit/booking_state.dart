@@ -18,15 +18,25 @@ class BookingState extends Equatable {
   final String? message;
   final BookingModel? existingBooking;
 
-  const BookingState({this.status = BookingCubitStatus.idle, this.message, this.existingBooking});
+  const BookingState({
+    this.status = BookingCubitStatus.idle,
+    this.message,
+    this.existingBooking,
+  });
 
   static const _absent = Object();
 
-  BookingState copyWith({BookingCubitStatus? status, Object? message = _absent, Object? existingBooking = _absent}) {
+  BookingState copyWith({
+    BookingCubitStatus? status,
+    Object? message = _absent,
+    Object? existingBooking = _absent,
+  }) {
     return BookingState(
       status: status ?? this.status,
       message: identical(message, _absent) ? this.message : message as String?,
-      existingBooking: identical(existingBooking, _absent) ? this.existingBooking : existingBooking as BookingModel?,
+      existingBooking: identical(existingBooking, _absent)
+          ? this.existingBooking
+          : existingBooking as BookingModel?,
     );
   }
 

@@ -23,16 +23,27 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
-  Future<void> _onWatchStarted(FavouritesWatchStarted event, Emitter<FavouritesState> emit) async {
+  Future<void> _onWatchStarted(
+    FavouritesWatchStarted event,
+    Emitter<FavouritesState> emit,
+  ) async {
     await _subscription?.cancel();
-    _subscription = _repository.watchFavouriteIds().listen((ids) => add(_FavouriteIdsUpdated(ids)));
+    _subscription = _repository.watchFavouriteIds().listen(
+      (ids) => add(_FavouriteIdsUpdated(ids)),
+    );
   }
 
-  void _onIdsUpdated(_FavouriteIdsUpdated event, Emitter<FavouritesState> emit) {
+  void _onIdsUpdated(
+    _FavouriteIdsUpdated event,
+    Emitter<FavouritesState> emit,
+  ) {
     emit(state.copyWith(favouriteIds: event.ids));
   }
 
-  Future<void> _onToggled(FavouritesToggled event, Emitter<FavouritesState> emit) async {
+  Future<void> _onToggled(
+    FavouritesToggled event,
+    Emitter<FavouritesState> emit,
+  ) async {
     final shouldAdd = !state.favouriteIds.contains(event.uuid);
     final updated = Set<String>.from(state.favouriteIds);
 
@@ -41,10 +52,16 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
     // Optimistic update.
     emit(state.copyWith(favouriteIds: updated));
 
-    await _repository.setFavourite(programId: event.uuid, isFavourite: shouldAdd);
+    await _repository.setFavourite(
+      programId: event.uuid,
+      isFavourite: shouldAdd,
+    );
   }
 
-  void _onLessonsRegistered(FavouritesLessonsRegistered event, Emitter<FavouritesState> emit) {
+  void _onLessonsRegistered(
+    FavouritesLessonsRegistered event,
+    Emitter<FavouritesState> emit,
+  ) {
     emit(state.copyWith(allPrograms: event.programs));
   }
 

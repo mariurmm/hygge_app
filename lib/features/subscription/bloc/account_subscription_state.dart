@@ -14,8 +14,16 @@ class AccountSubscriptionState extends Equatable {
     this.errorMessage,
   });
 
-  AccountSubscriptionState copyWith({AccountSubscriptionStatus? status, UserModel? user, String? errorMessage}) {
-    return AccountSubscriptionState(status: status ?? this.status, user: user ?? this.user, errorMessage: errorMessage);
+  AccountSubscriptionState copyWith({
+    AccountSubscriptionStatus? status,
+    UserModel? user,
+    String? errorMessage,
+  }) {
+    return AccountSubscriptionState(
+      status: status ?? this.status,
+      user: user ?? this.user,
+      errorMessage: errorMessage,
+    );
   }
 
   @override

@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/data/models/user_model.dart';
+import 'package:hygge_app/data/repositories/user_repository/user_repository.dart';
+import 'package:injectable/injectable.dart';
 
-import 'user_repository.dart';
-
-/// Implementation of [UserRepository] using Firebase Auth.
+@LazySingleton(as: UserRepository)
 class UserRepositoryImpl implements UserRepository {
-  UserRepositoryImpl({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  UserRepositoryImpl({required FirebaseAuth auth}) : _auth = auth;
 
   final FirebaseAuth _auth;
 

@@ -40,7 +40,9 @@ class MainTab extends StatelessWidget {
                 ProgramsHeader(trailing: _NotificationsBell()),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(bottom: AppConstants.programsCardsBottomInset),
+                    padding: const EdgeInsets.only(
+                      bottom: AppConstants.programsCardsBottomInset,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -70,17 +72,27 @@ class MainTab extends StatelessWidget {
                         ),
                         const SizedBox(height: AppSpacings.xl),
                         Padding(
-                          padding: const EdgeInsets.only(left: AppPaddings.programsScreenHorizontal),
+                          padding: const EdgeInsets.only(
+                            left: AppPaddings.programsScreenHorizontal,
+                          ),
                           child: Text(
                             loc.homeAnnouncements,
-                            style: AppTextStyles.programsHeading.copyWith(fontSize: AppSpacings.xl),
+                            style: AppTextStyles.programsHeading.copyWith(
+                              fontSize: AppSpacings.xl,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: AppSpacings.scheduleSignedTitleGap),
+                        const SizedBox(
+                          height: AppSpacings.scheduleSignedTitleGap,
+                        ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacings.md),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacings.md,
+                          ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.programsCardRadius,
+                            ),
                             child: Stack(
                               children: [
                                 Image.asset(
@@ -92,7 +104,10 @@ class MainTab extends StatelessWidget {
                                 Positioned(
                                   left: AppSpacings.xl,
                                   bottom: AppSpacings.lg,
-                                  child: Text(loc.readOurNews, style: AppTextStyles.programsFilter),
+                                  child: Text(
+                                    loc.readOurNews,
+                                    style: AppTextStyles.programsFilter,
+                                  ),
                                 ),
                               ],
                             ),
@@ -106,7 +121,9 @@ class MainTab extends StatelessWidget {
                           ),
                           child: Text(
                             loc.homeUpcomingPrograms,
-                            style: AppTextStyles.programsHeading.copyWith(fontSize: 24),
+                            style: AppTextStyles.programsHeading.copyWith(
+                              fontSize: 24,
+                            ),
                           ),
                         ),
                         const SizedBox(height: AppSpacings.lg),
@@ -115,30 +132,48 @@ class MainTab extends StatelessWidget {
                             if (state.isLoading) {
                               return const Padding(
                                 padding: EdgeInsets.all(24),
-                                child: Center(child: CircularProgressIndicator(color: Colors.white)),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
                               );
                             }
                             if (state.lessons.isEmpty) {
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
-                                child: Text('Нет предстоящих занятий', style: AppTextStyles.programsSubtitle),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal:
+                                      AppPaddings.programsScreenHorizontal,
+                                ),
+                                child: Text(
+                                  'Нет предстоящих занятий',
+                                  style: AppTextStyles.programsSubtitle,
+                                ),
                               );
                             }
                             return SizedBox(
                               height: 170,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(horizontal: AppPaddings.programsScreenHorizontal),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal:
+                                      AppPaddings.programsScreenHorizontal,
+                                ),
                                 itemCount: state.lessons.length,
                                 itemBuilder: (context, index) {
                                   final lesson = state.lessons[index];
-                                  final program = state.programsById[lesson.programId];
+                                  final program =
+                                      state.programsById[lesson.programId];
                                   if (program == null) {
                                     return const SizedBox.shrink();
                                   }
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 14),
-                                    child: ProgrammCard(type: ProgrammCardType.small, program: program, lesson: lesson),
+                                    child: ProgrammCard(
+                                      type: ProgrammCardType.small,
+                                      program: program,
+                                      lesson: lesson,
+                                    ),
                                   );
                                 },
                               ),
@@ -177,7 +212,10 @@ class _NotificationsBell extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () => context.go(RouteNames.notifications),
-              icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+              icon: const Icon(
+                Icons.notifications_outlined,
+                color: Colors.white,
+              ),
             ),
             if (state.hasUnread)
               Positioned(
@@ -186,7 +224,10 @@ class _NotificationsBell extends StatelessWidget {
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.red),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
                 ),
               ),
           ],
