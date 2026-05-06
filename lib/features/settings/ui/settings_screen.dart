@@ -164,7 +164,7 @@ class _SettingsView extends StatelessWidget {
                             }
                           },
                           icon: Image.asset(
-                            AssetPaths.arrowBackPng,
+                            AssetPaths.arrowBack,
                             width: 24,
                             height: 24,
                             errorBuilder: (_, __, ___) => const Icon(

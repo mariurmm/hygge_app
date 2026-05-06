@@ -208,7 +208,7 @@ class _InnerHeader extends StatelessWidget {
             constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
             onPressed: onBack,
             icon: Image.asset(
-              AssetPaths.arrowBackPng,
+              AssetPaths.arrowBack,
               width: AppConstants.programsHeaderIconSize,
               height: AppConstants.programsHeaderIconSize,
               errorBuilder: (_, __, ___) => const Icon(
