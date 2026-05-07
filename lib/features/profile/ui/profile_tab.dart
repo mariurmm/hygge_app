@@ -161,10 +161,6 @@ class ProfileTab extends StatelessWidget {
                                             .profileMonthlySessionsCompleted(
                                               state.sessionsCompletedThisMonth,
                                             ),
-                                        leftSessionsLine: loc
-                                            .profileSessionsLeftToStage(
-                                              state.sessionsLeftToNextStage,
-                                            ),
                                         goalLine: loc.profileGoalSessions(
                                           state.goalSessionsTotal,
                                         ),
