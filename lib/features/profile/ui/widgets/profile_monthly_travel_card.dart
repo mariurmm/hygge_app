@@ -13,13 +13,11 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
   const ProfileMonthlyTravelCard({
     required this.percent,
     required this.description,
-    required this.leftSessionsLine,
     required this.goalLine,
     super.key,
   });
   final int percent;
   final String description;
-  final String leftSessionsLine;
   final String goalLine;
 
   @override
@@ -69,28 +67,13 @@ class ProfileMonthlyTravelCard extends StatelessWidget {
               const SizedBox(
                 height: AppSpacings.profileMonthlyProgressFooterGap,
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: AppConstants.profileMonthlyLeftTextMaxWidth,
-                    child: Text(
-                      leftSessionsLine,
-                      style: AppTextStyles.scheduleCardLabel.copyWith(
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacings.profileMonthlyLeftGoalGap),
-                  Expanded(
-                    child: Text(
-                      goalLine,
-                      style: AppTextStyles.scheduleCardLabel,
-                    ),
-                  ),
-                ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  goalLine,
+                  style: AppTextStyles.scheduleCardLabel,
+                  textAlign: TextAlign.right,
+                ),
               ),
             ],
           ),

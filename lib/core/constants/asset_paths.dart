@@ -10,7 +10,7 @@ class AssetPaths {
   static const String notificationIcon = 'assets/svg/notification.svg';
 
   // ── PNG ────────────────────────────────────────────────────────
-  static const String homeBackground = 'assets/png/background1.png';
+  static const String homeBackground = 'assets/png/background.png';
   static const String profileAccountCardIcon = 'assets/svg/card.svg';
   static const String profileAccountArrow = 'assets/svg/arrow.svg';
   static const String settingsIcon = 'assets/svg/settings.svg';
