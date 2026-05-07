@@ -133,7 +133,7 @@ class _AppShellState extends State<AppShell>
           Positioned(
             left: 16,
             right: 16,
-            bottom: 16,
+            bottom: 22,
             child: AnimatedBuilder(
               animation: _animation,
               builder: (context, _) {

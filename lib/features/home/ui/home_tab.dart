@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
@@ -10,8 +11,6 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/home/bloc/home_cubit.dart';
 import 'package:hygge_app/features/home/bloc/home_state.dart';
-import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
-import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
@@ -199,9 +198,10 @@ class _NotificationsBell extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () => context.push(RouteNames.notifications),
-      icon: const Icon(
-        Icons.notifications_outlined,
-        color: Colors.white,
+      icon: SvgPicture.asset(
+        AssetPaths.notificationIcon,
+        width: 24,
+        height: 24,
       ),
     );
   }
