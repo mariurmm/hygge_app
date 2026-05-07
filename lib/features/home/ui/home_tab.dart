@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,6 +16,7 @@ import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainTab extends StatelessWidget {
   const MainTab({super.key});
@@ -102,9 +104,37 @@ class MainTab extends StatelessWidget {
                                 Positioned(
                                   left: AppSpacings.xl,
                                   bottom: AppSpacings.lg,
-                                  child: Text(
-                                    loc.readOurNews,
-                                    style: AppTextStyles.programsFilter,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: AppTextStyles.programsFilter,
+                                      children: [
+                                        TextSpan(
+                                          text: '${loc.readOurNews} ',
+                                        ),
+                                        TextSpan(
+                                          text: '@hy.gge.concept',
+                                          style: AppTextStyles.programsFilter
+                                              .copyWith(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () async {
+                                              final uri = Uri.parse(
+                                                'https://instagram.com/hy.gge.concept',
+                                              );
+
+                                              await launchUrl(
+                                                uri,
+                                                mode: LaunchMode
+                                                    .externalApplication,
+                                              );
+                                            },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

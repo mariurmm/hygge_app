@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
@@ -85,7 +84,6 @@ final class _ScheduleContent extends StatelessWidget {
     final selectedDateLabel = DateFormat.yMMMMEEEEd(
       locale,
     ).format(state.selectedDay);
-    final percent = (state.progress * 100).round();
     final selectedLessons = state.selectedDayLessons;
 
     return ListView(
