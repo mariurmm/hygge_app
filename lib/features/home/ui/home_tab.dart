@@ -36,7 +36,7 @@ class MainTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ProgramsHeader(trailing: _NotificationsBell()),
+                const ProgramsHeader(trailing: _NotificationsBell()),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(
@@ -193,45 +193,16 @@ class MainTab extends StatelessWidget {
 }
 
 class _NotificationsBell extends StatelessWidget {
+  const _NotificationsBell();
+
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<NotificationsBloc?>();
-
-    if (bloc == null) {
-      return IconButton(
-        onPressed: () => context.go(RouteNames.notifications),
-        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-      );
-    }
-
-    return BlocBuilder<NotificationsBloc, NotificationsState>(
-      builder: (context, state) {
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            IconButton(
-              onPressed: () => context.go(RouteNames.notifications),
-              icon: const Icon(
-                Icons.notifications_outlined,
-                color: Colors.white,
-              ),
-            ),
-            if (state.hasUnread)
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
+    return IconButton(
+      onPressed: () => context.push(RouteNames.notifications),
+      icon: const Icon(
+        Icons.notifications_outlined,
+        color: Colors.white,
+      ),
     );
   }
 }

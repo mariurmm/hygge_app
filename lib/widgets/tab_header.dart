@@ -5,12 +5,23 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 
 class ProgramsHeader extends StatelessWidget {
-  const ProgramsHeader({super.key, this.leading, this.trailing});
+  const ProgramsHeader({
+    super.key,
+    this.leading,
+    this.trailing,
+    this.showLogo = true,
+    this.title = 'hy.gge concept',
+  });
+
   final Widget? leading;
   final Widget? trailing;
+  final bool showLogo;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
+    final leadingWidget = leading;
+
     return SizedBox(
       height: AppConstants.appHeaderHeight,
       child: Padding(
@@ -19,24 +30,29 @@ class ProgramsHeader extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // LEFT SIDE
             Expanded(
               child: Row(
                 children: [
-                  if (leading != null) ...[leading!, const SizedBox(width: 8)],
-
-                  Image.asset(
-                    AssetPaths.hyggeLogo,
-                    width: AppConstants.programsHeaderLogoSize,
-                    height: AppConstants.programsHeaderLogoSize,
-                    fit: BoxFit.contain,
-                  ),
+                  if (leadingWidget != null) ...[
+                    SizedBox(
+                      width: AppConstants.programsHeaderLogoSize,
+                      height: AppConstants.programsHeaderLogoSize,
+                      child: Center(child: leadingWidget),
+                    ),
+                  ] else if (showLogo) ...[
+                    Image.asset(
+                      AssetPaths.hyggeLogo,
+                      width: AppConstants.programsHeaderLogoSize,
+                      height: AppConstants.programsHeaderLogoSize,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
 
                   const SizedBox(width: 8),
 
                   Flexible(
                     child: Text(
-                      'hy.gge concept',
+                      title,
                       style: AppTextStyles.programsLogo,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -45,7 +61,6 @@ class ProgramsHeader extends StatelessWidget {
               ),
             ),
 
-            // RIGHT SIDE
             if (trailing != null) trailing!,
           ],
         ),
