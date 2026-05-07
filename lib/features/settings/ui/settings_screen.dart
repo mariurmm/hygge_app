@@ -64,6 +64,7 @@ class _SettingsView extends StatelessWidget {
 
   void _showUnsavedChangesDialog(BuildContext context) {
     final loc = AppLocalizations.of(context);
+
     showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -85,11 +86,15 @@ class _SettingsView extends StatelessWidget {
       ),
     ).then((result) {
       if (!context.mounted) return;
+
       if (result == 'save') {
         _save(context).then((_) {
           if (context.mounted) _popAfterAction(context);
         });
-      } else if (result == 'discard') {
+        return;
+      }
+
+      if (result == 'discard') {
         final bloc = context.read<SettingsBloc>();
         bloc.nameController.text = bloc.state.savedName;
         _popAfterAction(context);
@@ -99,13 +104,19 @@ class _SettingsView extends StatelessWidget {
 
   Future<void> _signOut(BuildContext context) async {
     context.read<AppBloc>().add(const AppSignOutRequested());
-    if (context.mounted) context.go(RouteNames.login);
+
+    if (context.mounted) {
+      context.go(RouteNames.login);
+    }
   }
 
   Future<void> _deleteAccount(BuildContext context, SettingsBloc bloc) async {
     try {
       await bloc.deleteAccount();
-      if (context.mounted) context.go(RouteNames.login);
+
+      if (context.mounted) {
+        context.go(RouteNames.login);
+      }
     } on Exception catch (e, st) {
       AppLogger.error(
         'SettingsScreen: ошибка удаления аккаунта',
@@ -113,6 +124,15 @@ class _SettingsView extends StatelessWidget {
         stackTrace: st,
       );
     }
+  }
+
+  void _handleBack(BuildContext context, bool hasUnsavedChanges) {
+    if (hasUnsavedChanges) {
+      _showUnsavedChangesDialog(context);
+      return;
+    }
+
+    context.pop();
   }
 
   @override
@@ -125,7 +145,9 @@ class _SettingsView extends StatelessWidget {
     return PopScope(
       canPop: state.allowPop || !state.hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _showUnsavedChangesDialog(context);
+        if (!didPop) {
+          _showUnsavedChangesDialog(context);
+        }
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -135,7 +157,10 @@ class _SettingsView extends StatelessWidget {
         body: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
+              child: Image.asset(
+                AssetPaths.homeBackground,
+                fit: BoxFit.cover,
+              ),
             ),
             Positioned.fill(
               child: SafeArea(

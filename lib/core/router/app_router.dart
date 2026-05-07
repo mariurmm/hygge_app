@@ -15,6 +15,7 @@ import 'package:hygge_app/features/home/bloc/home_cubit.dart';
 import 'package:hygge_app/features/home/ui/home_tab.dart';
 import 'package:hygge_app/features/login/ui/login_screen.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
+import 'package:hygge_app/features/notifications/ui/notifications_screen.dart';
 import 'package:hygge_app/features/profile/ui/profile_tab.dart';
 import 'package:hygge_app/features/programs/ui/programs_tab.dart';
 import 'package:hygge_app/features/schedule/cubit/schedule_cubit.dart';
@@ -171,11 +172,15 @@ class AppRouter {
         GoRoute(
           name: RouteNames.notificationsName,
           path: RouteNames.notifications,
-          pageBuilder: (context, state) => CustomTransitionPage(
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
             key: state.pageKey,
-            child: const SizedBox.shrink(),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
+            child: const NotificationsScreen(),
+            transitionsBuilder: (context, animation, _, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
