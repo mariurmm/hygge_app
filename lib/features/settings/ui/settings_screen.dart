@@ -15,6 +15,7 @@ import 'package:hygge_app/features/app/bloc/locale_cubit.dart';
 import 'package:hygge_app/features/settings/bloc/settings_bloc.dart';
 import 'package:hygge_app/features/settings/bloc/settings_state.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
+import 'package:hygge_app/widgets/base_layout.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 
@@ -152,6 +153,7 @@ class _SettingsView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         extendBody: true,
         extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             Positioned.fill(
@@ -160,110 +162,118 @@ class _SettingsView extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ProgramsHeader(
+            Positioned.fill(
+              child: SafeArea(
+                child: HyggeScreenLayout(
+                  header: ProgramsHeader(
+                    trailing: const SizedBox.shrink(),
                     leading: IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
-                        minWidth: 44,
-                        minHeight: 44,
+                        minWidth: AppConstants.profileProgramsHeaderIconSize, 
+                        minHeight: AppConstants.profileProgramsHeaderIconSize,
                       ),
-                      onPressed: () => _handleBack(
-                        context,
-                        state.hasUnsavedChanges,
-                      ),
+                      onPressed: () {
+                        if (state.hasUnsavedChanges) {
+                          _showUnsavedChangesDialog(context);
+                        } else {
+                          context.pop();
+                        }
+                      },
                       icon: Image.asset(
                         AssetPaths.arrowBack,
-                        width: 24,
-                        height: 24,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        width: AppConstants.arrowBackIconSize,
+                        height: AppConstants.arrowBackIconSize,
+                        errorBuilder: (_, _, _) => const Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: Colors.white,
-                          size: AppConstants.iconSizeMd,
                         ),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(
-                        left: AppPaddings.profileScreenHorizontal,
-                        right: AppPaddings.profileScreenHorizontal,
-                        bottom: AppConstants.profileCardsBottomInset,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 24),
-                          _AvatarSection(
-                            bloc: bloc,
-                            appUser: appUser,
-                            busy: state.busy,
-                          ),
-                          const SizedBox(height: 32),
-                          _SectionLabel(label: loc.settingsRequiredFields),
-                          const SizedBox(height: 12),
-                          _InputField(
-                            label: loc.settingsFullName,
-                            controller: bloc.nameController,
-                            hasChanges: state.hasUnsavedChanges,
-                            onSave: state.busy ? null : () => _save(context),
-                          ),
-                          const SizedBox(height: 16),
-                          _ReadonlyField(
-                            label: loc.settingsEmailAddress,
-                            controller: bloc.emailController,
-                          ),
-                          const SizedBox(height: 32),
-                          _SectionLabel(label: loc.settingsAppSettings),
-                          const SizedBox(height: 12),
-                          _ActionRow(
-                            assetPath: '',
-                            fallbackIcon: Icons.language_rounded,
-                            leadingWidget: Text(
-                              _languageFlag(
-                                context
-                                        .watch<LocaleCubit>()
-                                        .state
-                                        ?.languageCode ??
-                                    Localizations.localeOf(
-                                      context,
-                                    ).languageCode,
-                              ),
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                            label: loc.settingsChangeLanguage,
-                            textStyle: AppTextStyles.settingsActionWhite,
-                            onTap: () => _LanguagePickerSheet.show(context),
-                          ),
-                          const SizedBox(height: 32),
-                          _SectionLabel(label: loc.settingsAccount),
-                          const SizedBox(height: 12),
-                          _ActionRow(
-                            assetPath: AssetPaths.logoutIcon,
-                            fallbackIcon: Icons.logout_rounded,
-                            label: loc.settingsSignOut,
-                            textStyle: AppTextStyles.settingsActionWhite,
-                            onTap: state.busy ? null : () => _signOut(context),
-                          ),
-                          const SizedBox(height: 8),
-                          _ActionRow(
-                            assetPath: AssetPaths.deleteAccountIcon,
-                            fallbackIcon: Icons.delete_outline_rounded,
-                            label: loc.settingsDeleteAccount,
-                            textStyle: AppTextStyles.settingsActionDelete,
-                            onTap: state.busy
-                                ? null
-                                : () => _deleteAccount(context, bloc),
-                          ),
-                        ],
-                      ),
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppPaddings.profileScreenHorizontal,
                     ),
-                  ),
-                ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 24),
+
+                        // ── Аватар ──
+                        _AvatarSection(
+                          bloc: bloc,
+                          appUser: appUser,
+                          busy: state.busy,
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // ── Секция: Профиль ──
+                        _SectionLabel(label: loc.settingsRequiredFields),
+                        const SizedBox(height: 12),
+                        _InputField(
+                          label: loc.settingsFullName,
+                          controller: bloc.nameController,
+                          hasChanges: state.hasUnsavedChanges,
+                          onSave: state.busy ? null : () => _save(context),
+                        ),
+                        const SizedBox(height: 16),
+                        _ReadonlyField(
+                          label: loc.settingsEmailAddress,
+                          controller: bloc.emailController,
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // ── Секция: Настройки приложения ──
+                        _SectionLabel(label: loc.settingsAppSettings),
+                        const SizedBox(height: 12),
+                        _ActionRow(
+                          assetPath: '',
+                          fallbackIcon: Icons.language_rounded,
+                          leadingWidget: Text(
+                            _languageFlag(
+                              context
+                                      .watch<LocaleCubit>()
+                                      .state
+                                      ?.languageCode ??
+                                  Localizations.localeOf(context).languageCode,
+                            ),
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          label: loc.settingsChangeLanguage,
+                          textStyle: AppTextStyles.settingsActionWhite,
+                          onTap: () => _LanguagePickerSheet.show(context),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // ── Секция: Аккаунт ──
+                        _SectionLabel(label: loc.settingsAccount),
+                        const SizedBox(height: 12),
+                        _ActionRow(
+                          assetPath: AssetPaths.logoutIcon,
+                          fallbackIcon: Icons.logout_rounded,
+                          label: loc.settingsSignOut,
+                          textStyle: AppTextStyles.settingsActionWhite,
+                          onTap: state.busy ? null : () => _signOut(context),
+                        ),
+                        const SizedBox(height: 8),
+                        _ActionRow(
+                          assetPath: AssetPaths.deleteAccountIcon,
+                          fallbackIcon: Icons.delete_outline_rounded,
+                          label: loc.settingsDeleteAccount,
+                          textStyle: AppTextStyles.settingsActionDelete,
+                          onTap: state.busy
+                              ? null
+                              : () => _deleteAccount(context, bloc),
+                        ),
+                      ],
+                    ),
+                  ),],
+                ),
               ),
             ),
           ],

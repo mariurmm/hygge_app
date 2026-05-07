@@ -122,4 +122,11 @@ class AppConstants {
   static const double splashDotOpacityMin = 0.2;
   static const double splashDotOpacityRange = 0.8;
   static const int splashDotCount = 3;
+
+  //profile programs header
+  static const double profileProgramsHeaderIconSize = 44;
+
+  static const double arrowBackIconSize = 24;
+
+  static const double aboutSectionIconSize = 22;
 }

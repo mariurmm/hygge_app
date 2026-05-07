@@ -19,5 +19,8 @@ class AssetPaths {
   static const String deleteAccountIcon = 'assets/svg/delete.svg';
   static const String homeAnnouncementCard = 'assets/png/banner.png';
   static const String loginBackground = 'assets/png/login_background.png';
-  static const String chakraIcon = 'assets/svg/chakra.svg';
+  static const String chakraIcon = 'assets/png/chakra.png';
+  static const String instagramIcon = 'assets/svg/instagram_icon.svg';
+  static const String mapIcon = 'assets/svg/map.svg';
+
 }

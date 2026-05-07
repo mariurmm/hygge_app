@@ -39,11 +39,12 @@ class ProfileFavouritesSection extends StatelessWidget {
               height: 184,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                physics: const ClampingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppPaddings.profileScreenHorizontal,
                 ),
                 itemCount: programs.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const SizedBox(width: AppSpacings.programsCardsGap),
                 itemBuilder: (context, index) {
                   final program = programs[index];
