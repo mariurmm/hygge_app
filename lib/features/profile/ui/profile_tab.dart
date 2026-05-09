@@ -10,9 +10,6 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/di/injection.dart';
-import 'package:hygge_app/domain/use_cases/calculate_progress_use_case.dart';
-import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
-import 'package:hygge_app/domain/use_cases/map_class_to_lesson_use_case.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_state.dart'
     show AppState, AppStatus;
@@ -34,19 +31,11 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) {
-        final scheduleRepo = getIt<ScheduleRepository>();
-        return ProfileBloc(
-          loadHistory: LoadHistoryUseCase(
-            bookingRepository: getIt<BookingRepository>(),
-            mapLesson: MapClassToLessonUseCase(
-              scheduleRepository: scheduleRepo,
-            ),
-          ),
-          calculateProgress: const CalculateProgressUseCase(),
-          user: context.read<AppBloc>().state.user,
-        );
-      },
+      create: (context) => ProfileBloc(
+        bookingRepository: getIt<BookingRepository>(),
+        scheduleRepository: getIt<ScheduleRepository>(),
+        user: context.read<AppBloc>().state.user,
+      ),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AppBloc, AppState>(

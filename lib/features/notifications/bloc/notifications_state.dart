@@ -1,7 +1,7 @@
 // lib/features/notifications/bloc/notifications_state.dart
 
 import 'package:equatable/equatable.dart';
-import 'package:hygge_app/features/notifications/domain/notification_item.dart';
+import 'package:hygge_app/data/models/notification_model.dart';
 
 class NotificationsState extends Equatable {
   const NotificationsState({this.items = const []});

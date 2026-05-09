@@ -3,27 +3,32 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/core/constants/app_defaults.dart';
 import 'package:hygge_app/core/utils/logger.dart';
+import 'package:hygge_app/data/models/class_model.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/user_model.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/di/injection.dart';
-import 'package:hygge_app/domain/use_cases/calculate_progress_use_case.dart';
-import 'package:hygge_app/domain/use_cases/load_history_use_case.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
 
 class ProfileBloc extends Cubit<ProfileState> {
   ProfileBloc({
-    required LoadHistoryUseCase loadHistory,
-    required CalculateProgressUseCase calculateProgress,
+    required BookingRepository bookingRepository,
+    required ScheduleRepository scheduleRepository,
     ProgramsRepository? programsRepo,
     UserModel? user,
-  }) : _loadHistoryUseCase = loadHistory,
-       _calculateProgressUseCase = calculateProgress,
+  }) : _bookingRepo = bookingRepository,
+       _scheduleRepo = scheduleRepository,
        _programsRepo = programsRepo ?? getIt<ProgramsRepository>(),
        super(_initialState(user)) {
     unawaited(_loadHistory(user?.uid ?? ''));
   }
-  final LoadHistoryUseCase _loadHistoryUseCase;
-  final CalculateProgressUseCase _calculateProgressUseCase;
+
+  static const int _goal = 15;
+
+  final BookingRepository _bookingRepo;
+  final ScheduleRepository _scheduleRepo;
   final ProgramsRepository _programsRepo;
 
   static ProfileState _initialState(UserModel? user) {
@@ -57,21 +62,38 @@ class ProfileBloc extends Cubit<ProfileState> {
       return;
     }
     try {
-      final history = await _loadHistoryUseCase(userId);
-      final progress = _calculateProgressUseCase(history.completedThisMonth);
+      final bookings = await _bookingRepo.getBookingHistory(userId);
+      final now = DateTime.now();
 
-      final lesson = history.recentLesson;
-      final program = lesson != null && lesson.programId.isNotEmpty
-          ? await _programsRepo.fetchProgramById(lesson.programId)
-          : null;
+      final completedThisMonth = bookings
+          .where(
+            (b) =>
+                b.datetime.year == now.year && b.datetime.month == now.month,
+          )
+          .length;
+
+      LessonModel? recentLesson;
+      if (bookings.isNotEmpty) {
+        final cls = await _scheduleRepo.getClass(bookings.first.classId);
+        if (cls != null) recentLesson = _classToLesson(cls);
+      }
+
+      final left = (_goal - completedThisMonth).clamp(0, _goal);
+      final percent =
+          (completedThisMonth / _goal * 100).clamp(0, 100).toInt();
+
+      final program =
+          recentLesson != null && recentLesson.programId.isNotEmpty
+              ? await _programsRepo.fetchProgramById(recentLesson.programId)
+              : null;
 
       emit(
         state.copyWith(
-          sessionsCompletedThisMonth: progress.completedThisMonth,
-          sessionsLeftToNextStage: progress.sessionsLeftToNextStage,
-          goalSessionsTotal: progress.goalSessionsTotal,
-          travelProgressPercent: progress.travelProgressPercent,
-          recentSessionLesson: lesson,
+          sessionsCompletedThisMonth: completedThisMonth,
+          sessionsLeftToNextStage: left,
+          goalSessionsTotal: _goal,
+          travelProgressPercent: percent,
+          recentSessionLesson: recentLesson,
           recentSessionProgram: program,
           isHistoryLoading: false,
         ),
@@ -87,6 +109,14 @@ class ProfileBloc extends Cubit<ProfileState> {
       );
     }
   }
+
+  static LessonModel _classToLesson(ClassModel cls) => LessonModel(
+    id: cls.id,
+    programId: '',
+    trainerId: cls.trainerId,
+    startDate: cls.startDate,
+    endDate: cls.startDate.add(Duration(minutes: cls.durationMinutes)),
+  );
 
   static bool _hasActiveSubscription(UserModel? user) {
     if (user == null || user.isEmpty) return false;

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/utils/parse_utils.dart';
+import 'package:hygge_app/data/models/notification_model.dart';
 import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
-import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: NotificationRepository)

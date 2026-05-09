@@ -1,4 +1,4 @@
-import 'package:hygge_app/features/notifications/domain/notification_item.dart';
+import 'package:hygge_app/data/models/notification_model.dart';
 
 /// Interface for managing user notifications.
 ///
