@@ -8,8 +8,6 @@ import 'package:hygge_app/core/utils/external_links.dart';
 import 'package:hygge_app/data/models/contact_info_model.dart';
 import 'package:hygge_app/data/repositories/app_config_repository.dart';
 import 'package:hygge_app/di/injection.dart';
-import 'package:hygge_app/l10n/generated/app_localizations.dart';
-
 class ProfileAboutSection extends StatelessWidget {
   const ProfileAboutSection({super.key});
 

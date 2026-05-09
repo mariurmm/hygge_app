@@ -16,7 +16,7 @@ class AppConfigRepository {
           .doc('profile_about')
           .get();
       return ContactInfoModel.fromFirestore(doc.data()!, languageCode);
-    } catch (_) {
+    } on Exception catch (_) {
       return ContactInfoModel.fallback;
     }
   }

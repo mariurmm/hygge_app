@@ -11,7 +11,11 @@ import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProfileStatusSection extends StatelessWidget {
 
-  const ProfileStatusSection({required this.state, required this.loc, super.key});
+  const ProfileStatusSection({
+    required this.state,
+    required this.loc,
+    super.key,
+  });
   final ProfileState state;
   final AppLocalizations loc;
 
@@ -53,10 +57,6 @@ class ProfileStatusSection extends StatelessWidget {
             description: loc
             .profileMonthlySessionsCompleted(
               state.sessionsCompletedThisMonth,
-            ),
-            leftSessionsLine: loc
-            .profileSessionsLeftToStage(
-              state.sessionsLeftToNextStage,
             ),
             goalLine: loc.profileGoalSessions(
               state.goalSessionsTotal,

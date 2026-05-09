@@ -112,7 +112,7 @@ class AccountSubscriptionView extends StatelessWidget {
                       AssetPaths.arrowBack,
                       width: 24,
                       height: 24,
-                      errorBuilder: (_, __, ___) => const Icon(
+                      errorBuilder: (_, _, _) => const Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: Colors.white,
                         size: AppConstants.iconSizeMd,

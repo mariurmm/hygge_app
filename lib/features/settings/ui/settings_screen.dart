@@ -124,15 +124,6 @@ class _SettingsView extends StatelessWidget {
     }
   }
 
-  void _handleBack(BuildContext context, bool hasUnsavedChanges) {
-    if (hasUnsavedChanges) {
-      _showUnsavedChangesDialog(context);
-      return;
-    }
-
-    context.pop();
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = context.watch<SettingsBloc>().state;

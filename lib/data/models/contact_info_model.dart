@@ -13,18 +13,6 @@ class ContactInfoModel {
     required this.title,
   });
 
-  final String phoneDisplay;
-  final String phoneUri;
-  final String email;
-  final String emailUri;
-  final String instagramConceptLabel;
-  final String instagramConceptUrl;
-  final String instagramBarLabel;
-  final String instagramBarUrl;
-  final String mapAddress;
-  final String mapUrl;
-  final String title;
-
   factory ContactInfoModel.fromFirestore(
     Map<String, dynamic> data,
     String languageCode,
@@ -50,6 +38,18 @@ class ContactInfoModel {
       title: localized(data['title']),
     );
   }
+
+  final String phoneDisplay;
+  final String phoneUri;
+  final String email;
+  final String emailUri;
+  final String instagramConceptLabel;
+  final String instagramConceptUrl;
+  final String instagramBarLabel;
+  final String instagramBarUrl;
+  final String mapAddress;
+  final String mapUrl;
+  final String title;
 
   static const fallback = ContactInfoModel(
     phoneDisplay: 'xxx',//+7 777 000 00 00

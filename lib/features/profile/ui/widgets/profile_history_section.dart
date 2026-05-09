@@ -51,8 +51,8 @@ class ProfileHistorySection extends StatelessWidget {
             program: state.recentSessionProgram!, 
             lesson: state.recentSessionLesson,
             master: state.recentSessionMaster,
-            // ignore the lines_longer_than_80_chars
-            timingOverlayLabel: state.recentSessionLesson ?.historyWhenLabel(now),
+            timingOverlayLabel: state.recentSessionLesson
+                ?.historyWhenLabel(now),
           ),
           const SizedBox( 
             height: AppSpacings.profileCardsVerticalGap,

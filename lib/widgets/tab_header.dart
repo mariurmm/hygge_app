@@ -102,7 +102,7 @@ class ProgramsHeader extends StatelessWidget {
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 180),
                     opacity: 1 - (t * 0.1),
-                    child: trailing!,
+                    child: trailing,
                   ),
               ],
             ),
