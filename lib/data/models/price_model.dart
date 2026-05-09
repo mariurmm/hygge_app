@@ -1,7 +1,15 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class PriceModel extends Equatable {
-  const PriceModel({required this.amount, required this.currency});
+part 'price_model.freezed.dart';
+
+@freezed
+abstract class PriceModel with _$PriceModel {
+  const factory PriceModel({
+    required double amount,
+    required String currency,
+  }) = _PriceModel;
+
+  const PriceModel._();
 
   factory PriceModel.fromJson(Map<String, dynamic> json) {
     return PriceModel(
@@ -9,18 +17,11 @@ class PriceModel extends Equatable {
       currency: json['currency'] as String? ?? 'KZT',
     );
   }
-  final double amount;
-  final String currency;
 
   static const PriceModel empty = PriceModel(amount: 0, currency: 'KZT');
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  Map<String, dynamic> toJson() {
-    return {'amount': amount, 'currency': currency};
-  }
-
-  @override
-  List<Object?> get props => [amount, currency];
+  Map<String, dynamic> toJson() => {'amount': amount, 'currency': currency};
 }

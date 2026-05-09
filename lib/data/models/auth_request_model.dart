@@ -1,35 +1,22 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-/// Модель запроса на авторизацию.
-class AuthRequestModel extends Equatable {
-  const AuthRequestModel({required this.email, required this.password});
+part 'auth_request_model.freezed.dart';
+part 'auth_request_model.g.dart';
 
-  factory AuthRequestModel.fromJson(Map<String, dynamic> json) {
-    return AuthRequestModel(
-      email: json['email'] as String? ?? '',
-      password: json['password'] as String? ?? '',
-    );
-  }
+@freezed
+abstract class AuthRequestModel with _$AuthRequestModel {
+  const factory AuthRequestModel({
+    @Default('') String email,
+    @Default('') String password,
+  }) = _AuthRequestModel;
 
-  /// Email пользователя.
-  final String email;
+  const AuthRequestModel._();
 
-  /// Пароль пользователя.
-  final String password;
+  factory AuthRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthRequestModelFromJson(json);
 
-  /// Пустая модель.
-  static const AuthRequestModel empty = AuthRequestModel(
-    email: '',
-    password: '',
-  );
+  static const AuthRequestModel empty = AuthRequestModel();
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
-
-  Map<String, dynamic> toJson() {
-    return {'email': email, 'password': password};
-  }
-
-  @override
-  List<Object?> get props => [email, password];
 }

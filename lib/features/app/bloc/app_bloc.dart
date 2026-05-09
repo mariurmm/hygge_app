@@ -28,7 +28,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // Каждый раз, когда пользователь входит/выходит,
     // стрим присылает нового [UserModel].
     _authSubscription = _authRepository.authStateChanges.listen((
-      UserModel user,
+      user,
     ) {
       add(AppAuthStateChanged(user));
     });
@@ -42,6 +42,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _onAuthStateChanged(AppAuthStateChanged event, Emitter<AppState> emit) {
     if (event.user.isNotEmpty) {
       AppLogger.info('AppBloc: пользователь авторизован — ${event.user.email}');
+      // configureScope returns FutureOr<void>, not Future<void>.
+      // ignore: discarded_futures
       Sentry.configureScope(
         (scope) => scope.setUser(
           SentryUser(id: event.user.uid, email: event.user.email),
@@ -50,6 +52,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       emit(AppState.authenticated(event.user));
     } else {
       AppLogger.info('AppBloc: пользователь не авторизован');
+      // configureScope returns FutureOr<void>, not Future<void>.
+      // ignore: discarded_futures
       Sentry.configureScope((scope) => scope.setUser(null));
       emit(const AppState.unauthenticated());
     }
@@ -85,7 +89,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   /// Закрываем подписку при уничтожении BLoC.
   @override
   Future<void> close() {
-    _authSubscription.cancel();
+    unawaited(_authSubscription.cancel());
     return super.close();
   }
 }

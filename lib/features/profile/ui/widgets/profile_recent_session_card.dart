@@ -41,7 +41,7 @@ class ProfileRecentSessionCard extends StatelessWidget {
                 child: Image.asset(
                   imageAssetPath,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
+                  errorBuilder: (_, _, _) =>
                       Container(color: AppColors.programsCardMedia),
                 ),
               ),

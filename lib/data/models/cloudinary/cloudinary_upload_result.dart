@@ -1,15 +1,20 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-final class CloudinaryUploadResult extends Equatable {
-  const CloudinaryUploadResult({
-    required this.publicId,
-    required this.secureUrl,
-    required this.originalFilename,
-    required this.bytes,
-    required this.width,
-    required this.height,
-    required this.format,
-  });
+part 'cloudinary_upload_result.freezed.dart';
+
+@freezed
+abstract class CloudinaryUploadResult with _$CloudinaryUploadResult {
+  const factory CloudinaryUploadResult({
+    required String publicId,
+    required String secureUrl,
+    required String originalFilename,
+    required int bytes,
+    required int width,
+    required int height,
+    required String format,
+  }) = _CloudinaryUploadResult;
+
+  const CloudinaryUploadResult._();
 
   factory CloudinaryUploadResult.fromJson(Map<String, dynamic> json) {
     return CloudinaryUploadResult(
@@ -23,15 +28,7 @@ final class CloudinaryUploadResult extends Equatable {
     );
   }
 
-  final String publicId;
-  final String secureUrl;
-  final String originalFilename;
-  final int bytes;
-  final int width;
-  final int height;
-  final String format;
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Map<String, dynamic> toJson() => {
     'publicId': publicId,
     'secureUrl': secureUrl,
     'originalFilename': originalFilename,
@@ -40,15 +37,4 @@ final class CloudinaryUploadResult extends Equatable {
     'height': height,
     'format': format,
   };
-
-  @override
-  List<Object?> get props => <Object?>[
-    publicId,
-    secureUrl,
-    originalFilename,
-    bytes,
-    width,
-    height,
-    format,
-  ];
 }

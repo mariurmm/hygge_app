@@ -33,7 +33,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   StreamSubscription<List<ClassModel>>? _monthSub;
 
   void _subscribeUpcoming() {
-    _classesSub?.cancel();
+    unawaited(_classesSub?.cancel() ?? Future<void>.value());
     _classesSub = _scheduleRepo.watchUpcomingClasses().listen(
       (classes) => emit(state.copyWith(upcomingClasses: classes)),
       onError: (Object e) => emit(state.copyWith(error: e.toString())),
@@ -41,7 +41,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   }
 
   void _subscribeMonth(DateTime month) {
-    _monthSub?.cancel();
+    unawaited(_monthSub?.cancel() ?? Future<void>.value());
     _monthSub = _scheduleRepo
         .watchClassesForMonth(month)
         .listen(
@@ -88,8 +88,8 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
   @override
   Future<void> close() {
-    _classesSub?.cancel();
-    _monthSub?.cancel();
+    unawaited(_classesSub?.cancel() ?? Future<void>.value());
+    unawaited(_monthSub?.cancel() ?? Future<void>.value());
     return super.close();
   }
 }

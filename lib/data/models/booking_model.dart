@@ -1,19 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:hygge_app/core/utils/parse_utils.dart';
 
+part 'booking_model.freezed.dart';
+
 enum BookingStatus { pending, confirmed, cancelled }
 
-class BookingModel extends Equatable {
-  const BookingModel({
-    required this.id,
-    required this.userId,
-    required this.classId,
-    required this.datetime,
-    required this.status,
-    required this.notificationSent,
-  });
+@freezed
+abstract class BookingModel with _$BookingModel {
+  const factory BookingModel({
+    required String id,
+    required String userId,
+    required String classId,
+    required DateTime datetime,
+    required BookingStatus status,
+    required bool notificationSent,
+  }) = _BookingModel;
+
+  const BookingModel._();
 
   factory BookingModel.fromJson(Map<String, dynamic> json, {String? id}) {
     return BookingModel(
@@ -25,12 +30,6 @@ class BookingModel extends Equatable {
       notificationSent: json['notificationSent'] as bool? ?? false,
     );
   }
-  final String id;
-  final String userId;
-  final String classId;
-  final DateTime datetime;
-  final BookingStatus status;
-  final bool notificationSent;
 
   bool get isPending => status == BookingStatus.pending;
   bool get isConfirmed => status == BookingStatus.confirmed;
@@ -56,24 +55,6 @@ class BookingModel extends Equatable {
     'notificationSent': notificationSent,
   };
 
-  BookingModel copyWith({
-    String? id,
-    String? userId,
-    String? classId,
-    DateTime? datetime,
-    BookingStatus? status,
-    bool? notificationSent,
-  }) {
-    return BookingModel(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      classId: classId ?? this.classId,
-      datetime: datetime ?? this.datetime,
-      status: status ?? this.status,
-      notificationSent: notificationSent ?? this.notificationSent,
-    );
-  }
-
   static BookingStatus _parseStatus(dynamic value) {
     switch (value as String?) {
       case 'confirmed':
@@ -84,14 +65,4 @@ class BookingModel extends Equatable {
         return BookingStatus.pending;
     }
   }
-
-  @override
-  List<Object?> get props => [
-    id,
-    userId,
-    classId,
-    datetime,
-    status,
-    notificationSent,
-  ];
 }

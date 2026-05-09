@@ -1,16 +1,20 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:hygge_app/data/models/localized_value.dart';
 
-/// Модель мастера.
-class MasterModel extends Equatable {
-  const MasterModel({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    this.bio = '',
-    this.photoUrl = '',
-  });
+part 'master_model.freezed.dart';
+
+@freezed
+abstract class MasterModel with _$MasterModel {
+  const factory MasterModel({
+    required String id,
+    required String firstName,
+    required String lastName,
+    @Default('') String bio,
+    @Default('') String photoUrl,
+  }) = _MasterModel;
+
+  const MasterModel._();
 
   factory MasterModel.fromJson(
     Map<String, dynamic> json, {
@@ -25,22 +29,6 @@ class MasterModel extends Equatable {
     );
   }
 
-  /// Уникальный идентификатор.
-  final String id;
-
-  /// Имя.
-  final String firstName;
-
-  /// Фамилия.
-  final String lastName;
-
-  /// Описание / биография мастера.
-  final String bio;
-
-  /// URL фото мастера.
-  final String photoUrl;
-
-  /// Пустая модель.
   static const MasterModel empty = MasterModel(
     id: '',
     firstName: '',
@@ -50,7 +38,6 @@ class MasterModel extends Equatable {
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
 
-  /// Полное имя.
   String get fullName => '$firstName $lastName'.trim();
 
   Map<String, dynamic> toJson() {
@@ -62,7 +49,4 @@ class MasterModel extends Equatable {
       'avatarUrl': photoUrl,
     };
   }
-
-  @override
-  List<Object?> get props => [id, firstName, lastName, bio, photoUrl];
 }

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/services/firebase_auth_service.dart';
 import 'package:hygge_app/core/services/firestore_service.dart';
 import 'package:hygge_app/core/utils/logger.dart';
@@ -26,7 +25,7 @@ class AuthRepository {
   bool get isLoggedIn => _authService.currentUser != null;
 
   Stream<UserModel> get authStateChanges {
-    return _authService.authStateChanges.map((User? firebaseUser) {
+    return _authService.authStateChanges.map((firebaseUser) {
       if (firebaseUser == null) return UserModel.empty;
       return UserModel.fromFirebaseUser(firebaseUser);
     });

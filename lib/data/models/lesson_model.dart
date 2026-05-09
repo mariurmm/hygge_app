@@ -1,16 +1,21 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:intl/intl.dart';
 
-class LessonModel extends Equatable {
-  const LessonModel({
-    required this.id,
-    required this.programId,
-    required this.startDate,
-    required this.endDate,
-    this.trainerId = '',
-    this.isBookable = true,
-  });
+part 'lesson_model.freezed.dart';
+
+@freezed
+abstract class LessonModel with _$LessonModel {
+  const factory LessonModel({
+    required String id,
+    required String programId,
+    required DateTime startDate,
+    required DateTime endDate,
+    @Default('') String trainerId,
+    @Default(true) bool isBookable,
+  }) = _LessonModel;
+
+  const LessonModel._();
 
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
@@ -26,12 +31,6 @@ class LessonModel extends Equatable {
       isBookable: json['isBookable'] as bool? ?? true,
     );
   }
-  final String id;
-  final String programId;
-  final String trainerId;
-  final DateTime startDate;
-  final DateTime endDate;
-  final bool isBookable;
 
   static final LessonModel empty = LessonModel(
     id: '',
@@ -111,14 +110,4 @@ class LessonModel extends Equatable {
       _ => 'Вчера',
     };
   }
-
-  @override
-  List<Object?> get props => [
-    id,
-    programId,
-    trainerId,
-    startDate,
-    endDate,
-    isBookable,
-  ];
 }

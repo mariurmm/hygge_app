@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,7 +31,13 @@ class App extends StatelessWidget {
           create: (context) =>
               AppBloc(authRepository: context.read<AuthRepository>()),
         ),
-        BlocProvider(create: (_) => LocaleCubit()..load()),
+        BlocProvider(
+          create: (_) {
+            final cubit = LocaleCubit();
+            unawaited(cubit.load());
+            return cubit;
+          },
+        ),
       ],
       child: BlocBuilder<LocaleCubit, Locale?>(
         builder: (context, locale) => MaterialApp.router(

@@ -1,13 +1,19 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:hygge_app/features/notifications/domain/notification_item.dart';
 
-class NotificationModel {
-  NotificationModel({
-    required this.id,
-    required this.type,
-    required this.date,
-    this.isRead = false,
-  });
+part 'notification_model.freezed.dart';
+
+@freezed
+abstract class NotificationModel with _$NotificationModel {
+  const factory NotificationModel({
+    required String id,
+    required NotificationType type,
+    required DateTime date,
+    @Default(false) bool isRead,
+  }) = _NotificationModel;
+
+  const NotificationModel._();
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
@@ -17,10 +23,6 @@ class NotificationModel {
       isRead: json['isRead'] as bool? ?? false,
     );
   }
-  final String id;
-  final NotificationType type;
-  final DateTime date;
-  final bool isRead;
 
   Map<String, dynamic> toJson() {
     return {
@@ -29,15 +31,6 @@ class NotificationModel {
       'date': date.toIso8601String(),
       'isRead': isRead,
     };
-  }
-
-  NotificationModel copyWith({bool? isRead}) {
-    return NotificationModel(
-      id: id,
-      type: type,
-      date: date,
-      isRead: isRead ?? this.isRead,
-    );
   }
 
   static NotificationType _parseType(dynamic value) {

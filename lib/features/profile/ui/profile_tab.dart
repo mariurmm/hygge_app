@@ -97,7 +97,7 @@ class ProfileTab extends StatelessWidget {
                               AssetPaths.settingsIcon,
                               width: AppConstants.programsHeaderIconSize,
                               height: AppConstants.programsHeaderIconSize,
-                              errorBuilder: (_, __, ___) => const Icon(
+                              errorBuilder: (_, _, _) => const Icon(
                                 Icons.settings_outlined,
                                 color: Colors.white,
                                 size: AppConstants.programsHeaderIconSize,

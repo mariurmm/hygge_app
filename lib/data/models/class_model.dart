@@ -1,21 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:intl/intl.dart';
 
-class ClassModel extends Equatable {
-  const ClassModel({
-    required this.id,
-    required this.title,
-    required this.type,
-    required this.startDate,
-    required this.durationMinutes,
-    required this.trainerId,
-    required this.maxParticipants,
-    required this.currentParticipants,
-    required this.price,
-    required this.isIncludedInSubscription,
-  });
+part 'class_model.freezed.dart';
+
+@freezed
+abstract class ClassModel with _$ClassModel {
+  const factory ClassModel({
+    required String id,
+    required String title,
+    required String type,
+    required DateTime startDate,
+    required int durationMinutes,
+    required String trainerId,
+    required int maxParticipants,
+    required int currentParticipants,
+    required double price,
+    required bool isIncludedInSubscription,
+  }) = _ClassModel;
+
+  const ClassModel._();
 
   factory ClassModel.fromJson(Map<String, dynamic> json, {String? id}) {
     return ClassModel(
@@ -32,16 +37,6 @@ class ClassModel extends Equatable {
           json['isIncludedInSubscription'] as bool? ?? true,
     );
   }
-  final String id;
-  final String title;
-  final String type;
-  final DateTime startDate;
-  final int durationMinutes;
-  final String trainerId;
-  final int maxParticipants;
-  final int currentParticipants;
-  final double price;
-  final bool isIncludedInSubscription;
 
   bool get isFull => currentParticipants >= maxParticipants;
 
@@ -88,45 +83,4 @@ class ClassModel extends Equatable {
     'price': price,
     'isIncludedInSubscription': isIncludedInSubscription,
   };
-
-  ClassModel copyWith({
-    String? id,
-    String? title,
-    String? type,
-    DateTime? startDate,
-    int? durationMinutes,
-    String? trainerId,
-    int? maxParticipants,
-    int? currentParticipants,
-    double? price,
-    bool? isIncludedInSubscription,
-  }) {
-    return ClassModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      type: type ?? this.type,
-      startDate: startDate ?? this.startDate,
-      durationMinutes: durationMinutes ?? this.durationMinutes,
-      trainerId: trainerId ?? this.trainerId,
-      maxParticipants: maxParticipants ?? this.maxParticipants,
-      currentParticipants: currentParticipants ?? this.currentParticipants,
-      price: price ?? this.price,
-      isIncludedInSubscription:
-          isIncludedInSubscription ?? this.isIncludedInSubscription,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    id,
-    title,
-    type,
-    startDate,
-    durationMinutes,
-    trainerId,
-    maxParticipants,
-    currentParticipants,
-    price,
-    isIncludedInSubscription,
-  ];
 }

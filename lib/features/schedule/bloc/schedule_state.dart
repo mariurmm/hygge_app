@@ -42,18 +42,18 @@ final class ScheduleState extends Equatable {
       totalSessions == 0 ? 0 : completedSessions / totalSessions;
 
   Set<DateTime> get scheduledDates => bookedLessons
-      .map((LessonModel lesson) => _dayOnly(lesson.calendarDay))
+      .map((lesson) => _dayOnly(lesson.calendarDay))
       .toSet();
 
   List<LessonModel> get selectedDayLessons {
     final selected = _dayOnly(selectedDay);
 
     final lessons = bookedLessons
-        .where((LessonModel lesson) => _dayOnly(lesson.calendarDay) == selected)
+        .where((lesson) => _dayOnly(lesson.calendarDay) == selected)
         .toList(growable: false);
 
     return lessons..sort(
-      (LessonModel a, LessonModel b) => a.startDate.compareTo(b.startDate),
+      (a, b) => a.startDate.compareTo(b.startDate),
     );
   }
 

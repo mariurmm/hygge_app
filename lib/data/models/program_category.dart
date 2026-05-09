@@ -5,7 +5,8 @@ enum ProgramCategory {
   ceremony,
   masterClass,
   lecture,
-  authorTour;
+  authorTour
+  ;
 
   static ProgramCategory fromJson(String? value) {
     return switch (value) {

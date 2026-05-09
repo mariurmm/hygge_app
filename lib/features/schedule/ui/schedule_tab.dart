@@ -54,7 +54,7 @@ final class _ScheduleView extends StatelessWidget {
                 const ProgramsHeader(trailing: SizedBox.shrink()),
                 Expanded(
                   child: BlocBuilder<ScheduleBloc, ScheduleState>(
-                    builder: (BuildContext context, ScheduleState state) {
+                    builder: (context, state) {
                       return RefreshIndicator.adaptive(
                         onRefresh: () async {
                           context.read<ScheduleBloc>().add(
@@ -116,7 +116,7 @@ final class _ScheduleContent extends StatelessWidget {
         const SizedBox(height: AppPaddings.largePadding),
         ScheduleDateStrip(
           selectedDay: state.selectedDay,
-          onDateSelected: (DateTime day) {
+          onDateSelected: (day) {
             context.read<ScheduleBloc>().add(ScheduleDaySelected(day));
           },
         ),
@@ -179,7 +179,7 @@ final class _ScheduleBody extends StatelessWidget {
             description: loc.scheduleEmptyDescription,
           )
         else
-          ...selectedLessons.map((LessonModel lesson) {
+          ...selectedLessons.map((lesson) {
             final program = state.programsById[lesson.programId];
 
             if (program == null) {

@@ -90,7 +90,7 @@ class HistoryScreen extends StatelessWidget {
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: state.lessons.length,
-                                  separatorBuilder: (_, __) => const SizedBox(
+                                  separatorBuilder: (_, _) => const SizedBox(
                                     height: AppSpacings.programsCardsGap,
                                   ),
                                   itemBuilder: (context, index) {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
@@ -20,7 +21,8 @@ class _SplashDotsLoaderState extends State<SplashDotsLoader>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..repeat();
+    );
+    unawaited(_controller.repeat());
   }
 
   @override
@@ -33,7 +35,7 @@ class _SplashDotsLoaderState extends State<SplashDotsLoader>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (_, __) => Row(
+      builder: (_, _) => Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(AppConstants.splashDotCount, (i) {
           final sin = math

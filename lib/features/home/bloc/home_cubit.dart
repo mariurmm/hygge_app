@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
@@ -13,7 +15,7 @@ class HomeCubit extends Cubit<HomeState> {
   }) : _upcomingRepo = upcomingRepo,
        _programsRepo = programsRepo ?? getIt<ProgramsRepository>(),
        super(const HomeState()) {
-    loadUpcoming();
+    unawaited(loadUpcoming());
   }
   final UpcomingLessonRepository _upcomingRepo;
   final ProgramsRepository _programsRepo;

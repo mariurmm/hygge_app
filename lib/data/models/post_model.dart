@@ -1,15 +1,19 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:hygge_app/data/models/localized_value.dart';
 
-/// Модель поста.
-class PostModel extends Equatable {
-  const PostModel({
-    required this.uuid,
-    required this.title,
-    required this.text,
-    required this.imageUrl,
-  });
+part 'post_model.freezed.dart';
+
+@freezed
+abstract class PostModel with _$PostModel {
+  const factory PostModel({
+    required String uuid,
+    required String title,
+    required String text,
+    required String imageUrl,
+  }) = _PostModel;
+
+  const PostModel._();
 
   factory PostModel.fromJson(
     Map<String, dynamic> json, {
@@ -22,18 +26,6 @@ class PostModel extends Equatable {
       imageUrl: json['imageUrl'] as String? ?? '',
     );
   }
-
-  /// Уникальный идентификатор.
-  final String uuid;
-
-  /// Заголовок поста.
-  final String title;
-
-  /// Текст поста.
-  final String text;
-
-  /// Ссылка на изображение.
-  final String imageUrl;
 
   static const PostModel empty = PostModel(
     uuid: '',
@@ -48,7 +40,4 @@ class PostModel extends Equatable {
   Map<String, dynamic> toJson() {
     return {'uuid': uuid, 'title': title, 'text': text, 'imageUrl': imageUrl};
   }
-
-  @override
-  List<Object?> get props => [uuid, title, text, imageUrl];
 }

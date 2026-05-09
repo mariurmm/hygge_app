@@ -46,7 +46,7 @@ class ProgramsHeader extends StatelessWidget {
             ),
 
             // RIGHT SIDE
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),

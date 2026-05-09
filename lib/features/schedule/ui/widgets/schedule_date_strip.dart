@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -50,11 +52,11 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
     if (!DateUtils.isSameDay(oldWidget.selectedDay, widget.selectedDay)) {
       final index = _selectedIndex();
 
-      _controller.animateTo(
+      unawaited(_controller.animateTo(
         index * _itemWidth,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
-      );
+      ));
     }
   }
 

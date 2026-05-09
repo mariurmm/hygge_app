@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/core/constants/app_defaults.dart';
 import 'package:hygge_app/core/utils/logger.dart';
@@ -18,7 +20,7 @@ class ProfileBloc extends Cubit<ProfileState> {
        _calculateProgressUseCase = calculateProgress,
        _programsRepo = programsRepo ?? getIt<ProgramsRepository>(),
        super(_initialState(user)) {
-    _loadHistory(user?.uid ?? '');
+    unawaited(_loadHistory(user?.uid ?? ''));
   }
   final LoadHistoryUseCase _loadHistoryUseCase;
   final CalculateProgressUseCase _calculateProgressUseCase;
@@ -46,7 +48,7 @@ class ProfileBloc extends Cubit<ProfileState> {
         isPremium: _hasActiveSubscription(user),
       ),
     );
-    _loadHistory(user.uid);
+    unawaited(_loadHistory(user.uid));
   }
 
   Future<void> _loadHistory(String userId) async {

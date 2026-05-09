@@ -107,7 +107,7 @@ class ProgramsTab extends StatelessWidget {
                                           AppPaddings.programsScreenHorizontal,
                                     ),
                                     itemCount: filterLabels.length,
-                                    separatorBuilder: (_, __) => const SizedBox(
+                                    separatorBuilder: (_, _) => const SizedBox(
                                       width: AppSpacings.programsFiltersGap,
                                     ),
                                     itemBuilder: (context, index) {

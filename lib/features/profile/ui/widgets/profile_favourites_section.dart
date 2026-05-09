@@ -43,7 +43,7 @@ class ProfileFavouritesSection extends StatelessWidget {
                   horizontal: AppPaddings.profileScreenHorizontal,
                 ),
                 itemCount: programs.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const SizedBox(width: AppSpacings.programsCardsGap),
                 itemBuilder: (context, index) {
                   final program = programs[index];

@@ -1,55 +1,24 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-/// Модель запроса на регистрацию.
-class RegistrationRequestModel extends Equatable {
-  const RegistrationRequestModel({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.password,
-  });
+part 'registration_request_model.freezed.dart';
+part 'registration_request_model.g.dart';
 
-  factory RegistrationRequestModel.fromJson(Map<String, dynamic> json) {
-    return RegistrationRequestModel(
-      firstName: json['firstName'] as String? ?? '',
-      lastName: json['lastName'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      password: json['password'] as String? ?? '',
-    );
-  }
+@freezed
+abstract class RegistrationRequestModel with _$RegistrationRequestModel {
+  const factory RegistrationRequestModel({
+    @Default('') String firstName,
+    @Default('') String lastName,
+    @Default('') String email,
+    @Default('') String password,
+  }) = _RegistrationRequestModel;
 
-  /// Имя пользователя.
-  final String firstName;
+  const RegistrationRequestModel._();
 
-  /// Фамилия пользователя.
-  final String lastName;
+  factory RegistrationRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$RegistrationRequestModelFromJson(json);
 
-  /// Email пользователя.
-  final String email;
-
-  /// Пароль пользователя.
-  final String password;
-
-  /// Пустая модель.
-  static const RegistrationRequestModel empty = RegistrationRequestModel(
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-  );
+  static const RegistrationRequestModel empty = RegistrationRequestModel();
 
   bool get isEmpty => this == empty;
   bool get isNotEmpty => this != empty;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'password': password,
-    };
-  }
-
-  @override
-  List<Object?> get props => [firstName, lastName, email, password];
 }

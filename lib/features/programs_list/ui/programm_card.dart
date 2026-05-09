@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class ProgrammCard extends StatelessWidget {
   }
 
   void _openDetails(BuildContext context) {
-    Navigator.of(context).push(
+    unawaited(Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ProgramDetailsPage(
           program: program,
@@ -60,7 +61,7 @@ class ProgrammCard extends StatelessWidget {
           master: master ?? MasterModel.empty,
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -311,7 +312,7 @@ class _ProgramImage extends StatelessWidget {
     return Image.network(
       imageUrl,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => _ProgramImageFallback(),
+      errorBuilder: (_, _, _) => _ProgramImageFallback(),
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
 

@@ -131,7 +131,7 @@ class _NotificationsList extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: state.items.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: AppSpacings.programsCardsGap),
               itemBuilder: (context, index) {
                 final item = state.items[index];

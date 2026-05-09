@@ -24,7 +24,9 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<BookingCubit>().checkBookingStatus(widget.classModel.id);
+    unawaited(
+      context.read<BookingCubit>().checkBookingStatus(widget.classModel.id),
+    );
   }
 
   @override

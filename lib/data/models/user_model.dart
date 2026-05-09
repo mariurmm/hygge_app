@@ -1,17 +1,21 @@
-import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:hygge_app/data/models/subscription_model.dart';
 
-/// Модель пользователя.
-class UserModel extends Equatable {
-  const UserModel({
-    required this.uid,
-    required this.displayName,
-    required this.email,
-    required this.photoUrl,
-    this.subscription,
-  });
+part 'user_model.freezed.dart';
+
+@freezed
+abstract class UserModel with _$UserModel {
+  const factory UserModel({
+    required String uid,
+    required String displayName,
+    required String email,
+    required String photoUrl,
+    SubscriptionModel? subscription,
+  }) = _UserModel;
+
+  const UserModel._();
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -36,21 +40,6 @@ class UserModel extends Equatable {
     );
   }
 
-  /// Уникальный идентификатор (совпадает с uid в FirebaseAuth).
-  final String uid;
-
-  /// Отображаемое имя.
-  final String displayName;
-
-  /// Email пользователя.
-  final String email;
-
-  /// URL аватара.
-  final String photoUrl;
-
-  /// Активный абонемент пользователя.
-  final SubscriptionModel? subscription;
-
   static const UserModel empty = UserModel(
     uid: '',
     displayName: '',
@@ -70,7 +59,4 @@ class UserModel extends Equatable {
       'subscription': subscription?.toJson(),
     };
   }
-
-  @override
-  List<Object?> get props => [uid, displayName, email, photoUrl, subscription];
 }

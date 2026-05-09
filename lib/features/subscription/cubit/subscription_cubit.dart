@@ -22,7 +22,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   StreamSubscription<SubscriptionModel?>? _sub;
 
   void _subscribe() {
-    _sub?.cancel();
+    unawaited(_sub?.cancel() ?? Future<void>.value());
     _sub = _repository
         .watchSubscription(userId)
         .listen(
@@ -53,7 +53,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   @override
   Future<void> close() {
-    _sub?.cancel();
+    unawaited(_sub?.cancel() ?? Future<void>.value());
     return super.close();
   }
 }

@@ -46,7 +46,7 @@ class ProgrammList extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemCount: programs.length,
           padding: const EdgeInsets.only(right: AppSpacings.programsCardsGap),
-          separatorBuilder: (_, __) =>
+          separatorBuilder: (_, _) =>
               const SizedBox(width: AppSpacings.programsCardsGap),
           itemBuilder: (context, index) {
             final program = programs[index];
@@ -66,7 +66,7 @@ class ProgrammList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: programs.length,
-      separatorBuilder: (_, __) =>
+      separatorBuilder: (_, _) =>
           const SizedBox(height: AppSpacings.programsCardsGap),
       itemBuilder: (context, index) {
         final program = programs[index];

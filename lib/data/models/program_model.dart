@@ -1,21 +1,26 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:hygge_app/data/models/localized_value.dart';
 import 'package:hygge_app/data/models/program_category.dart';
 
-class ProgramModel extends Equatable {
-  const ProgramModel({
-    required this.id,
-    required this.category,
-    required this.title,
-    required this.text,
-    required this.price,
-    required this.trainerId,
-    this.ritual = '',
-    this.imageUrl = '',
-    this.isBookable = true,
-  });
+part 'program_model.freezed.dart';
+
+@freezed
+abstract class ProgramModel with _$ProgramModel {
+  const factory ProgramModel({
+    required String id,
+    required ProgramCategory category,
+    required String title,
+    required String text,
+    required double price,
+    required String trainerId,
+    @Default('') String ritual,
+    @Default('') String imageUrl,
+    @Default(true) bool isBookable,
+  }) = _ProgramModel;
+
+  const ProgramModel._();
 
   factory ProgramModel.fromJson(
     Map<String, dynamic> json, {
@@ -33,15 +38,6 @@ class ProgramModel extends Equatable {
       isBookable: json['isBookable'] as bool? ?? true,
     );
   }
-  final String id;
-  final ProgramCategory category;
-  final String ritual;
-  final String title;
-  final String text;
-  final String imageUrl;
-  final double price;
-  final String trainerId;
-  final bool isBookable;
 
   static const ProgramModel empty = ProgramModel(
     id: '',
@@ -71,30 +67,6 @@ class ProgramModel extends Equatable {
     };
   }
 
-  ProgramModel copyWith({
-    String? id,
-    ProgramCategory? category,
-    String? ritual,
-    String? title,
-    String? text,
-    String? imageUrl,
-    double? price,
-    String? trainerId,
-    bool? isBookable,
-  }) {
-    return ProgramModel(
-      id: id ?? this.id,
-      category: category ?? this.category,
-      ritual: ritual ?? this.ritual,
-      title: title ?? this.title,
-      text: text ?? this.text,
-      imageUrl: imageUrl ?? this.imageUrl,
-      price: price ?? this.price,
-      trainerId: trainerId ?? this.trainerId,
-      isBookable: isBookable ?? this.isBookable,
-    );
-  }
-
   static String _readString(Map<String, dynamic> json, List<String> keys) {
     for (final key in keys) {
       final value = json[key];
@@ -104,17 +76,4 @@ class ProgramModel extends Equatable {
     }
     return '';
   }
-
-  @override
-  List<Object?> get props => [
-    id,
-    category,
-    ritual,
-    title,
-    text,
-    imageUrl,
-    price,
-    trainerId,
-    isBookable,
-  ];
 }

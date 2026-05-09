@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class _AppShellState extends State<AppShell>
   void _onTabTapped(BuildContext context, int index) {
     if (index == _lastIndex) return;
 
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     _animation =
         Tween<double>(
@@ -70,7 +71,7 @@ class _AppShellState extends State<AppShell>
           ),
         );
 
-    _animationController.forward(from: 0);
+    unawaited(_animationController.forward(from: 0));
     _lastIndex = index;
 
     switch (index) {

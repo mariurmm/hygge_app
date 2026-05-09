@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -63,7 +65,7 @@ class _SettingsView extends StatelessWidget {
 
   void _showUnsavedChangesDialog(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    showDialog<String>(
+    unawaited(showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(loc.dialogSaveChangesTitle),
@@ -85,15 +87,15 @@ class _SettingsView extends StatelessWidget {
     ).then((result) {
       if (!context.mounted) return;
       if (result == 'save') {
-        _save(context).then((_) {
+        unawaited(_save(context).then((_) {
           if (context.mounted) _popAfterAction(context);
-        });
+        }));
       } else if (result == 'discard') {
         final bloc = context.read<SettingsBloc>();
         bloc.nameController.text = bloc.state.savedName;
         _popAfterAction(context);
       }
-    });
+    }));
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -167,7 +169,7 @@ class _SettingsView extends StatelessWidget {
                             AssetPaths.arrowBackPng,
                             width: 24,
                             height: 24,
-                            errorBuilder: (_, __, ___) => const Icon(
+                            errorBuilder: (_, _, _) => const Icon(
                               Icons.arrow_back_ios_new_rounded,
                               color: Colors.white,
                             ),
@@ -324,7 +326,7 @@ class _AvatarSection extends StatelessWidget {
         fit: BoxFit.cover,
         width: AppConstants.settingsAvatarWidth,
         height: AppConstants.settingsAvatarHeight,
-        errorBuilder: (_, __, ___) => const ColoredBox(color: Colors.black26),
+        errorBuilder: (_, _, _) => const ColoredBox(color: Colors.black26),
       );
     }
     return const ColoredBox(color: Colors.black26);
@@ -477,7 +479,7 @@ class _ActionRow extends StatelessWidget {
                   assetPath,
                   width: AppConstants.settingsActionIconSize,
                   height: AppConstants.settingsActionIconSize,
-                  errorBuilder: (_, __, ___) => Icon(
+                  errorBuilder: (_, _, _) => Icon(
                     fallbackIcon,
                     color: textStyle.color,
                     size: AppConstants.settingsActionIconSize,
@@ -512,12 +514,12 @@ class _LanguagePickerSheet extends StatelessWidget {
   const _LanguagePickerSheet();
 
   static void show(BuildContext context) {
-    showModalBottomSheet<void>(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const _LanguagePickerSheet(),
-    );
+    ));
   }
 
   @override
@@ -572,7 +574,7 @@ class _LanguageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.read<LocaleCubit>().setLocale(locale);
+        unawaited(context.read<LocaleCubit>().setLocale(locale));
         Navigator.of(context).pop();
       },
       borderRadius: BorderRadius.circular(12),

@@ -1,18 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:hygge_app/core/utils/parse_utils.dart';
 
-class SubscriptionModel extends Equatable {
-  const SubscriptionModel({
-    required this.id,
-    required this.userId,
-    required this.totalSessions,
-    required this.usedSessions,
-    required this.startDate,
-    required this.endDate,
-    required this.isActive,
-  });
+part 'subscription_model.freezed.dart';
+
+@freezed
+abstract class SubscriptionModel with _$SubscriptionModel {
+  const factory SubscriptionModel({
+    required String id,
+    required String userId,
+    required int totalSessions,
+    required int usedSessions,
+    required DateTime startDate,
+    required DateTime endDate,
+    required bool isActive,
+  }) = _SubscriptionModel;
+
+  const SubscriptionModel._();
 
   factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
     return SubscriptionModel(
@@ -25,13 +30,6 @@ class SubscriptionModel extends Equatable {
       isActive: json['isActive'] as bool? ?? false,
     );
   }
-  final String id;
-  final String userId;
-  final int totalSessions;
-  final int usedSessions;
-  final DateTime startDate;
-  final DateTime endDate;
-  final bool isActive;
 
   int get remainingSessions => totalSessions - usedSessions;
   bool get isExpired => endDate.isBefore(DateTime.now());
@@ -59,35 +57,4 @@ class SubscriptionModel extends Equatable {
     'endDate': Timestamp.fromDate(endDate),
     'isActive': isActive,
   };
-
-  SubscriptionModel copyWith({
-    String? id,
-    String? userId,
-    int? totalSessions,
-    int? usedSessions,
-    DateTime? startDate,
-    DateTime? endDate,
-    bool? isActive,
-  }) {
-    return SubscriptionModel(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      totalSessions: totalSessions ?? this.totalSessions,
-      usedSessions: usedSessions ?? this.usedSessions,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      isActive: isActive ?? this.isActive,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    id,
-    userId,
-    totalSessions,
-    usedSessions,
-    startDate,
-    endDate,
-    isActive,
-  ];
 }

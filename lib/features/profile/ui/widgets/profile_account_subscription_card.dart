@@ -107,7 +107,7 @@ class ProfileAccountSubscriptionCard extends StatelessWidget {
       width: size,
       height: size,
       fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) =>
+      errorBuilder: (_, _, _) =>
           Icon(fallback, color: Colors.white, size: size),
     );
   }
