@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hygge_app/core/logging/sentry_log_output.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
@@ -17,6 +16,6 @@ abstract class RegisterModule {
   Logger get logger => Logger(
     level: kReleaseMode ? Level.warning : Level.trace,
     printer: kReleaseMode ? SimplePrinter() : PrettyPrinter(),
-    output: SentryLogOutput(),
+    output: ConsoleOutput(),
   );
 }

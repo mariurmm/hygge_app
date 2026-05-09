@@ -2,26 +2,52 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## First-time setup
+
+```bash
+fvm install          # installs the pinned Flutter version from .fvmrc
+fvm flutter pub get
+cp .env.example .env # fill in required keys (see Environment section)
+fvm dart run build_runner build --delete-conflicting-outputs
+fvm flutter run
+```
+
 ## Commands
 
 ```bash
 # Run tests
-flutter test
+fvm flutter test
 
 # Run a single test file
-flutter test test/features/settings/settings_bloc_test.dart
+fvm flutter test test/features/settings/settings_bloc_test.dart
 
 # Lint
-flutter analyze
+fvm flutter analyze
 
-# Code generation (freezed, injectable, json_serializable)
-flutter pub run build_runner build --delete-conflicting-outputs
+# Format
+fvm dart format lib test
+
+# Code generation (freezed, injectable, json_serializable, hive)
+fvm dart run build_runner build --delete-conflicting-outputs
 
 # Watch mode for code generation
-flutter pub run build_runner watch --delete-conflicting-outputs
+fvm dart run build_runner watch --delete-conflicting-outputs
 ```
 
 Localization (`.arb` files in `l10n/`) is auto-generated on `flutter pub get` / `flutter run` — no separate command needed.
+
+## Environment
+
+Copy `.env.example` to `.env`. Required keys:
+
+| Key | Description |
+|-----|-------------|
+| `SERVER_CLIENT_ID` | Google Sign-In server client ID |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary account name |
+| `CLOUDINARY_UPLOAD_PRESET` | Cloudinary unsigned upload preset |
+| `CLOUDINARY_AVATAR_FOLDER` | Cloudinary folder for avatar images |
+
+`.env` is gitignored — never commit it.
 
 ## Architecture
 
@@ -45,8 +71,8 @@ lib/
 1. Load `.env` via `flutter_dotenv`
 2. `Firebase.initializeApp()`
 3. `configureDependencies()` — registers all GetIt singletons
-4. Wrap app in `MultiRepositoryProvider` (exposes all repositories to the widget tree via `context.read<Repo>()`)
-5. `SentryFlutter.init()` wraps `runApp`
+4. Wrap app in `MultiRepositoryProvider` (exposes all repositories via `context.read<Repo>()`)
+5. `runApp(const App())`
 
 ### State Management
 
@@ -58,13 +84,14 @@ lib/
 **BLoC provision pattern:**
 - **App-level** (`App` widget): `AppBloc`, `LocaleCubit`, `FavouritesBloc`
 - **Shell-level** (`AppRouter` ShellRoute): `ScheduleCubit`, `BookingCubit`, `SubscriptionCubit`, `HomeCubit`, `NotificationsBloc`
-- **Screen-level**: `ProfileBloc` (created in `ProfileTab`), `SettingsBloc` (created in `SettingsScreen`)
+- **Screen-level**: `ProfileBloc` (in `ProfileTab`), `SettingsBloc` (in `SettingsScreen`)
 
-`AppBloc` holds the authenticated `UserModel` and drives auth-gated routing. Its state is read everywhere via `context.read<AppBloc>().state.user`.
+`AppBloc` holds the authenticated `UserModel` and drives auth-gated routing.
+Read the user anywhere with `context.read<AppBloc>().state.user`.
 
 ### Navigation
 
-GoRouter (`lib/core/router/app_router.dart`). Route constants are in `lib/core/router/route_names.dart`.
+GoRouter (`lib/core/router/app_router.dart`). Route constants in `lib/core/router/route_names.dart`.
 
 Route structure:
 - `/` → SplashScreen
@@ -74,50 +101,62 @@ Route structure:
   - `/home/programs` → ProgramsTab
   - `/home/schedule` → ScheduleTab
   - `/home/profile` → ProfileTab
-- `/home/settings`, `/home/notifications`, `/home/history`, `/home/subscription` — standalone screens outside the shell
+- `/home/settings`, `/home/notifications`, `/home/history`, `/home/subscription` — standalone screens
 
-Navigate with `context.go(RouteNames.xxx)` or `context.push(RouteNames.xxx)`. All page transitions use a 200ms `FadeTransition`.
+Navigate with `context.go(RouteNames.xxx)` or `context.push(RouteNames.xxx)`.
+All transitions: 200ms `FadeTransition`.
 
 ### Dependency Injection
 
-GetIt + Injectable. All singletons are registered at startup via `configureDependencies()`, which calls into the generated `lib/di/injection.config.dart`.
+GetIt + Injectable. Registered at startup via `configureDependencies()` → `lib/di/injection.config.dart`.
 
-Repositories are annotated `@lazySingleton`. Access them with `getIt<SomeRepository>()` (in router/non-widget code) or `context.read<SomeRepository>()` (in widgets, since `main.dart` wraps the tree in `MultiRepositoryProvider`).
+Repositories are `@lazySingleton`. Access via:
+- `getIt<SomeRepository>()` — in router/non-widget code
+- `context.read<SomeRepository>()` — in widgets (tree wrapped in `MultiRepositoryProvider`)
 
-After adding or changing an injectable class, re-run build_runner to regenerate `injection.config.dart`.
+After adding or changing an injectable class, re-run build_runner.
 
 ### Models
 
-Models use **freezed** for immutable data classes and **json_serializable** for Firestore serialization. Most models also have a manual `fromJson` factory and a `toJson()` method alongside the generated code.
+`freezed` for immutable data classes, `json_serializable` for Firestore serialization.
 
 ```dart
 @freezed
 abstract class SomeModel with _$SomeModel {
   const factory SomeModel({required String id, ...}) = _SomeModel;
-  const SomeModel._(); // enables custom instance methods
+  const SomeModel._(); // required for custom instance methods
   factory SomeModel.fromJson(Map<String, dynamic> json) { ... }
   Map<String, dynamic> toJson() { ... }
   static SomeModel get empty => const SomeModel(id: '', ...);
 }
 ```
 
-`NotificationItem` and `NotificationType` are defined inside `lib/data/models/notification_model.dart` alongside `NotificationModel`.
+`NotificationItem` and `NotificationType` are co-located in `notification_model.dart`.
+
+### Hive (local persistence)
+
+Transaction and Category models use Hive CE (`hive_ce`) for offline storage.
+
+**Critical rules:**
+- Never change existing `@HiveType(typeId: N)` or `@HiveField(N)` indices — breaks existing stored data
+- Register adapters in `main.dart` in typeId order before opening boxes
+- After changing a Hive model, re-run build_runner to regenerate the adapter
 
 ### Linting
 
-`very_good_analysis` ruleset. Rules that come up most in practice:
+`very_good_analysis` ruleset. Common rules to watch:
 
-- `avoid_types_on_closure_parameters` — don't annotate closure params (use `(x) =>` not `(Type x) =>`)
-- `unnecessary_underscores` — use `_` not `__`/`___` for unused params
-- `discarded_futures` — wrap fire-and-forget futures in `unawaited()`; for `FutureOr<void>` returns (e.g. Sentry), use `// ignore: discarded_futures` with a reason comment
+- `avoid_types_on_closure_parameters` — use `(x) =>` not `(Type x) =>`
+- `unnecessary_underscores` — use `_` not `__`/`___`
 - `prefer_final_locals`, `require_trailing_commas`, `prefer_const_constructors`
 
 Generated files (`*.freezed.dart`, `*.g.dart`, `*.gr.dart`) are excluded from analysis.
 
 ### Firebase / Backend
 
-Firestore is the primary database. User-scoped collections follow `users/{uid}/...`. `FirestoreService` and `FirebaseAuthService` in `lib/core/services/` are thin wrappers injected into repositories.
+Firestore is the primary database. User-scoped path: `users/{uid}/...`.
+`FirestoreService` and `FirebaseAuthService` in `lib/core/services/` are thin wrappers injected into repositories.
 
-Image uploads go through Cloudinary (`CloudinaryMediaService`). Config keys come from `.env` via `flutter_dotenv`.
+Image uploads → Cloudinary (`CloudinaryMediaService`). Keys from `.env`.
 
-Logging and error reporting use `AppLogger.info/warning/error` (`lib/core/utils/logger.dart`), which wraps Sentry.
+Logging: `AppLogger.info/warning/error` (`lib/core/utils/logger.dart`) — uses `logger` package, outputs to console.

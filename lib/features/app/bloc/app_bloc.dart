@@ -6,7 +6,6 @@ import 'package:hygge_app/data/models/user_model.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
 import 'package:hygge_app/features/app/bloc/app_event.dart';
 import 'package:hygge_app/features/app/bloc/app_state.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// Глобальный BLoC авторизации.
 ///
@@ -42,19 +41,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _onAuthStateChanged(AppAuthStateChanged event, Emitter<AppState> emit) {
     if (event.user.isNotEmpty) {
       AppLogger.info('AppBloc: пользователь авторизован — ${event.user.email}');
-      // configureScope returns FutureOr<void>, not Future<void>.
-      // ignore: discarded_futures
-      Sentry.configureScope(
-        (scope) => scope.setUser(
-          SentryUser(id: event.user.uid, email: event.user.email),
-        ),
-      );
       emit(AppState.authenticated(event.user));
     } else {
       AppLogger.info('AppBloc: пользователь не авторизован');
-      // configureScope returns FutureOr<void>, not Future<void>.
-      // ignore: discarded_futures
-      Sentry.configureScope((scope) => scope.setUser(null));
       emit(const AppState.unauthenticated());
     }
   }
