@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
@@ -8,7 +7,6 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 import 'package:hygge_app/features/programs_list/ui/schedule_program_card.dart';
-import 'package:hygge_app/features/programs_list/ui/schedule_progress_card.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_state.dart';
 import 'package:hygge_app/features/schedule/ui/widgets/schedule_date_strip.dart';
@@ -86,12 +84,12 @@ final class _ScheduleContent extends StatelessWidget {
     final selectedDateLabel = DateFormat.yMMMMEEEEd(
       locale,
     ).format(state.selectedDay);
-    final percent = (state.progress * 100).round();
     final selectedLessons = state.selectedDayLessons;
 
     return ListView(
       padding: const EdgeInsets.only(
-        bottom: AppConstants.scheduleCardsBottomInset,
+        // bottom: AppConstants.scheduleCardsBottomInset,
+        bottom: 24,
       ),
       children: <Widget>[
         Padding(
@@ -128,7 +126,6 @@ final class _ScheduleContent extends StatelessWidget {
           child: _ScheduleBody(
             state: state,
             loc: loc,
-            percent: percent,
             selectedLessons: selectedLessons,
           ),
         ),
@@ -141,12 +138,10 @@ final class _ScheduleBody extends StatelessWidget {
   const _ScheduleBody({
     required this.state,
     required this.loc,
-    required this.percent,
     required this.selectedLessons,
   });
   final ScheduleState state;
   final AppLocalizations loc;
-  final int percent;
   final List<LessonModel> selectedLessons;
 
   @override
@@ -200,13 +195,6 @@ final class _ScheduleBody extends StatelessWidget {
               ),
             );
           }),
-        ScheduleProgressCard(
-          percent: percent,
-          description: loc.scheduleProgressDescription(
-            state.completedSessions,
-            state.totalSessions,
-          ),
-        ),
       ],
     );
   }

@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
@@ -10,12 +12,11 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/home/bloc/home_cubit.dart';
 import 'package:hygge_app/features/home/bloc/home_state.dart';
-import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
-import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainTab extends StatelessWidget {
   const MainTab({super.key});
@@ -36,7 +37,7 @@ class MainTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ProgramsHeader(trailing: _NotificationsBell()),
+                const ProgramsHeader(trailing: _NotificationsBell()),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(
@@ -103,9 +104,37 @@ class MainTab extends StatelessWidget {
                                 Positioned(
                                   left: AppSpacings.xl,
                                   bottom: AppSpacings.lg,
-                                  child: Text(
-                                    loc.readOurNews,
-                                    style: AppTextStyles.programsFilter,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: AppTextStyles.programsFilter,
+                                      children: [
+                                        TextSpan(
+                                          text: '${loc.readOurNews} ',
+                                        ),
+                                        TextSpan(
+                                          text: '@hy.gge.concept',
+                                          style: AppTextStyles.programsFilter
+                                              .copyWith(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () async {
+                                              final uri = Uri.parse(
+                                                'https://instagram.com/hy.gge.concept',
+                                              );
+
+                                              await launchUrl(
+                                                uri,
+                                                mode: LaunchMode
+                                                    .externalApplication,
+                                              );
+                                            },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -193,45 +222,17 @@ class MainTab extends StatelessWidget {
 }
 
 class _NotificationsBell extends StatelessWidget {
+  const _NotificationsBell();
+
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<NotificationsBloc?>();
-
-    if (bloc == null) {
-      return IconButton(
-        onPressed: () => context.go(RouteNames.notifications),
-        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-      );
-    }
-
-    return BlocBuilder<NotificationsBloc, NotificationsState>(
-      builder: (context, state) {
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            IconButton(
-              onPressed: () => context.go(RouteNames.notifications),
-              icon: const Icon(
-                Icons.notifications_outlined,
-                color: Colors.white,
-              ),
-            ),
-            if (state.hasUnread)
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
+    return IconButton(
+      onPressed: () => context.push(RouteNames.notifications),
+      icon: SvgPicture.asset(
+        AssetPaths.notificationIcon,
+        width: 24,
+        height: 24,
+      ),
     );
   }
 }

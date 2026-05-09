@@ -12,6 +12,7 @@ import 'package:hygge_app/features/subscription/bloc/account_subscription_bloc.d
 import 'package:hygge_app/features/subscription/bloc/account_subscription_event.dart';
 import 'package:hygge_app/features/subscription/bloc/account_subscription_state.dart';
 import 'package:hygge_app/widgets/glass_panel.dart';
+import 'package:hygge_app/widgets/tab_header.dart';
 
 class AccountSubscriptionPage extends StatelessWidget {
   const AccountSubscriptionPage({super.key});
@@ -95,133 +96,119 @@ class AccountSubscriptionView extends StatelessWidget {
 
           SafeArea(
             bottom: false,
-            child:
-                BlocBuilder<AccountSubscriptionBloc, AccountSubscriptionState>(
-                  builder: (context, state) {
-                    if (state.status == AccountSubscriptionStatus.loading) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      );
-                    }
-
-                    if (state.status == AccountSubscriptionStatus.failure) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            state.errorMessage ?? _t(context, 'error'),
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.programsSubtitle,
-                          ),
-                        ),
-                      );
-                    }
-
-                    final user = state.user;
-
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.only(
-                        bottom: AppConstants.profileCardsBottomInset,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ProgramsHeader(
+                  showLogo: false,
+                  leading: IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: AppConstants.programsHeaderLogoSize,
+                      minHeight: AppConstants.programsHeaderLogoSize,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Image.asset(
+                      AssetPaths.arrowBack,
+                      width: 24,
+                      height: 24,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white,
+                        size: AppConstants.iconSizeMd,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppPaddings.profileScreenHorizontal,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _InnerHeader(
-                              onBack: () => Navigator.of(context).pop(),
-                            ),
-
-                            const SizedBox(height: 18),
-
-                            Text(
-                              _t(context, 'page'),
-                              style: AppTextStyles.programsHeading,
-                            ),
-
-                            const SizedBox(
-                              height: AppSpacings.profileNameCardGap,
-                            ),
-
-                            _AccountGlassCard(
-                              name: user.displayName,
-                              email: user.email,
-                              photoUrl: user.photoUrl,
-                            ),
-
-                            const SizedBox(
-                              height: AppSpacings.profileCardsVerticalGap,
-                            ),
-
-                            _SubscriptionGlassCard(
-                              subscription: user.subscription,
-                              currentPlanLabel: _t(context, 'currentPlan'),
-                              freeLabel: _t(context, 'free'),
-                              premiumActiveText: _t(context, 'premiumActive'),
-                              freeActiveText: _t(context, 'freeActive'),
-                            ),
-
-                            const SizedBox(
-                              height: AppSpacings.profileCardsVerticalGap,
-                            ),
-
-                            _ActionGlassTile(
-                              title: _t(context, 'manageTitle'),
-                              subtitle: _t(context, 'manageSubtitle'),
-                              onTap: () {},
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            _ActionGlassTile(
-                              title: _t(context, 'historyTitle'),
-                              subtitle: _t(context, 'historySubtitle'),
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+                Expanded(
+                  child:
+                      BlocBuilder<
+                        AccountSubscriptionBloc,
+                        AccountSubscriptionState
+                      >(
+                        builder: (context, state) {
+                          if (state.status ==
+                              AccountSubscriptionStatus.loading) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            );
+                          }
 
-class _InnerHeader extends StatelessWidget {
-  const _InnerHeader({required this.onBack});
-  final VoidCallback onBack;
+                          if (state.status ==
+                              AccountSubscriptionStatus.failure) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Text(
+                                  state.errorMessage ?? _t(context, 'error'),
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.programsSubtitle,
+                                ),
+                              ),
+                            );
+                          }
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56,
-      child: Row(
-        children: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            onPressed: onBack,
-            icon: Image.asset(
-              AssetPaths.arrowBackPng,
-              width: AppConstants.programsHeaderIconSize,
-              height: AppConstants.programsHeaderIconSize,
-              errorBuilder: (_, _, _) => const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: AppConstants.programsHeaderIconSize,
-              ),
+                          final user = state.user;
+
+                          return SingleChildScrollView(
+                            padding: const EdgeInsets.only(
+                              left: AppPaddings.profileScreenHorizontal,
+                              right: AppPaddings.profileScreenHorizontal,
+                              bottom: AppConstants.profileCardsBottomInset,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 18),
+                                Text(
+                                  _t(context, 'page'),
+                                  style: AppTextStyles.programsHeading,
+                                ),
+                                const SizedBox(
+                                  height: AppSpacings.profileNameCardGap,
+                                ),
+                                _AccountGlassCard(
+                                  name: user.displayName,
+                                  email: user.email,
+                                  photoUrl: user.photoUrl,
+                                ),
+                                const SizedBox(
+                                  height: AppSpacings.profileCardsVerticalGap,
+                                ),
+                                _SubscriptionGlassCard(
+                                  subscription: user.subscription,
+                                  currentPlanLabel: _t(context, 'currentPlan'),
+                                  freeLabel: _t(context, 'free'),
+                                  premiumActiveText: _t(
+                                    context,
+                                    'premiumActive',
+                                  ),
+                                  freeActiveText: _t(context, 'freeActive'),
+                                ),
+                                const SizedBox(
+                                  height: AppSpacings.profileCardsVerticalGap,
+                                ),
+                                _ActionGlassTile(
+                                  title: _t(context, 'manageTitle'),
+                                  subtitle: _t(context, 'manageSubtitle'),
+                                  onTap: () {},
+                                ),
+                                const SizedBox(height: 12),
+                                _ActionGlassTile(
+                                  title: _t(context, 'historyTitle'),
+                                  subtitle: _t(context, 'historySubtitle'),
+                                  onTap: () {},
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'hygge concept',
-            style: AppTextStyles.programsLogo.copyWith(fontSize: 20),
           ),
         ],
       ),

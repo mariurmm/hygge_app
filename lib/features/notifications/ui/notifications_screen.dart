@@ -32,6 +32,15 @@ class NotificationsScreen extends StatelessWidget {
 class _NotificationsView extends StatelessWidget {
   const _NotificationsView();
 
+  void _goBack(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    context.go(RouteNames.main);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -40,8 +49,8 @@ class _NotificationsView extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.transparent,
-          extendBodyBehindAppBar: true,
           extendBody: true,
+          extendBodyBehindAppBar: true,
           body: Stack(
             children: [
               Positioned.fill(
@@ -52,23 +61,27 @@ class _NotificationsView extends StatelessWidget {
               ),
               SafeArea(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ProgramsHeader(
+                      showLogo: false,
                       leading: IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
-                          minWidth: AppConstants.notificationIconSize,
-                          minHeight: AppConstants.notificationIconSize,
+                          minWidth: AppConstants.programsHeaderLogoSize,
+                          minHeight: AppConstants.programsHeaderLogoSize,
                         ),
-                        icon: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Colors.white,
-                          size: AppConstants.iconSizeMd,
+                        onPressed: () => _goBack(context),
+                        icon: Image.asset(
+                          AssetPaths.arrowBack,
+                          width: 24,
+                          height: 24,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            color: Colors.white,
+                            size: AppConstants.iconSizeMd,
+                          ),
                         ),
-                        onPressed: () => context.canPop()
-                            ? context.pop()
-                            : context.go(RouteNames.main),
                       ),
                       trailing: state.hasUnread
                           ? TextButton(
@@ -109,45 +122,43 @@ class _NotificationsList extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
+        left: AppPaddings.profileScreenHorizontal,
+        right: AppPaddings.profileScreenHorizontal,
         bottom: AppConstants.profileCardsBottomInset,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppPaddings.profileScreenHorizontal,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(loc.notifications, style: AppTextStyles.programsHeading),
-            const SizedBox(height: AppSpacings.programsLeadGap),
-            if (state.hasUnread) ...[
-              Text(
-                loc.unreadNotifications(state.unreadCount),
-                style: AppTextStyles.programsSubtitle,
-              ),
-              const SizedBox(height: AppSpacings.programsCardsGap),
-            ],
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: state.items.length,
-              separatorBuilder: (_, _) =>
-                  const SizedBox(height: AppSpacings.programsCardsGap),
-              itemBuilder: (context, index) {
-                final item = state.items[index];
-                return NotificationTile(
-                  item: item,
-                  onTap: () => context.read<NotificationsBloc>().add(
-                    NotificationMarkedAsRead(item.id),
-                  ),
-                  onDismiss: () => context.read<NotificationsBloc>().add(
-                    NotificationRemoved(item.id),
-                  ),
-                );
-              },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+          Text(loc.notifications, style: AppTextStyles.programsHeading),
+          const SizedBox(height: AppSpacings.programsLeadGap),
+          if (state.hasUnread) ...[
+            Text(
+              loc.unreadNotifications(state.unreadCount),
+              style: AppTextStyles.programsSubtitle,
             ),
+            const SizedBox(height: AppSpacings.programsCardsGap),
           ],
-        ),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: state.items.length,
+            separatorBuilder: (_, _) =>
+                const SizedBox(height: AppSpacings.programsCardsGap),
+            itemBuilder: (context, index) {
+              final item = state.items[index];
+              return NotificationTile(
+                item: item,
+                onTap: () => context.read<NotificationsBloc>().add(
+                  NotificationMarkedAsRead(item.id),
+                ),
+                onDismiss: () => context.read<NotificationsBloc>().add(
+                  NotificationRemoved(item.id),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -158,21 +169,27 @@ class _EmptyNotifications extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.notifications_none_rounded,
-            color: Colors.white38,
-            size: AppConstants.iconSizeHero,
-          ),
-          const SizedBox(height: AppSpacings.md),
-          Text(
-            AppLocalizations.of(context).noNotifications,
-            style: AppTextStyles.programsSubtitle,
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppPaddings.profileScreenHorizontal,
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.notifications_none_rounded,
+              color: Colors.white38,
+              size: AppConstants.iconSizeHero,
+            ),
+            const SizedBox(height: AppSpacings.md),
+            Text(
+              AppLocalizations.of(context).noNotifications,
+              style: AppTextStyles.programsSubtitle,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

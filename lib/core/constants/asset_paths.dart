@@ -10,14 +10,17 @@ class AssetPaths {
   static const String notificationIcon = 'assets/svg/notification.svg';
 
   // ── PNG ────────────────────────────────────────────────────────
-  static const String homeBackground = 'assets/png/background1.png';
-  static const String profileAccountCardIcon = 'assets/png/card.png';
-  static const String profileAccountArrow = 'assets/png/arrow.png';
+  static const String homeBackground = 'assets/png/background.png';
+  static const String profileAccountCardIcon = 'assets/svg/card.svg';
+  static const String profileAccountArrow = 'assets/svg/arrow.svg';
   static const String settingsIcon = 'assets/svg/settings.svg';
-  static const String arrowBackPng = 'assets/png/arrow_back.png';
-  static const String logoutIcon = 'assets/png/logout.png';
-  static const String deleteAccountIcon = 'assets/png/delete.png';
+  static const String arrowBack = 'assets/svg/arrow_back.svg';
+  static const String logoutIcon = 'assets/svg/logout.svg';
+  static const String deleteAccountIcon = 'assets/svg/delete.svg';
   static const String homeAnnouncementCard = 'assets/png/banner.png';
   static const String loginBackground = 'assets/png/login_background.png';
   static const String chakraIcon = 'assets/png/chakra.png';
+  static const String instagramIcon = 'assets/svg/instagram_icon.svg';
+  static const String mapIcon = 'assets/svg/map.svg';
+
 }

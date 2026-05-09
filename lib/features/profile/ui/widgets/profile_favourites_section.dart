@@ -39,6 +39,7 @@ class ProfileFavouritesSection extends StatelessWidget {
               height: 184,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                physics: const ClampingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppPaddings.profileScreenHorizontal,
                 ),

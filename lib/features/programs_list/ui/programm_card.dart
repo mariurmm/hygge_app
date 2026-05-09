@@ -81,11 +81,11 @@ class _BigProgramCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: AppConstants.programsBlurSigma,
-          sigmaY: AppConstants.programsBlurSigma,
-        ),
+      // child: BackdropFilter(
+      //   filter: ImageFilter.blur(
+      //     sigmaX: AppConstants.programsBlurSigma,
+      //     sigmaY: AppConstants.programsBlurSigma,
+      //   ),
         child: Container(
           width: AppConstants.programsCardWidth,
           height: AppConstants.programsCardHeight,
@@ -157,7 +157,7 @@ class _BigProgramCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      // ),
     );
   }
 }

@@ -62,22 +62,36 @@ class ProgrammList extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: programs.length,
-      separatorBuilder: (_, _) =>
-          const SizedBox(height: AppSpacings.programsCardsGap),
-      itemBuilder: (context, index) {
-        final program = programs[index];
+    // return ListView.separated(
+    //   shrinkWrap: true,
+    //   physics: const NeverScrollableScrollPhysics(),
+    //   itemCount: programs.length,
+    //   separatorBuilder: (_, __) =>
+    //       const SizedBox(height: AppSpacings.programsCardsGap),
+    //   itemBuilder: (context, index) {
+    //     final program = programs[index];
 
-        return ProgrammCard(
-          type: type,
-          program: program,
-          lesson: lessonsByProgramId[program.id],
-          master: mastersById[program.trainerId],
-        );
-      },
+    //     return ProgrammCard(
+    //       type: type,
+    //       program: program,
+    //       lesson: lessonsByProgramId[program.id],
+    //       master: mastersById[program.trainerId],
+    //     );
+    //   },
+    // );
+    return Column(
+      children: [
+        for (int i = 0; i < programs.length; i++) ...[
+          ProgrammCard(
+            type: type,
+            program: programs[i],
+            lesson: lessonsByProgramId[programs[i].id],
+            master: mastersById[programs[i].trainerId],
+          ),
+          if (i < programs.length - 1)
+            const SizedBox(height: AppSpacings.programsCardsGap),
+        ],
+      ],
     );
   }
 }
