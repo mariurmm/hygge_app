@@ -14,18 +14,19 @@ class ScheduleProgramCard extends StatelessWidget {
     required this.ritual,
     required this.title,
     required this.timeRange,
-    required this.whenLabel,
     super.key,
   });
+
   final String ritual;
   final String title;
   final String timeRange;
-  final String whenLabel;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
+      borderRadius: BorderRadius.circular(
+        AppConstants.scheduleCardRadius,
+      ),
       child: BackdropFilter(
         filter: ImageFilter.blur(
           sigmaX: AppConstants.programsBlurSigma,
@@ -39,10 +40,12 @@ class ScheduleProgramCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               AppConstants.scheduleCardRadius,
             ),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+            ),
           ),
           child: Row(
-            children: [
+            children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(
                   left: AppPaddings.scheduleCardIconLeft,
@@ -56,17 +59,21 @@ class ScheduleProgramCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: AppSpacings.scheduleCardTextGapH),
+              const SizedBox(
+                width: AppSpacings.scheduleCardTextGapH,
+              ),
 
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(
                     top: AppPaddings.scheduleCardTextTop,
                     right: AppPaddings.scheduleCardIconLeft,
+                    bottom: AppPaddings.scheduleCardTextTop,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
                       Text(
                         ritual,
                         maxLines: 1,
@@ -74,38 +81,27 @@ class ScheduleProgramCard extends StatelessWidget {
                         style: AppTextStyles.scheduleCardLabel,
                       ),
 
-                      const SizedBox(height: AppSpacings.scheduleCardTextGapV),
+                      const SizedBox(height: 4),
 
                       Text(
                         title,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.scheduleCardTitle,
                       ),
 
-                      const SizedBox(height: AppSpacings.programsFiltersGap),
+                      const SizedBox(height: 6),
 
                       Row(
-                        children: [
+                        children: <Widget>[
                           Flexible(
                             child: Text(
                               timeRange,
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.scheduleCardLabel,
-                            ),
-                          ),
-
-                          const SizedBox(
-                            width: AppSpacings.scheduleCardBottomRowGap,
-                          ),
-
-                          Flexible(
-                            child: Text(
-                              whenLabel,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.scheduleCardLabel,
+                              style: AppTextStyles.scheduleCardLabel.copyWith(
+                                height: 1.15,
+                              ),
                             ),
                           ),
                         ],

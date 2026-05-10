@@ -191,7 +191,6 @@ final class _ScheduleBody extends StatelessWidget {
                     : loc.scheduleProgramFallback,
                 title: program.title,
                 timeRange: lesson.scheduleTimeRange(),
-                whenLabel: lesson.scheduleDayLabel(state.today),
               ),
             );
           }),

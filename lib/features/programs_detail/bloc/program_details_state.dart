@@ -10,6 +10,8 @@ class ProgramDetailsState extends Equatable {
     required this.program,
     required this.lesson,
     required this.master,
+    this.availableLessons = const [],
+    this.bookedLessonIds = const {},
     this.status = ProgramDetailsStatus.initial,
     this.isFavourite = false,
     this.isBooking = false,
@@ -23,22 +25,28 @@ class ProgramDetailsState extends Equatable {
       master: MasterModel.empty,
     );
   }
-  final ProgramDetailsStatus status;
 
+  final ProgramDetailsStatus status;
   final ProgramModel program;
   final LessonModel lesson;
   final MasterModel master;
-
+  final List<LessonModel> availableLessons;
+  final Set<String> bookedLessonIds;
   final bool isFavourite;
   final bool isBooking;
-
   final String? errorMessage;
+
+  bool get hasSelectedLesson => lesson.isNotEmpty;
+  bool get isSelectedLessonBooked =>
+      lesson.isNotEmpty && bookedLessonIds.contains(lesson.id);
 
   ProgramDetailsState copyWith({
     ProgramDetailsStatus? status,
     ProgramModel? program,
     LessonModel? lesson,
     MasterModel? master,
+    List<LessonModel>? availableLessons,
+    Set<String>? bookedLessonIds,
     bool? isFavourite,
     bool? isBooking,
     String? errorMessage,
@@ -48,6 +56,8 @@ class ProgramDetailsState extends Equatable {
       program: program ?? this.program,
       lesson: lesson ?? this.lesson,
       master: master ?? this.master,
+      availableLessons: availableLessons ?? this.availableLessons,
+      bookedLessonIds: bookedLessonIds ?? this.bookedLessonIds,
       isFavourite: isFavourite ?? this.isFavourite,
       isBooking: isBooking ?? this.isBooking,
       errorMessage: errorMessage,
@@ -60,6 +70,8 @@ class ProgramDetailsState extends Equatable {
     program,
     lesson,
     master,
+    availableLessons,
+    bookedLessonIds,
     isFavourite,
     isBooking,
     errorMessage,

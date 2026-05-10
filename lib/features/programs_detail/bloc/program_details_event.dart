@@ -16,6 +16,7 @@ class ProgramDetailsStarted extends ProgramDetailsEvent {
     required this.lesson,
     required this.master,
   });
+
   final ProgramModel program;
   final LessonModel lesson;
   final MasterModel master;
@@ -24,8 +25,18 @@ class ProgramDetailsStarted extends ProgramDetailsEvent {
   List<Object?> get props => [program, lesson, master];
 }
 
+class ProgramDetailsLessonSelected extends ProgramDetailsEvent {
+  const ProgramDetailsLessonSelected(this.lesson);
+
+  final LessonModel lesson;
+
+  @override
+  List<Object?> get props => [lesson];
+}
+
 class ProgramDetailsBooked extends ProgramDetailsEvent {
   const ProgramDetailsBooked(this.lesson);
+
   final LessonModel lesson;
 
   @override
@@ -34,6 +45,7 @@ class ProgramDetailsBooked extends ProgramDetailsEvent {
 
 class ProgramDetailsFavouriteToggled extends ProgramDetailsEvent {
   const ProgramDetailsFavouriteToggled(this.program);
+
   final ProgramModel program;
 
   @override

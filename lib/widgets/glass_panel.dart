@@ -8,14 +8,14 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 class GlassRoundedPanel extends StatelessWidget {
   const GlassRoundedPanel({
     required this.width,
-    required this.height,
+    this.height,
     required this.child,
     super.key,
     this.borderRadius = AppConstants.settingsGlassRadius,
     this.padding,
   });
   final double width;
-  final double height;
+  final double? height;
   final double borderRadius;
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -36,7 +36,7 @@ class GlassRoundedPanel extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.profileAccountCardFill,
             borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.28)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
           ),
           child: child,
         ),

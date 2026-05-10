@@ -74,8 +74,10 @@ class UpcomingLessonRepositoryImpl
         action: () async {
           if (programId.isEmpty) return const <LessonModel>[];
 
+          final now = Timestamp.fromDate(DateTime.now());
           final snapshot = await _lessons
               .where('programId', isEqualTo: programId)
+              .where('startDate', isGreaterThanOrEqualTo: now)
               .orderBy('startDate')
               .get();
 
@@ -213,19 +215,34 @@ class UpcomingLessonRepositoryImpl
     final data = doc.data();
 
     if (data['lesson'] is Map) {
+      final lesson = Map<String, dynamic>.from(data['lesson'] as Map);
       return LessonModel.fromJson({
-        ...Map<String, dynamic>.from(data['lesson'] as Map),
-        'uuid': data['programId'] ?? data['uuid'] ?? doc.id,
+        ...lesson,
+        'uuid': data['lessonId'] ?? lesson['uuid'] ?? lesson['id'] ?? doc.id,
+        'programId': data['programId'] ?? lesson['programId'],
       });
     }
 
-    final programId =
-        data['programId'] as String? ?? data['lessonId'] as String?;
+    final lessonId = data['lessonId'] as String? ?? doc.id;
+    if (lessonId.isEmpty) return null;
+
+    final lessonDoc = await _lessons.doc(lessonId).get();
+    if (lessonDoc.exists && lessonDoc.data() != null) {
+      return _lessonFromDoc(lessonDoc);
+    }
+
+    final programId = data['programId'] as String?;
     if (programId == null || programId.isEmpty) return null;
 
     final programDoc = await _programs.doc(programId).get();
     if (!programDoc.exists || programDoc.data() == null) return null;
-    return _lessonFromDoc(programDoc);
+    return LessonModel.fromJson({
+      ...programDoc.data()!,
+      'uuid': lessonId,
+      'programId': programId,
+      'startDate': data['startDate'] ?? data['datetime'],
+      'finishDate': data['finishDate'] ?? data['endDate'] ?? data['datetime'],
+    });
   }
 
   Function _onStreamError(String actionName) =>

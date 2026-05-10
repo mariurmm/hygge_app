@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +18,7 @@ import 'package:hygge_app/features/programs_detail/bloc/program_details_bloc.dar
 import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_state.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
-import 'package:hygge_app/widgets/glass_panel.dart';
+import 'package:intl/intl.dart';
 
 class ProgramDetailsPage extends StatelessWidget {
   const ProgramDetailsPage({
@@ -25,6 +27,7 @@ class ProgramDetailsPage extends StatelessWidget {
     required this.master,
     super.key,
   });
+
   final ProgramModel program;
   final LessonModel lesson;
   final MasterModel master;
@@ -51,50 +54,11 @@ class ProgramDetailsPage extends StatelessWidget {
 class ProgramDetailsView extends StatelessWidget {
   const ProgramDetailsView({super.key});
 
-  String _locale(BuildContext context) {
-    final code = Localizations.localeOf(context).languageCode;
-    if (code == 'en' || code == 'ru' || code == 'kk') return code;
-    return 'ru';
-  }
-
-  String _t(BuildContext context, String key) {
-    final locale = _locale(context);
-
-    const values = {
-      'ru': {
-        'description': 'Описание программы',
-        'master': 'Мастер',
-        'price': 'Стоимость',
-        'time': 'Время',
-        'date': 'Дата',
-        'book': 'Записаться',
-        'booking': 'Запись...',
-      },
-      'en': {
-        'description': 'Program description',
-        'master': 'Master',
-        'price': 'Price',
-        'time': 'Time',
-        'date': 'Date',
-        'book': 'Book',
-        'booking': 'Booking...',
-      },
-      'kk': {
-        'description': 'Бағдарлама сипаттамасы',
-        'master': 'Шебер',
-        'price': 'Бағасы',
-        'time': 'Уақыты',
-        'date': 'Күні',
-        'book': 'Жазылу',
-        'booking': 'Жазылуда...',
-      },
-    };
-
-    return values[locale]?[key] ?? values['ru']![key]!;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final locale = _localeTag(context);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor: Colors.transparent,
@@ -103,18 +67,21 @@ class ProgramDetailsView extends StatelessWidget {
       child: BlocBuilder<ProgramDetailsBloc, ProgramDetailsState>(
         builder: (context, state) {
           final program = state.program;
-          final lesson = state.lesson;
+          final selectedLesson = state.lesson;
           final master = state.master;
+          final isBooked = state.isSelectedLessonBooked;
 
           return Scaffold(
             backgroundColor: AppColors.background,
             extendBody: true,
             extendBodyBehindAppBar: true,
-            resizeToAvoidBottomInset: false,
             body: Stack(
               fit: StackFit.expand,
-              children: [
-                Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
+              children: <Widget>[
+                Image.asset(
+                  AssetPaths.homeBackground,
+                  fit: BoxFit.cover,
+                ),
                 SafeArea(
                   bottom: false,
                   child: SingleChildScrollView(
@@ -127,168 +94,71 @@ class ProgramDetailsView extends StatelessWidget {
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           _InnerHeader(
                             onBack: () => Navigator.of(context).pop(),
                           ),
                           const SizedBox(height: 18),
-                          Text(
-                            program.title,
-                            style: AppTextStyles.programsHeading,
-                          ),
-                          if (program.ritual.isNotEmpty) ...[
-                            const SizedBox(height: 10),
-                            Text(
-                              program.ritual,
-                              style: AppTextStyles.programsSubtitle,
-                            ),
-                          ],
+                          _ProgramTitleBlock(program: program),
                           const SizedBox(
                             height: AppSpacings.profileNameCardGap,
                           ),
-                          _GlassCard(
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _InfoRow(
-                                  label: _t(context, 'price'),
-                                  value:
-                                      '${program.price.toStringAsFixed(0)} ₸',
-                                ),
-                                _InfoRow(
-                                  label: _t(context, 'time'),
-                                  value: lesson.scheduleTimeRange(),
-                                ),
-                                _InfoRow(
-                                  label: _t(context, 'date'),
-                                  value: lesson.scheduleDayLabel(
-                                    DateTime.now(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          Text(
-                            _t(context, 'description'),
-                            style: AppTextStyles.programsHeading.copyWith(
-                              fontSize: 22,
-                            ),
+                          _SectionTitle(
+                            text: _text(context, 'description'),
                           ),
                           const SizedBox(height: 12),
-                          _GlassCard(
-                            height: 170,
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                program.text,
-                                style: AppTextStyles.programsCardDescription,
-                              ),
+                          _GlassBlock(
+                            child: Text(
+                              program.text,
+                              softWrap: true,
+                              style: AppTextStyles.programsCardDescription
+                                  .copyWith(height: 1.36),
                             ),
                           ),
                           const SizedBox(
                             height: AppSpacings.profileCardsVerticalGap,
                           ),
+                          _SectionTitle(text: _text(context, 'master')),
+                          const SizedBox(height: 12),
+                          _MasterCard(master: master),
+                          const SizedBox(
+                            height: AppSpacings.profileCardsVerticalGap,
+                          ),
+                          _SectionTitle(text: _text(context, 'dates')),
+                          const SizedBox(height: 8),
                           Text(
-                            _t(context, 'master'),
-                            style: AppTextStyles.programsHeading.copyWith(
-                              fontSize: 22,
-                            ),
+                            _text(context, 'chooseDate'),
+                            style: AppTextStyles.programsCardDescription,
                           ),
                           const SizedBox(height: 12),
-                          _MasterGlassCard(
-                            name: master.fullName,
-                            bio: master.bio,
-                            photoUrl: master.photoUrl,
+                          _LessonDatesPanel(
+                            lessons: state.availableLessons,
+                            selectedLesson: selectedLesson,
+                            bookedLessonIds: state.bookedLessonIds,
+                            programPrice: program.price,
+                            emptyText: _text(context, 'noDates'),
+                            alreadyBookedText: _text(
+                              context,
+                              'alreadyBooked',
+                            ),
+                            locale: locale,
                           ),
                           const SizedBox(
                             height: AppSpacings.profileCardsVerticalGap,
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: 54,
-                                  child: program.isBookable
-                                      ? ElevatedButton(
-                                          onPressed: state.isBooking
-                                              ? null
-                                              : () {
-                                                  if (lesson.isEmpty) {
-                                                    return;
-                                                  }
-
-                                                  context
-                                                      .read<
-                                                        ProgramDetailsBloc
-                                                      >()
-                                                      .add(
-                                                        ProgramDetailsBooked(
-                                                          lesson,
-                                                        ),
-                                                      );
-                                                },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: AppColors.primary,
-                                            foregroundColor: Colors.white,
-                                            disabledBackgroundColor: AppColors
-                                                .primary
-                                                .withValues(alpha: 0.55),
-                                            disabledForegroundColor: Colors
-                                                .white
-                                                .withValues(alpha: 0.75),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            state.isBooking
-                                                ? _t(context, 'booking')
-                                                : _t(context, 'book'),
-                                            style: AppTextStyles.button,
-                                          ),
-                                        )
-                                      : Container(
-                                          height: 54,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            color: AppColors
-                                                .profileAccountCardFill,
-                                            borderRadius: BorderRadius.circular(
-                                              24,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            ).comingSoon,
-                                            style: AppTextStyles.button
-                                                .copyWith(
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.8),
-                                                ),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              SizedBox(
-                                height: 54,
-                                width: 54,
-                                child: _FavouriteButton(
-                                  isFavourite: state.isFavourite,
-                                  onTap: () {
-                                    context.read<ProgramDetailsBloc>().add(
-                                      ProgramDetailsFavouriteToggled(program),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
+                          _BottomActions(
+                            program: program,
+                            selectedLesson: selectedLesson,
+                            isBooked: isBooked,
+                            isBooking: state.isBooking,
+                            isFavourite: state.isFavourite,
+                            bookText: _text(context, 'book'),
+                            bookingText: _text(context, 'booking'),
+                            alreadyBookedText: _text(
+                              context,
+                              'alreadyBooked',
+                            ),
+                            comingSoonText: loc.comingSoon,
                           ),
                           const SizedBox(height: 32),
                         ],
@@ -305,8 +175,357 @@ class ProgramDetailsView extends StatelessWidget {
   }
 }
 
+class _ProgramTitleBlock extends StatelessWidget {
+  const _ProgramTitleBlock({required this.program});
+
+  final ProgramModel program;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          program.title,
+          softWrap: true,
+          style: AppTextStyles.programsHeading,
+        ),
+        if (program.ritual.isNotEmpty) ...<Widget>[
+          const SizedBox(height: 10),
+          Text(
+            program.ritual,
+            softWrap: true,
+            style: AppTextStyles.programsSubtitle,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: AppTextStyles.programsHeading.copyWith(fontSize: 22),
+    );
+  }
+}
+
+class _LessonDatesPanel extends StatelessWidget {
+  const _LessonDatesPanel({
+    required this.lessons,
+    required this.selectedLesson,
+    required this.bookedLessonIds,
+    required this.programPrice,
+    required this.emptyText,
+    required this.alreadyBookedText,
+    required this.locale,
+  });
+
+  final List<LessonModel> lessons;
+  final LessonModel selectedLesson;
+  final Set<String> bookedLessonIds;
+  final double programPrice;
+  final String emptyText;
+  final String alreadyBookedText;
+  final String locale;
+
+  @override
+  Widget build(BuildContext context) {
+    if (lessons.isEmpty) {
+      return _GlassBlock(
+        child: Text(
+          emptyText,
+          softWrap: true,
+          style: AppTextStyles.programsCardDescription,
+        ),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: lessons
+          .map((lesson) {
+            final isSelected = lesson.id == selectedLesson.id;
+            final isBooked = bookedLessonIds.contains(lesson.id);
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _LessonDateCard(
+                lesson: lesson,
+                locale: locale,
+                price: programPrice,
+                isSelected: isSelected,
+                isBooked: isBooked,
+                alreadyBookedText: alreadyBookedText,
+                onTap: () {
+                  context.read<ProgramDetailsBloc>().add(
+                    ProgramDetailsLessonSelected(lesson),
+                  );
+                },
+              ),
+            );
+          })
+          .toList(growable: false),
+    );
+  }
+}
+
+class _LessonDateCard extends StatelessWidget {
+  const _LessonDateCard({
+    required this.lesson,
+    required this.locale,
+    required this.price,
+    required this.isSelected,
+    required this.isBooked,
+    required this.alreadyBookedText,
+    required this.onTap,
+  });
+
+  final LessonModel lesson;
+  final String locale;
+  final double price;
+  final bool isSelected;
+  final bool isBooked;
+  final String alreadyBookedText;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final date = DateFormat('d MMMM, EEEE', locale).format(
+      lesson.startDate,
+    );
+    final time = lesson.scheduleTimeRange(locale: locale);
+    final formattedPrice = _formatPrice(price);
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: _GlassBlock(
+          padding: EdgeInsets.zero,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.primary.withValues(alpha: 0.22)
+                  : AppColors.profileAccountCardFill.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.primary.withValues(alpha: 0.95)
+                    : Colors.white.withValues(alpha: 0.18),
+                width: isSelected ? 1.4 : 1,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        date,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.scheduleCardTitle.copyWith(
+                          fontSize: 16,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      formattedPrice,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.scheduleCardTitle.copyWith(
+                        fontSize: 15,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  time,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.scheduleCardLabel.copyWith(
+                    fontSize: 14,
+                    height: 1.2,
+                  ),
+                ),
+                if (isBooked) ...<Widget>[
+                  const SizedBox(height: 8),
+                  Text(
+                    alreadyBookedText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.scheduleCardLabel.copyWith(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MasterCard extends StatelessWidget {
+  const _MasterCard({required this.master});
+
+  final MasterModel master;
+
+  @override
+  Widget build(BuildContext context) {
+    return _GlassBlock(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: AppColors.programsCardMedia,
+            backgroundImage: master.photoUrl.isNotEmpty
+                ? NetworkImage(master.photoUrl)
+                : null,
+            child: master.photoUrl.isEmpty
+                ? const Icon(Icons.person, color: Colors.white)
+                : null,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  master.fullName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.programsCardTitle,
+                ),
+                if (master.bio.isNotEmpty) ...<Widget>[
+                  const SizedBox(height: 6),
+                  Text(
+                    master.bio,
+                    softWrap: true,
+                    style: AppTextStyles.programsCardDescription.copyWith(
+                      fontSize: 14,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomActions extends StatelessWidget {
+  const _BottomActions({
+    required this.program,
+    required this.selectedLesson,
+    required this.isBooked,
+    required this.isBooking,
+    required this.isFavourite,
+    required this.bookText,
+    required this.bookingText,
+    required this.alreadyBookedText,
+    required this.comingSoonText,
+  });
+
+  final ProgramModel program;
+  final LessonModel selectedLesson;
+  final bool isBooked;
+  final bool isBooking;
+  final bool isFavourite;
+  final String bookText;
+  final String bookingText;
+  final String alreadyBookedText;
+  final String comingSoonText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: SizedBox(
+            height: 54,
+            child: program.isBookable
+                ? ElevatedButton(
+                    onPressed: isBooking || isBooked || selectedLesson.isEmpty
+                        ? null
+                        : () {
+                            context.read<ProgramDetailsBloc>().add(
+                              ProgramDetailsBooked(selectedLesson),
+                            );
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppColors.primary.withValues(
+                        alpha: 0.55,
+                      ),
+                      disabledForegroundColor: Colors.white.withValues(
+                        alpha: 0.14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                    child: Text(
+                      isBooked
+                          ? alreadyBookedText
+                          : isBooking
+                          ? bookingText
+                          : bookText,
+                      style: AppTextStyles.button,
+                    ),
+                  )
+                : _DisabledButton(text: comingSoonText),
+          ),
+        ),
+        const SizedBox(width: 12),
+        SizedBox(
+          height: 54,
+          width: 54,
+          child: _FavouriteButton(
+            isFavourite: isFavourite,
+            onTap: () {
+              context.read<ProgramDetailsBloc>().add(
+                ProgramDetailsFavouriteToggled(program),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _InnerHeader extends StatelessWidget {
   const _InnerHeader({required this.onBack});
+
   final VoidCallback onBack;
 
   @override
@@ -314,10 +533,13 @@ class _InnerHeader extends StatelessWidget {
     return SizedBox(
       height: 56,
       child: Row(
-        children: [
+        children: <Widget>[
           IconButton(
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+            constraints: const BoxConstraints(
+              minWidth: 44,
+              minHeight: 44,
+            ),
             onPressed: onBack,
             icon: Image.asset(
               AssetPaths.arrowBack,
@@ -341,101 +563,72 @@ class _InnerHeader extends StatelessWidget {
   }
 }
 
-class _GlassCard extends StatelessWidget {
-  const _GlassCard({required this.height, required this.child});
-  final double height;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassRoundedPanel(
-      width: double.infinity,
-      height: height,
-      padding: const EdgeInsets.all(18),
-      child: child,
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value});
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: AppTextStyles.settingsLabel16Light),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: AppTextStyles.settingsInput16Medium,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MasterGlassCard extends StatelessWidget {
-  const _MasterGlassCard({
-    required this.name,
-    required this.bio,
-    required this.photoUrl,
+class _GlassBlock extends StatelessWidget {
+  const _GlassBlock({
+    required this.child,
+    this.padding = const EdgeInsets.all(18),
   });
-  final String name;
-  final String bio;
-  final String photoUrl;
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
-    return GlassRoundedPanel(
-      width: double.infinity,
-      height: 124,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: AppColors.programsCardMedia,
-            backgroundImage: photoUrl.isNotEmpty
-                ? NetworkImage(photoUrl)
-                : null,
-            child: photoUrl.isEmpty
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: AppTextStyles.programsCardTitle),
-                const SizedBox(height: 6),
-                Expanded(
-                  child: Text(
-                    bio,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.programsCardDescription.copyWith(
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(26),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 18,
+          sigmaY: 18,
+        ),
+        child: Container(
+          width: double.infinity,
+          padding: padding,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.14),
+              width: 1,
             ),
           ),
-        ],
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _DisabledButton extends StatelessWidget {
+  const _DisabledButton({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 54,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.profileAccountCardFill,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Text(
+        text,
+        style: AppTextStyles.button.copyWith(
+          color: Colors.white.withValues(alpha: 0.8),
+        ),
       ),
     );
   }
 }
 
 class _FavouriteButton extends StatelessWidget {
-  const _FavouriteButton({required this.isFavourite, required this.onTap});
+  const _FavouriteButton({
+    required this.isFavourite,
+    required this.onTap,
+  });
+
   final bool isFavourite;
   final VoidCallback onTap;
 
@@ -454,4 +647,60 @@ class _FavouriteButton extends StatelessWidget {
       ),
     );
   }
+}
+
+String _localeTag(BuildContext context) {
+  final code = Localizations.localeOf(context).languageCode;
+
+  return switch (code) {
+    'en' => 'en',
+    'kk' => 'kk',
+    _ => 'ru',
+  };
+}
+
+String _formatPrice(double price) {
+  if (price <= 0) return '—';
+
+  final formatter = NumberFormat.decimalPattern('ru');
+  return '${formatter.format(price)} ₸';
+}
+
+String _text(BuildContext context, String key) {
+  final locale = _localeTag(context);
+
+  const values = <String, Map<String, String>>{
+    'ru': <String, String>{
+      'description': 'Описание программы',
+      'master': 'Мастер',
+      'dates': 'Даты занятий',
+      'book': 'Записаться',
+      'booking': 'Запись...',
+      'alreadyBooked': 'Вы уже записаны',
+      'chooseDate': 'Выберите дату занятия',
+      'noDates': 'Для этой программы пока нет доступных дат',
+    },
+    'en': <String, String>{
+      'description': 'Program description',
+      'master': 'Master',
+      'dates': 'Class dates',
+      'book': 'Book',
+      'booking': 'Booking...',
+      'alreadyBooked': 'You are already booked',
+      'chooseDate': 'Choose a class date',
+      'noDates': 'There are no available dates for this program yet',
+    },
+    'kk': <String, String>{
+      'description': 'Бағдарлама сипаттамасы',
+      'master': 'Шебер',
+      'dates': 'Сабақ күндері',
+      'book': 'Жазылу',
+      'booking': 'Жазылуда...',
+      'alreadyBooked': 'Сіз жазылып қойғансыз',
+      'chooseDate': 'Сабақ күнін таңдаңыз',
+      'noDates': 'Бұл бағдарлама үшін қолжетімді күндер әлі жоқ',
+    },
+  };
+
+  return values[locale]?[key] ?? values['ru']![key]!;
 }

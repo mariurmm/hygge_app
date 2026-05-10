@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -45,19 +43,33 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
     });
   }
 
+  void _handleTap(DateTime day, int index) {
+    widget.onDateSelected(day);
+
+    if (!_controller.hasClients) return;
+
+    final viewport = _controller.position.viewportDimension;
+    final lastVisibleIndex = ((_controller.offset + viewport) / _itemWidth)
+        .floor()
+        .clamp(0, _visibleDaysCount - 1);
+
+    if (index < lastVisibleIndex) return;
+
+    final targetIndex = (index + 1).clamp(0, _visibleDaysCount - 1);
+    final targetOffset = targetIndex * _itemWidth;
+    final maxOffset = _controller.position.maxScrollExtent;
+
+    _controller.animateTo(
+      targetOffset.clamp(0, maxOffset).toDouble(),
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
-  void didUpdateWidget(covariant ScheduleDateStrip oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (!DateUtils.isSameDay(oldWidget.selectedDay, widget.selectedDay)) {
-      final index = _selectedIndex();
-
-      unawaited(_controller.animateTo(
-        index * _itemWidth,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      ));
-    }
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,7 +86,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
           final isSelected = DateUtils.isSameDay(day, widget.selectedDay);
 
           return GestureDetector(
-            onTap: () => widget.onDateSelected(day),
+            onTap: () => _handleTap(day, index),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 70,
@@ -89,7 +101,7 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateFormat('E', 'ru_RU').format(day).toUpperCase(),
+                    DateFormat('E', Localizations.localeOf(context).toLanguageTag()).format(day).toUpperCase(),
                     style: TextStyle(
                       fontSize: 11,
                       height: 1,
