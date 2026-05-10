@@ -4,16 +4,17 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
-import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
+import 'package:hygge_app/data/models/program_category.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/features/favourites/ui/widgets/favourite_button.dart';
 import 'package:hygge_app/features/programs_detail/ui/program_details_page.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class ProgrammCard extends StatelessWidget {
   const ProgrammCard({
@@ -24,6 +25,7 @@ class ProgrammCard extends StatelessWidget {
     this.master,
     this.timingOverlayLabel,
   });
+
   final ProgrammCardType type;
   final ProgramModel program;
   final LessonModel? lesson;
@@ -53,15 +55,17 @@ class ProgrammCard extends StatelessWidget {
   }
 
   void _openDetails(BuildContext context) {
-    unawaited(Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => ProgramDetailsPage(
-          program: program,
-          lesson: lesson ?? LessonModel.empty,
-          master: master ?? MasterModel.empty,
+    unawaited(
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ProgramDetailsPage(
+            program: program,
+            lesson: lesson ?? LessonModel.empty,
+            master: master ?? MasterModel.empty,
+          ),
         ),
       ),
-    ));
+    );
   }
 }
 
@@ -72,6 +76,7 @@ class _BigProgramCard extends StatelessWidget {
     required this.timingOverlayLabel,
     required this.loc,
   });
+
   final ProgramModel program;
   final LessonModel? lesson;
   final String? timingOverlayLabel;
@@ -81,83 +86,39 @@ class _BigProgramCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
-      // child: BackdropFilter(
-      //   filter: ImageFilter.blur(
-      //     sigmaX: AppConstants.programsBlurSigma,
-      //     sigmaY: AppConstants.programsBlurSigma,
-      //   ),
-        child: Container(
-          width: AppConstants.programsCardWidth,
-          height: AppConstants.programsCardHeight,
-          decoration: BoxDecoration(
-            color: AppColors.programsCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(
-              AppConstants.programsCardRadius,
-            ),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ProgramMedia(
-                program: program,
-                timingOverlayLabel: timingOverlayLabel,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppPaddings.programsCardHorizontal,
-                    AppPaddings.programsCardTop,
-                    AppPaddings.programsCardHorizontal,
-                    AppPaddings.programsCardBottom,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              program.title.isNotEmpty
-                                  ? program.title
-                                  : loc.programCardDefaultTitle,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.programsCardTitle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            flex: 0,
-                            child: Text(
-                              _durationLabel(lesson, loc),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.programsCardTitle,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacings.programsCardTitleGap),
-                      Expanded(
-                        child: Text(
-                          program.text.isNotEmpty
-                              ? program.text
-                              : loc.programCardDefaultDescription,
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.programsCardDescription,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+      child: Container(
+        width: AppConstants.programsCardWidth,
+        decoration: BoxDecoration(
+          color: AppColors.programsCard.withValues(alpha: 0.82),
+          borderRadius: BorderRadius.circular(AppConstants.programsCardRadius),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.2),
           ),
         ),
-      // ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _ProgramMedia(
+              program: program,
+              timingOverlayLabel: timingOverlayLabel,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppPaddings.programsCardHorizontal,
+                13,
+                AppPaddings.programsCardHorizontal,
+                15,
+              ),
+              child: _BigProgramBody(
+                title: _title(program, loc),
+                category: _categoryLabel(program, loc),
+                time: _timeLabel(lesson, loc),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -168,60 +129,179 @@ class _SmallProgramCard extends StatelessWidget {
     required this.lesson,
     required this.loc,
   });
+
   final ProgramModel program;
   final LessonModel? lesson;
   final AppLocalizations loc;
 
+  static const double _width = 164;
+  static const double _radius = 22;
+  static const double _mediaHeight = 82;
+
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: AppConstants.programsBlurSigma,
-          sigmaY: AppConstants.programsBlurSigma,
-        ),
-        child: Container(
-          width: 150,
-          height: 170,
-          decoration: BoxDecoration(
-            color: AppColors.programsCard.withValues(alpha: 0.75),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+    return SizedBox(
+      width: _width,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(_radius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: AppConstants.programsBlurSigma,
+            sigmaY: AppConstants.programsBlurSigma,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _SmallProgramMedia(program: program),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      program.title.isNotEmpty
-                          ? program.title
-                          : loc.programCardDefaultTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.programsCardTitle.copyWith(
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _durationLabel(lesson, loc),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.programsCardDescription,
-                    ),
-                  ],
-                ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.programsCard.withValues(alpha: 0.72),
+              borderRadius: BorderRadius.circular(_radius),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.15),
               ),
-            ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _SmallProgramMedia(
+                  program: program,
+                  height: _mediaHeight,
+                  radius: _radius,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 7, 12, 8),
+                    child: _SmallProgramBody(
+                      title: _title(program, loc),
+                      date: _dateLabel(lesson),
+                      time: _timeLabel(lesson, loc),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _BigProgramBody extends StatelessWidget {
+  const _BigProgramBody({
+    required this.title,
+    required this.category,
+    required this.time,
+  });
+
+  final String title;
+  final String category;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                title,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.programsCardTitle.copyWith(
+                  height: 1.18,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                time,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+                style: AppTextStyles.programsCardDescription.copyWith(
+                  height: 1.18,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Text(
+          category,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.programsCardDescription.copyWith(
+            fontSize: 13,
+            height: 1.15,
+            fontWeight: FontWeight.w300,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SmallProgramBody extends StatelessWidget {
+  const _SmallProgramBody({
+    required this.title,
+    required this.date,
+    required this.time,
+  });
+
+  final String title;
+  final String date;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasDate = date.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.programsCardTitle.copyWith(
+            fontSize: 15,
+            height: 1.1,
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        if (hasDate) ...<Widget>[
+          Text(
+            date,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.programsCardDescription.copyWith(
+              fontSize: 13,
+              height: 1.1,
+              color: Colors.white.withValues(alpha: 0.78),
+            ),
+          ),
+
+          const SizedBox(height: 2),
+        ],
+
+        Text(
+          time,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.programsCardDescription.copyWith(
+            fontSize: 14,
+            height: 1.1,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -231,6 +311,7 @@ class _ProgramMedia extends StatelessWidget {
     required this.program,
     required this.timingOverlayLabel,
   });
+
   final ProgramModel program;
   final String? timingOverlayLabel;
 
@@ -242,18 +323,19 @@ class _ProgramMedia extends StatelessWidget {
       ),
       child: SizedBox(
         height: AppConstants.programsCardMediaHeight,
+        width: double.infinity,
         child: Stack(
           fit: StackFit.expand,
-          children: [
+          children: <Widget>[
             _ProgramImage(imageUrl: program.imageUrl),
-            if (timingOverlayLabel != null) ...[
+            if (timingOverlayLabel != null) ...<Widget>[
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
+                      colors: <Color>[
                         Colors.black.withValues(alpha: 0.35),
                         Colors.black.withValues(alpha: 0.45),
                       ],
@@ -283,16 +365,25 @@ class _ProgramMedia extends StatelessWidget {
 }
 
 class _SmallProgramMedia extends StatelessWidget {
-  const _SmallProgramMedia({required this.program});
+  const _SmallProgramMedia({
+    required this.program,
+    required this.height,
+    required this.radius,
+  });
+
   final ProgramModel program;
+  final double height;
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 90,
+      height: height,
       width: double.infinity,
       child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(radius),
+        ),
         child: _ProgramImage(imageUrl: program.imageUrl),
       ),
     );
@@ -301,47 +392,80 @@ class _SmallProgramMedia extends StatelessWidget {
 
 class _ProgramImage extends StatelessWidget {
   const _ProgramImage({required this.imageUrl});
+
   final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl.isEmpty) {
-      return _ProgramImageFallback();
+    final url = imageUrl.trim();
+
+    if (url.isEmpty) {
+      return const _ProgramImageFallback();
     }
 
     return Image.network(
-      imageUrl,
+      url,
       fit: BoxFit.cover,
-      errorBuilder: (_, _, _) => _ProgramImageFallback(),
-      loadingBuilder: (context, child, loadingProgress) {
+      errorBuilder: (_, _, _) => const _ProgramImageFallback(),
+      loadingBuilder: (_, child, loadingProgress) {
         if (loadingProgress == null) return child;
 
-        return _ProgramImageFallback();
+        return const _ProgramImageFallback();
       },
     );
   }
 }
 
 class _ProgramImageFallback extends StatelessWidget {
+  const _ProgramImageFallback();
+
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
       color: AppColors.programsCardMedia.withValues(alpha: 0.95),
       child: const Center(
-        child: Icon(Icons.play_circle_outline, color: Colors.white70, size: 28),
+        child: Icon(
+          Icons.play_circle_outline,
+          color: Colors.white70,
+          size: 28,
+        ),
       ),
     );
   }
 }
 
-String _durationLabel(LessonModel? lesson, AppLocalizations loc) {
+String _title(ProgramModel program, AppLocalizations loc) {
+  if (program.title.isNotEmpty) return program.title;
+
+  return loc.programCardDefaultTitle;
+}
+
+String _timeLabel(LessonModel? lesson, AppLocalizations loc) {
   if (lesson == null || lesson.isEmpty) {
     return loc.minutesLabel(AppConstants.programsDefaultDurationMin);
   }
 
-  final mins = lesson.endDate.difference(lesson.startDate).inMinutes;
+  return lesson.scheduleTimeRange();
+}
 
-  if (mins > 0) return loc.minutesLabel(mins);
+String _dateLabel(LessonModel? lesson) {
+  if (lesson == null || lesson.isEmpty) {
+    return '';
+  }
 
-  return loc.minutesLabel(AppConstants.programsDefaultDurationMin);
+  final locale = Intl.getCurrentLocale();
+
+  return DateFormat('d MMMM', locale).format(lesson.startDate);
+}
+
+String _categoryLabel(ProgramModel program, AppLocalizations loc) {
+  return switch (program.category) {
+    ProgramCategory.meditation => loc.filterMeditation,
+    ProgramCategory.yoga => loc.filterYoga,
+    ProgramCategory.outdoor => loc.filterOutdoor,
+    ProgramCategory.ceremony => loc.filterCeremony,
+    ProgramCategory.masterClass => loc.filterMasterClass,
+    ProgramCategory.lecture => loc.filterLecture,
+    ProgramCategory.authorTour => loc.filterAuthorTour,
+  };
 }

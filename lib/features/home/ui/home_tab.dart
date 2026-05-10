@@ -174,13 +174,13 @@ class MainTab extends StatelessWidget {
                                       AppPaddings.programsScreenHorizontal,
                                 ),
                                 child: Text(
-                                  'Нет предстоящих занятий',
+                                  loc.noUpcomingPrograms,
                                   style: AppTextStyles.programsSubtitle,
                                 ),
                               );
                             }
                             return SizedBox(
-                              height: 170,
+                              height: 178,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 padding: const EdgeInsets.symmetric(
@@ -201,6 +201,8 @@ class MainTab extends StatelessWidget {
                                       type: ProgrammCardType.small,
                                       program: program,
                                       lesson: lesson,
+                                      master:
+                                          state.mastersById[program.trainerId],
                                     ),
                                   );
                                 },
