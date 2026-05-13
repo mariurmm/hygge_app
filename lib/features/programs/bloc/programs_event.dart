@@ -1,18 +1,39 @@
 part of 'programs_bloc.dart';
 
-sealed class ProgramsEvent {
+abstract class ProgramsEvent extends Equatable {
   const ProgramsEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
-final class ProgramsInitialized extends ProgramsEvent {
-  const ProgramsInitialized();
+class ProgramsInitialized extends ProgramsEvent {
+  const ProgramsInitialized({this.locale});
+
+  final String? locale;
+
+  @override
+  List<Object?> get props => [locale];
 }
 
-final class ProgramsRefreshRequested extends ProgramsEvent {
+class ProgramsRefreshRequested extends ProgramsEvent {
   const ProgramsRefreshRequested();
 }
 
-final class ProgramsFilterChanged extends ProgramsEvent {
+class ProgramsLocaleChanged extends ProgramsEvent {
+  const ProgramsLocaleChanged(this.locale);
+
+  final String locale;
+
+  @override
+  List<Object?> get props => [locale];
+}
+
+class ProgramsFilterChanged extends ProgramsEvent {
   const ProgramsFilterChanged(this.filterIndex);
+
   final int filterIndex;
+
+  @override
+  List<Object?> get props => [filterIndex];
 }

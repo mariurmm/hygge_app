@@ -22,67 +22,66 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
-        listeners: [
-          BlocListener<AppBloc, AppState>(
-            listenWhen: (p, c) => p.user != c.user,
-            listener: (context, state) {
-              context.read<ProfileBloc>().syncUser(state.user);
-            },
-          ),
-          BlocListener<AppBloc, AppState>(
-            listenWhen: (p, c) => p.status != c.status,
-            listener: (context, state) {
-              if (state.status == AppStatus.unauthenticated) {
-                context.go(RouteNames.login);
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            final now = DateTime.now();
-            final loc = AppLocalizations.of(context);
-
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              extendBody: true,
-              extendBodyBehindAppBar: true,
-              resizeToAvoidBottomInset: false,
-              body: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.asset(
-                      AssetPaths.homeBackground,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-
-                  Positioned.fill(
-                    child: SafeArea(
-                      child: HyggeScreenLayout(
-                        header: const ProfileProgramsHeader(),
-                        onRefresh: () =>
-                            context.read<ProfileBloc>().refresh(),
-                        children: [
-                          ProfileStatusSection(state: state, loc: loc),
-                          const ProfileFavouritesSection(),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          ProfileHistorySection(
-                            state: state,
-                            now: now,
-                            loc: loc,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+      listeners: [
+        BlocListener<AppBloc, AppState>(
+          listenWhen: (p, c) => p.user != c.user,
+          listener: (context, state) {
+            context.read<ProfileBloc>().syncUser(state.user);
           },
         ),
+        BlocListener<AppBloc, AppState>(
+          listenWhen: (p, c) => p.status != c.status,
+          listener: (context, state) {
+            if (state.status == AppStatus.unauthenticated) {
+              context.go(RouteNames.login);
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          final now = DateTime.now();
+          final loc = AppLocalizations.of(context);
+
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            resizeToAvoidBottomInset: false,
+            body: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    AssetPaths.homeBackground,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+
+                Positioned.fill(
+                  child: SafeArea(
+                    child: HyggeScreenLayout(
+                      header: const ProfileProgramsHeader(),
+                      onRefresh: () => context.read<ProfileBloc>().refresh(),
+                      children: [
+                        ProfileStatusSection(state: state, loc: loc),
+                        const ProfileFavouritesSection(),
+                        const SizedBox(
+                          height: AppSpacings.profileCardsVerticalGap,
+                        ),
+                        ProfileHistorySection(
+                          state: state,
+                          now: now,
+                          loc: loc,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

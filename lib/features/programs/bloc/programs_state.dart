@@ -13,48 +13,42 @@ enum ProgramFilter {
 
 class ProgramsState extends Equatable {
   const ProgramsState({
+    this.locale = LocalizedValue.defaultLocale,
     this.allPrograms = const [],
     this.selectedFilter = ProgramFilter.all,
     this.nearestLessonsByProgramId = const {},
     this.mastersById = const {},
   });
+
+  final String locale;
   final List<ProgramModel> allPrograms;
   final ProgramFilter selectedFilter;
   final Map<String, LessonModel> nearestLessonsByProgramId;
   final Map<String, MasterModel> mastersById;
 
   List<ProgramModel> get visiblePrograms {
-    if (selectedFilter == ProgramFilter.all) return allPrograms;
+    if (selectedFilter == ProgramFilter.all) {
+      return allPrograms;
+    }
+
+    final category = _categoryByFilter(selectedFilter);
 
     return allPrograms
         .where((program) {
-          return switch (selectedFilter) {
-            ProgramFilter.meditation =>
-              program.category == ProgramCategory.meditation,
-            ProgramFilter.yoga => program.category == ProgramCategory.yoga,
-            ProgramFilter.outdoor =>
-              program.category == ProgramCategory.outdoor,
-            ProgramFilter.ceremony =>
-              program.category == ProgramCategory.ceremony,
-            ProgramFilter.masterClass =>
-              program.category == ProgramCategory.masterClass,
-            ProgramFilter.lecture =>
-              program.category == ProgramCategory.lecture,
-            ProgramFilter.authorTour =>
-              program.category == ProgramCategory.authorTour,
-            ProgramFilter.all => true,
-          };
+          return program.category == category;
         })
         .toList(growable: false);
   }
 
   ProgramsState copyWith({
+    String? locale,
     List<ProgramModel>? allPrograms,
     ProgramFilter? selectedFilter,
     Map<String, LessonModel>? nearestLessonsByProgramId,
     Map<String, MasterModel>? mastersById,
   }) {
     return ProgramsState(
+      locale: locale ?? this.locale,
       allPrograms: allPrograms ?? this.allPrograms,
       selectedFilter: selectedFilter ?? this.selectedFilter,
       nearestLessonsByProgramId:
@@ -65,9 +59,23 @@ class ProgramsState extends Equatable {
 
   @override
   List<Object?> get props => [
+    locale,
     allPrograms,
     selectedFilter,
     nearestLessonsByProgramId,
     mastersById,
   ];
+
+  static ProgramCategory _categoryByFilter(ProgramFilter filter) {
+    return switch (filter) {
+      ProgramFilter.meditation => ProgramCategory.meditation,
+      ProgramFilter.yoga => ProgramCategory.yoga,
+      ProgramFilter.outdoor => ProgramCategory.outdoor,
+      ProgramFilter.ceremony => ProgramCategory.ceremony,
+      ProgramFilter.masterClass => ProgramCategory.masterClass,
+      ProgramFilter.lecture => ProgramCategory.lecture,
+      ProgramFilter.authorTour => ProgramCategory.authorTour,
+      ProgramFilter.all => ProgramCategory.yoga,
+    };
+  }
 }

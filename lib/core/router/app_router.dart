@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
@@ -20,7 +19,6 @@ import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
 import 'package:hygge_app/features/notifications/ui/notifications_screen.dart';
 import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
 import 'package:hygge_app/features/profile/ui/profile_tab.dart';
-import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
 import 'package:hygge_app/features/programs/ui/programs_tab.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
 import 'package:hygge_app/features/schedule/cubit/schedule_cubit.dart';
@@ -86,17 +84,11 @@ class AppRouter {
                   BlocProvider<HomeCubit>(
                     create: (ctx) => HomeCubit(upcomingRepo: ctx.read()),
                   ),
-                  BlocProvider<ProgramsBloc>(
-                    create: (ctx) =>
-                        ProgramsBloc(
-                          repository: ctx.read<ProgramsRepository>(),
-                        )..add(const ProgramsInitialized()),
-                  ),
+
                   BlocProvider<ScheduleBloc>(
-                    create: (ctx) =>
-                        ScheduleBloc(
-                          repository: ctx.read<UpcomingLessonRepository>(),
-                        )..add(const ScheduleStarted()),
+                    create: (ctx) => ScheduleBloc(
+                      repository: ctx.read<UpcomingLessonRepository>(),
+                    )..add(const ScheduleStarted()),
                   ),
                   BlocProvider<ProfileBloc>(
                     create: (ctx) => ProfileBloc(
