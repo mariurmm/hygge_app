@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/models/localized_value.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_category.dart';
 import 'package:hygge_app/data/models/program_model.dart';
@@ -20,22 +21,76 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
   }) : _repository = repository,
        _firestore = firestore ?? FirebaseFirestore.instance,
        super(const ProgramsState()) {
-    on<ProgramsInitialized>((_, emit) => _load(emit));
-    on<ProgramsRefreshRequested>((_, emit) => _load(emit));
+    on<ProgramsInitialized>(_onInitialized);
+    on<ProgramsRefreshRequested>(_onRefreshRequested);
+    on<ProgramsLocaleChanged>(_onLocaleChanged);
     on<ProgramsFilterChanged>(_onFilterChanged);
   }
+
   final ProgramsRepository _repository;
   final FirebaseFirestore _firestore;
 
-  Future<void> _load(Emitter<ProgramsState> emit) async {
+  Future<void> _onInitialized(
+    ProgramsInitialized event,
+    Emitter<ProgramsState> emit,
+  ) async {
+    await _load(
+      emit,
+      locale: event.locale ?? state.locale,
+    );
+  }
+
+  Future<void> _onRefreshRequested(
+    ProgramsRefreshRequested event,
+    Emitter<ProgramsState> emit,
+  ) async {
+    await _load(
+      emit,
+      locale: state.locale,
+    );
+  }
+
+  Future<void> _onLocaleChanged(
+    ProgramsLocaleChanged event,
+    Emitter<ProgramsState> emit,
+  ) async {
+    final locale = _normalizeLocale(event.locale);
+
+    if (locale == state.locale) return;
+
+    emit(state.copyWith(locale: locale));
+
+    await _load(
+      emit,
+      locale: locale,
+    );
+  }
+
+  Future<void> _load(
+    Emitter<ProgramsState> emit, {
+    required String locale,
+  }) async {
+    final normalizedLocale = _normalizeLocale(locale);
+
     try {
-      final programs = await _repository.fetchPrograms();
-      AppLogger.debug('ProgramsBloc: загружено ${programs.length} программ');
+      final programs = await _repository.fetchPrograms(
+        locale: normalizedLocale,
+      );
+
+      AppLogger.debug(
+        'ProgramsBloc: загружено ${programs.length} программ, '
+        'locale=$normalizedLocale',
+      );
+
       final nearestLessonsByProgramId = await _fetchNearestLessons(programs);
-      final mastersById = await _fetchMasters(programs);
+      final mastersById = await _fetchMasters(
+        programs,
+        locale: normalizedLocale,
+      );
 
       emit(
         state.copyWith(
+          locale: normalizedLocale,
           allPrograms: programs,
           nearestLessonsByProgramId: nearestLessonsByProgramId,
           mastersById: mastersById,
@@ -47,8 +102,10 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
         error: e,
         stackTrace: st,
       );
+
       emit(
         state.copyWith(
+          locale: normalizedLocale,
           allPrograms: const [],
           nearestLessonsByProgramId: const {},
           mastersById: const {},
@@ -67,7 +124,9 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
     }
 
     emit(
-      state.copyWith(selectedFilter: ProgramFilter.values[event.filterIndex]),
+      state.copyWith(
+        selectedFilter: ProgramFilter.values[event.filterIndex],
+      ),
     );
   }
 
@@ -89,7 +148,10 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
       if (snapshot.docs.isEmpty) continue;
 
       final doc = snapshot.docs.first;
-      final lesson = LessonModel.fromJson({...doc.data(), 'id': doc.id});
+      final lesson = LessonModel.fromJson({
+        ...doc.data(),
+        'id': doc.id,
+      });
 
       result[program.id] = lesson;
     }
@@ -98,8 +160,9 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
   }
 
   Future<Map<String, MasterModel>> _fetchMasters(
-    List<ProgramModel> programs,
-  ) async {
+    List<ProgramModel> programs, {
+    required String locale,
+  }) async {
     final trainerIds = programs
         .map((program) => program.trainerId)
         .where((id) => id.isNotEmpty)
@@ -113,11 +176,25 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
 
       if (!doc.exists || data == null) continue;
 
-      final master = MasterModel.fromJson({...data, 'id': doc.id});
+      final master = MasterModel.fromJson(
+        {
+          ...data,
+          'id': doc.id,
+        },
+        locale: locale,
+      );
 
       result[master.id] = master;
     }
 
     return result;
+  }
+
+  String _normalizeLocale(String locale) {
+    return switch (locale) {
+      'en' => 'en',
+      'kk' => 'kk',
+      _ => LocalizedValue.defaultLocale,
+    };
   }
 }
