@@ -20,16 +20,14 @@ class ProgramsBloc extends Bloc<ProgramsEvent, ProgramsState> {
   }) : _repository = repository,
        _firestore = firestore ?? FirebaseFirestore.instance,
        super(const ProgramsState()) {
-    on<ProgramsInitialized>(_onInitialized);
+    on<ProgramsInitialized>((_, emit) => _load(emit));
+    on<ProgramsRefreshRequested>((_, emit) => _load(emit));
     on<ProgramsFilterChanged>(_onFilterChanged);
   }
   final ProgramsRepository _repository;
   final FirebaseFirestore _firestore;
 
-  Future<void> _onInitialized(
-    ProgramsInitialized event,
-    Emitter<ProgramsState> emit,
-  ) async {
+  Future<void> _load(Emitter<ProgramsState> emit) async {
     try {
       final programs = await _repository.fetchPrograms();
       AppLogger.debug('ProgramsBloc: загружено ${programs.length} программ');

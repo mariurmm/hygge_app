@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app_shell/app_shell.dart';
@@ -16,14 +18,18 @@ import 'package:hygge_app/features/home/ui/home_tab.dart';
 import 'package:hygge_app/features/login/ui/login_screen.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
 import 'package:hygge_app/features/notifications/ui/notifications_screen.dart';
+import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
 import 'package:hygge_app/features/profile/ui/profile_tab.dart';
+import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
 import 'package:hygge_app/features/programs/ui/programs_tab.dart';
+import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
 import 'package:hygge_app/features/schedule/cubit/schedule_cubit.dart';
 import 'package:hygge_app/features/schedule/ui/schedule_tab.dart';
 import 'package:hygge_app/features/settings/ui/settings_screen.dart';
 import 'package:hygge_app/features/splash/ui/splash_screen.dart';
 import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
-import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
+// TODO(mvp): restore after MVP
+// import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
 
 class AppRouter {
   static GoRouter create() {
@@ -79,6 +85,25 @@ class AppRouter {
                   ),
                   BlocProvider<HomeCubit>(
                     create: (ctx) => HomeCubit(upcomingRepo: ctx.read()),
+                  ),
+                  BlocProvider<ProgramsBloc>(
+                    create: (ctx) =>
+                        ProgramsBloc(
+                          repository: ctx.read<ProgramsRepository>(),
+                        )..add(const ProgramsInitialized()),
+                  ),
+                  BlocProvider<ScheduleBloc>(
+                    create: (ctx) =>
+                        ScheduleBloc(
+                          repository: ctx.read<UpcomingLessonRepository>(),
+                        )..add(const ScheduleStarted()),
+                  ),
+                  BlocProvider<ProfileBloc>(
+                    create: (ctx) => ProfileBloc(
+                      bookingRepository: ctx.read<BookingRepository>(),
+                      scheduleRepository: ctx.read<ScheduleRepository>(),
+                      user: ctx.read<AppBloc>().state.user,
+                    ),
                   ),
                   BlocProvider<NotificationsBloc>(
                     create: (ctx) => NotificationsBloc(
@@ -185,17 +210,18 @@ class AppRouter {
           ),
         ),
 
-        GoRoute(
-          name: RouteNames.subscriptionName,
-          path: RouteNames.subscription,
-          pageBuilder: (context, state) => CustomTransitionPage(
-            key: state.pageKey,
-            child: const AccountSubscriptionPage(),
-            transitionsBuilder: (context, animation, _, child) =>
-                FadeTransition(opacity: animation, child: child),
-            transitionDuration: const Duration(milliseconds: 200),
-          ),
-        ),
+        // TODO(mvp): restore after MVP
+        // GoRoute(
+        //   name: RouteNames.subscriptionName,
+        //   path: RouteNames.subscription,
+        //   pageBuilder: (context, state) => CustomTransitionPage(
+        //     key: state.pageKey,
+        //     child: const AccountSubscriptionPage(),
+        //     transitionsBuilder: (context, animation, _, child) =>
+        //         FadeTransition(opacity: animation, child: child),
+        //     transitionDuration: const Duration(milliseconds: 200),
+        //   ),
+        // ),
       ],
 
       // ── 404 ───────────────────────────────────────────────

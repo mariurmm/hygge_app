@@ -22,11 +22,13 @@ class ProfileBloc extends Cubit<ProfileState> {
        _scheduleRepo = scheduleRepository,
        _programsRepo = programsRepo ?? getIt<ProgramsRepository>(),
        super(_initialState(user)) {
-    unawaited(_loadHistory(user?.uid ?? ''));
+    _uid = user?.uid ?? '';
+    unawaited(_loadHistory(_uid));
   }
 
   static const int _goal = 15;
 
+  String _uid = '';
   final BookingRepository _bookingRepo;
   final ScheduleRepository _scheduleRepo;
   final ProgramsRepository _programsRepo;
@@ -45,6 +47,7 @@ class ProfileBloc extends Cubit<ProfileState> {
   }
 
   void syncUser(UserModel user) {
+    _uid = user.uid;
     emit(
       state.copyWith(
         displayName: user.isNotEmpty && user.displayName.isNotEmpty
@@ -53,8 +56,10 @@ class ProfileBloc extends Cubit<ProfileState> {
         isPremium: _hasActiveSubscription(user),
       ),
     );
-    unawaited(_loadHistory(user.uid));
+    unawaited(_loadHistory(_uid));
   }
+
+  Future<void> refresh() => _loadHistory(_uid);
 
   Future<void> _loadHistory(String userId) async {
     if (userId.isEmpty) {
@@ -67,8 +72,7 @@ class ProfileBloc extends Cubit<ProfileState> {
 
       final completedThisMonth = bookings
           .where(
-            (b) =>
-                b.datetime.year == now.year && b.datetime.month == now.month,
+            (b) => b.datetime.year == now.year && b.datetime.month == now.month,
           )
           .length;
 
@@ -79,13 +83,11 @@ class ProfileBloc extends Cubit<ProfileState> {
       }
 
       final left = (_goal - completedThisMonth).clamp(0, _goal);
-      final percent =
-          (completedThisMonth / _goal * 100).clamp(0, 100).toInt();
+      final percent = (completedThisMonth / _goal * 100).clamp(0, 100).toInt();
 
-      final program =
-          recentLesson != null && recentLesson.programId.isNotEmpty
-              ? await _programsRepo.fetchProgramById(recentLesson.programId)
-              : null;
+      final program = recentLesson != null && recentLesson.programId.isNotEmpty
+          ? await _programsRepo.fetchProgramById(recentLesson.programId)
+          : null;
 
       emit(
         state.copyWith(

@@ -11,12 +11,12 @@ import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProfileHistorySection extends StatelessWidget {
-
   const ProfileHistorySection({
-    required this.now, 
-    required this.state, 
-    required this.loc, 
-    super.key,});
+    required this.now,
+    required this.state,
+    required this.loc,
+    super.key,
+  });
   final ProfileState state;
   final AppLocalizations loc;
   final DateTime now;
@@ -29,32 +29,35 @@ class ProfileHistorySection extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [ 
+        children: [
           ProfileHistoryHeader(
-            onViewAll: () =>context.push(RouteNames.history),
+            onViewAll: () => context.push(RouteNames.history),
           ),
-          const SizedBox( 
+          const SizedBox(
             height: AppSpacings.profileHistoryLinkCardGap,
           ),
           if (state.isHistoryLoading)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16, ),
-            child: Center(
-              child: CircularProgressIndicator( 
-                color: Colors.white,
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 16,
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            )
+          else if (state.recentSessionProgram != null)
+            ProgrammCard(
+              type: ProgrammCardType.big,
+              program: state.recentSessionProgram!,
+              lesson: state.recentSessionLesson,
+              master: state.recentSessionMaster,
+              timingOverlayLabel: state.recentSessionLesson?.historyWhenLabel(
+                now,
               ),
             ),
-          )
-          else if (state.recentSessionProgram != null)
-          ProgrammCard(
-            type: ProgrammCardType.big, 
-            program: state.recentSessionProgram!, 
-            lesson: state.recentSessionLesson,
-            master: state.recentSessionMaster,
-            timingOverlayLabel: state.recentSessionLesson
-                ?.historyWhenLabel(now),
-          ),
-          const SizedBox( 
+          const SizedBox(
             height: AppSpacings.profileCardsVerticalGap,
           ),
           const ProfileAboutSection(),

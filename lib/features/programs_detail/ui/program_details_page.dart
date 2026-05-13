@@ -589,7 +589,6 @@ class _GlassBlock extends StatelessWidget {
             borderRadius: BorderRadius.circular(26),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.14),
-              width: 1,
             ),
           ),
           child: child,

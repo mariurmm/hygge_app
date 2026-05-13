@@ -5,7 +5,6 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
@@ -19,11 +18,7 @@ class ProgramsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProgramsBloc>(
-      create: (ctx) =>
-          ProgramsBloc(repository: ctx.read<ProgramsRepository>())
-            ..add(const ProgramsInitialized()),
-      child: BlocListener<ProgramsBloc, ProgramsState>(
+    return BlocListener<ProgramsBloc, ProgramsState>(
         listenWhen: (previous, current) =>
             previous.allPrograms != current.allPrograms,
         listener: (context, state) {
@@ -63,6 +58,11 @@ class ProgramsTab extends StatelessWidget {
                     child: SafeArea(
                       child: HyggeScreenLayout(
                         header: const ProgramsHeader(),
+                        onRefresh: () async {
+                          context.read<ProgramsBloc>().add(
+                            const ProgramsRefreshRequested(),
+                          );
+                        },
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -144,7 +144,6 @@ class ProgramsTab extends StatelessWidget {
             );
           },
         ),
-      ),
     );
   }
 }

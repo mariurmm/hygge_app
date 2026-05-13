@@ -9,7 +9,8 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/core/utils/logger.dart';
-import 'package:hygge_app/data/models/user_model.dart';
+// TODO(mvp): restore after MVP
+// import 'package:hygge_app/data/models/user_model.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_event.dart';
@@ -66,38 +67,42 @@ class _SettingsView extends StatelessWidget {
 
   void _showUnsavedChangesDialog(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    unawaited(showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(loc.dialogSaveChangesTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'cancel'),
-            child: Text(loc.dialogCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'discard'),
-            child: Text(loc.dialogDiscard),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'save'),
-            child: Text(loc.dialogSave),
-          ),
-        ],
-      ),
-    ).then((result) {
-      if (!context.mounted) return;
+    unawaited(
+      showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(loc.dialogSaveChangesTitle),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'cancel'),
+              child: Text(loc.dialogCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'discard'),
+              child: Text(loc.dialogDiscard),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'save'),
+              child: Text(loc.dialogSave),
+            ),
+          ],
+        ),
+      ).then((result) {
+        if (!context.mounted) return;
 
-      if (result == 'save') {
-        unawaited(_save(context).then((_) {
-          if (context.mounted) _popAfterAction(context);
-        }));
-      } else if (result == 'discard') {
-        final bloc = context.read<SettingsBloc>();
-        bloc.nameController.text = bloc.state.savedName;
-        _popAfterAction(context);
-      }
-    }));
+        if (result == 'save') {
+          unawaited(
+            _save(context).then((_) {
+              if (context.mounted) _popAfterAction(context);
+            }),
+          );
+        } else if (result == 'discard') {
+          final bloc = context.read<SettingsBloc>();
+          bloc.nameController.text = bloc.state.savedName;
+          _popAfterAction(context);
+        }
+      }),
+    );
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -128,7 +133,8 @@ class _SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<SettingsBloc>().state;
     final bloc = context.read<SettingsBloc>();
-    final appUser = context.watch<AppBloc>().state.user;
+    // TODO(mvp): restore after MVP
+    // final appUser = context.watch<AppBloc>().state.user;
     final loc = AppLocalizations.of(context);
 
     return PopScope(
@@ -159,7 +165,7 @@ class _SettingsView extends StatelessWidget {
                     leading: IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
-                        minWidth: AppConstants.profileProgramsHeaderIconSize, 
+                        minWidth: AppConstants.profileProgramsHeaderIconSize,
                         minHeight: AppConstants.profileProgramsHeaderIconSize,
                       ),
                       onPressed: () {
@@ -181,87 +187,92 @@ class _SettingsView extends StatelessWidget {
                     ),
                   ),
                   children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppPaddings.profileScreenHorizontal,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppPaddings.profileScreenHorizontal,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 24),
 
-                        // ── Аватар ──
-                        _AvatarSection(
-                          bloc: bloc,
-                          appUser: appUser,
-                          busy: state.busy,
-                        ),
+                          // TODO(mvp): restore after MVP
+                          // // ── Аватар ──
+                          // _AvatarSection(
+                          //   bloc: bloc,
+                          //   appUser: appUser,
+                          //   busy: state.busy,
+                          // ),
 
-                        const SizedBox(height: 32),
+                          // TODO(mvp): restore after MVP
+                          // const SizedBox(height: 32),
 
-                        // ── Секция: Профиль ──
-                        _SectionLabel(label: loc.settingsRequiredFields),
-                        const SizedBox(height: 12),
-                        _InputField(
-                          label: loc.settingsFullName,
-                          controller: bloc.nameController,
-                          hasChanges: state.hasUnsavedChanges,
-                          onSave: state.busy ? null : () => _save(context),
-                        ),
-                        const SizedBox(height: 16),
-                        _ReadonlyField(
-                          label: loc.settingsEmailAddress,
-                          controller: bloc.emailController,
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // ── Секция: Настройки приложения ──
-                        _SectionLabel(label: loc.settingsAppSettings),
-                        const SizedBox(height: 12),
-                        _ActionRow(
-                          assetPath: '',
-                          fallbackIcon: Icons.language_rounded,
-                          leadingWidget: Text(
-                            _languageFlag(
-                              context
-                                      .watch<LocaleCubit>()
-                                      .state
-                                      ?.languageCode ??
-                                  Localizations.localeOf(context).languageCode,
-                            ),
-                            style: const TextStyle(fontSize: 24),
+                          // ── Секция: Профиль ──
+                          _SectionLabel(label: loc.settingsRequiredFields),
+                          const SizedBox(height: 12),
+                          _InputField(
+                            label: loc.settingsFullName,
+                            controller: bloc.nameController,
+                            hasChanges: state.hasUnsavedChanges,
+                            onSave: state.busy ? null : () => _save(context),
                           ),
-                          label: loc.settingsChangeLanguage,
-                          textStyle: AppTextStyles.settingsActionWhite,
-                          onTap: () => _LanguagePickerSheet.show(context),
-                        ),
+                          const SizedBox(height: 16),
+                          _ReadonlyField(
+                            label: loc.settingsEmailAddress,
+                            controller: bloc.emailController,
+                          ),
 
-                        const SizedBox(height: 32),
+                          const SizedBox(height: 32),
 
-                        // ── Секция: Аккаунт ──
-                        _SectionLabel(label: loc.settingsAccount),
-                        const SizedBox(height: 12),
-                        _ActionRow(
-                          assetPath: AssetPaths.logoutIcon,
-                          fallbackIcon: Icons.logout_rounded,
-                          label: loc.settingsSignOut,
-                          textStyle: AppTextStyles.settingsActionWhite,
-                          onTap: state.busy ? null : () => _signOut(context),
-                        ),
-                        const SizedBox(height: 8),
-                        _ActionRow(
-                          assetPath: AssetPaths.deleteAccountIcon,
-                          fallbackIcon: Icons.delete_outline_rounded,
-                          label: loc.settingsDeleteAccount,
-                          textStyle: AppTextStyles.settingsActionDelete,
-                          onTap: state.busy
-                              ? null
-                              : () => _deleteAccount(context, bloc),
-                        ),
-                      ],
+                          // ── Секция: Настройки приложения ──
+                          _SectionLabel(label: loc.settingsAppSettings),
+                          const SizedBox(height: 12),
+                          _ActionRow(
+                            assetPath: '',
+                            fallbackIcon: Icons.language_rounded,
+                            leadingWidget: Text(
+                              _languageFlag(
+                                context
+                                        .watch<LocaleCubit>()
+                                        .state
+                                        ?.languageCode ??
+                                    Localizations.localeOf(
+                                      context,
+                                    ).languageCode,
+                              ),
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            label: loc.settingsChangeLanguage,
+                            textStyle: AppTextStyles.settingsActionWhite,
+                            onTap: () => _LanguagePickerSheet.show(context),
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // ── Секция: Аккаунт ──
+                          _SectionLabel(label: loc.settingsAccount),
+                          const SizedBox(height: 12),
+                          _ActionRow(
+                            assetPath: AssetPaths.logoutIcon,
+                            fallbackIcon: Icons.logout_rounded,
+                            label: loc.settingsSignOut,
+                            textStyle: AppTextStyles.settingsActionWhite,
+                            onTap: state.busy ? null : () => _signOut(context),
+                          ),
+                          const SizedBox(height: 8),
+                          _ActionRow(
+                            assetPath: AssetPaths.deleteAccountIcon,
+                            fallbackIcon: Icons.delete_outline_rounded,
+                            label: loc.settingsDeleteAccount,
+                            textStyle: AppTextStyles.settingsActionDelete,
+                            onTap: state.busy
+                                ? null
+                                : () => _deleteAccount(context, bloc),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),],
+                  ],
                 ),
               ),
             ),
@@ -293,60 +304,61 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-// ─── Avatar ──────────────────────────────────────────────────────────────────
-
-class _AvatarSection extends StatelessWidget {
-  const _AvatarSection({
-    required this.bloc,
-    required this.appUser,
-    required this.busy,
-  });
-
-  final SettingsBloc bloc;
-  final UserModel appUser;
-  final bool busy;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: GestureDetector(
-        onTap: busy ? null : bloc.pickAvatarFromGallery,
-        child: GlassRoundedPanel(
-          width: AppConstants.settingsAvatarWidth,
-          height: AppConstants.settingsAvatarHeight,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-              AppConstants.settingsGlassRadius,
-            ),
-            child: _avatarContent(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _avatarContent() {
-    final localImage = bloc.avatarImage();
-    if (localImage != null) {
-      return Image(
-        image: localImage,
-        fit: BoxFit.cover,
-        width: AppConstants.settingsAvatarWidth,
-        height: AppConstants.settingsAvatarHeight,
-      );
-    }
-    if (appUser.photoUrl.isNotEmpty) {
-      return Image.network(
-        appUser.photoUrl,
-        fit: BoxFit.cover,
-        width: AppConstants.settingsAvatarWidth,
-        height: AppConstants.settingsAvatarHeight,
-        errorBuilder: (_, _, _) => const ColoredBox(color: Colors.black26),
-      );
-    }
-    return const ColoredBox(color: Colors.black26);
-  }
-}
+// TODO(mvp): restore after MVP
+// // ─── Avatar ────────────────────────────────────────────────────────────────
+//
+// class _AvatarSection extends StatelessWidget {
+//   const _AvatarSection({
+//     required this.bloc,
+//     required this.appUser,
+//     required this.busy,
+//   });
+//
+//   final SettingsBloc bloc;
+//   final UserModel appUser;
+//   final bool busy;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: GestureDetector(
+//         onTap: busy ? null : bloc.pickAvatarFromGallery,
+//         child: GlassRoundedPanel(
+//           width: AppConstants.settingsAvatarWidth,
+//           height: AppConstants.settingsAvatarHeight,
+//           child: ClipRRect(
+//             borderRadius: BorderRadius.circular(
+//               AppConstants.settingsGlassRadius,
+//             ),
+//             child: _avatarContent(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _avatarContent() {
+//     final localImage = bloc.avatarImage();
+//     if (localImage != null) {
+//       return Image(
+//         image: localImage,
+//         fit: BoxFit.cover,
+//         width: AppConstants.settingsAvatarWidth,
+//         height: AppConstants.settingsAvatarHeight,
+//       );
+//     }
+//     if (appUser.photoUrl.isNotEmpty) {
+//       return Image.network(
+//         appUser.photoUrl,
+//         fit: BoxFit.cover,
+//         width: AppConstants.settingsAvatarWidth,
+//         height: AppConstants.settingsAvatarHeight,
+//         errorBuilder: (_, _, _) => const ColoredBox(color: Colors.black26),
+//       );
+//     }
+//     return const ColoredBox(color: Colors.black26);
+//   }
+// }
 
 // ─── Editable Input Field ────────────────────────────────────────────────────
 
@@ -529,12 +541,14 @@ class _LanguagePickerSheet extends StatelessWidget {
   const _LanguagePickerSheet();
 
   static void show(BuildContext context) {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const _LanguagePickerSheet(),
-    ));
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        useRootNavigator: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const _LanguagePickerSheet(),
+      ),
+    );
   }
 
   @override

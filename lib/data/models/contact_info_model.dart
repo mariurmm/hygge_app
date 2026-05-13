@@ -52,16 +52,16 @@ class ContactInfoModel {
   final String title;
 
   static const fallback = ContactInfoModel(
-    phoneDisplay: 'xxx',//+7 777 000 00 00
-    phoneUri: 'xxx',//tel:+77770000000
-    email: 'xxx',//hy.gge_concept@gmail.com
-    emailUri: 'xxx',//mailto:hy.gge_concept@gmail.com
-    instagramConceptLabel: 'xxx',//@hy.gge_concept
-    instagramConceptUrl: 'xxx',//https://instagram.com/hy.gge.concept
-    instagramBarLabel: 'xxx',//@hy.gge.specialty.bar
-    instagramBarUrl: 'xxx',//https://instagram.com/hy.gge.specialty.bar/
-    mapAddress: 'xxx',//Казахстан, Алматы, ул. Зенкова, 17
-    mapUrl: 'xxx',//https://maps.app.goo.gl/4bk3WANmFhNcCwXF7
-    title: 'xxx',//О нас
+    phoneDisplay: 'xxx', //+7 777 000 00 00
+    phoneUri: 'xxx', //tel:+77770000000
+    email: 'xxx', //hy.gge_concept@gmail.com
+    emailUri: 'xxx', //mailto:hy.gge_concept@gmail.com
+    instagramConceptLabel: 'xxx', //@hy.gge_concept
+    instagramConceptUrl: 'xxx', //https://instagram.com/hy.gge.concept
+    instagramBarLabel: 'xxx', //@hy.gge.specialty.bar
+    instagramBarUrl: 'xxx', //https://instagram.com/hy.gge.specialty.bar/
+    mapAddress: 'xxx', //Казахстан, Алматы, ул. Зенкова, 17
+    mapUrl: 'xxx', //https://maps.app.goo.gl/4bk3WANmFhNcCwXF7
+    title: 'xxx', //О нас
   );
 }

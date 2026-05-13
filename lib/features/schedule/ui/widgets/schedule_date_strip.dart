@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -59,10 +61,12 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
     final targetOffset = targetIndex * _itemWidth;
     final maxOffset = _controller.position.maxScrollExtent;
 
-    _controller.animateTo(
-      targetOffset.clamp(0, maxOffset).toDouble(),
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOut,
+    unawaited(
+      _controller.animateTo(
+        targetOffset.clamp(0, maxOffset).toDouble(),
+        duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOut,
+      ),
     );
   }
 
@@ -101,7 +105,10 @@ class _ScheduleDateStripState extends State<ScheduleDateStrip> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateFormat('E', Localizations.localeOf(context).toLanguageTag()).format(day).toUpperCase(),
+                    DateFormat(
+                      'E',
+                      Localizations.localeOf(context).toLanguageTag(),
+                    ).format(day).toUpperCase(),
                     style: TextStyle(
                       fontSize: 11,
                       height: 1,

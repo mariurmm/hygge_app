@@ -22,5 +22,4 @@ class AssetPaths {
   static const String chakraIcon = 'assets/png/chakra.png';
   static const String instagramIcon = 'assets/svg/instagram_icon.svg';
   static const String mapIcon = 'assets/svg/map.svg';
-
 }

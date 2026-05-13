@@ -8,6 +8,7 @@ import 'package:hygge_app/core/utils/external_links.dart';
 import 'package:hygge_app/data/models/contact_info_model.dart';
 import 'package:hygge_app/data/repositories/app_config_repository.dart';
 import 'package:hygge_app/di/injection.dart';
+
 class ProfileAboutSection extends StatelessWidget {
   const ProfileAboutSection({super.key});
 
@@ -47,8 +48,7 @@ class ProfileAboutSection extends StatelessWidget {
             _LinkRow(
               icon: SvgPicture.asset(AssetPaths.instagramIcon),
               label: contactInfo.instagramConceptLabel,
-              onTap: () =>
-              launchExternalUrl(contactInfo.instagramConceptUrl),
+              onTap: () => launchExternalUrl(contactInfo.instagramConceptUrl),
             ),
             const SizedBox(height: AppSpacings.scheduleCardTextGapV),
             _LinkRow(

@@ -41,9 +41,8 @@ final class ScheduleState extends Equatable {
   double get progress =>
       totalSessions == 0 ? 0 : completedSessions / totalSessions;
 
-  Set<DateTime> get scheduledDates => bookedLessons
-      .map((lesson) => _dayOnly(lesson.calendarDay))
-      .toSet();
+  Set<DateTime> get scheduledDates =>
+      bookedLessons.map((lesson) => _dayOnly(lesson.calendarDay)).toSet();
 
   List<LessonModel> get selectedDayLessons {
     final selected = _dayOnly(selectedDay);

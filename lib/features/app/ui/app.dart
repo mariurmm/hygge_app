@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
@@ -12,6 +11,17 @@ import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/locale_cubit.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
+
+class NoGlowScrollBehavior extends ScrollBehavior {
+  const NoGlowScrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) => child;
+}
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -50,7 +60,7 @@ class App extends StatelessWidget {
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
           ),
-          scrollBehavior: const CupertinoScrollBehavior(),
+          scrollBehavior: const NoGlowScrollBehavior(),
           routerConfig: router,
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,

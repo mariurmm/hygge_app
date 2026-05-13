@@ -8,9 +8,9 @@ import 'package:hygge_app/core/theme/app_colors.dart';
 class GlassRoundedPanel extends StatelessWidget {
   const GlassRoundedPanel({
     required this.width,
-    this.height,
     required this.child,
     super.key,
+    this.height,
     this.borderRadius = AppConstants.settingsGlassRadius,
     this.padding,
   });

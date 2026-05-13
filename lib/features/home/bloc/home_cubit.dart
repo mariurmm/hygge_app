@@ -28,12 +28,16 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadUpcoming() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final lessons = await _upcomingRepo.fetchBookings(status: 'booked');
+      final allLessons = await _upcomingRepo.fetchBookings(status: 'booked');
 
-      final programIds = lessons
-          .map((l) => l.programId)
-          .where((id) => id.isNotEmpty)
-          .toSet();
+      // Keep one lesson per program (earliest date wins) to avoid duplicates.
+      final seenProgramIds = <String>{};
+      final lessons = allLessons.where((l) {
+        if (l.programId.isEmpty) return false;
+        return seenProgramIds.add(l.programId);
+      }).toList();
+
+      final programIds = seenProgramIds;
 
       final programsById = <String, ProgramModel>{};
       for (final id in programIds) {

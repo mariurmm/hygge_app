@@ -53,7 +53,9 @@ final class _ScheduleView extends StatelessWidget {
                 Expanded(
                   child: BlocBuilder<ScheduleBloc, ScheduleState>(
                     builder: (context, state) {
-                      return RefreshIndicator.adaptive(
+                      return RefreshIndicator(
+                        color: Colors.white,
+                        backgroundColor: Colors.black54,
                         onRefresh: () async {
                           context.read<ScheduleBloc>().add(
                             const ScheduleRefreshRequested(),

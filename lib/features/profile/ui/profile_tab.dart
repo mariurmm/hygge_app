@@ -4,9 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
-import 'package:hygge_app/data/repositories/booking_repository.dart';
-import 'package:hygge_app/data/repositories/schedule_repository.dart';
-import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app/bloc/app_state.dart'
     show AppState, AppStatus;
@@ -24,13 +21,7 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProfileBloc(
-        bookingRepository: getIt<BookingRepository>(),
-        scheduleRepository: getIt<ScheduleRepository>(),
-        user: context.read<AppBloc>().state.user,
-      ),
-      child: MultiBlocListener(
+    return MultiBlocListener(
         listeners: [
           BlocListener<AppBloc, AppState>(
             listenWhen: (p, c) => p.user != c.user,
@@ -70,6 +61,8 @@ class ProfileTab extends StatelessWidget {
                     child: SafeArea(
                       child: HyggeScreenLayout(
                         header: const ProfileProgramsHeader(),
+                        onRefresh: () =>
+                            context.read<ProfileBloc>().refresh(),
                         children: [
                           ProfileStatusSection(state: state, loc: loc),
                           const ProfileFavouritesSection(),
@@ -90,7 +83,6 @@ class ProfileTab extends StatelessWidget {
             );
           },
         ),
-      ),
     );
   }
 }

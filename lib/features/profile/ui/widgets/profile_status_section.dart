@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+// TODO(mvp): restore after MVP
+// import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
-import 'package:hygge_app/core/router/route_names.dart';
+// TODO(mvp): restore after MVP
+// import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';
-import 'package:hygge_app/features/profile/ui/widgets/profile_account_subscription_card.dart';
+// TODO(mvp): restore after MVP
+// import 'package:hygge_app/features/profile/ui/widgets/profile_account_subscription_card.dart';
 import 'package:hygge_app/features/profile/ui/widgets/profile_monthly_travel_card.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
 class ProfileStatusSection extends StatelessWidget {
-
   const ProfileStatusSection({
     required this.state,
     required this.loc,
@@ -30,8 +32,8 @@ class ProfileStatusSection extends StatelessWidget {
         children: [
           Text(
             state.isPremium
-            ? loc.profileStatusPremium
-            : loc.profileStatusStandard,
+                ? loc.profileStatusPremium
+                : loc.profileStatusStandard,
             style: AppTextStyles.programsSubtitle,
           ),
           const SizedBox(
@@ -44,23 +46,19 @@ class ProfileStatusSection extends StatelessWidget {
           const SizedBox(
             height: AppSpacings.profileNameCardGap,
           ),
-          ProfileAccountSubscriptionCard(
-            onTap: () => context.push(
-              RouteNames.subscription,
-            ),
-          ),
-          const SizedBox(
-            height: AppSpacings.profileCardsVerticalGap,
-          ),
+          // TODO(mvp): restore after MVP
+          // ProfileAccountSubscriptionCard(
+          //   onTap: () => context.push(RouteNames.subscription),
+          // ),
+          // const SizedBox(height: AppSpacings.profileCardsVerticalGap),
           ProfileMonthlyTravelCard(
             percent: state.travelProgressPercent,
-            description: loc
-            .profileMonthlySessionsCompleted(
+            description: loc.profileMonthlySessionsCompleted(
               state.sessionsCompletedThisMonth,
             ),
             goalLine: loc.profileGoalSessions(
               state.goalSessionsTotal,
-              ),
+            ),
           ),
         ],
       ),

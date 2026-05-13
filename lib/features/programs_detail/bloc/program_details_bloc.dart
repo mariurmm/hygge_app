@@ -116,7 +116,8 @@ class ProgramDetailsBloc
     ProgramDetailsBooked event,
     Emitter<ProgramDetailsState> emit,
   ) async {
-    if (event.lesson.isEmpty || state.bookedLessonIds.contains(event.lesson.id)) {
+    if (event.lesson.isEmpty ||
+        state.bookedLessonIds.contains(event.lesson.id)) {
       return;
     }
 

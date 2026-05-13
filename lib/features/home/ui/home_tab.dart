@@ -39,11 +39,19 @@ class MainTab extends StatelessWidget {
               children: [
                 const ProgramsHeader(trailing: _NotificationsBell()),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                      bottom: AppConstants.programsCardsBottomInset,
-                    ),
-                    child: Column(
+                  child: RefreshIndicator(
+                    color: Colors.white,
+                    backgroundColor: Colors.black54,
+                    onRefresh: () =>
+                        context.read<HomeCubit>().loadUpcoming(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: ClampingScrollPhysics(),
+                      ),
+                      padding: const EdgeInsets.only(
+                        bottom: AppConstants.programsCardsBottomInset,
+                      ),
+                      child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
@@ -214,6 +222,7 @@ class MainTab extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
               ],
             ),
           ),

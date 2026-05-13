@@ -6,7 +6,6 @@ import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 
 class ProfileProgramsHeader extends StatelessWidget {
-
   const ProfileProgramsHeader({super.key, this.onSettingsTap});
   final VoidCallback? onSettingsTap;
 
