@@ -9,6 +9,7 @@ enum ProgramFilter {
   masterClass,
   lecture,
   authorTour,
+  masters,
 }
 
 class ProgramsState extends Equatable {
@@ -26,17 +27,33 @@ class ProgramsState extends Equatable {
   final Map<String, LessonModel> nearestLessonsByProgramId;
   final Map<String, MasterModel> mastersById;
 
+  bool get isMastersFilterSelected {
+    return selectedFilter == ProgramFilter.masters;
+  }
+
+  List<MasterModel> get visibleMasters {
+    final masters = mastersById.values
+        .where((master) => master.isNotEmpty)
+        .toList(growable: false)
+
+    ..sort((a, b) => a.fullName.compareTo(b.fullName));
+
+    return masters;
+  }
+
   List<ProgramModel> get visiblePrograms {
     if (selectedFilter == ProgramFilter.all) {
       return allPrograms;
     }
 
+    if (selectedFilter == ProgramFilter.masters) {
+      return const <ProgramModel>[];
+    }
+
     final category = _categoryByFilter(selectedFilter);
 
     return allPrograms
-        .where((program) {
-          return program.category == category;
-        })
+        .where((program) => program.category == category)
         .toList(growable: false);
   }
 
@@ -75,7 +92,7 @@ class ProgramsState extends Equatable {
       ProgramFilter.masterClass => ProgramCategory.masterClass,
       ProgramFilter.lecture => ProgramCategory.lecture,
       ProgramFilter.authorTour => ProgramCategory.authorTour,
-      ProgramFilter.all => ProgramCategory.yoga,
+      ProgramFilter.all || ProgramFilter.masters => ProgramCategory.yoga,
     };
   }
 }

@@ -14,10 +14,13 @@ import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/features/masters/ui/master_details_page.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_bloc.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_state.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
+import 'package:hygge_app/widgets/base_layout.dart';
+import 'package:hygge_app/widgets/tab_header.dart';
 import 'package:intl/intl.dart';
 
 class ProgramDetailsPage extends StatelessWidget {
@@ -35,10 +38,10 @@ class ProgramDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProgramDetailsBloc>(
-      create: (ctx) =>
+      create: (context) =>
           ProgramDetailsBloc(
-            favouritesRepository: ctx.read<FavouritesRepository>(),
-            bookingRepository: ctx.read<UpcomingLessonRepository>(),
+            favouritesRepository: context.read<FavouritesRepository>(),
+            bookingRepository: context.read<UpcomingLessonRepository>(),
           )..add(
             ProgramDetailsStarted(
               program: program,
@@ -72,97 +75,120 @@ class ProgramDetailsView extends StatelessWidget {
           final isBooked = state.isSelectedLessonBooked;
 
           return Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: Colors.transparent,
             extendBody: true,
             extendBodyBehindAppBar: true,
             body: Stack(
-              fit: StackFit.expand,
               children: <Widget>[
-                Image.asset(
-                  AssetPaths.homeBackground,
-                  fit: BoxFit.cover,
+                Positioned.fill(
+                  child: Image.asset(
+                    AssetPaths.homeBackground,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                      bottom: AppConstants.profileCardsBottomInset,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppPaddings.profileScreenHorizontal,
+                Positioned.fill(
+                  child: SafeArea(
+                    bottom: false,
+                    child: HyggeScreenLayout(
+                      header: ProgramsHeader(
+                        trailing: const SizedBox.shrink(),
+                        leading: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth:
+                                AppConstants.profileProgramsHeaderIconSize,
+                            minHeight:
+                                AppConstants.profileProgramsHeaderIconSize,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Image.asset(
+                            AssetPaths.arrowBack,
+                            width: AppConstants.arrowBackIconSize,
+                            height: AppConstants.arrowBackIconSize,
+                            errorBuilder: (_, _, _) => const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _InnerHeader(
-                            onBack: () => Navigator.of(context).pop(),
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppPaddings.profileScreenHorizontal,
                           ),
-                          const SizedBox(height: 18),
-                          _ProgramTitleBlock(program: program),
-                          const SizedBox(
-                            height: AppSpacings.profileNameCardGap,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const SizedBox(height: 24),
+                              _ProgramTitleBlock(program: program),
+                              const SizedBox(
+                                height: AppSpacings.profileNameCardGap,
+                              ),
+                              _SectionTitle(
+                                text: _text(context, 'description'),
+                              ),
+                              const SizedBox(height: 12),
+                              _GlassBlock(
+                                child: Text(
+                                  program.text,
+                                  softWrap: true,
+                                  style: AppTextStyles.programsCardDescription
+                                      .copyWith(height: 1.36),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: AppSpacings.profileCardsVerticalGap,
+                              ),
+                              _SectionTitle(text: _text(context, 'master')),
+                              const SizedBox(height: 12),
+                              _MasterCard(master: master),
+                              const SizedBox(
+                                height: AppSpacings.profileCardsVerticalGap,
+                              ),
+                              _SectionTitle(text: _text(context, 'dates')),
+                              const SizedBox(height: 8),
+                              Text(
+                                _text(context, 'chooseDate'),
+                                style: AppTextStyles.programsCardDescription,
+                              ),
+                              const SizedBox(height: 12),
+                              _LessonDatesPanel(
+                                lessons: state.availableLessons,
+                                selectedLesson: selectedLesson,
+                                bookedLessonIds: state.bookedLessonIds,
+                                programPrice: program.price,
+                                emptyText: _text(context, 'noDates'),
+                                alreadyBookedText: _text(
+                                  context,
+                                  'alreadyBooked',
+                                ),
+                                locale: locale,
+                              ),
+                              const SizedBox(
+                                height: AppSpacings.profileCardsVerticalGap,
+                              ),
+                              _BottomActions(
+                                program: program,
+                                selectedLesson: selectedLesson,
+                                isBooked: isBooked,
+                                isBooking: state.isBooking,
+                                isFavourite: state.isFavourite,
+                                bookText: _text(context, 'book'),
+                                bookingText: _text(context, 'booking'),
+                                alreadyBookedText: _text(
+                                  context,
+                                  'alreadyBooked',
+                                ),
+                                comingSoonText: loc.comingSoon,
+                              ),
+                              const SizedBox(
+                                height: AppConstants.profileCardsBottomInset,
+                              ),
+                            ],
                           ),
-                          _SectionTitle(
-                            text: _text(context, 'description'),
-                          ),
-                          const SizedBox(height: 12),
-                          _GlassBlock(
-                            child: Text(
-                              program.text,
-                              softWrap: true,
-                              style: AppTextStyles.programsCardDescription
-                                  .copyWith(height: 1.36),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          _SectionTitle(text: _text(context, 'master')),
-                          const SizedBox(height: 12),
-                          _MasterCard(master: master),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          _SectionTitle(text: _text(context, 'dates')),
-                          const SizedBox(height: 8),
-                          Text(
-                            _text(context, 'chooseDate'),
-                            style: AppTextStyles.programsCardDescription,
-                          ),
-                          const SizedBox(height: 12),
-                          _LessonDatesPanel(
-                            lessons: state.availableLessons,
-                            selectedLesson: selectedLesson,
-                            bookedLessonIds: state.bookedLessonIds,
-                            programPrice: program.price,
-                            emptyText: _text(context, 'noDates'),
-                            alreadyBookedText: _text(
-                              context,
-                              'alreadyBooked',
-                            ),
-                            locale: locale,
-                          ),
-                          const SizedBox(
-                            height: AppSpacings.profileCardsVerticalGap,
-                          ),
-                          _BottomActions(
-                            program: program,
-                            selectedLesson: selectedLesson,
-                            isBooked: isBooked,
-                            isBooking: state.isBooking,
-                            isFavourite: state.isFavourite,
-                            bookText: _text(context, 'book'),
-                            bookingText: _text(context, 'booking'),
-                            alreadyBookedText: _text(
-                              context,
-                              'alreadyBooked',
-                            ),
-                            comingSoonText: loc.comingSoon,
-                          ),
-                          const SizedBox(height: 32),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -176,7 +202,9 @@ class ProgramDetailsView extends StatelessWidget {
 }
 
 class _ProgramTitleBlock extends StatelessWidget {
-  const _ProgramTitleBlock({required this.program});
+  const _ProgramTitleBlock({
+    required this.program,
+  });
 
   final ProgramModel program;
 
@@ -204,7 +232,9 @@ class _ProgramTitleBlock extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.text});
+  const _SectionTitle({
+    required this.text,
+  });
 
   final String text;
 
@@ -213,6 +243,81 @@ class _SectionTitle extends StatelessWidget {
     return Text(
       text,
       style: AppTextStyles.programsHeading.copyWith(fontSize: 22),
+    );
+  }
+}
+
+class _MasterCard extends StatelessWidget {
+  const _MasterCard({
+    required this.master,
+  });
+
+  final MasterModel master;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(26),
+      child: InkWell(
+        onTap: master.isEmpty
+            ? null
+            : () async {
+                await openMasterDetails(context, master: master);
+              },
+        borderRadius: BorderRadius.circular(26),
+        child: _GlassBlock(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: AppColors.programsCardMedia,
+                backgroundImage: master.photoUrl.isNotEmpty
+                    ? NetworkImage(master.photoUrl)
+                    : null,
+                child: master.photoUrl.isEmpty
+                    ? const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      )
+                    : null,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      master.fullName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.programsCardTitle,
+                    ),
+                    if (master.bio.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: 6),
+                      Text(
+                        master.bio,
+                        softWrap: true,
+                        style: AppTextStyles.programsCardDescription.copyWith(
+                          fontSize: 14,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: Colors.white.withValues(alpha: 0.72),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -298,9 +403,7 @@ class _LessonDateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat('d MMMM, EEEE', locale).format(
-      lesson.startDate,
-    );
+    final date = DateFormat('d MMMM, EEEE', locale).format(lesson.startDate);
     final time = lesson.scheduleTimeRange(locale: locale);
     final formattedPrice = _formatPrice(price);
 
@@ -388,59 +491,6 @@ class _LessonDateCard extends StatelessWidget {
   }
 }
 
-class _MasterCard extends StatelessWidget {
-  const _MasterCard({required this.master});
-
-  final MasterModel master;
-
-  @override
-  Widget build(BuildContext context) {
-    return _GlassBlock(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: AppColors.programsCardMedia,
-            backgroundImage: master.photoUrl.isNotEmpty
-                ? NetworkImage(master.photoUrl)
-                : null,
-            child: master.photoUrl.isEmpty
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  master.fullName,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.programsCardTitle,
-                ),
-                if (master.bio.isNotEmpty) ...<Widget>[
-                  const SizedBox(height: 6),
-                  Text(
-                    master.bio,
-                    softWrap: true,
-                    style: AppTextStyles.programsCardDescription.copyWith(
-                      fontSize: 14,
-                      height: 1.3,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _BottomActions extends StatelessWidget {
   const _BottomActions({
     required this.program,
@@ -523,46 +573,6 @@ class _BottomActions extends StatelessWidget {
   }
 }
 
-class _InnerHeader extends StatelessWidget {
-  const _InnerHeader({required this.onBack});
-
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56,
-      child: Row(
-        children: <Widget>[
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(
-              minWidth: 44,
-              minHeight: 44,
-            ),
-            onPressed: onBack,
-            icon: Image.asset(
-              AssetPaths.arrowBack,
-              width: AppConstants.programsHeaderIconSize,
-              height: AppConstants.programsHeaderIconSize,
-              errorBuilder: (_, _, _) => const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: AppConstants.programsHeaderIconSize,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'hygge concept',
-            style: AppTextStyles.programsLogo.copyWith(fontSize: 20),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _GlassBlock extends StatelessWidget {
   const _GlassBlock({
     required this.child,
@@ -599,7 +609,9 @@ class _GlassBlock extends StatelessWidget {
 }
 
 class _DisabledButton extends StatelessWidget {
-  const _DisabledButton({required this.text});
+  const _DisabledButton({
+    required this.text,
+  });
 
   final String text;
 

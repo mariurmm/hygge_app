@@ -100,6 +100,15 @@ class _AppShellState extends State<AppShell>
   Widget build(BuildContext context) {
     final selectedIndex = _currentIndex(context);
 
+    final location = GoRouterState.of(context).uri.toString();
+
+    final hideNavBar =
+        location.contains('settings') ||
+        location.contains('notifications') ||
+        location.contains('history') ||
+        location.contains('program-details') ||
+        location.contains('master-details');
+
     if (selectedIndex != _lastIndex && !_animationController.isAnimating) {
       _lastIndex = selectedIndex;
       _animation = ConstantTween<double>(
@@ -130,24 +139,30 @@ class _AppShellState extends State<AppShell>
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: widget.child),
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 22,
-            child: AnimatedBuilder(
-              animation: _animation,
-              builder: (context, _) {
-                return _FloatingNavBar(
-                  tabs: tabs,
-                  currentIndexValue: _animation.value,
-                  targetIndex: selectedIndex,
-                  onTabTapped: (index) => _onTabTapped(context, index),
-                  colorWithOpacity: colorWithOpacity,
-                );
-              },
-            ),
+          Positioned.fill(
+            child: widget.child,
           ),
+
+          if (!(widget.child.runtimeType.toString() == 'ProgramDetailsPage' ||
+              widget.child.runtimeType.toString() == 'MasterDetailsPage'))
+            if (!hideNavBar)
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 22,
+                child: AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, _) {
+                    return _FloatingNavBar(
+                      tabs: tabs,
+                      currentIndexValue: _animation.value,
+                      targetIndex: selectedIndex,
+                      onTabTapped: (index) => _onTabTapped(context, index),
+                      colorWithOpacity: colorWithOpacity,
+                    );
+                  },
+                ),
+              ),
         ],
       ),
     );

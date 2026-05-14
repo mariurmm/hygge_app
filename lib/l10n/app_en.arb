@@ -405,5 +405,25 @@
   "scheduleEmptyDescription": "Choose another date or book a new session.",
   "@scheduleEmptyDescription": {
     "description": "Empty state description when there are no sessions"
+  },
+  "masters": "Masters",
+  "@masters": {
+    "description": "Masters filter title"
+  },
+  "masterPrograms": "Master programs",
+  "@masterPrograms": {
+    "description": "Title for master programs section"
+  },
+  "aboutMaster": "About master",
+  "@aboutMaster": {
+    "description": "About master page title"
+  },
+  "masterNotFound": "Master not found",
+  "@masterNotFound": {
+    "description": "Message when masters list is empty"
+  },
+  "noMasterPrograms": "This master has no programs yet",
+  "@noMasterPrograms": {
+    "description": "Empty state when selected master has no programs"
   }
 }

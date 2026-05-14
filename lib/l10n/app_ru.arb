@@ -149,5 +149,25 @@
   "scheduleEmptyDescription": "Выберите другую дату или запишитесь на новую практику.",
   "@scheduleEmptyDescription": {
     "description": "Empty state description when no sessions"
+  },
+  "masters": "Мастера",
+  "@masters": {
+    "description": "Masters filter title"
+  },
+  "masterPrograms": "Программы мастера",
+  "@masterPrograms": {
+    "description": "Title for master programs section"
+  },
+  "aboutMaster": "О мастере",
+  "@aboutMaster": {
+    "description": "About master page title"
+  },
+  "masterNotFound": "Мастера не найдены",
+  "@masterNotFound": {
+    "description": "Message when masters list is empty"
+  },
+  "noMasterPrograms": "У этого мастера пока нет программ",
+  "@noMasterPrograms": {
+    "description": "Empty state when selected master has no programs"
   }
 }
