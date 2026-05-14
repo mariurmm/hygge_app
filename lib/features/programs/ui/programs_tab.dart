@@ -7,6 +7,7 @@ import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
+import 'package:hygge_app/features/programs/ui/programs_masters_list.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/base_layout.dart';
@@ -39,6 +40,7 @@ class ProgramsTab extends StatelessWidget {
               loc.filterMasterClass,
               loc.filterLecture,
               loc.filterAuthorTour,
+              loc.masters,
             ];
 
             return Scaffold(
@@ -124,17 +126,27 @@ class ProgramsTab extends StatelessWidget {
                           ),
 
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppPaddings.programsScreenHorizontal,
-                            ),
-                            child: ProgrammList(
-                              type: ProgrammCardType.big,
-                              programs: state.visiblePrograms,
-                              lessonsByProgramId:
-                                  state.nearestLessonsByProgramId,
-                              mastersById: state.mastersById,
-                            ),
-                          ),
+  padding: const EdgeInsets.symmetric(
+    horizontal: AppPaddings.programsScreenHorizontal,
+  ),
+  child: AnimatedSwitcher(
+    duration: const Duration(milliseconds: 220),
+    switchInCurve: Curves.easeOutCubic,
+    switchOutCurve: Curves.easeInCubic,
+    child: state.isMastersFilterSelected
+        ? ProgramsMastersList(
+            key: const ValueKey<String>('programs-masters'),
+            masters: state.visibleMasters,
+          )
+        : ProgrammList(
+            key: ValueKey<ProgramFilter>(state.selectedFilter),
+            type: ProgrammCardType.big,
+            programs: state.visiblePrograms,
+            lessonsByProgramId: state.nearestLessonsByProgramId,
+            mastersById: state.mastersById,
+          ),
+  ),
+),
                         ],
                       ),
                     ),

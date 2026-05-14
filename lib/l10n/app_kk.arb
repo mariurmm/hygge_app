@@ -152,5 +152,25 @@
   "scheduleEmptyDescription": "Басқа күнді таңдаңыз немесе жаңа сеансқа жазылыңыз.",
   "@scheduleEmptyDescription": {
     "description": "Сеанстар болмаған кездегі сипаттама"
+  },
+  "masters": "Шеберлер",
+  "@masters": {
+    "description": "Masters filter title"
+  },
+  "masterPrograms": "Шебер бағдарламалары",
+  "@masterPrograms": {
+    "description": "Title for master programs section"
+  },
+  "aboutMaster": "Шебер туралы",
+  "@aboutMaster": {
+    "description": "About master page title"
+  },
+  "masterNotFound": "Шеберлер табылмады",
+  "@masterNotFound": {
+    "description": "Message when masters list is empty"
+  },
+  "noMasterPrograms": "Бұл шеберде әзірге бағдарламалар жоқ",
+  "@noMasterPrograms": {
+    "description": "Empty state when selected master has no programs"
   }
 }

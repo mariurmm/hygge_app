@@ -16,4 +16,9 @@ abstract class ProgramsRepository {
     String programId, {
     String locale = LocalizedValue.defaultLocale,
   });
+
+  Future<List<ProgramModel>> fetchProgramsByMasterId(
+    String masterId, {
+    String locale = LocalizedValue.defaultLocale,
+  });
 }

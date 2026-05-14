@@ -118,4 +118,30 @@ class ProgramsRepositoryImpl
       Error.throwWithStackTrace(error, stackTrace);
     };
   }
+
+  @override
+  Future<List<ProgramModel>> fetchProgramsByMasterId(
+    String masterId, {
+    String locale = LocalizedValue.defaultLocale,
+  }) {
+    return execute(
+      actionName: 'ProgramsRepository.fetchProgramsByMasterId',
+      action: () async {
+        final normalizedMasterId = masterId.trim();
+
+        if (normalizedMasterId.isEmpty) {
+          return const <ProgramModel>[];
+        }
+
+        final snapshot = await _programs
+            .where('isActive', isEqualTo: true)
+            .where('masterId', isEqualTo: normalizedMasterId)
+            .get();
+
+        return snapshot.docs
+            .map((doc) => _programFromDoc(doc, locale: locale))
+            .toList(growable: false);
+      },
+    );
+  }
 }

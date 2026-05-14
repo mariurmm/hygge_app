@@ -22,7 +22,7 @@ class ProgramFilterButton extends StatelessWidget {
 
   Color _backgroundColor() {
     if (!isSelected) return AppColors.programsFilterUnselected;
-    if (isAllPrograms) return AppColors.programsFilterAllSelected;
+    if (isAllPrograms) return AppColors.programsFilterCategorySelected;
     return AppColors.programsFilterCategorySelected;
   }
 
