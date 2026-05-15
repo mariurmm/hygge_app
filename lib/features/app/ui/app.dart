@@ -14,7 +14,6 @@ import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 
-
 class NoGlowScrollBehavior extends ScrollBehavior {
   const NoGlowScrollBehavior();
 
@@ -66,19 +65,33 @@ class App extends StatelessWidget {
           },
         ),
       ],
-      child: BlocListener<LocaleCubit, Locale?>(
-        listenWhen: (previous, current) {
-          return previous?.languageCode != current?.languageCode;
-        },
-        listener: (context, locale) {
-          final languageCode = locale?.languageCode;
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<LocaleCubit, Locale?>(
+            listenWhen: (previous, current) {
+              return previous?.languageCode != current?.languageCode;
+            },
+            listener: (context, locale) {
+              final languageCode = locale?.languageCode;
 
-          if (languageCode == null) return;
+              if (languageCode == null) return;
 
-          context.read<ProgramsBloc>().add(
-            ProgramsLocaleChanged(languageCode),
-          );
-        },
+              context.read<ProgramsBloc>().add(
+                ProgramsLocaleChanged(languageCode),
+              );
+            },
+          ),
+          BlocListener<ProgramsBloc, ProgramsState>(
+            listenWhen: (previous, current) {
+              return previous.allPrograms != current.allPrograms;
+            },
+            listener: (context, state) {
+              context.read<FavouritesBloc>().add(
+                FavouritesLessonsRegistered(state.allPrograms),
+              );
+            },
+          ),
+        ],
         child: BlocBuilder<LocaleCubit, Locale?>(
           builder: (context, locale) {
             return MaterialApp.router(

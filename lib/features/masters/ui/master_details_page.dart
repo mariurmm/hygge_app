@@ -14,7 +14,6 @@ import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/base_layout.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 
-
 class MasterDetailsPage extends StatefulWidget {
   const MasterDetailsPage({
     required this.master,
@@ -257,14 +256,16 @@ Future<void> openMasterDetails(
 
   final repository = context.read<ProgramsRepository>();
 
-  await Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) {
+  await Navigator.of(context, rootNavigator: true).push(
+    PageRouteBuilder<void>(
+      pageBuilder: (_, __, ___) {
         return MasterDetailsPage(
           master: master,
           repository: repository,
         );
       },
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
     ),
   );
 }

@@ -119,17 +119,27 @@ class UpcomingLessonRepositoryImpl
       if (uid == null) return const <LessonModel>[];
 
       var query = _bookings(uid) as Query<Map<String, dynamic>>;
+
       if (status != null) {
         query = query.where('status', isEqualTo: status);
       }
 
+      final now = DateTime.now();
       final snapshot = await query.get();
+
       final result = <LessonModel>[];
+
       for (final doc in snapshot.docs) {
         final lesson = await _lessonFromBooking(doc);
-        if (lesson != null) result.add(lesson);
+
+        if (lesson == null) continue;
+        if (lesson.startDate.isBefore(now)) continue;
+
+        result.add(lesson);
       }
+
       result.sort((a, b) => a.startDate.compareTo(b.startDate));
+
       return result;
     },
   );
