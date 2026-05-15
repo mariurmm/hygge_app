@@ -41,6 +41,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isLoading: true));
 
     try {
+      final now = DateTime.now();
       final allLessons = await _upcomingRepo.fetchBookings(status: 'booked');
 
       final seenProgramIds = <String>{};
@@ -48,6 +49,8 @@ class HomeCubit extends Cubit<HomeState> {
       final lessons = allLessons
           .where((lesson) {
             if (lesson.programId.isEmpty) return false;
+            if (lesson.startDate.isBefore(now)) return false;
+
             return seenProgramIds.add(lesson.programId);
           })
           .toList(growable: false);

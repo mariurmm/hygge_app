@@ -56,13 +56,15 @@ class ProgrammCard extends StatelessWidget {
 
   void _openDetails(BuildContext context) {
     unawaited(
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => ProgramDetailsPage(
+      Navigator.of(context, rootNavigator: true).push(
+        PageRouteBuilder<void>(
+          pageBuilder: (_, __, ___) => ProgramDetailsPage(
             program: program,
             lesson: lesson ?? LessonModel.empty,
             master: master ?? MasterModel.empty,
           ),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         ),
       ),
     );
