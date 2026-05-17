@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/notification_model.dart';
-import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
+import 'package:hygge_app/data/repositories/notification_repository.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
 
 part 'notifications_event.dart';

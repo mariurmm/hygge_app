@@ -2,16 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/utils/parse_utils.dart';
 import 'package:hygge_app/data/models/notification_model.dart';
-import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: NotificationRepository)
-class NotificationRepositoryImpl implements NotificationRepository {
-  NotificationRepositoryImpl({
+@LazySingleton()
+class NotificationRepository {
+  NotificationRepository({
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
-  }) : _firestore = firestore,
-       _auth = auth;
+  })  : _firestore = firestore,
+        _auth = auth;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
@@ -21,9 +20,11 @@ class NotificationRepositoryImpl implements NotificationRepository {
   CollectionReference<Map<String, dynamic>> _userCollection(
     String uid,
     String collection,
-  ) => _firestore.collection('users').doc(uid).collection(collection);
+  ) =>
+      _firestore.collection('users').doc(uid).collection(collection);
 
-  @override
+  // ── Public API ────────────────────────────────────────────────
+
   Stream<List<NotificationItem>> watchNotifications() {
     final uid = _currentUserId;
     if (uid == null) return Stream.value(const <NotificationItem>[]);
@@ -36,26 +37,22 @@ class NotificationRepositoryImpl implements NotificationRepository {
         );
   }
 
-  @override
   Future<void> markNotificationAsRead(String id) async {
     final uid = _currentUserId;
     if (uid == null || id.isEmpty) return;
 
-    await _userCollection(
-      uid,
-      'notifications',
-    ).doc(id).set({'isRead': true}, SetOptions(merge: true));
+    await _userCollection(uid, 'notifications')
+        .doc(id)
+        .set({'isRead': true}, SetOptions(merge: true));
   }
 
-  @override
   Future<void> markAllNotificationsAsRead() async {
     final uid = _currentUserId;
     if (uid == null) return;
 
-    final snapshot = await _userCollection(
-      uid,
-      'notifications',
-    ).where('isRead', isEqualTo: false).get();
+    final snapshot = await _userCollection(uid, 'notifications')
+        .where('isRead', isEqualTo: false)
+        .get();
 
     final batch = _firestore.batch();
     for (final doc in snapshot.docs) {
@@ -64,13 +61,14 @@ class NotificationRepositoryImpl implements NotificationRepository {
     await batch.commit();
   }
 
-  @override
   Future<void> removeNotification(String id) async {
     final uid = _currentUserId;
     if (uid == null || id.isEmpty) return;
 
     await _userCollection(uid, 'notifications').doc(id).delete();
   }
+
+  // ── Helpers ──────────────────────────────────────────────────
 
   NotificationItem _notificationFromDocument(
     QueryDocumentSnapshot<Map<String, dynamic>> doc,

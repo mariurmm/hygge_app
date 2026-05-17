@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hygge_app/core/router/route_names.dart';
+import 'package:hygge_app/core/services/whatsapp_service.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
-import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
+import 'package:hygge_app/data/repositories/notification_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app_shell/app_shell.dart';
-import 'package:hygge_app/features/booking/cubit/booking_cubit.dart';
+import 'package:hygge_app/features/booking/bloc/booking_bloc.dart';
 import 'package:hygge_app/features/history/ui/history_screen.dart';
 import 'package:hygge_app/features/home/bloc/home_cubit.dart';
 import 'package:hygge_app/features/home/ui/home_tab.dart';
@@ -25,7 +26,7 @@ import 'package:hygge_app/features/schedule/cubit/schedule_cubit.dart';
 import 'package:hygge_app/features/schedule/ui/schedule_tab.dart';
 import 'package:hygge_app/features/settings/ui/settings_screen.dart';
 import 'package:hygge_app/features/splash/ui/splash_screen.dart';
-import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
+import 'package:hygge_app/features/subscription/bloc/subscription_bloc.dart';
 // TODO(mvp): restore after MVP
 // import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
 
@@ -68,15 +69,17 @@ class AppRouter {
                       userId: userId,
                     ),
                   ),
-                  BlocProvider<BookingCubit>(
-                    create: (_) => BookingCubit(
+                  BlocProvider<BookingBloc>(
+                    create: (ctx) => BookingBloc(
                       bookingRepo: bookingRepo,
                       subscriptionRepo: subscriptionRepo,
+                      upcomingLessonRepo: ctx.read<UpcomingLessonRepository>(),
                       userId: userId,
+                      whatsAppService: getIt<WhatsAppService>(),
                     ),
                   ),
-                  BlocProvider<SubscriptionCubit>(
-                    create: (_) => SubscriptionCubit(
+                  BlocProvider<SubscriptionBloc>(
+                    create: (_) => SubscriptionBloc(
                       repository: subscriptionRepo,
                       userId: userId,
                     ),

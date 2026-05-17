@@ -169,5 +169,67 @@
   "noMasterPrograms": "У этого мастера пока нет программ",
   "@noMasterPrograms": {
     "description": "Empty state when selected master has no programs"
-  }
+  },
+
+  "bookButton": "Записаться",  
+  "bookedButton": "Записано",  
+  "alreadyBooked": "Уже записано",  
+  "bookingSuccess": "Успешно записано!",  
+  "bookingCancelled": "Запись отменена",  
+  "bookingError": "Ошибка записи. Попробуйте снова.",  
+  "cancelBooking": "Отменить запись",  
+  "bookViaAdmin": "Связаться с администратором",  
+  "noSpots": "Мест нет",  
+  "classFull": "Класс заполнен",  
+  "noSubscription": "Требуется подписка",  
+  "externalBookingRequired": "Свяжитесь с администратором для записи на этот класс",  
+  "cancelDialogTitle": "Отменить запись?",  
+  "cancelDialogContent": "Вы уверены, что хотите отменить запись на \"{title}\"?",  
+  "cancelDialogBack": "Назад",  
+  "cancelDialogConfirm": "Отменить запись",  
+  "durationMinutes": "{count} мин",  
+  "participants": "{current} / {max} участников",  
+  "externalEventNotice": "Это событие требует отдельной регистрации. Пожалуйста, свяжитесь с администратором.",  
+  "subscriptionRequired": "Требуется активная подписка для записи",    
+  "bookingAlreadyBooked": "У вас уже есть запись на этот класс",  
+  "bookingNoSubscription": "Для записи на этот класс требуется активная подписка",  
+  "bookingClassFull": "Этот класс заполнен. Пожалуйста, выберите другое время.",  
+  "bookingSuccess": "Успешная запись на \"{title}\"!",  
+  "bookingError": "Ошибка записи: {error}",  
+  "bookingCancelled": "Запись успешно отменена",  
+  "bookingCancelError": "Не удалось отменить запись: {error}",
+
+  "whatsAppExternalEvent": "Здравствуйте! Хочу записаться на мероприятие «{title}».",
+  "@whatsAppExternalEvent": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "whatsAppNoSubscription": "Здравствуйте! Хочу записаться на «{title}», но у меня нет абонемента. Как оплатить разово?",
+  "@whatsAppNoSubscription": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "whatsAppBuySubscription": "Здравствуйте! Интересует абонемент в Hygge. Расскажите подробнее.",
+  "whatsAppNoLessonsLeft": "Здравствуйте! У меня закончились занятия по абонементу. Хочу продлить.",
+
+  "subscriptionLessonsLeftLabel": "Занятий осталось",
+  "subscriptionOutOf": "из {total}",
+  "@subscriptionOutOf": { "placeholders": { "total": { "type": "int" } } },
+  "subscriptionValidUntilLabel": "Действует до",
+  "subscriptionStartLabel": "Начало",
+  "subscriptionActive": "Активен",
+  "subscriptionExpired": "Истёк",
+  "subscriptionExpiredNotice": "Абонемент истёк. Обратитесь к администратору для продления.",
+  "subscriptionNoSessionsNotice": "Занятия закончились. Обратитесь к администратору для продления.",
+  "subscriptionRenewButton": "Написать администратору",
+  "subscriptionNotFound": "Абонемент не найден",
+  "subscriptionContactAdmin": "Для приобретения абонемента обратитесь к администратору студии.",
+  "subscriptionBuy": "Купить абонемент",
+
+  "programDescription": "Описание программы",
+  "programMaster": "Мастер",
+  "programDates": "Даты занятий",
+  "programBook": "Записаться",
+  "programBooking": "Запись...",
+  "programAlreadyBooked": "Вы уже записаны",
+  "programChooseDate": "Выберите дату занятия",
+  "programNoDates": "Для этой программы пока нет доступных дат"
 }

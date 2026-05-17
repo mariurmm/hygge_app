@@ -6,7 +6,7 @@ import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
 import 'package:hygge_app/features/history/bloc/history_bloc.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_card.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';

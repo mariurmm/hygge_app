@@ -8,7 +8,7 @@ import 'package:hygge_app/core/constants/app_spacings.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
-import 'package:hygge_app/data/repositories/notification_repository/notification_repository.dart';
+import 'package:hygge_app/data/repositories/notification_repository.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_bloc.dart';
 import 'package:hygge_app/features/notifications/bloc/notifications_state.dart';
 import 'package:hygge_app/features/notifications/ui/widgets/notification_tile.dart';

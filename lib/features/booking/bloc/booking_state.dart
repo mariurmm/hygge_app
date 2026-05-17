@@ -1,6 +1,6 @@
-part of 'booking_cubit.dart';
+part of 'booking_bloc.dart';
 
-enum BookingCubitStatus {
+enum BookingUiStatus {
   idle,
   loading,
   success,
@@ -13,26 +13,29 @@ enum BookingCubitStatus {
   cancelConfirmationRequired,
 }
 
-class BookingState extends Equatable {
+final class BookingState extends Equatable {
   const BookingState({
-    this.status = BookingCubitStatus.idle,
-    this.message,
+    this.status = BookingUiStatus.idle,
+    this.errorMessage,
     this.existingBooking,
   });
-  final BookingCubitStatus status;
-  final String? message;
+
+  final BookingUiStatus status;
+  final String? errorMessage;
   final BookingModel? existingBooking;
 
   static const _absent = Object();
 
   BookingState copyWith({
-    BookingCubitStatus? status,
-    Object? message = _absent,
+    BookingUiStatus? status,
+    Object? errorMessage = _absent,
     Object? existingBooking = _absent,
   }) {
     return BookingState(
       status: status ?? this.status,
-      message: identical(message, _absent) ? this.message : message as String?,
+      errorMessage: identical(errorMessage, _absent)
+          ? this.errorMessage
+          : errorMessage as String?,
       existingBooking: identical(existingBooking, _absent)
           ? this.existingBooking
           : existingBooking as BookingModel?,
@@ -40,5 +43,5 @@ class BookingState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, message, existingBooking];
+  List<Object?> get props => [status, errorMessage, existingBooking];
 }

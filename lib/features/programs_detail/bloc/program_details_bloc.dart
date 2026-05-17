@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_state.dart';
 
@@ -121,13 +121,10 @@ class ProgramDetailsBloc
       return;
     }
 
-    emit(state.copyWith(isBooking: true));
-
     try {
       await _bookingRepository.bookProgram(event.lesson);
       emit(
         state.copyWith(
-          isBooking: false,
           bookedLessonIds: {...state.bookedLessonIds, event.lesson.id},
         ),
       );
@@ -139,7 +136,6 @@ class ProgramDetailsBloc
       );
       emit(
         state.copyWith(
-          isBooking: false,
           errorMessage: 'Не удалось записаться на занятие',
         ),
       );

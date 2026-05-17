@@ -14,7 +14,6 @@ class ProgramDetailsState extends Equatable {
     this.bookedLessonIds = const {},
     this.status = ProgramDetailsStatus.initial,
     this.isFavourite = false,
-    this.isBooking = false,
     this.errorMessage,
   });
 
@@ -33,7 +32,6 @@ class ProgramDetailsState extends Equatable {
   final List<LessonModel> availableLessons;
   final Set<String> bookedLessonIds;
   final bool isFavourite;
-  final bool isBooking;
   final String? errorMessage;
 
   bool get hasSelectedLesson => lesson.isNotEmpty;
@@ -48,7 +46,6 @@ class ProgramDetailsState extends Equatable {
     List<LessonModel>? availableLessons,
     Set<String>? bookedLessonIds,
     bool? isFavourite,
-    bool? isBooking,
     String? errorMessage,
   }) {
     return ProgramDetailsState(
@@ -59,7 +56,6 @@ class ProgramDetailsState extends Equatable {
       availableLessons: availableLessons ?? this.availableLessons,
       bookedLessonIds: bookedLessonIds ?? this.bookedLessonIds,
       isFavourite: isFavourite ?? this.isFavourite,
-      isBooking: isBooking ?? this.isBooking,
       errorMessage: errorMessage,
     );
   }
@@ -73,7 +69,6 @@ class ProgramDetailsState extends Equatable {
     availableLessons,
     bookedLessonIds,
     isFavourite,
-    isBooking,
     errorMessage,
   ];
 }

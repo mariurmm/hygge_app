@@ -9,7 +9,7 @@ import 'package:hygge_app/data/models/localized_value.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_category.dart';
 import 'package:hygge_app/data/models/program_model.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository.dart';
 
 part 'programs_event.dart';
 part 'programs_state.dart';

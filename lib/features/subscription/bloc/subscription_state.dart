@@ -1,13 +1,14 @@
-part of 'subscription_cubit.dart';
+part of 'subscription_bloc.dart';
 
 enum SubscriptionStatus { initial, loaded, error }
 
-class SubscriptionState extends Equatable {
+final class SubscriptionState extends Equatable {
   const SubscriptionState({
     this.status = SubscriptionStatus.initial,
     this.subscription,
     this.error,
   });
+
   final SubscriptionStatus status;
   final SubscriptionModel? subscription;
   final String? error;

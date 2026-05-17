@@ -5,8 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hygge_app/data/models/localized_value.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/home/bloc/home_state.dart';
 

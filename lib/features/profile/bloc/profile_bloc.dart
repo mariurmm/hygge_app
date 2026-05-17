@@ -7,7 +7,7 @@ import 'package:hygge_app/data/models/class_model.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/user_model.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/profile/bloc/profile_state.dart';

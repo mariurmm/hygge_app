@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
 
 part 'history_event.dart';
 part 'history_state.dart';

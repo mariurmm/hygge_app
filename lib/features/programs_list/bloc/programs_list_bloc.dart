@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:hygge_app/data/models/program_model.dart';
-import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
-import 'package:hygge_app/data/repositories/programs_repository/programs_repository.dart';
+import 'package:hygge_app/data/repositories/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 
 abstract class ProgramsListState {}

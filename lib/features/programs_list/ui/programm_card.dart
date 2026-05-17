@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/app_paddings.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
@@ -10,6 +11,7 @@ import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_category.dart';
 import 'package:hygge_app/data/models/program_model.dart';
+import 'package:hygge_app/features/booking/bloc/booking_bloc.dart';
 import 'package:hygge_app/features/favourites/ui/widgets/favourite_button.dart';
 import 'package:hygge_app/features/programs_detail/ui/program_details_page.dart';
 import 'package:hygge_app/features/programs_list/ui/programm_list.dart';
@@ -55,13 +57,18 @@ class ProgrammCard extends StatelessWidget {
   }
 
   void _openDetails(BuildContext context) {
+    final bookingBloc = context.read<BookingBloc>(); // ← capture before push
+
     unawaited(
       Navigator.of(context, rootNavigator: true).push(
         PageRouteBuilder<void>(
-          pageBuilder: (_, __, ___) => ProgramDetailsPage(
-            program: program,
-            lesson: lesson ?? LessonModel.empty,
-            master: master ?? MasterModel.empty,
+          pageBuilder: (_, __, ___) => BlocProvider.value(
+            value: bookingBloc, // ← pass it in
+            child: ProgramDetailsPage(
+              program: program,
+              lesson: lesson ?? LessonModel.empty,
+              master: master ?? MasterModel.empty,
+            ),
           ),
           transitionDuration: Duration.zero,
           reverseTransitionDuration: Duration.zero,

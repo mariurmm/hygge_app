@@ -425,5 +425,188 @@
   "noMasterPrograms": "This master has no programs yet",
   "@noMasterPrograms": {
     "description": "Empty state when selected master has no programs"
-  }
+  },
+
+  "bookButton": "Book",  
+  "@bookButton": {    
+    "description": "Button text to book a class"  
+  },
+  "bookedButton": "Booked",  
+  "@bookedButton": {    
+    "description": "Button text shown when class is already booked"  
+  },
+  "alreadyBooked": "Already booked",  
+  "@alreadyBooked": {    
+    "description": "Message shown when trying to book a class that is already booked"  
+  },
+  "bookingSuccess": "Successfully booked!",  
+  "@bookingSuccess": {
+    "description": "Success message when booking is completed"  
+  },
+  "bookingCancelled": "Booking cancelled",  
+  "@bookingCancelled": {  
+    "description": "Success message when booking is cancelled"  
+  },
+  "bookingError": "Booking failed. Please try again.",  
+  "@bookingError": { 
+    "description": "Error message when booking fails"  
+  },
+  "cancelBooking": "Cancel booking",  
+  "@cancelBooking": {  
+    "description": "Button text to cancel an existing booking"  
+  },
+  "bookViaAdmin": "Contact admin to book",  
+  "@bookViaAdmin": {    
+    "description": "Button text for classes that require external booking"  
+  },
+  "noSpots": "No spots left",  
+  "@noSpots": {    
+    "description": "Button text when class is full"  
+  },
+  "classFull": "Class is full",  
+  "@classFull": {    
+    "description": "Message shown when trying to book a full class"  
+  },
+  "noSubscription": "Subscription required",  
+  "@noSubscription": {    
+    "description": "Message shown when user doesn't have an active subscription"  
+  },
+  "externalBookingRequired": "Contact admin to book this class",  
+  "@externalBookingRequired": {    
+    "description": "Message shown for classes that require external booking"  
+  },
+  "cancelDialogTitle": "Cancel booking?",  
+  "@cancelDialogTitle": {    
+    "description": "Title of the cancel booking confirmation dialog"  
+  },
+  "cancelDialogContent": "Are you sure you want to cancel your booking for \"{title}\"?",  
+  "@cancelDialogContent": {    
+    "description": "Content of the cancel booking confirmation dialog",    
+    "placeholders": {    
+      "title": {    
+        "type": "String",    
+        "example": "Morning Yoga"    
+      }    
+    }  
+  },
+  "cancelDialogBack": "Back",  
+  "@cancelDialogBack": {    
+    "description": "Button text to go back from cancel dialog"  
+  },
+  "cancelDialogConfirm": "Cancel booking",  
+  "@cancelDialogConfirm": {    
+    "description": "Button text to confirm cancellation"  
+  },
+  "durationMinutes": "{count} min",  
+  "@durationMinutes": {    
+    "description": "Duration label in minutes",    
+    "placeholders": {    
+      "count": {
+        "type": "int",   
+        "example": "60"    
+      }    
+    } 
+  },
+  "participants": "{current} / {max} participants",  
+  "@participants": {    
+    "description": "Participants count display",    
+    "placeholders": {    
+      "current": {    
+        "type": "int",    
+        "example": "5"    
+      },    
+      "max": {    
+        "type": "int",    
+        "example": "15"    
+      }    
+    }  
+  },
+  "externalEventNotice": "This event requires separate registration. Please contact the administrator.",  
+  "@externalEventNotice": {    
+    "description": "Notice shown for events not included in subscription"  
+  },
+  "subscriptionRequired": "Active subscription required for booking",  
+  "@subscriptionRequired": {    
+    "description": "Message shown when user needs a subscription to book"  
+  },
+  "bookingAlreadyBooked": "You already have a booking for this class",  
+  "@bookingAlreadyBooked": {    
+    "description": "Message shown when user tries to book a class they already booked"  
+  },
+  "bookingNoSubscription": "Active subscription required to book this class",  
+  "@bookingNoSubscription": {    
+    "description": "Message shown when user tries to book without an active subscription"  
+  },
+  "bookingClassFull": "This class is full. Please choose another time.",  
+  "@bookingClassFull": {    
+    "description": "Message shown when user tries to book a full class"  
+  },
+  "bookingSuccess": "Successfully booked \"{title}\"!",  
+  "@bookingSuccess": {    
+    "description": "Success message when booking is completed",    
+    "placeholders": {    
+      "title": {    
+        "type": "String",    
+        "example": "Morning Yoga"    
+      }    
+    }  
+  },
+  "bookingError": "Booking failed: {error}",
+  "@bookingError": {    
+    "description": "Error message when booking fails",    
+    "placeholders": {    
+      "error": {    
+        "type": "String",    
+        "example": "Network connection failed"    
+      }    
+    }  
+  },
+  "bookingCancelled": "Booking cancelled successfully",  
+  "@bookingCancelled": {    
+    "description": "Success message when booking is cancelled"  
+  },
+  "bookingCancelError": "Failed to cancel booking: {error}",  
+  "@bookingCancelError": {    
+    "description": "Error message when cancellation fails",    
+    "placeholders": {    
+      "error": {    
+        "type": "String",    
+        "example": "Network connection failed"    
+      }    
+    }
+  },
+
+  "whatsAppExternalEvent": "Hello! I would like to sign up for the event «{title}».",
+  "@whatsAppExternalEvent": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "whatsAppNoSubscription": "Hello! I would like to book «{title}» but I don't have a subscription. How can I pay per class?",
+  "@whatsAppNoSubscription": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "whatsAppBuySubscription": "Hello! I'm interested in a Hygge subscription. Could you tell me more?",
+  "whatsAppNoLessonsLeft": "Hello! I've used all my subscription classes and would like to renew.",
+
+  "subscriptionLessonsLeftLabel": "Classes remaining",
+  "subscriptionOutOf": "of {total}",
+  "@subscriptionOutOf": { "placeholders": { "total": { "type": "int" } } },
+  "subscriptionValidUntilLabel": "Valid until",
+  "subscriptionStartLabel": "Start date",
+  "subscriptionActive": "Active",
+  "subscriptionExpired": "Expired",
+  "subscriptionExpiredNotice": "Your subscription has expired. Contact the administrator to renew.",
+  "subscriptionNoSessionsNotice": "No classes remaining. Contact the administrator to renew.",
+  "subscriptionRenewButton": "Contact administrator",
+  "subscriptionNotFound": "Subscription not found",
+  "subscriptionContactAdmin": "To purchase a subscription, contact the studio administrator.",
+  "subscriptionBuy": "Buy subscription",
+
+  "programDescription": "Program description",
+  "programMaster": "Master",
+  "programDates": "Class dates",
+  "programBook": "Book",
+  "programBooking": "Booking...",
+  "programAlreadyBooked": "You are already booked",
+  "programChooseDate": "Choose a class date",
+  "programNoDates": "There are no available dates for this program yet"
 }

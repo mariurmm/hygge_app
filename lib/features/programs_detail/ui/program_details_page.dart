@@ -12,8 +12,9 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
-import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
+import 'package:hygge_app/features/booking/bloc/booking_bloc.dart';
 import 'package:hygge_app/features/masters/ui/master_details_page.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_bloc.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
@@ -62,140 +63,166 @@ class ProgramDetailsView extends StatelessWidget {
     final loc = AppLocalizations.of(context);
     final locale = _localeTag(context);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarDividerColor: Colors.transparent,
-      ),
-      child: BlocBuilder<ProgramDetailsBloc, ProgramDetailsState>(
-        builder: (context, state) {
-          final program = state.program;
-          final selectedLesson = state.lesson;
-          final master = state.master;
-          final isBooked = state.isSelectedLessonBooked;
+    return BlocListener<BookingBloc, BookingState>(
+      listener: (context, state) {
+        const snackbarStatuses = {
+          BookingUiStatus.success,
+          BookingUiStatus.error,
+          BookingUiStatus.noSubscription,
+        };
+        if (!snackbarStatuses.contains(state.status)) return;
+        final loc = AppLocalizations.of(context);
+        final msg = switch (state.status) {
+          BookingUiStatus.success => loc.bookingSuccess(''),
+          BookingUiStatus.noSubscription => loc.bookingNoSubscription,
+          BookingUiStatus.error => loc.bookingError(state.errorMessage ?? ''),
+          _ => null,
+        };
+        if (msg == null) return;
+        final isPositive = state.status == BookingUiStatus.success;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              msg,
+              style: AppTextStyles.bodySmall.copyWith(color: Colors.white),
+            ),
+            backgroundColor: isPositive
+                ? AppColors.primary
+                : AppColors.darkBrown,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarDividerColor: Colors.transparent,
+        ),
+        child: BlocBuilder<ProgramDetailsBloc, ProgramDetailsState>(
+          builder: (context, state) {
+            final program = state.program;
+            final selectedLesson = state.lesson;
+            final master = state.master;
+            final isBooked = state.isSelectedLessonBooked;
 
-          return Scaffold(
-            backgroundColor: Colors.transparent,
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            body: Stack(
-              children: <Widget>[
-                Positioned.fill(
-                  child: Image.asset(
-                    AssetPaths.homeBackground,
-                    fit: BoxFit.cover,
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBody: true,
+              extendBodyBehindAppBar: true,
+              body: Stack(
+                children: <Widget>[
+                  Positioned.fill(
+                    child: Image.asset(
+                      AssetPaths.homeBackground,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                Positioned.fill(
-                  child: SafeArea(
-                    bottom: false,
-                    child: HyggeScreenLayout(
-                      header: ProgramsHeader(
-                        trailing: const SizedBox.shrink(),
-                        leading: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth:
-                                AppConstants.profileProgramsHeaderIconSize,
-                            minHeight:
-                                AppConstants.profileProgramsHeaderIconSize,
-                          ),
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: Image.asset(
-                            AssetPaths.arrowBack,
-                            width: AppConstants.arrowBackIconSize,
-                            height: AppConstants.arrowBackIconSize,
-                            errorBuilder: (_, _, _) => const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
+                  Positioned.fill(
+                    child: SafeArea(
+                      bottom: false,
+                      child: HyggeScreenLayout(
+                        header: ProgramsHeader(
+                          trailing: const SizedBox.shrink(),
+                          leading: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(
+                              minWidth:
+                                  AppConstants.profileProgramsHeaderIconSize,
+                              minHeight:
+                                  AppConstants.profileProgramsHeaderIconSize,
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: Image.asset(
+                              AssetPaths.arrowBack,
+                              width: AppConstants.arrowBackIconSize,
+                              height: AppConstants.arrowBackIconSize,
+                              errorBuilder: (_, _, _) => const Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppPaddings.profileScreenHorizontal,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(height: 24),
+                                _ProgramTitleBlock(program: program),
+                                const SizedBox(
+                                  height: AppSpacings.profileNameCardGap,
+                                ),
+                                _SectionTitle(
+                                  text: loc.programDescription,
+                                ),
+                                const SizedBox(height: 12),
+                                _GlassBlock(
+                                  child: Text(
+                                    program.text,
+                                    softWrap: true,
+                                    style: AppTextStyles.programsCardDescription
+                                        .copyWith(height: 1.36),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: AppSpacings.profileCardsVerticalGap,
+                                ),
+                                _SectionTitle(text: loc.programMaster),
+                                const SizedBox(height: 12),
+                                _MasterCard(master: master),
+                                const SizedBox(
+                                  height: AppSpacings.profileCardsVerticalGap,
+                                ),
+                                _SectionTitle(text: loc.programDates),
+                                const SizedBox(height: 8),
+                                Text(
+                                  loc.programChooseDate,
+                                  style: AppTextStyles.programsCardDescription,
+                                ),
+                                const SizedBox(height: 12),
+                                _LessonDatesPanel(
+                                  lessons: state.availableLessons,
+                                  selectedLesson: selectedLesson,
+                                  bookedLessonIds: state.bookedLessonIds,
+                                  programPrice: program.price,
+                                  locale: locale,
+                                  emptyText: loc.programNoDates,
+                                  alreadyBookedText: loc.programAlreadyBooked,
+                                ),
+                                const SizedBox(
+                                  height: AppSpacings.profileCardsVerticalGap,
+                                ),
+                                _BottomActions(
+                                  program: program,
+                                  selectedLesson: selectedLesson,
+                                  isBooked: isBooked,
+                                  isFavourite: state.isFavourite,
+                                  bookText: loc.programBook,
+                                  alreadyBookedText: loc.programAlreadyBooked,
+                                  comingSoonText: loc.comingSoon,
+                                ),
+                                const SizedBox(
+                                  height: AppConstants.profileCardsBottomInset,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppPaddings.profileScreenHorizontal,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(height: 24),
-                              _ProgramTitleBlock(program: program),
-                              const SizedBox(
-                                height: AppSpacings.profileNameCardGap,
-                              ),
-                              _SectionTitle(
-                                text: _text(context, 'description'),
-                              ),
-                              const SizedBox(height: 12),
-                              _GlassBlock(
-                                child: Text(
-                                  program.text,
-                                  softWrap: true,
-                                  style: AppTextStyles.programsCardDescription
-                                      .copyWith(height: 1.36),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: AppSpacings.profileCardsVerticalGap,
-                              ),
-                              _SectionTitle(text: _text(context, 'master')),
-                              const SizedBox(height: 12),
-                              _MasterCard(master: master),
-                              const SizedBox(
-                                height: AppSpacings.profileCardsVerticalGap,
-                              ),
-                              _SectionTitle(text: _text(context, 'dates')),
-                              const SizedBox(height: 8),
-                              Text(
-                                _text(context, 'chooseDate'),
-                                style: AppTextStyles.programsCardDescription,
-                              ),
-                              const SizedBox(height: 12),
-                              _LessonDatesPanel(
-                                lessons: state.availableLessons,
-                                selectedLesson: selectedLesson,
-                                bookedLessonIds: state.bookedLessonIds,
-                                programPrice: program.price,
-                                emptyText: _text(context, 'noDates'),
-                                alreadyBookedText: _text(
-                                  context,
-                                  'alreadyBooked',
-                                ),
-                                locale: locale,
-                              ),
-                              const SizedBox(
-                                height: AppSpacings.profileCardsVerticalGap,
-                              ),
-                              _BottomActions(
-                                program: program,
-                                selectedLesson: selectedLesson,
-                                isBooked: isBooked,
-                                isBooking: state.isBooking,
-                                isFavourite: state.isFavourite,
-                                bookText: _text(context, 'book'),
-                                bookingText: _text(context, 'booking'),
-                                alreadyBookedText: _text(
-                                  context,
-                                  'alreadyBooked',
-                                ),
-                                comingSoonText: loc.comingSoon,
-                              ),
-                              const SizedBox(
-                                height: AppConstants.profileCardsBottomInset,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -496,61 +523,76 @@ class _BottomActions extends StatelessWidget {
     required this.program,
     required this.selectedLesson,
     required this.isBooked,
-    required this.isBooking,
     required this.isFavourite,
     required this.bookText,
-    required this.bookingText,
     required this.alreadyBookedText,
     required this.comingSoonText,
+    super.key,
   });
 
   final ProgramModel program;
   final LessonModel selectedLesson;
   final bool isBooked;
-  final bool isBooking;
   final bool isFavourite;
   final String bookText;
-  final String bookingText;
   final String alreadyBookedText;
   final String comingSoonText;
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context); // ← add this
+
     return Row(
       children: <Widget>[
         Expanded(
           child: SizedBox(
             height: 54,
             child: program.isBookable
-                ? ElevatedButton(
-                    onPressed: isBooking || isBooked || selectedLesson.isEmpty
-                        ? null
-                        : () {
-                            context.read<ProgramDetailsBloc>().add(
-                              ProgramDetailsBooked(selectedLesson),
-                            );
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: AppColors.primary.withValues(
-                        alpha: 0.55,
-                      ),
-                      disabledForegroundColor: Colors.white.withValues(
-                        alpha: 0.14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                    ),
-                    child: Text(
-                      isBooked
-                          ? alreadyBookedText
-                          : isBooking
-                          ? bookingText
-                          : bookText,
-                      style: AppTextStyles.button,
-                    ),
+                ? BlocBuilder<BookingBloc, BookingState>(
+                    builder: (context, bookingState) {
+                      final isLoading =
+                          bookingState.status == BookingUiStatus.loading;
+                      return ElevatedButton(
+                        onPressed:
+                            isLoading || isBooked || selectedLesson.isEmpty
+                            ? null
+                            : () => context.read<BookingBloc>().add(
+                                BookingBookLessonEvent(
+                                  lesson: selectedLesson,
+                                  programTitle: program.title,
+                                  whatsAppMessage: loc.whatsAppNoSubscription(
+                                    program.title,
+                                  ),
+                                ),
+                              ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: AppColors.primary.withValues(
+                            alpha: 0.55,
+                          ),
+                          disabledForegroundColor: Colors.white.withValues(
+                            alpha: 0.14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                isBooked ? alreadyBookedText : bookText,
+                                style: AppTextStyles.button,
+                              ),
+                      );
+                    },
                   )
                 : _DisabledButton(text: comingSoonText),
           ),
@@ -561,11 +603,9 @@ class _BottomActions extends StatelessWidget {
           width: 54,
           child: _FavouriteButton(
             isFavourite: isFavourite,
-            onTap: () {
-              context.read<ProgramDetailsBloc>().add(
-                ProgramDetailsFavouriteToggled(program),
-              );
-            },
+            onTap: () => context.read<ProgramDetailsBloc>().add(
+              ProgramDetailsFavouriteToggled(program),
+            ),
           ),
         ),
       ],
@@ -675,43 +715,4 @@ String _formatPrice(double price) {
 
   final formatter = NumberFormat.decimalPattern('ru');
   return '${formatter.format(price)} ₸';
-}
-
-String _text(BuildContext context, String key) {
-  final locale = _localeTag(context);
-
-  const values = <String, Map<String, String>>{
-    'ru': <String, String>{
-      'description': 'Описание программы',
-      'master': 'Мастер',
-      'dates': 'Даты занятий',
-      'book': 'Записаться',
-      'booking': 'Запись...',
-      'alreadyBooked': 'Вы уже записаны',
-      'chooseDate': 'Выберите дату занятия',
-      'noDates': 'Для этой программы пока нет доступных дат',
-    },
-    'en': <String, String>{
-      'description': 'Program description',
-      'master': 'Master',
-      'dates': 'Class dates',
-      'book': 'Book',
-      'booking': 'Booking...',
-      'alreadyBooked': 'You are already booked',
-      'chooseDate': 'Choose a class date',
-      'noDates': 'There are no available dates for this program yet',
-    },
-    'kk': <String, String>{
-      'description': 'Бағдарлама сипаттамасы',
-      'master': 'Шебер',
-      'dates': 'Сабақ күндері',
-      'book': 'Жазылу',
-      'booking': 'Жазылуда...',
-      'alreadyBooked': 'Сіз жазылып қойғансыз',
-      'chooseDate': 'Сабақ күнін таңдаңыз',
-      'noDates': 'Бұл бағдарлама үшін қолжетімді күндер әлі жоқ',
-    },
-  };
-
-  return values[locale]?[key] ?? values['ru']![key]!;
 }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/data/models/program_model.dart';
-import 'package:hygge_app/data/repositories/favourites_repository/favourites_repository.dart';
+import 'package:hygge_app/data/repositories/favourites_repository.dart';
 
 part 'favourites_event.dart';
 part 'favourites_state.dart';

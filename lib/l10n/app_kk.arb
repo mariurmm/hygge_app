@@ -172,5 +172,67 @@
   "noMasterPrograms": "Бұл шеберде әзірге бағдарламалар жоқ",
   "@noMasterPrograms": {
     "description": "Empty state when selected master has no programs"
-  }
+  },
+
+  "bookButton": "Жазылу",  
+  "bookedButton": "Жазылдыңыз",  
+  "alreadyBooked": "Қазірдің өзінде жазылған",  
+  "bookingSuccess": "Сәтті жазылдыңыз!",  
+  "bookingCancelled": "Жазылым болдыртылды",  
+  "bookingError": "Жазылу сәтсіз болды. Қайталап көріңіз.",  
+  "cancelBooking": "Жазылымды болдырмау",  
+  "bookViaAdmin": "Әкімшіге хабарласыңыз",  
+  "noSpots": "Орындар қалмады",  
+  "classFull": "Сынып толы", 
+  "noSubscription": "Жазылым қажет",  
+  "externalBookingRequired": "Осы сабаққа жазылу үшін әкімшіге хабарласыңыз",  
+  "cancelDialogTitle": "Жазылымды болдырмау?",  
+  "cancelDialogContent": "\"{title}\" сабағына жазылымыңызды болдырмағыңыз келе ме?",  
+  "cancelDialogBack": "Артқа",  
+  "cancelDialogConfirm": "Жазылымды болдырмау",  
+  "durationMinutes": "{count} мин",  
+  "participants": "{current} / {max} қатысушы",  
+  "externalEventNotice": "Бұл оқиға бөлек тіркелуді қажет етеді. Әкімшіге хабарласыңыз.",  
+  "subscriptionRequired": "Жазылым үшін белсенді жазылым қажет",    
+  "bookingAlreadyBooked": "Сізде бұл сабаққа жазылым қазірдің өзінде бар", 
+  "bookingNoSubscription": "Осы сабаққа жазылу үшін белсенді жазылым қажет",  
+  "bookingClassFull": "Бұл сабақ толы. Басқа уақытты таңдаңыз.",  
+  "bookingSuccess": "\"{title}\" сабағына сәтті жазылдыңыз!",  
+  "bookingError": "Жазылу сәтсіз болды: {error}",  
+  "bookingCancelled": "Жазылым сәтті болдыртылды",  
+  "bookingCancelError": "Жазылымды болдырту сәтсіз болды: {error}",
+
+  "whatsAppExternalEvent": "Сәлеметсіз бе! «{title}» іс-шарасына жазылғым келеді.",
+  "@whatsAppExternalEvent": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "whatsAppNoSubscription": "Сәлеметсіз бе! «{title}» сабағына жазылғым келеді, бірақ абонементім жоқ. Жекелей төлеу мүмкін бе?",
+  "@whatsAppNoSubscription": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "whatsAppBuySubscription": "Сәлеметсіз бе! Hygge абонементі туралы білгім келеді.",
+  "whatsAppNoLessonsLeft": "Сәлеметсіз бе! Абонементімдегі сабақтар бітті. Жаңартқым келеді.",
+
+  "subscriptionLessonsLeftLabel": "Сабақ қалды",
+  "subscriptionOutOf": "{total} ішінен",
+  "@subscriptionOutOf": { "placeholders": { "total": { "type": "int" } } },
+  "subscriptionValidUntilLabel": "Дейін жарамды",
+  "subscriptionStartLabel": "Басталу күні",
+  "subscriptionActive": "Белсенді",
+  "subscriptionExpired": "Мерзімі өтті",
+  "subscriptionExpiredNotice": "Абонемент мерзімі өтті. Ұзарту үшін әкімшіге хабарласыңыз.",
+  "subscriptionNoSessionsNotice": "Сабақтар бітті. Ұзарту үшін әкімшіге хабарласыңыз.",
+  "subscriptionRenewButton": "Әкімшіге жазу",
+  "subscriptionNotFound": "Абонемент табылмады",
+  "subscriptionContactAdmin": "Абонемент сатып алу үшін студия әкімшісіне хабарласыңыз.",
+  "subscriptionBuy": "Абонемент сатып алу",
+
+  "programDescription": "Бағдарлама сипаттамасы",
+  "programMaster": "Шебер",
+  "programDates": "Сабақ күндері",
+  "programBook": "Жазылу",
+  "programBooking": "Жазылуда...",
+  "programAlreadyBooked": "Сіз жазылып қойғансыз",
+  "programChooseDate": "Сабақ күнін таңдаңыз",
+  "programNoDates": "Бұл бағдарлама үшін қолжетімді күндер әлі жоқ"
 }

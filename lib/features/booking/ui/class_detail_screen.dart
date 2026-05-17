@@ -1,15 +1,16 @@
-import 'dart:async';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/constants/asset_paths.dart';
 import 'package:hygge_app/core/theme/app_colors.dart';
 import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/class_model.dart';
-import 'package:hygge_app/features/booking/cubit/booking_cubit.dart';
-import 'package:hygge_app/features/subscription/cubit/subscription_cubit.dart';
+import 'package:hygge_app/features/booking/bloc/booking_bloc.dart';
+import 'package:hygge_app/features/booking/widgets/booking_book_button.dart';
+import 'package:hygge_app/features/booking/widgets/booking_cancel_dialog.dart';
+import 'package:hygge_app/features/booking/widgets/booking_detail_row.dart';
+import 'package:hygge_app/features/booking/widgets/booking_glass_card.dart';
+import 'package:hygge_app/features/booking/widgets/booking_info_card.dart';
+import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class ClassDetailScreen extends StatefulWidget {
@@ -24,15 +25,16 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(
-      context.read<BookingCubit>().checkBookingStatus(widget.classModel.id),
+    context.read<BookingBloc>().add(
+      BookingCheckStatusEvent(classId: widget.classModel.id),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final classModel = widget.classModel;
-    final dateFormat = DateFormat('d MMMM, EEEE', 'ru');
+    final loc = AppLocalizations.of(context);
+    final dateFormat = DateFormat('d MMMM, EEEE', loc.localeName);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -52,44 +54,54 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           Image.asset(AssetPaths.homeBackground, fit: BoxFit.cover),
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 24,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 12),
-                  Text(classModel.type, style: AppTextStyles.scheduleCardLabel),
+                  Text(
+                    classModel.type,
+                    style: AppTextStyles.scheduleCardLabel,
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     classModel.title,
                     style: AppTextStyles.scheduleSectionTitle,
                   ),
                   const SizedBox(height: 24),
-                  _GlassCard(
+                  BookingGlassCard(
                     child: Column(
                       children: [
-                        _DetailRow(
+                        BookingDetailRow(
                           icon: Icons.calendar_today_outlined,
                           label: dateFormat.format(classModel.startDate),
                         ),
                         const SizedBox(height: 12),
-                        _DetailRow(
+                        BookingDetailRow(
                           icon: Icons.access_time_outlined,
                           label: classModel.timeRange,
                         ),
                         const SizedBox(height: 12),
-                        _DetailRow(
+                        BookingDetailRow(
                           icon: Icons.timer_outlined,
-                          label: '${classModel.durationMinutes} мин',
+                          label: loc.durationMinutes(
+                            classModel.durationMinutes,
+                          ),
                         ),
                         const SizedBox(height: 12),
-                        _DetailRow(
+                        BookingDetailRow(
                           icon: Icons.people_outline,
-                          label:
-                              '${classModel.currentParticipants} / ${classModel.maxParticipants} участников',
+                          label: loc.participants(
+                            classModel.currentParticipants,
+                            classModel.maxParticipants,
+                          ),
                         ),
                         if (!classModel.isIncludedInSubscription) ...[
                           const SizedBox(height: 12),
-                          _DetailRow(
+                          BookingDetailRow(
                             icon: Icons.attach_money,
                             label: '${classModel.price.toStringAsFixed(0)} ₸',
                           ),
@@ -98,128 +110,62 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (!classModel.isIncludedInSubscription)
-                    _GlassCard(
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.info_outline,
-                            color: Colors.white70,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Это выездное мероприятие. Запись через'
-                              ' администратора.',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    BlocBuilder<SubscriptionCubit, SubscriptionState>(
-                      builder: (context, subState) {
-                        if (!subState.hasActiveSubscription) {
-                          return _GlassCard(
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.card_membership,
-                                  color: Colors.white70,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Для записи необходим активный абонемент.',
-                                    style: AppTextStyles.bodySmall.copyWith(
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
+                  BookingInfoCard(classModel: classModel, loc: loc),
                   const SizedBox(height: 24),
-                  BlocConsumer<BookingCubit, BookingState>(
+                  BlocConsumer<BookingBloc, BookingState>(
                     listener: (context, state) async {
                       if (state.status ==
-                          BookingCubitStatus.cancelConfirmationRequired) {
+                          BookingUiStatus.cancelConfirmationRequired) {
                         final bookingId = state.existingBooking?.id;
                         if (bookingId == null) return;
                         final confirmed = await showDialog<bool>(
                           context: context,
-                          builder: (ctx) => AlertDialog(
-                            backgroundColor: AppColors.darkBrown,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            title: Text(
-                              'Отменить запись?',
-                              style: AppTextStyles.scheduleCalendarTitle,
-                            ),
-                            content: Text(
-                              'Вы уверены, что хотите отменить запись'
-                              ' на «${classModel.title}»?',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: Colors.white70,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(ctx).pop(false),
-                                child: Text(
-                                  'Назад',
-                                  style: AppTextStyles.button.copyWith(
-                                    color: Colors.white54,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.of(ctx).pop(true),
-                                child: Text(
-                                  'Да, отменить',
-                                  style: AppTextStyles.button.copyWith(
-                                    color: AppColors.terracotta,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          builder: (_) => BookingCancelDialog(
+                            classModel: classModel,
+                            loc: loc,
                           ),
                         );
                         if ((confirmed ?? false) && context.mounted) {
-                          unawaited(
-                            context.read<BookingCubit>().cancelBooking(
-                              bookingId,
-                            ),
+                          context.read<BookingBloc>().add(
+                            BookingConfirmCancelEvent(bookingId: bookingId),
                           );
                         }
                         return;
                       }
 
                       const snackbarStatuses = {
-                        BookingCubitStatus.success,
-                        BookingCubitStatus.cancelled,
-                        BookingCubitStatus.error,
-                        BookingCubitStatus.alreadyBooked,
-                        BookingCubitStatus.noSubscription,
-                        BookingCubitStatus.classFull,
-                        BookingCubitStatus.externalBookingRequired,
+                        BookingUiStatus.success,
+                        BookingUiStatus.cancelled,
+                        BookingUiStatus.error,
+                        BookingUiStatus.alreadyBooked,
+                        BookingUiStatus.noSubscription,
+                        BookingUiStatus.classFull,
+                        BookingUiStatus.externalBookingRequired,
                       };
                       if (!snackbarStatuses.contains(state.status)) return;
-                      final msg = state.message ?? '';
-                      if (msg.isEmpty) return;
+
+                      final msg = switch (state.status) {
+                        BookingUiStatus.success => loc.bookingSuccess(
+                          classModel.title,
+                        ),
+                        BookingUiStatus.cancelled => loc.bookingCancelled,
+                        BookingUiStatus.alreadyBooked =>
+                          loc.bookingAlreadyBooked,
+                        BookingUiStatus.noSubscription =>
+                          loc.bookingNoSubscription,
+                        BookingUiStatus.classFull => loc.bookingClassFull,
+                        BookingUiStatus.externalBookingRequired =>
+                          loc.bookViaAdmin,
+                        BookingUiStatus.error => loc.bookingError(
+                          state.errorMessage ?? '',
+                        ),
+                        _ => null,
+                      };
+                      if (msg == null) return;
+
                       final isPositive =
-                          state.status == BookingCubitStatus.success ||
-                          state.status == BookingCubitStatus.cancelled;
+                          state.status == BookingUiStatus.success ||
+                          state.status == BookingUiStatus.cancelled;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -239,11 +185,13 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                       );
                     },
                     builder: (context, state) {
-                      return _BookButton(
+                      return BookingBookButton(
                         classModel: classModel,
                         bookingState: state,
-                        onCancelTap: () =>
-                            context.read<BookingCubit>().requestCancelBooking(),
+                        loc: loc,
+                        onCancelTap: () => context.read<BookingBloc>().add(
+                          const BookingRequestCancelEvent(),
+                        ),
                       );
                     },
                   ),
@@ -253,187 +201,6 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _BookButton extends StatelessWidget {
-  const _BookButton({
-    required this.classModel,
-    required this.bookingState,
-    this.onCancelTap,
-  });
-  final ClassModel classModel;
-  final BookingState bookingState;
-  final VoidCallback? onCancelTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final isLoading = bookingState.status == BookingCubitStatus.loading;
-    final isBooked = bookingState.existingBooking != null;
-    final isExternal = !classModel.isIncludedInSubscription;
-
-    if (isExternal) {
-      return _primaryButton(
-        label: 'Запись через администратора',
-        enabled: false,
-        isLoading: false,
-        onPressed: null,
-      );
-    }
-
-    if (isBooked) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _primaryButton(
-            label: 'Вы записаны',
-            enabled: false,
-            isLoading: isLoading,
-            onPressed: null,
-          ),
-          const SizedBox(height: 12),
-          _cancelButton(context, isLoading),
-        ],
-      );
-    }
-
-    if (classModel.isFull) {
-      return _primaryButton(
-        label: 'Мест нет',
-        enabled: false,
-        isLoading: false,
-        onPressed: null,
-      );
-    }
-
-    return _primaryButton(
-      label: 'Записаться',
-      enabled: !isLoading,
-      isLoading: isLoading,
-      onPressed: () => context.read<BookingCubit>().bookClass(classModel),
-    );
-  }
-
-  Widget _primaryButton({
-    required String label,
-    required bool enabled,
-    required bool isLoading,
-    required VoidCallback? onPressed,
-  }) {
-    return SizedBox(
-      height: 56,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: ElevatedButton(
-            onPressed: onPressed,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: enabled
-                  ? AppColors.primary.withValues(alpha: 0.85)
-                  : Colors.white.withValues(alpha: 0.1),
-              foregroundColor: Colors.white,
-              disabledBackgroundColor: Colors.white.withValues(alpha: 0.1),
-              disabledForegroundColor: Colors.white54,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  AppConstants.scheduleCardRadius,
-                ),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-              ),
-            ),
-            child: isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Text(label, style: AppTextStyles.button),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _cancelButton(BuildContext context, bool isLoading) {
-    return SizedBox(
-      height: 48,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: OutlinedButton(
-            onPressed: isLoading ? null : onCancelTap,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.terracotta,
-              side: BorderSide(
-                color: AppColors.terracotta.withValues(alpha: 0.6),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  AppConstants.scheduleCardRadius,
-                ),
-              ),
-            ),
-            child: Text(
-              'Отменить запись',
-              style: AppTextStyles.button.copyWith(color: AppColors.terracotta),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GlassCard extends StatelessWidget {
-  const _GlassCard({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(
-              AppConstants.scheduleCardRadius,
-            ),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-          ),
-          child: child,
-        ),
-      ),
-    );
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  const _DetailRow({required this.icon, required this.label});
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.white70, size: 18),
-        const SizedBox(width: 10),
-        Text(
-          label,
-          style: AppTextStyles.scheduleCardLabel.copyWith(color: Colors.white),
-        ),
-      ],
     );
   }
 }
