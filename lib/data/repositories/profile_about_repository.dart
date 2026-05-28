@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 @LazySingleton()
 class ProfileAboutRepository with RepositoryExecutorMixin {
   ProfileAboutRepository({required FirebaseFirestore firestore})
-      : _firestore = firestore;
+    : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
 
@@ -18,18 +18,16 @@ class ProfileAboutRepository with RepositoryExecutorMixin {
   Future<ProfileAboutModel> fetchProfileAbout({
     required String locale,
     required String userUid,
-  }) =>
-      execute<ProfileAboutModel>(
-        actionName: 'ProfileAboutRepository.fetchProfileAbout',
-        action: () async {
-          final doc =
-              await _firestore.collection(_collection).doc(_document).get();
+  }) => execute<ProfileAboutModel>(
+    actionName: 'ProfileAboutRepository.fetchProfileAbout',
+    action: () async {
+      final doc = await _firestore.collection(_collection).doc(_document).get();
 
-          if (!doc.exists || doc.data() == null) {
-            return ProfileAboutModel.empty;
-          }
+      if (!doc.exists || doc.data() == null) {
+        return ProfileAboutModel.empty;
+      }
 
-          return ProfileAboutModel.fromJson(doc.data()!);
-        },
-      );
+      return ProfileAboutModel.fromJson(doc.data()!);
+    },
+  );
 }

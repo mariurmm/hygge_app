@@ -32,11 +32,11 @@ class ProgramsState extends Equatable {
   }
 
   List<MasterModel> get visibleMasters {
-    final masters = mastersById.values
-        .where((master) => master.isNotEmpty)
-        .toList(growable: false)
-
-    ..sort((a, b) => a.fullName.compareTo(b.fullName));
+    final masters =
+        mastersById.values
+            .where((master) => master.isNotEmpty)
+            .toList(growable: false)
+          ..sort((a, b) => a.fullName.compareTo(b.fullName));
 
     return masters;
   }

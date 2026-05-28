@@ -27,8 +27,7 @@ class BookingInfoCard extends StatelessWidget {
             Expanded(
               child: Text(
                 loc.externalEventNotice,
-                style:
-                    AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
               ),
             ),
           ],
@@ -51,8 +50,9 @@ class BookingInfoCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   loc.subscriptionRequired,
-                  style: AppTextStyles.bodySmall
-                      .copyWith(color: Colors.white70),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: Colors.white70,
+                  ),
                 ),
               ),
             ],

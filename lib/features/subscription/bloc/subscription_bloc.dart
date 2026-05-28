@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/core/utils/logger.dart';
@@ -13,15 +11,14 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   SubscriptionBloc({
     required SubscriptionRepository repository,
     required this.userId,
-  })  : _repository = repository,
-        super(const SubscriptionState()) {
+  }) : _repository = repository,
+       super(const SubscriptionState()) {
     on<SubscriptionStarted>(_onStarted);
     on<SubscriptionDeductSession>(_onDeductSession);
   }
 
   final SubscriptionRepository _repository;
   final String userId;
-  StreamSubscription<SubscriptionModel?>? _sub;
 
   Future<void> _onStarted(
     SubscriptionStarted event,
@@ -59,16 +56,13 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
         error: e,
         stackTrace: st,
       );
-      emit(state.copyWith(
-        status: SubscriptionStatus.error,
-        error: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: SubscriptionStatus.error,
+          error: e.toString(),
+        ),
+      );
     }
   }
 
-  @override
-  Future<void> close() {
-    _sub?.cancel();
-    return super.close();
-  }
 }

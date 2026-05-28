@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 @LazySingleton()
 class BookingRepository with RepositoryExecutorMixin {
   BookingRepository({required FirebaseFirestore firestore})
-      : _firestore = firestore;
+    : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
 
@@ -36,121 +36,114 @@ class BookingRepository with RepositoryExecutorMixin {
   Future<BookingModel?> getBookingForClass(
     String userId,
     String classId,
-  ) =>
-      execute(
-        actionName: 'BookingRepository.getBookingForClass',
-        action: () async {
-          final snap = await _userBookings(userId)
-              .where('classId', isEqualTo: classId)
-              .where('status', whereIn: ['pending', 'confirmed'])
-              .limit(1)
-              .get();
+  ) => execute(
+    actionName: 'BookingRepository.getBookingForClass',
+    action: () async {
+      final snap = await _userBookings(userId)
+          .where('classId', isEqualTo: classId)
+          .where('status', whereIn: ['pending', 'confirmed'])
+          .limit(1)
+          .get();
 
-          if (snap.docs.isEmpty) return null;
-          final doc = snap.docs.first;
-          return BookingModel.fromJson(doc.data(), id: doc.id);
-        },
-      );
+      if (snap.docs.isEmpty) return null;
+      final doc = snap.docs.first;
+      return BookingModel.fromJson(doc.data(), id: doc.id);
+    },
+  );
 
   Future<BookingModel> createBooking(
     String userId,
     String classId,
     DateTime datetime,
-  ) =>
-      execute(
-        actionName: 'BookingRepository.createBooking',
-        action: () async {
-          final ref = _userBookings(userId).doc();
-          final booking = BookingModel(
-            id: ref.id,
-            userId: userId,
-            classId: classId,
-            datetime: datetime,
-            status: BookingStatus.pending,
-            notificationSent: false,
-          );
-          await ref.set(booking.toJson());
-          return booking;
-        },
+  ) => execute(
+    actionName: 'BookingRepository.createBooking',
+    action: () async {
+      final ref = _userBookings(userId).doc();
+      final booking = BookingModel(
+        id: ref.id,
+        userId: userId,
+        classId: classId,
+        datetime: datetime,
+        status: BookingStatus.pending,
+        notificationSent: false,
       );
+      await ref.set(booking.toJson());
+      return booking;
+    },
+  );
 
   Future<void> updateBookingStatus(
     String userId,
     String bookingId,
     BookingStatus status,
-  ) =>
-      execute(
-        actionName: 'BookingRepository.updateBookingStatus',
-        action: () async {
-          await _userBookings(userId)
-              .doc(bookingId)
-              .update({'status': status.name});
-        },
-      );
+  ) => execute(
+    actionName: 'BookingRepository.updateBookingStatus',
+    action: () async {
+      await _userBookings(
+        userId,
+      ).doc(bookingId).update({'status': status.name});
+    },
+  );
 
-  Future<List<BookingModel>> getUpcomingBookings(String userId) =>
-      execute(
-        actionName: 'BookingRepository.getUpcomingBookings',
-        action: () async {
-          final now = Timestamp.fromDate(DateTime.now());
-          final snap = await _userBookings(userId)
-              .where('datetime', isGreaterThan: now)
-              .orderBy('datetime')
-              .get();
+  Future<List<BookingModel>> getUpcomingBookings(String userId) => execute(
+    actionName: 'BookingRepository.getUpcomingBookings',
+    action: () async {
+      final now = Timestamp.fromDate(DateTime.now());
+      final snap = await _userBookings(
+        userId,
+      ).where('datetime', isGreaterThan: now).orderBy('datetime').get();
 
-          return snap.docs
-              .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
-              .where(
-                (b) =>
-                    b.status == BookingStatus.pending ||
-                    b.status == BookingStatus.confirmed,
-              )
-              .toList();
-        },
-      );
+      return snap.docs
+          .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
+          .where(
+            (b) =>
+                b.status == BookingStatus.pending ||
+                b.status == BookingStatus.confirmed,
+          )
+          .toList();
+    },
+  );
 
-  Future<List<BookingModel>> getBookingHistory(String userId) =>
-      execute(
-        actionName: 'BookingRepository.getBookingHistory',
-        action: () async {
-          final now = Timestamp.fromDate(DateTime.now());
-          final snap = await _userBookings(userId)
-              .where('datetime', isLessThan: now)
-              .orderBy('datetime', descending: true)
-              .get();
+  Future<List<BookingModel>> getBookingHistory(String userId) => execute(
+    actionName: 'BookingRepository.getBookingHistory',
+    action: () async {
+      final now = Timestamp.fromDate(DateTime.now());
+      final snap = await _userBookings(userId)
+          .where('datetime', isLessThan: now)
+          .orderBy('datetime', descending: true)
+          .get();
 
-          return snap.docs
-              .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
-              .where((b) => b.status == BookingStatus.confirmed)
-              .toList();
-        },
-      );
+      return snap.docs
+          .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
+          .where((b) => b.status == BookingStatus.confirmed)
+          .toList();
+    },
+  );
 
   Future<List<Map<String, dynamic>>> getPendingBookingsForNotification(
     String userId,
-  ) =>
-      execute(
-        actionName: 'BookingRepository.getPendingBookingsForNotification',
-        action: () async {
-          final now = Timestamp.fromDate(DateTime.now());
-          final snap = await _userBookings(userId)
-              .where('datetime', isGreaterThan: now)
-              .get();
+  ) => execute(
+    actionName: 'BookingRepository.getPendingBookingsForNotification',
+    action: () async {
+      final now = Timestamp.fromDate(DateTime.now());
+      final snap = await _userBookings(
+        userId,
+      ).where('datetime', isGreaterThan: now).get();
 
-          return snap.docs
-              .map((doc) => {
-                    ...doc.data(),
-                    'bookingId': doc.id,
-                    'userId': userId,
-                  })
-              .where(
-                (b) =>
-                    b['status'] == 'pending' &&
-                    b['notificationSent'] == false,
-              )
-              .toList();
-        },
-      );
+      return snap.docs
+          .map(
+            (doc) => {
+              ...doc.data(),
+              'bookingId': doc.id,
+              'userId': userId,
+            },
+          )
+          .where(
+            (b) => b['status'] == 'pending' && b['notificationSent'] == false,
+          )
+          .toList();
+    },
+  );
 
   // ── Helpers ──────────────────────────────────────────────────
 

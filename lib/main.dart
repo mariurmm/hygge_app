@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hygge_app/core/services/firestore_service.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
@@ -33,6 +37,21 @@ Future<void> main() async {
   AppLogger.info('main: Firebase инициализирован');
 
   configureDependencies();
+
+  await FirebaseMessaging.instance.requestPermission();
+  FirebaseMessaging.instance.onTokenRefresh.listen(
+    (token) {
+      final authRepo = getIt<AuthRepository>();
+      final user = authRepo.currentUser;
+      if (user.isNotEmpty) {
+        unawaited(
+          getIt<FirestoreService>().saveUser(user.uid, {'fcmToken': token}),
+        );
+      }
+    },
+    onError: (Object e, StackTrace st) =>
+        AppLogger.error('FCM onTokenRefresh error', error: e, stackTrace: st),
+  );
 
   // await FirebaseSeed.seedInitialData();
 

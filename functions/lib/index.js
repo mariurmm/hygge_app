@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onBookingStatusChanged = exports.processAutoConfirm = exports.sendClassReminders = void 0;
 const admin = require("firebase-admin");
-const functions = require("firebase-functions/v2");
-const scheduler_1 = require("firebase-functions/v2/scheduler");
-const firestore_1 = require("firebase-functions/v2/firestore");
+const logger_1 = require("firebase-functions/logger");
+const scheduler_1 = require("firebase-functions/scheduler");
+const firestore_1 = require("firebase-functions/firestore");
 admin.initializeApp();
 const db = admin.firestore();
 const messaging = admin.messaging();
@@ -16,7 +16,6 @@ const AUTO_CONFIRM_HOURS = 1;
 // Scheduled function: каждые 15 минут проверяет брони и отправляет уведомления
 // ─────────────────────────────────────────────────────────────────────────────
 exports.sendClassReminders = (0, scheduler_1.onSchedule)({ schedule: "every 15 minutes", timeZone: "Asia/Almaty" }, async () => {
-    var _a, _b;
     const now = admin.firestore.Timestamp.now();
     const windowStart = admin.firestore.Timestamp.fromMillis(now.toMillis() + NOTIFICATION_HOURS_BEFORE * 60 * 60 * 1000 - 15 * 60 * 1000);
     const windowEnd = admin.firestore.Timestamp.fromMillis(now.toMillis() + NOTIFICATION_HOURS_BEFORE * 60 * 60 * 1000);
@@ -27,13 +26,13 @@ exports.sendClassReminders = (0, scheduler_1.onSchedule)({ schedule: "every 15 m
         .where("datetime", "<=", windowEnd)
         .get();
     if (classesSnap.empty) {
-        functions.logger.info("No upcoming classes in notification window");
+        logger_1.logger.info("No upcoming classes in notification window");
         return;
     }
     for (const classDoc of classesSnap.docs) {
         const classData = classDoc.data();
         const classId = classDoc.id;
-        const classTitle = (_a = classData.title) !== null && _a !== void 0 ? _a : "Занятие";
+        const classTitle = classData.title ?? "Занятие";
         const classTime = classData.datetime;
         // Ищем все pending-брони на это занятие, которым ещё не отправлено уведомление
         const bookingsQuery = await db
@@ -49,9 +48,9 @@ exports.sendClassReminders = (0, scheduler_1.onSchedule)({ schedule: "every 15 m
             const bookingId = bookingDoc.id;
             // Получаем FCM токен пользователя
             const userSnap = await db.collection("users").doc(userId).get();
-            const fcmToken = (_b = userSnap.data()) === null || _b === void 0 ? void 0 : _b.fcmToken;
+            const fcmToken = userSnap.data()?.fcmToken;
             if (!fcmToken) {
-                functions.logger.warn(`No FCM token for user ${userId}`);
+                logger_1.logger.warn(`No FCM token for user ${userId}`);
                 continue;
             }
             const timeStr = _formatTime(classTime.toDate());
@@ -97,7 +96,7 @@ exports.sendClassReminders = (0, scheduler_1.onSchedule)({ schedule: "every 15 m
                 confirmAt: admin.firestore.Timestamp.fromMillis(now.toMillis() + AUTO_CONFIRM_HOURS * 60 * 60 * 1000),
                 processed: false,
             });
-            functions.logger.info(`Notification sent to ${userId} for booking ${bookingId}`);
+            logger_1.logger.info(`Notification sent to ${userId} for booking ${bookingId}`);
         }
     }
 });
@@ -105,7 +104,6 @@ exports.sendClassReminders = (0, scheduler_1.onSchedule)({ schedule: "every 15 m
 // Scheduled function: обрабатывает авто-подтверждения (нет ответа = "Да")
 // ─────────────────────────────────────────────────────────────────────────────
 exports.processAutoConfirm = (0, scheduler_1.onSchedule)({ schedule: "every 15 minutes", timeZone: "Asia/Almaty" }, async () => {
-    var _a, _b;
     const now = admin.firestore.Timestamp.now();
     const queueSnap = await db
         .collection("_autoConfirmQueue")
@@ -124,11 +122,11 @@ exports.processAutoConfirm = (0, scheduler_1.onSchedule)({ schedule: "every 15 m
             await queueDoc.ref.update({ processed: true });
             continue;
         }
-        const status = (_b = (_a = bookingSnap.data()) === null || _a === void 0 ? void 0 : _a.status) !== null && _b !== void 0 ? _b : "pending";
+        const status = bookingSnap.data()?.status ?? "pending";
         // Только если всё ещё pending (не ответил) — авто-подтверждаем
         if (status === "pending") {
             await _confirmBookingAndDeduct(userId, bookingId, bookingRef);
-            functions.logger.info(`Auto-confirmed booking ${bookingId} for user ${userId}`);
+            logger_1.logger.info(`Auto-confirmed booking ${bookingId} for user ${userId}`);
         }
         await queueDoc.ref.update({ processed: true });
     }
@@ -138,9 +136,8 @@ exports.processAutoConfirm = (0, scheduler_1.onSchedule)({ schedule: "every 15 m
 // Клиент обновляет bookings/{userId}/userBookings/{bookingId}.status
 // ─────────────────────────────────────────────────────────────────────────────
 exports.onBookingStatusChanged = (0, firestore_1.onDocumentUpdated)("bookings/{userId}/userBookings/{bookingId}", async (event) => {
-    var _a, _b, _c, _d;
-    const before = (_b = (_a = event.data) === null || _a === void 0 ? void 0 : _a.before) === null || _b === void 0 ? void 0 : _b.data();
-    const after = (_d = (_c = event.data) === null || _c === void 0 ? void 0 : _c.after) === null || _d === void 0 ? void 0 : _d.data();
+    const before = event.data?.before?.data();
+    const after = event.data?.after?.data();
     if (!before || !after)
         return;
     if (before.status === after.status)
@@ -157,12 +154,17 @@ exports.onBookingStatusChanged = (0, firestore_1.onDocumentUpdated)("bookings/{u
         await _confirmBookingAndDeduct(userId, bookingId, bookingRef);
     }
     else if (newStatus === "cancelled") {
-        // Пользователь ответил "Нет" — уменьшаем счётчик участников
+        // Уменьшаем счётчик участников
         const classId = after.classId;
         if (classId) {
             await _decrementParticipants(classId);
         }
-        functions.logger.info(`Booking ${bookingId} cancelled by user ${userId}`);
+        // Если бронь была подтверждена — возвращаем занятие в абонемент
+        const prevStatus = before.status;
+        if (prevStatus === "confirmed") {
+            await _restoreSession(userId);
+        }
+        logger_1.logger.info(`Booking ${bookingId} cancelled by user ${userId} (was ${prevStatus})`);
     }
 });
 // ─────────────────────────────────────────────────────────────────────────────
@@ -170,24 +172,23 @@ exports.onBookingStatusChanged = (0, firestore_1.onDocumentUpdated)("bookings/{u
 // ─────────────────────────────────────────────────────────────────────────────
 async function _confirmBookingAndDeduct(userId, bookingId, bookingRef) {
     await db.runTransaction(async (tx) => {
-        var _a, _b, _c, _d, _e;
         const bookingSnap = await tx.get(bookingRef);
         if (!bookingSnap.exists)
             return;
         // Статус уже не pending — пропускаем (идемпотентность)
-        if (((_a = bookingSnap.data()) === null || _a === void 0 ? void 0 : _a.status) !== "pending")
+        if (bookingSnap.data()?.status !== "pending")
             return;
         const subRef = db.collection("subscriptions").doc(userId);
         const subSnap = await tx.get(subRef);
         if (!subSnap.exists) {
-            functions.logger.warn(`No subscription for user ${userId}, confirming without deduct`);
+            logger_1.logger.warn(`No subscription for user ${userId}, confirming without deduct`);
             tx.update(bookingRef, { status: "confirmed" });
             return;
         }
-        const used = (_c = (_b = subSnap.data()) === null || _b === void 0 ? void 0 : _b.usedSessions) !== null && _c !== void 0 ? _c : 0;
-        const total = (_e = (_d = subSnap.data()) === null || _d === void 0 ? void 0 : _d.totalSessions) !== null && _e !== void 0 ? _e : 0;
+        const used = subSnap.data()?.usedSessions ?? 0;
+        const total = subSnap.data()?.totalSessions ?? 0;
         if (used >= total) {
-            functions.logger.warn(`Subscription exhausted for user ${userId}`);
+            logger_1.logger.warn(`Subscription exhausted for user ${userId}`);
             tx.update(bookingRef, { status: "confirmed" });
             return;
         }
@@ -198,14 +199,23 @@ async function _confirmBookingAndDeduct(userId, bookingId, bookingRef) {
 async function _decrementParticipants(classId) {
     const classRef = db.collection("classes").doc(classId);
     await db.runTransaction(async (tx) => {
-        var _a, _b;
         const snap = await tx.get(classRef);
         if (!snap.exists)
             return;
-        const current = (_b = (_a = snap.data()) === null || _a === void 0 ? void 0 : _a.currentParticipants) !== null && _b !== void 0 ? _b : 0;
+        const current = snap.data()?.currentParticipants ?? 0;
         tx.update(classRef, {
             currentParticipants: current > 0 ? current - 1 : 0,
         });
+    });
+}
+async function _restoreSession(userId) {
+    const subRef = db.collection("subscriptions").doc(userId);
+    await db.runTransaction(async (tx) => {
+        const snap = await tx.get(subRef);
+        if (!snap.exists)
+            return;
+        const used = snap.data()?.usedSessions ?? 0;
+        tx.update(subRef, { usedSessions: used > 0 ? used - 1 : 0 });
     });
 }
 function _formatTime(date) {

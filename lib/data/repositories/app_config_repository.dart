@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 @LazySingleton()
 class AppConfigRepository with RepositoryExecutorMixin {
   AppConfigRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
 
@@ -19,7 +19,10 @@ class AppConfigRepository with RepositoryExecutorMixin {
       execute<ContactInfoModel>(
         actionName: 'AppConfigRepository.getContactInfo',
         action: () async {
-          final doc = await _firestore.collection(_collection).doc(_document).get();
+          final doc = await _firestore
+              .collection(_collection)
+              .doc(_document)
+              .get();
 
           if (!doc.exists || doc.data() == null) {
             return ContactInfoModel.fallback;

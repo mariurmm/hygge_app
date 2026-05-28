@@ -19,10 +19,10 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     required UpcomingLessonRepository upcomingLessonRepo,
     required this.userId,
     required this.whatsAppService,
-  })  : _bookingRepo = bookingRepo,
-        _subscriptionRepo = subscriptionRepo,
-        _upcomingLessonRepo = upcomingLessonRepo,
-        super(const BookingState()) {
+  }) : _bookingRepo = bookingRepo,
+       _subscriptionRepo = subscriptionRepo,
+       _upcomingLessonRepo = upcomingLessonRepo,
+       super(const BookingState()) {
     on<BookingCheckStatusEvent>(_onCheckStatus);
     on<BookingBookClassEvent>(_onBookClass);
     on<BookingRequestCancelEvent>(_onRequestCancel);
@@ -45,10 +45,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       userId,
       event.classId,
     );
-    emit(state.copyWith(
-      existingBooking: existing,
-      status: BookingUiStatus.idle,
-    ));
+    emit(
+      state.copyWith(
+        existingBooking: existing,
+        status: BookingUiStatus.idle,
+      ),
+    );
   }
 
   Future<void> _onBookClass(
@@ -65,10 +67,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         classModel.id,
       );
       if (existing != null) {
-        emit(state.copyWith(
-          status: BookingUiStatus.alreadyBooked,
-          existingBooking: existing,
-        ));
+        emit(
+          state.copyWith(
+            status: BookingUiStatus.alreadyBooked,
+            existingBooking: existing,
+          ),
+        );
         return;
       }
 
@@ -76,10 +80,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         unawaited(
           whatsAppService.open(event.whatsAppMessage),
         );
-        emit(state.copyWith(
-          status: BookingUiStatus.externalBookingRequired,
-          existingBooking: existing,
-        ));
+        emit(
+          state.copyWith(
+            status: BookingUiStatus.externalBookingRequired,
+            existingBooking: existing,
+          ),
+        );
         return;
       }
 
@@ -101,17 +107,19 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         classModel.startDate,
       );
 
-      await _subscriptionRepo.deductSession(userId);
-
-      emit(state.copyWith(
-        status: BookingUiStatus.success,
-        existingBooking: booking,
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.success,
+          existingBooking: booking,
+        ),
+      );
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: BookingUiStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -136,10 +144,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       );
       emit(const BookingState(status: BookingUiStatus.cancelled));
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: BookingUiStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -161,10 +171,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
       emit(state.copyWith(status: BookingUiStatus.success));
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: BookingUiStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

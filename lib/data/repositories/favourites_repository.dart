@@ -9,8 +9,8 @@ class FavouritesRepository with RepositoryExecutorMixin {
   FavouritesRepository({
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
-  })  : _firestore = firestore,
-        _auth = auth;
+  }) : _firestore = firestore,
+       _auth = auth;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
@@ -36,57 +36,57 @@ class FavouritesRepository with RepositoryExecutorMixin {
   }
 
   Future<Set<String>> fetchFavouriteIds() => execute(
-        actionName: 'FavouritesRepository.fetchFavouriteIds',
-        action: () async {
-          final uid = _uid;
-          if (uid == null) return <String>{};
+    actionName: 'FavouritesRepository.fetchFavouriteIds',
+    action: () async {
+      final uid = _uid;
+      if (uid == null) return <String>{};
 
-          final snapshot = await _favourites(uid).get();
-          return snapshot.docs.map((d) => d.id).toSet();
-        },
-      );
+      final snapshot = await _favourites(uid).get();
+      return snapshot.docs.map((d) => d.id).toSet();
+    },
+  );
 
   Future<void> setFavourite({
     required String programId,
     required bool isFavourite,
   }) => execute(
-        actionName: 'FavouritesRepository.setFavourite',
-        action: () async {
-          final uid = _uid;
-          if (uid == null || programId.isEmpty) return;
+    actionName: 'FavouritesRepository.setFavourite',
+    action: () async {
+      final uid = _uid;
+      if (uid == null || programId.isEmpty) return;
 
-          final ref = _favourites(uid).doc(programId);
+      final ref = _favourites(uid).doc(programId);
 
-          if (isFavourite) {
-            await ref.set({
-              'programId': programId,
-              'createdAt': FieldValue.serverTimestamp(),
-            }, SetOptions(merge: true));
-          } else {
-            await ref.delete();
-          }
-        },
-      );
+      if (isFavourite) {
+        await ref.set({
+          'programId': programId,
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } else {
+        await ref.delete();
+      }
+    },
+  );
 
   Future<List<ProgramModel>> fetchFavouritePrograms() => execute(
-        actionName: 'FavouritesRepository.fetchFavouritePrograms',
-        action: () async {
-          final uid = _uid;
-          if (uid == null) return const <ProgramModel>[];
+    actionName: 'FavouritesRepository.fetchFavouritePrograms',
+    action: () async {
+      final uid = _uid;
+      if (uid == null) return const <ProgramModel>[];
 
-          final snapshot = await _favourites(uid).get();
-          final result = <ProgramModel>[];
+      final snapshot = await _favourites(uid).get();
+      final result = <ProgramModel>[];
 
-          for (final doc in snapshot.docs) {
-            final programDoc = await _programs.doc(doc.id).get();
-            if (programDoc.exists && programDoc.data() != null) {
-              result.add(_programFromDoc(programDoc));
-            }
-          }
+      for (final doc in snapshot.docs) {
+        final programDoc = await _programs.doc(doc.id).get();
+        if (programDoc.exists && programDoc.data() != null) {
+          result.add(_programFromDoc(programDoc));
+        }
+      }
 
-          return result;
-        },
-      );
+      return result;
+    },
+  );
 
   // ── Helpers ──────────────────────────────────────────────────
 

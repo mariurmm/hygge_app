@@ -258,7 +258,7 @@ Future<void> openMasterDetails(
 
   await Navigator.of(context, rootNavigator: true).push(
     PageRouteBuilder<void>(
-      pageBuilder: (_, __, ___) {
+      pageBuilder: (_, _, _) {
         return MasterDetailsPage(
           master: master,
           repository: repository,

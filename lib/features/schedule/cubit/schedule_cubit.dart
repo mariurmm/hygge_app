@@ -87,9 +87,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   BookingRepository get bookingRepo => _bookingRepo;
 
   @override
-  Future<void> close() {
-    unawaited(_classesSub?.cancel() ?? Future<void>.value());
-    unawaited(_monthSub?.cancel() ?? Future<void>.value());
+  Future<void> close() async {
+    await _classesSub?.cancel();
+    await _monthSub?.cancel();
     return super.close();
   }
 }

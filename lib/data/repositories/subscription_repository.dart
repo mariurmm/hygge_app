@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 @LazySingleton()
 class SubscriptionRepository with RepositoryExecutorMixin {
   SubscriptionRepository({required FirebaseFirestore firestore})
-      : _firestore = firestore;
+    : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
 
@@ -17,55 +17,58 @@ class SubscriptionRepository with RepositoryExecutorMixin {
   // ── Public API ────────────────────────────────────────────────
 
   Stream<SubscriptionModel?> watchSubscription(String userId) {
-    return _doc(userId).snapshots().map((snap) {
-      if (!snap.exists || snap.data() == null) return null;
-      return SubscriptionModel.fromJson(snap.data()!);
-    }).handleError(
-      _onStreamError('SubscriptionRepository.watchSubscription'),
-    );
+    return _doc(userId)
+        .snapshots()
+        .map((snap) {
+          if (!snap.exists || snap.data() == null) return null;
+          return SubscriptionModel.fromJson(snap.data()!);
+        })
+        .handleError(
+          _onStreamError('SubscriptionRepository.watchSubscription'),
+        );
   }
 
   Future<SubscriptionModel?> getSubscription(String userId) => execute(
-        actionName: 'SubscriptionRepository.getSubscription',
-        action: () async {
-          final snap = await _doc(userId).get();
-          if (!snap.exists || snap.data() == null) return null;
-          return SubscriptionModel.fromJson(snap.data()!);
-        },
-      );
+    actionName: 'SubscriptionRepository.getSubscription',
+    action: () async {
+      final snap = await _doc(userId).get();
+      if (!snap.exists || snap.data() == null) return null;
+      return SubscriptionModel.fromJson(snap.data()!);
+    },
+  );
 
   Future<void> deductSession(String userId) => execute(
-        actionName: 'SubscriptionRepository.deductSession',
-        action: () async {
-          final ref = _doc(userId);
-          await _firestore.runTransaction((tx) async {
-            final snap = await tx.get(ref);
-            if (!snap.exists) {
-              throw Exception('Абонемент не найден для $userId');
-            }
-            final data = snap.data();
-            if (data == null) {
-              throw Exception('Document not found at ${snap.reference.path}');
-            }
-            final used = (data['usedSessions'] as num?)?.toInt() ?? 0;
-            final total = (data['totalSessions'] as num?)?.toInt() ?? 0;
-            if (used >= total) {
-              throw Exception('Занятия на абонементе закончились');
-            }
-            tx.update(ref, {'usedSessions': used + 1});
-          });
-        },
-      );
+    actionName: 'SubscriptionRepository.deductSession',
+    action: () async {
+      final ref = _doc(userId);
+      await _firestore.runTransaction((tx) async {
+        final snap = await tx.get(ref);
+        if (!snap.exists) {
+          throw Exception('Абонемент не найден для $userId');
+        }
+        final data = snap.data();
+        if (data == null) {
+          throw Exception('Document not found at ${snap.reference.path}');
+        }
+        final used = (data['usedSessions'] as num?)?.toInt() ?? 0;
+        final total = (data['totalSessions'] as num?)?.toInt() ?? 0;
+        if (used >= total) {
+          throw Exception('Занятия на абонементе закончились');
+        }
+        tx.update(ref, {'usedSessions': used + 1});
+      });
+    },
+  );
 
   Future<void> saveFcmToken(String userId, String token) => execute(
-        actionName: 'SubscriptionRepository.saveFcmToken',
-        action: () async {
-          await _firestore.collection(CollectionNames.users).doc(userId).set(
-            {'fcmToken': token},
-            SetOptions(merge: true),
-          );
-        },
+    actionName: 'SubscriptionRepository.saveFcmToken',
+    action: () async {
+      await _firestore.collection(CollectionNames.users).doc(userId).set(
+        {'fcmToken': token},
+        SetOptions(merge: true),
       );
+    },
+  );
 
   // ── Helpers ──────────────────────────────────────────────────
 
