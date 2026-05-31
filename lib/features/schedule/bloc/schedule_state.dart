@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:hygge_app/data/models/lesson_model.dart';
-import 'package:hygge_app/data/models/program_model.dart';
+part of 'schedule_bloc.dart';
 
 enum ScheduleStatus { initial, loading, success, failure }
 
@@ -9,87 +7,62 @@ final class ScheduleState extends Equatable {
     required this.today,
     required this.selectedDay,
     this.status = ScheduleStatus.initial,
-    this.bookedLessons = const <LessonModel>[],
-    this.completedLessons = const <LessonModel>[],
-    this.errorMessage,
-    this.programsById = const {},
+    this.upcomingClasses = const [],
+    this.monthClasses = const [],
+    this.error,
   });
 
   factory ScheduleState.initial() {
     final now = DateTime.now();
-    final today = _dayOnly(now);
-
+    final today = DateTime(now.year, now.month, now.day);
     return ScheduleState(today: today, selectedDay: today);
   }
+
   final ScheduleStatus status;
   final DateTime today;
   final DateTime selectedDay;
-  final List<LessonModel> bookedLessons;
-  final List<LessonModel> completedLessons;
-  final String? errorMessage;
-  final Map<String, ProgramModel> programsById;
+  final List<ClassModel> upcomingClasses;
+  final List<ClassModel> monthClasses;
+  final String? error;
 
-  List<LessonModel> get allLessons => <LessonModel>[
-    ...bookedLessons,
-    ...completedLessons,
-  ];
-
-  int get completedSessions => completedLessons.length;
-
-  int get totalSessions => bookedLessons.length + completedLessons.length;
-
-  double get progress =>
-      totalSessions == 0 ? 0 : completedSessions / totalSessions;
-
-  Set<DateTime> get scheduledDates =>
-      bookedLessons.map((lesson) => _dayOnly(lesson.calendarDay)).toSet();
-
-  List<LessonModel> get selectedDayLessons {
-    final selected = _dayOnly(selectedDay);
-
-    final lessons = bookedLessons
-        .where((lesson) => _dayOnly(lesson.calendarDay) == selected)
-        .toList(growable: false);
-
-    return lessons..sort(
-      (a, b) => a.startDate.compareTo(b.startDate),
+  List<ClassModel> get selectedDayClasses {
+    final selected = DateTime(
+      selectedDay.year,
+      selectedDay.month,
+      selectedDay.day,
     );
+    return upcomingClasses
+        .where((c) => c.calendarDay == selected)
+        .toList(growable: false)
+      ..sort((a, b) => a.startDate.compareTo(b.startDate));
   }
-
-  bool get hasSelectedDayLessons => selectedDayLessons.isNotEmpty;
 
   ScheduleState copyWith({
     ScheduleStatus? status,
     DateTime? today,
     DateTime? selectedDay,
-    List<LessonModel>? bookedLessons,
-    List<LessonModel>? completedLessons,
-    String? errorMessage,
+    List<ClassModel>? upcomingClasses,
+    List<ClassModel>? monthClasses,
+    String? error,
     bool clearError = false,
-    Map<String, ProgramModel>? programsById,
   }) {
     return ScheduleState(
       status: status ?? this.status,
       today: today ?? this.today,
       selectedDay: selectedDay ?? this.selectedDay,
-      bookedLessons: bookedLessons ?? this.bookedLessons,
-      completedLessons: completedLessons ?? this.completedLessons,
-      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
-      programsById: programsById ?? this.programsById,
+      upcomingClasses: upcomingClasses ?? this.upcomingClasses,
+      monthClasses: monthClasses ?? this.monthClasses,
+      error: clearError ? null : error ?? this.error,
     );
   }
 
-  static DateTime _dayOnly(DateTime value) =>
-      DateTime(value.year, value.month, value.day);
-
   @override
-  List<Object?> get props => <Object?>[
-    status,
-    today,
-    selectedDay,
-    bookedLessons,
-    completedLessons,
-    errorMessage,
-    programsById,
-  ];
+  List<Object?> get props => [
+        status,
+        today,
+        selectedDay,
+        upcomingClasses,
+        monthClasses,
+        error,
+      ];
 }

@@ -4,7 +4,7 @@ sealed class ScheduleEvent extends Equatable {
   const ScheduleEvent();
 
   @override
-  List<Object?> get props => <Object?>[];
+  List<Object?> get props => [];
 }
 
 final class ScheduleStarted extends ScheduleEvent {
@@ -20,5 +20,21 @@ final class ScheduleDaySelected extends ScheduleEvent {
   final DateTime day;
 
   @override
-  List<Object?> get props => <Object?>[day];
+  List<Object?> get props => [day];
+}
+
+final class _UpcomingClassesUpdated extends ScheduleEvent {
+  const _UpcomingClassesUpdated(this.classes);
+  final List<ClassModel> classes;
+
+  @override
+  List<Object?> get props => [classes];
+}
+
+final class _MonthClassesUpdated extends ScheduleEvent {
+  const _MonthClassesUpdated(this.classes);
+  final List<ClassModel> classes;
+
+  @override
+  List<Object?> get props => [classes];
 }

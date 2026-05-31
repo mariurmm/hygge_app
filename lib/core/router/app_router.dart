@@ -22,13 +22,10 @@ import 'package:hygge_app/features/profile/bloc/profile_bloc.dart';
 import 'package:hygge_app/features/profile/ui/profile_tab.dart';
 import 'package:hygge_app/features/programs/ui/programs_tab.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
-import 'package:hygge_app/features/schedule/cubit/schedule_cubit.dart';
 import 'package:hygge_app/features/schedule/ui/schedule_tab.dart';
 import 'package:hygge_app/features/settings/ui/settings_screen.dart';
 import 'package:hygge_app/features/splash/ui/splash_screen.dart';
 import 'package:hygge_app/features/subscription/bloc/subscription_bloc.dart';
-// TODO(mvp): restore after MVP
-// import 'package:hygge_app/features/subscription/ui/account_subscription_page.dart';
 
 class AppRouter {
   static GoRouter create() {
@@ -39,21 +36,16 @@ class AppRouter {
     return GoRouter(
       initialLocation: RouteNames.splash,
       routes: [
-        // ── Splash ───────────────────────────────────────────
         GoRoute(
           name: RouteNames.splashName,
           path: RouteNames.splash,
           builder: (context, state) => const SplashScreen(),
         ),
-
-        // ── Login ────────────────────────────────────────────
         GoRoute(
           name: RouteNames.loginName,
           path: RouteNames.login,
           builder: (context, state) => const LoginScreen(),
         ),
-
-        // ── ShellRoute ────────────────────────────────────────
         ShellRoute(
           pageBuilder: (context, state, child) {
             final userId = context.read<AppBloc>().state.user.uid;
@@ -62,12 +54,10 @@ class AppRouter {
               key: state.pageKey,
               child: MultiBlocProvider(
                 providers: [
-                  BlocProvider<ScheduleCubit>(
-                    create: (_) => ScheduleCubit(
+                  BlocProvider<ScheduleBloc>(
+                    create: (_) => ScheduleBloc(
                       scheduleRepo: scheduleRepo,
-                      bookingRepo: bookingRepo,
-                      userId: userId,
-                    ),
+                    )..add(const ScheduleStarted()),
                   ),
                   BlocProvider<BookingBloc>(
                     create: (ctx) => BookingBloc(
@@ -82,16 +72,10 @@ class AppRouter {
                     create: (_) => SubscriptionBloc(
                       repository: subscriptionRepo,
                       userId: userId,
-                    ),
+                    )..add(const SubscriptionStarted()),
                   ),
                   BlocProvider<HomeCubit>(
                     create: (ctx) => HomeCubit(upcomingRepo: ctx.read()),
-                  ),
-
-                  BlocProvider<ScheduleBloc>(
-                    create: (ctx) => ScheduleBloc(
-                      repository: ctx.read<UpcomingLessonRepository>(),
-                    )..add(const ScheduleStarted()),
                   ),
                   BlocProvider<ProfileBloc>(
                     create: (ctx) => ProfileBloc(
@@ -125,7 +109,6 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
-
             GoRoute(
               name: RouteNames.programsName,
               path: RouteNames.programs,
@@ -137,7 +120,6 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
-
             GoRoute(
               name: RouteNames.scheduleName,
               path: RouteNames.schedule,
@@ -149,7 +131,6 @@ class AppRouter {
                 transitionDuration: const Duration(milliseconds: 200),
               ),
             ),
-
             GoRoute(
               name: RouteNames.profileName,
               path: RouteNames.profile,
@@ -163,8 +144,6 @@ class AppRouter {
             ),
           ],
         ),
-
-        // ── Outside ShellRoute ───────────────────────────────
         GoRoute(
           name: RouteNames.historyName,
           path: RouteNames.history,
@@ -176,7 +155,6 @@ class AppRouter {
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
-
         GoRoute(
           name: RouteNames.settingsName,
           path: RouteNames.settings,
@@ -188,38 +166,18 @@ class AppRouter {
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
-
         GoRoute(
           name: RouteNames.notificationsName,
           path: RouteNames.notifications,
           pageBuilder: (context, state) => CustomTransitionPage<void>(
             key: state.pageKey,
             child: const NotificationsScreen(),
-            transitionsBuilder: (context, animation, _, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder: (context, animation, _, child) =>
+                FadeTransition(opacity: animation, child: child),
             transitionDuration: const Duration(milliseconds: 200),
           ),
         ),
-
-        // TODO(mvp): restore after MVP
-        // GoRoute(
-        //   name: RouteNames.subscriptionName,
-        //   path: RouteNames.subscription,
-        //   pageBuilder: (context, state) => CustomTransitionPage(
-        //     key: state.pageKey,
-        //     child: const AccountSubscriptionPage(),
-        //     transitionsBuilder: (context, animation, _, child) =>
-        //         FadeTransition(opacity: animation, child: child),
-        //     transitionDuration: const Duration(milliseconds: 200),
-        //   ),
-        // ),
       ],
-
-      // ── 404 ───────────────────────────────────────────────
       errorBuilder: (context, state) => Scaffold(
         body: Center(
           child: Text(
