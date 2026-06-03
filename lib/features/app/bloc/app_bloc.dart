@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:hygge_app/core/firebase/firebase_seed.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/user_model.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
@@ -42,6 +43,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     if (event.user.isNotEmpty) {
       AppLogger.info('AppBloc: пользователь авторизован — ${event.user.email}');
       emit(AppState.authenticated(event.user));
+      // Seed запускается после логина — Firebase Rules требуют авторизации.
+      // Используем mergeFields, поэтому повторные запуски безопасны.
+      unawaited(FirebaseSeed.seedInitialData());
     } else {
       AppLogger.info('AppBloc: пользователь не авторизован');
       emit(const AppState.unauthenticated());

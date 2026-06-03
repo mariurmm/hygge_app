@@ -11,6 +11,7 @@ final class FirebaseSeed {
     _seedMasters(batch);
     _seedPrograms(batch);
     _seedLessons(batch);
+    _seedClasses(batch);
 
     await batch.commit();
   }
@@ -324,99 +325,99 @@ final class FirebaseSeed {
         uuid: 'hatha_yoga_aigerim_001_2026_05_18_0800',
         programId: 'hatha_yoga_aigerim_001',
         masterId: 'aigerim_amantaeva_001',
-        start: DateTime(2026, 5, 18, 8),
-        finish: DateTime(2026, 5, 18, 9),
+        start: DateTime(2026, 5, 30, 8),
+        finish: DateTime(2026, 5, 30, 9),
       ),
       _lesson(
         uuid: 'hatha_yoga_aigerim_001_2026_05_20_0800',
         programId: 'hatha_yoga_aigerim_001',
         masterId: 'aigerim_amantaeva_001',
-        start: DateTime(2026, 5, 20, 8),
-        finish: DateTime(2026, 5, 20, 9),
+        start: DateTime(2026, 6, 1, 8),
+        finish: DateTime(2026, 6, 1, 9),
       ),
       _lesson(
         uuid: 'hatha_yoga_aigerim_001_2026_05_23_1000',
         programId: 'hatha_yoga_aigerim_001',
         masterId: 'aigerim_amantaeva_001',
-        start: DateTime(2026, 5, 23, 10),
-        finish: DateTime(2026, 5, 23, 11),
+        start: DateTime(2026, 6, 2, 10),
+        finish: DateTime(2026, 6, 2, 11),
       ),
       _lesson(
         uuid: 'ashtanga_aigerim_001_2026_05_19_1900',
         programId: 'ashtanga_aigerim_001',
         masterId: 'aigerim_amantaeva_001',
-        start: DateTime(2026, 5, 19, 19),
-        finish: DateTime(2026, 5, 19, 20, 15),
+        start: DateTime(2026, 6, 19, 19),
+        finish: DateTime(2026, 6, 19, 20, 15),
       ),
       _lesson(
         uuid: 'ashtanga_aigerim_001_2026_05_22_1900',
         programId: 'ashtanga_aigerim_001',
         masterId: 'aigerim_amantaeva_001',
-        start: DateTime(2026, 5, 22, 19),
-        finish: DateTime(2026, 5, 22, 20, 15),
+        start: DateTime(2026, 6, 22, 19),
+        finish: DateTime(2026, 6, 22, 20, 15),
       ),
       _lesson(
         uuid: 'morning_meditation_dana_001_2026_05_18_0730',
         programId: 'morning_meditation_dana_001',
         masterId: 'dana_sadykova_001',
-        start: DateTime(2026, 5, 18, 7, 30),
-        finish: DateTime(2026, 5, 18, 8, 15),
+        start: DateTime(2026, 6, 18, 7, 30),
+        finish: DateTime(2026, 6, 18, 8, 15),
       ),
       _lesson(
         uuid: 'morning_meditation_dana_001_2026_05_21_0730',
         programId: 'morning_meditation_dana_001',
         masterId: 'dana_sadykova_001',
-        start: DateTime(2026, 5, 21, 7, 30),
-        finish: DateTime(2026, 5, 21, 8, 15),
+        start: DateTime(2026, 6, 21, 7, 30),
+        finish: DateTime(2026, 6, 21, 8, 15),
       ),
       _lesson(
         uuid: 'morning_meditation_dana_001_2026_05_25_0730',
         programId: 'morning_meditation_dana_001',
         masterId: 'dana_sadykova_001',
-        start: DateTime(2026, 5, 25, 7, 30),
-        finish: DateTime(2026, 5, 25, 8, 15),
+        start: DateTime(2026, 6, 25, 7, 30),
+        finish: DateTime(2026, 6, 25, 8, 15),
       ),
       _lesson(
         uuid: 'breathwork_dana_001_2026_05_20_1830',
         programId: 'breathwork_dana_001',
         masterId: 'dana_sadykova_001',
-        start: DateTime(2026, 5, 20, 18, 30),
-        finish: DateTime(2026, 5, 20, 19, 30),
+        start: DateTime(2026, 6, 20, 18, 30),
+        finish: DateTime(2026, 6, 20, 19, 30),
       ),
       _lesson(
         uuid: 'breathwork_dana_001_2026_05_24_1200',
         programId: 'breathwork_dana_001',
         masterId: 'dana_sadykova_001',
-        start: DateTime(2026, 5, 24, 12),
-        finish: DateTime(2026, 5, 24, 13),
+        start: DateTime(2026, 6, 24, 12),
+        finish: DateTime(2026, 6, 24, 13),
       ),
       _lesson(
         uuid: 'outdoor_movement_arman_001_2026_05_23_0900',
         programId: 'outdoor_movement_arman_001',
         masterId: 'arman_ibrayev_001',
-        start: DateTime(2026, 5, 23, 9),
-        finish: DateTime(2026, 5, 23, 10, 30),
+        start: DateTime(2026, 6, 23, 9),
+        finish: DateTime(2026, 6, 23, 10, 30),
       ),
       _lesson(
         uuid: 'outdoor_movement_arman_001_2026_05_30_0900',
         programId: 'outdoor_movement_arman_001',
         masterId: 'arman_ibrayev_001',
-        start: DateTime(2026, 5, 30, 9),
-        finish: DateTime(2026, 5, 30, 10, 30),
+        start: DateTime(2026, 6, 30, 9),
+        finish: DateTime(2026, 6, 30, 10, 30),
       ),
       _lesson(
         uuid: 'tea_ceremony_arman_001_2026_05_24_1700',
         programId: 'tea_ceremony_arman_001',
         masterId: 'arman_ibrayev_001',
-        start: DateTime(2026, 5, 24, 17),
-        finish: DateTime(2026, 5, 24, 18, 30),
+        start: DateTime(2026, 6, 24, 17),
+        finish: DateTime(2026, 6, 24, 18, 30),
       ),
       _lesson(
         uuid: 'tea_ceremony_arman_001_2026_05_31_1700',
         programId: 'tea_ceremony_arman_001',
         masterId: 'arman_ibrayev_001',
-        start: DateTime(2026, 5, 31, 17),
-        finish: DateTime(2026, 5, 31, 18, 30),
+        start: DateTime(2026, 6, 31, 17),
+        finish: DateTime(2026, 6, 31, 18, 30),
       ),
     ];
 
@@ -443,5 +444,179 @@ final class FirebaseSeed {
       'finishDate': Timestamp.fromDate(finish),
       'isBookable': true,
     };
+  }
+
+  // ── Classes seed (для Schedule tab + BookingBloc) ─────────────────────────
+  // Коллекция 'classes' — отдельная от 'lessons'. Используется расписанием
+  // и системой бронирования. Каждое занятие имеет maxParticipants=15.
+  // set() с merge:false — не перезаписывает currentParticipants если документ
+  // уже существует (для этого используется SetOptions(mergeFields)).
+
+  static void _seedClasses(WriteBatch batch) {
+    void addClass({
+      required String id,
+      required String title,
+      required String type,
+      required String trainerId,
+      required DateTime datetime,
+      required int durationMinutes,
+      bool isIncludedInSubscription = true,
+      double price = 0,
+    }) {
+      final ref = _firestore.collection('classes').doc(id);
+      batch.set(
+        ref,
+        {
+          'title': title,
+          'type': type,
+          'trainerId': trainerId,
+          'datetime': Timestamp.fromDate(datetime),
+          'durationMinutes': durationMinutes,
+          'maxParticipants': 15,
+          'currentParticipants': 0,
+          'isIncludedInSubscription': isIncludedInSubscription,
+          'price': price,
+        },
+        SetOptions(
+          mergeFields: [
+            'title',
+            'type',
+            'trainerId',
+            'datetime',
+            'durationMinutes',
+            'maxParticipants',
+            'isIncludedInSubscription',
+            'price',
+          ],
+        ),
+      );
+    }
+
+    // ── Июнь 2026 ────────────────────────────────────────────────────────────
+
+    addClass(
+      id: 'class_hatha_2026_06_04_0800',
+      title: 'Хатха-йога с Айгерим',
+      type: 'Йога',
+      trainerId: 'aigerim_amantaeva_001',
+      datetime: DateTime(2026, 6, 4, 8),
+      durationMinutes: 60,
+    );
+    addClass(
+      id: 'class_hatha_2026_06_06_0800',
+      title: 'Хатха-йога с Айгерим',
+      type: 'Йога',
+      trainerId: 'aigerim_amantaeva_001',
+      datetime: DateTime(2026, 6, 6, 8),
+      durationMinutes: 60,
+    );
+    addClass(
+      id: 'class_hatha_2026_06_09_0800',
+      title: 'Хатха-йога с Айгерим',
+      type: 'Йога',
+      trainerId: 'aigerim_amantaeva_001',
+      datetime: DateTime(2026, 6, 9, 8),
+      durationMinutes: 60,
+    );
+    addClass(
+      id: 'class_hatha_2026_06_11_0800',
+      title: 'Хатха-йога с Айгерим',
+      type: 'Йога',
+      trainerId: 'aigerim_amantaeva_001',
+      datetime: DateTime(2026, 6, 11, 8),
+      durationMinutes: 60,
+    );
+    addClass(
+      id: 'class_ashtanga_2026_06_05_1900',
+      title: 'Аштанга-виньяса',
+      type: 'Йога',
+      trainerId: 'aigerim_amantaeva_001',
+      datetime: DateTime(2026, 6, 5, 19),
+      durationMinutes: 75,
+    );
+    addClass(
+      id: 'class_ashtanga_2026_06_10_1900',
+      title: 'Аштанга-виньяса',
+      type: 'Йога',
+      trainerId: 'aigerim_amantaeva_001',
+      datetime: DateTime(2026, 6, 10, 19),
+      durationMinutes: 75,
+    );
+    addClass(
+      id: 'class_meditation_2026_06_04_0730',
+      title: 'Утренняя медитация',
+      type: 'Медитация',
+      trainerId: 'dana_sadykova_001',
+      datetime: DateTime(2026, 6, 4, 7, 30),
+      durationMinutes: 45,
+    );
+    addClass(
+      id: 'class_meditation_2026_06_07_0730',
+      title: 'Утренняя медитация',
+      type: 'Медитация',
+      trainerId: 'dana_sadykova_001',
+      datetime: DateTime(2026, 6, 7, 7, 30),
+      durationMinutes: 45,
+    );
+    addClass(
+      id: 'class_meditation_2026_06_11_0730',
+      title: 'Утренняя медитация',
+      type: 'Медитация',
+      trainerId: 'dana_sadykova_001',
+      datetime: DateTime(2026, 6, 11, 7, 30),
+      durationMinutes: 45,
+    );
+    addClass(
+      id: 'class_breathwork_2026_06_06_1830',
+      title: 'Дыхательная практика',
+      type: 'Медитация',
+      trainerId: 'dana_sadykova_001',
+      datetime: DateTime(2026, 6, 6, 18, 30),
+      durationMinutes: 60,
+    );
+    addClass(
+      id: 'class_breathwork_2026_06_10_1200',
+      title: 'Дыхательная практика',
+      type: 'Медитация',
+      trainerId: 'dana_sadykova_001',
+      datetime: DateTime(2026, 6, 10, 12),
+      durationMinutes: 60,
+    );
+    addClass(
+      id: 'class_outdoor_2026_06_07_0900',
+      title: 'Outdoor movement',
+      type: 'Аутдор',
+      trainerId: 'arman_ibrayev_001',
+      datetime: DateTime(2026, 6, 7, 9),
+      durationMinutes: 90,
+    );
+    addClass(
+      id: 'class_outdoor_2026_06_14_0900',
+      title: 'Outdoor movement',
+      type: 'Аутдор',
+      trainerId: 'arman_ibrayev_001',
+      datetime: DateTime(2026, 6, 14, 9),
+      durationMinutes: 90,
+    );
+    addClass(
+      id: 'class_tea_2026_06_08_1700',
+      title: 'Чайная церемония',
+      type: 'Церемония',
+      trainerId: 'arman_ibrayev_001',
+      datetime: DateTime(2026, 6, 8, 17),
+      durationMinutes: 90,
+      isIncludedInSubscription: false,
+      price: 5000,
+    );
+    addClass(
+      id: 'class_tea_2026_06_15_1700',
+      title: 'Чайная церемония',
+      type: 'Церемония',
+      trainerId: 'arman_ibrayev_001',
+      datetime: DateTime(2026, 6, 15, 17),
+      durationMinutes: 90,
+      isIncludedInSubscription: false,
+      price: 5000,
+    );
   }
 }

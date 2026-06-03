@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hygge_app/core/services/whatsapp_service.dart';
@@ -19,21 +20,28 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     required UpcomingLessonRepository upcomingLessonRepo,
     required this.userId,
     required this.whatsAppService,
-  })  : _bookingRepo = bookingRepo,
-        _subscriptionRepo = subscriptionRepo,
-        _upcomingLessonRepo = upcomingLessonRepo,
-        super(const BookingState()) {
+  }) : _bookingRepo = bookingRepo,
+       _subscriptionRepo = subscriptionRepo,
+       _upcomingLessonRepo = upcomingLessonRepo,
+       super(const BookingState()) {
     on<BookingCheckStatusEvent>(_onCheckStatus);
     on<BookingBookClassEvent>(_onBookClass);
     on<BookingRequestCancelEvent>(_onRequestCancel);
     on<BookingConfirmCancelEvent>(_onConfirmCancel);
-    on<BookingResetEvent>((_, emit) => emit(const BookingState()));
+    on<BookingResetEvent>((_, emit) {
+      emit(const BookingState());
+    });
     on<BookingBookLessonEvent>(_onBookLesson);
   }
+
+  /// Для дипломной демонстрации.
+  /// После защиты просто поменять на false.
+  static const bool demoMode = true;
 
   final BookingRepository _bookingRepo;
   final SubscriptionRepository _subscriptionRepo;
   final UpcomingLessonRepository _upcomingLessonRepo;
+
   final WhatsAppService whatsAppService;
   final String userId;
 
@@ -45,10 +53,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       userId,
       event.classId,
     );
-    emit(state.copyWith(
-      existingBooking: existing,
-      status: BookingUiStatus.idle,
-    ));
+
+    emit(
+      state.copyWith(
+        existingBooking: existing,
+        status: BookingUiStatus.idle,
+      ),
+    );
   }
 
   Future<void> _onBookClass(
@@ -64,29 +75,14 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         userId,
         classModel.id,
       );
+
       if (existing != null) {
-        emit(state.copyWith(
-          status: BookingUiStatus.alreadyBooked,
-          existingBooking: existing,
-        ));
-        return;
-      }
-
-      if (!classModel.isIncludedInSubscription) {
-        unawaited(
-          whatsAppService.open(event.whatsAppMessage),
+        emit(
+          state.copyWith(
+            status: BookingUiStatus.alreadyBooked,
+            existingBooking: existing,
+          ),
         );
-        emit(state.copyWith(
-          status: BookingUiStatus.externalBookingRequired,
-          existingBooking: existing,
-        ));
-        return;
-      }
-
-      final subscription = await _subscriptionRepo.getSubscription(userId);
-      if (subscription == null || !subscription.isValid) {
-        unawaited(whatsAppService.open(event.whatsAppMessage));
-        emit(state.copyWith(status: BookingUiStatus.noSubscription));
         return;
       }
 
@@ -95,23 +91,48 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         return;
       }
 
+      if (!demoMode) {
+        if (!classModel.isIncludedInSubscription) {
+          unawaited(whatsAppService.open(event.whatsAppMessage));
+          emit(state.copyWith(status: BookingUiStatus.externalBookingRequired));
+          return;
+        }
+
+        final subscription = await _subscriptionRepo.getSubscription(userId);
+
+        if (subscription == null || !subscription.isValid) {
+          unawaited(whatsAppService.open(event.whatsAppMessage));
+          emit(state.copyWith(status: BookingUiStatus.noSubscription));
+          return;
+        }
+      }
+
+      print('BOOKING: userId=$userId, classId=${classModel.id}');
       final booking = await _bookingRepo.createBooking(
         userId,
         classModel.id,
         classModel.startDate,
       );
+      print('BOOKING: created ${booking.id}');
 
-      await _subscriptionRepo.deductSession(userId);
+      if (!demoMode) {
+        await _subscriptionRepo.deductSession(userId);
+      }
 
-      emit(state.copyWith(
-        status: BookingUiStatus.success,
-        existingBooking: booking,
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.success,
+          existingBooking: booking,
+        ),
+      );
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: BookingUiStatus.error,
-        errorMessage: e.toString(),
-      ));
+      print('BOOKING ERROR: $e');
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -120,6 +141,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     Emitter<BookingState> emit,
   ) {
     if (state.existingBooking?.id == null) return;
+
     emit(state.copyWith(status: BookingUiStatus.cancelConfirmationRequired));
   }
 
@@ -128,18 +150,22 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     Emitter<BookingState> emit,
   ) async {
     emit(state.copyWith(status: BookingUiStatus.loading));
+
     try {
       await _bookingRepo.updateBookingStatus(
         userId,
         event.bookingId,
         BookingStatus.cancelled,
       );
+
       emit(const BookingState(status: BookingUiStatus.cancelled));
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: BookingUiStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -148,23 +174,32 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     Emitter<BookingState> emit,
   ) async {
     emit(state.copyWith(status: BookingUiStatus.loading));
+
     try {
-      final subscription = await _subscriptionRepo.getSubscription(userId);
-      if (subscription == null || !subscription.isValid) {
-        unawaited(whatsAppService.open(event.whatsAppMessage));
-        emit(state.copyWith(status: BookingUiStatus.noSubscription));
-        return;
+      if (!demoMode) {
+        final subscription = await _subscriptionRepo.getSubscription(userId);
+
+        if (subscription == null || !subscription.isValid) {
+          unawaited(whatsAppService.open(event.whatsAppMessage));
+          emit(state.copyWith(status: BookingUiStatus.noSubscription));
+          return;
+        }
       }
 
       await _upcomingLessonRepo.bookProgram(event.lesson);
-      await _subscriptionRepo.deductSession(userId);
+
+      if (!demoMode) {
+        await _subscriptionRepo.deductSession(userId);
+      }
 
       emit(state.copyWith(status: BookingUiStatus.success));
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: BookingUiStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

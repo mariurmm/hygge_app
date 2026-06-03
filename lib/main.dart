@@ -34,8 +34,6 @@ Future<void> main() async {
 
   configureDependencies();
 
-  // await FirebaseSeed.seedInitialData();
-
   runApp(
     MultiRepositoryProvider(
       providers: [
