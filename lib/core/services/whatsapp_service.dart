@@ -28,8 +28,7 @@ class WhatsAppService {
           .collection('config')
           .doc('contacts')
           .get();
-      _cachedPhone = doc.data()?['whatsAppPhone'] as String?;
-      return _cachedPhone;
+      return _cachedPhone = doc.data()?['whatsAppPhone'] as String?;
     } on Object {
       return null;
     }

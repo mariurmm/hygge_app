@@ -68,7 +68,9 @@ class ScheduleRepository with RepositoryExecutorMixin {
   Future<void> incrementParticipants(String classId) => execute(
         actionName: 'ScheduleRepository.incrementParticipants',
         action: () async {
-          final ref = _firestore.collection(CollectionNames.classes).doc(classId);
+          final ref = _firestore
+              .collection(CollectionNames.classes)
+              .doc(classId);
           await _firestore.runTransaction((tx) async {
             final snap = await tx.get(ref);
             if (!snap.exists) throw Exception('Занятие не найдено: $classId');
@@ -90,7 +92,9 @@ class ScheduleRepository with RepositoryExecutorMixin {
   Future<void> decrementParticipants(String classId) => execute(
         actionName: 'ScheduleRepository.decrementParticipants',
         action: () async {
-          final ref = _firestore.collection(CollectionNames.classes).doc(classId);
+          final ref = _firestore
+              .collection(CollectionNames.classes)
+              .doc(classId);
           await _firestore.runTransaction((tx) async {
             final snap = await tx.get(ref);
             if (!snap.exists) return;
@@ -99,7 +103,9 @@ class ScheduleRepository with RepositoryExecutorMixin {
             if (data == null) return;
 
             final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
-            tx.update(ref, {'currentParticipants': current > 0 ? current - 1 : 0});
+            tx.update(ref, {
+              'currentParticipants': current > 0 ? current - 1 : 0,
+            });
           });
         },
       );

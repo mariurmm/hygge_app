@@ -62,7 +62,7 @@ class ProgrammCard extends StatelessWidget {
     unawaited(
       Navigator.of(context, rootNavigator: true).push(
         PageRouteBuilder<void>(
-          pageBuilder: (_, __, ___) => BlocProvider.value(
+          pageBuilder: (_, _, _) => BlocProvider.value(
             value: bookingBloc, // ← pass it in
             child: ProgramDetailsPage(
               program: program,

@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/services/whatsapp_service.dart';
+import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
 import 'package:hygge_app/data/models/class_model.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
 
 part 'booking_event.dart';
 part 'booking_state.dart';
@@ -17,12 +18,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   BookingBloc({
     required BookingRepository bookingRepo,
     required SubscriptionRepository subscriptionRepo,
-    required UpcomingLessonRepository upcomingLessonRepo,
-    required this.userId,
     required this.whatsAppService,
   }) : _bookingRepo = bookingRepo,
        _subscriptionRepo = subscriptionRepo,
-       _upcomingLessonRepo = upcomingLessonRepo,
        super(const BookingState()) {
     on<BookingCheckStatusEvent>(_onCheckStatus);
     on<BookingBookClassEvent>(_onBookClass);
@@ -40,19 +38,20 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   final BookingRepository _bookingRepo;
   final SubscriptionRepository _subscriptionRepo;
-  final UpcomingLessonRepository _upcomingLessonRepo;
 
   final WhatsAppService whatsAppService;
-  final String userId;
+
+  /// Always reads the live UID — never stale from constructor time.
+  String get _uid => FirebaseAuth.instance.currentUser?.uid ?? '';
 
   Future<void> _onCheckStatus(
     BookingCheckStatusEvent event,
     Emitter<BookingState> emit,
   ) async {
-    final existing = await _bookingRepo.getBookingForClass(
-      userId,
-      event.classId,
-    );
+    final uid = _uid;
+    if (uid.isEmpty) return;
+
+    final existing = await _bookingRepo.getBookingForClass(uid, event.classId);
 
     emit(
       state.copyWith(
@@ -68,11 +67,22 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   ) async {
     emit(state.copyWith(status: BookingUiStatus.loading));
 
+    final uid = _uid;
+    if (uid.isEmpty) {
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: 'Пользователь не авторизован',
+        ),
+      );
+      return;
+    }
+
     final classModel = event.classModel;
 
     try {
       final existing = await _bookingRepo.getBookingForClass(
-        userId,
+        uid,
         classModel.id,
       );
 
@@ -98,7 +108,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           return;
         }
 
-        final subscription = await _subscriptionRepo.getSubscription(userId);
+        final subscription = await _subscriptionRepo.getSubscription(uid);
 
         if (subscription == null || !subscription.isValid) {
           unawaited(whatsAppService.open(event.whatsAppMessage));
@@ -107,16 +117,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         }
       }
 
-      print('BOOKING: userId=$userId, classId=${classModel.id}');
+      AppLogger.info('BOOKING: uid=$uid, classId=${classModel.id}');
       final booking = await _bookingRepo.createBooking(
-        userId,
+        uid,
         classModel.id,
         classModel.startDate,
       );
-      print('BOOKING: created ${booking.id}');
+      AppLogger.info('BOOKING: created ${booking.id}');
 
       if (!demoMode) {
-        await _subscriptionRepo.deductSession(userId);
+        await _subscriptionRepo.deductSession(uid);
       }
 
       emit(
@@ -126,7 +136,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         ),
       );
     } on Object catch (e) {
-      print('BOOKING ERROR: $e');
+      AppLogger.error('BOOKING ERROR', error: e);
       emit(
         state.copyWith(
           status: BookingUiStatus.error,
@@ -153,7 +163,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
     try {
       await _bookingRepo.updateBookingStatus(
-        userId,
+        _uid,
         event.bookingId,
         BookingStatus.cancelled,
       );
@@ -175,9 +185,24 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   ) async {
     emit(state.copyWith(status: BookingUiStatus.loading));
 
+    final uid = _uid;
+    AppLogger.info(
+      'BookingBloc._onBookLesson: uid="$uid", lessonId="${event.lesson.id}"',
+    );
+
+    if (uid.isEmpty) {
+      emit(
+        state.copyWith(
+          status: BookingUiStatus.error,
+          errorMessage: 'Пользователь не авторизован',
+        ),
+      );
+      return;
+    }
+
     try {
       if (!demoMode) {
-        final subscription = await _subscriptionRepo.getSubscription(userId);
+        final subscription = await _subscriptionRepo.getSubscription(uid);
 
         if (subscription == null || !subscription.isValid) {
           unawaited(whatsAppService.open(event.whatsAppMessage));
@@ -186,14 +211,19 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         }
       }
 
-      await _upcomingLessonRepo.bookProgram(event.lesson);
+      await _bookingRepo.bookLesson(
+        uid,
+        event.lesson.id,
+        event.lesson.startDate,
+      );
 
       if (!demoMode) {
-        await _subscriptionRepo.deductSession(userId);
+        await _subscriptionRepo.deductSession(uid);
       }
 
       emit(state.copyWith(status: BookingUiStatus.success));
     } on Object catch (e) {
+      AppLogger.error('BOOKING LESSON ERROR', error: e);
       emit(
         state.copyWith(
           status: BookingUiStatus.error,

@@ -20,7 +20,11 @@ class SubscriptionEmpty extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.card_membership, color: Colors.white54, size: 48),
+              const Icon(
+                Icons.card_membership,
+                color: Colors.white54,
+                size: 48,
+              ),
               const SizedBox(height: 16),
               Text(
                 loc.subscriptionNotFound,

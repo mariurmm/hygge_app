@@ -13,6 +13,7 @@ import 'package:hygge_app/features/programs_list/ui/schedule_program_card.dart';
 import 'package:hygge_app/features/schedule/bloc/schedule_bloc.dart';
 import 'package:hygge_app/features/schedule/ui/widgets/schedule_date_strip.dart';
 import 'package:hygge_app/features/schedule/ui/widgets/schedule_empty_state.dart';
+import 'package:hygge_app/features/subscription/bloc/subscription_bloc.dart';
 import 'package:hygge_app/l10n/generated/app_localizations.dart';
 import 'package:hygge_app/widgets/tab_header.dart';
 import 'package:intl/intl.dart';
@@ -187,11 +188,15 @@ final class _TappableClassCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final bookingBloc = context.read<BookingBloc>();
+        final subscriptionBloc = context.read<SubscriptionBloc>();
         unawaited(
           Navigator.of(context, rootNavigator: true).push(
             PageRouteBuilder<void>(
-              pageBuilder: (_, __, ___) => BlocProvider.value(
-                value: bookingBloc,
+              pageBuilder: (_, _, _) => MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: bookingBloc),
+                  BlocProvider.value(value: subscriptionBloc),
+                ],
                 child: ClassDetailScreen(classModel: classModel),
               ),
               transitionDuration: Duration.zero,

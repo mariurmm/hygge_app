@@ -45,7 +45,8 @@ class BookingCubit extends Cubit<BookingCubitState> {
   /// Порядок проверок:
   /// 1. Уже записан → [BookingCubitStatus.alreadyBooked]
   /// 2. Нет мест → [BookingCubitStatus.classFull]
-  /// 3. Нет активного абонемента (только вне demoMode) → [BookingCubitStatus.noSubscription]
+  /// 3. Нет активного абонемента (только вне demoMode) →
+  ///    [BookingCubitStatus.noSubscription]
   /// 4. Успех → [BookingCubitStatus.success]
   Future<void> bookClass(ClassModel classModel) async {
     emit(state.copyWith(status: BookingCubitStatus.loading));

@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/favourites_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_event.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_state.dart';
 
@@ -10,9 +11,13 @@ class ProgramDetailsBloc
     extends Bloc<ProgramDetailsEvent, ProgramDetailsState> {
   ProgramDetailsBloc({
     required FavouritesRepository favouritesRepository,
-    required UpcomingLessonRepository bookingRepository,
+    required ProgramsRepository programsRepository,
+    required BookingRepository bookingRepository,
+    required String userId,
   }) : _favouritesRepository = favouritesRepository,
+       _programsRepository = programsRepository,
        _bookingRepository = bookingRepository,
+       _userId = userId,
        super(ProgramDetailsState.initial()) {
     on<ProgramDetailsStarted>(_onStarted);
     on<ProgramDetailsLessonSelected>(_onLessonSelected);
@@ -21,7 +26,9 @@ class ProgramDetailsBloc
   }
 
   final FavouritesRepository _favouritesRepository;
-  final UpcomingLessonRepository _bookingRepository;
+  final ProgramsRepository _programsRepository;
+  final BookingRepository _bookingRepository;
+  final String _userId;
 
   Future<void> _onStarted(
     ProgramDetailsStarted event,
@@ -38,13 +45,11 @@ class ProgramDetailsBloc
 
     try {
       final favouriteIds = await _favouritesRepository.fetchFavouriteIds();
-      final lessons = await _bookingRepository.fetchLessonsByProgramId(
+      final lessons = await _programsRepository.fetchLessonsByProgramId(
         event.program.id,
       );
-      final bookedLessons = await _bookingRepository.fetchBookings(
-        status: 'booked',
-      );
-      final bookedLessonIds = bookedLessons.map((lesson) => lesson.id).toSet();
+      final bookings = await _bookingRepository.getUpcomingBookings(_userId);
+      final bookedLessonIds = bookings.map((b) => b.classId).toSet();
       final selectedLesson = _resolveSelectedLesson(
         initialLesson: event.lesson,
         lessons: lessons,
@@ -122,7 +127,11 @@ class ProgramDetailsBloc
     }
 
     try {
-      await _bookingRepository.bookProgram(event.lesson);
+      await _bookingRepository.bookLesson(
+        _userId,
+        event.lesson.id,
+        event.lesson.startDate,
+      );
       emit(
         state.copyWith(
           bookedLessonIds: {...state.bookedLessonIds, event.lesson.id},

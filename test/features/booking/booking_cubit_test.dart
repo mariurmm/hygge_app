@@ -79,6 +79,20 @@ class _FakeBookingRepository implements BookingRepository {
   Future<List<Map<String, dynamic>>> getPendingBookingsForNotification(
     String userId,
   ) async => [];
+
+  @override
+  Future<BookingModel> bookLesson(
+    String userId,
+    String lessonId,
+    DateTime datetime,
+  ) async => BookingModel(
+    id: 'lesson-booking',
+    userId: userId,
+    classId: lessonId,
+    datetime: datetime,
+    status: BookingStatus.pending,
+    notificationSent: false,
+  );
 }
 
 class _FakeSubscriptionRepository implements SubscriptionRepository {
@@ -182,8 +196,9 @@ void main() {
       'emits cancelConfirmationRequired when existingBooking is set',
       () {
         final cubit = _makeCubit(); // объявление
-        cubit.emit(cubit.state.copyWith(existingBooking: _baseBooking));
-        cubit.requestCancelBooking();
+        cubit
+          ..emit(cubit.state.copyWith(existingBooking: _baseBooking))
+          ..requestCancelBooking();
 
         expect(
           cubit.state.status,

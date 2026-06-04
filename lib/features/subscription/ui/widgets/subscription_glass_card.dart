@@ -20,7 +20,9 @@ class SubscriptionGlassCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.scheduleCard.withValues(alpha: 0.82),
-            borderRadius: BorderRadius.circular(AppConstants.scheduleCardRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.scheduleCardRadius,
+            ),
             border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,

@@ -451,9 +451,13 @@
   "@bookingError": { 
     "description": "Error message when booking fails"  
   },
-  "cancelBooking": "Cancel booking",  
-  "@cancelBooking": {  
-    "description": "Button text to cancel an existing booking"  
+  "cancelBooking": "Cancel booking",
+  "@cancelBooking": {
+    "description": "Button text to cancel an existing booking"
+  },
+  "cancelTooLate": "Cancellation not available less than 24 hours before class",
+  "@cancelTooLate": {
+    "description": "Cancel button label when cancellation window has passed"
   },
   "bookViaAdmin": "Contact admin to book",  
   "@bookViaAdmin": {    

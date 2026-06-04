@@ -12,8 +12,10 @@ import 'package:hygge_app/core/theme/app_text_styles.dart';
 import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/master_model.dart';
 import 'package:hygge_app/data/models/program_model.dart';
+import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/favourites_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
+import 'package:hygge_app/data/repositories/programs_repository.dart';
+import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/booking/bloc/booking_bloc.dart';
 import 'package:hygge_app/features/masters/ui/master_details_page.dart';
 import 'package:hygge_app/features/programs_detail/bloc/program_details_bloc.dart';
@@ -42,7 +44,9 @@ class ProgramDetailsPage extends StatelessWidget {
       create: (context) =>
           ProgramDetailsBloc(
             favouritesRepository: context.read<FavouritesRepository>(),
-            bookingRepository: context.read<UpcomingLessonRepository>(),
+            programsRepository: context.read<ProgramsRepository>(),
+            bookingRepository: context.read<BookingRepository>(),
+            userId: context.read<AppBloc>().state.user.uid,
           )..add(
             ProgramDetailsStarted(
               program: program,
@@ -64,22 +68,44 @@ class ProgramDetailsView extends StatelessWidget {
     final locale = _localeTag(context);
 
     return BlocListener<BookingBloc, BookingState>(
-      listener: (context, state) {
+      listener: (context, state) async {
+        if (state.status == BookingUiStatus.cancelConfirmationRequired) {
+          final bookingId = state.existingBooking?.id;
+          if (bookingId == null) return;
+          final programTitle =
+              context.read<ProgramDetailsBloc>().state.program.title;
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (_) => _ProgramCancelDialog(programTitle: programTitle),
+          );
+          if ((confirmed ?? false) && context.mounted) {
+            context.read<BookingBloc>().add(
+              BookingConfirmCancelEvent(bookingId: bookingId),
+            );
+          }
+          return;
+        }
+
         const snackbarStatuses = {
           BookingUiStatus.success,
+          BookingUiStatus.cancelled,
           BookingUiStatus.error,
           BookingUiStatus.noSubscription,
         };
         if (!snackbarStatuses.contains(state.status)) return;
         final loc = AppLocalizations.of(context);
         final msg = switch (state.status) {
-          BookingUiStatus.success => loc.bookingSuccess(''),
+          BookingUiStatus.success => loc.bookingSuccess(
+            context.read<ProgramDetailsBloc>().state.program.title,
+          ),
+          BookingUiStatus.cancelled => loc.bookingCancelled,
           BookingUiStatus.noSubscription => loc.bookingNoSubscription,
           BookingUiStatus.error => loc.bookingError(state.errorMessage ?? ''),
           _ => null,
         };
         if (msg == null) return;
-        final isPositive = state.status == BookingUiStatus.success;
+        final isPositive = state.status == BookingUiStatus.success ||
+            state.status == BookingUiStatus.cancelled;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -527,7 +553,6 @@ class _BottomActions extends StatelessWidget {
     required this.bookText,
     required this.alreadyBookedText,
     required this.comingSoonText,
-    super.key,
   });
 
   final ProgramModel program;
@@ -540,19 +565,21 @@ class _BottomActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context); // ← add this
+    final loc = AppLocalizations.of(context);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Expanded(
-          child: SizedBox(
-            height: 54,
-            child: program.isBookable
-                ? BlocBuilder<BookingBloc, BookingState>(
-                    builder: (context, bookingState) {
-                      final isLoading =
-                          bookingState.status == BookingUiStatus.loading;
-                      return ElevatedButton(
+          child: program.isBookable
+              ? BlocBuilder<BookingBloc, BookingState>(
+                  builder: (context, bookingState) {
+                    final isLoading =
+                        bookingState.status == BookingUiStatus.loading;
+
+                    final bookButton = SizedBox(
+                      height: 54,
+                      child: ElevatedButton(
                         onPressed:
                             isLoading || isBooked || selectedLesson.isEmpty
                             ? null
@@ -591,11 +618,61 @@ class _BottomActions extends StatelessWidget {
                                 isBooked ? alreadyBookedText : bookText,
                                 style: AppTextStyles.button,
                               ),
-                      );
-                    },
-                  )
-                : _DisabledButton(text: comingSoonText),
-          ),
+                      ),
+                    );
+
+                    if (!isBooked) return bookButton;
+
+                    final canCancel = selectedLesson.startDate
+                            .difference(DateTime.now()) >
+                        const Duration(hours: 24);
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        bookButton,
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 48,
+                          child: OutlinedButton(
+                            onPressed: (canCancel && !isLoading)
+                                ? () => context.read<BookingBloc>().add(
+                                    const BookingRequestCancelEvent(),
+                                  )
+                                : null,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.terracotta,
+                              disabledForegroundColor:
+                                  AppColors.terracotta.withValues(alpha: 0.4),
+                              side: BorderSide(
+                                color: AppColors.terracotta.withValues(
+                                  alpha: canCancel ? 0.6 : 0.25,
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                            ),
+                            child: Text(
+                              canCancel
+                                  ? loc.cancelBooking
+                                  : loc.cancelTooLate,
+                              style: AppTextStyles.button.copyWith(
+                                color: AppColors.terracotta.withValues(
+                                  alpha: canCancel ? 1.0 : 0.4,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                )
+              : SizedBox(
+                  height: 54,
+                  child: _DisabledButton(text: comingSoonText),
+                ),
         ),
         const SizedBox(width: 12),
         SizedBox(
@@ -606,6 +683,47 @@ class _BottomActions extends StatelessWidget {
             onTap: () => context.read<ProgramDetailsBloc>().add(
               ProgramDetailsFavouriteToggled(program),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProgramCancelDialog extends StatelessWidget {
+  const _ProgramCancelDialog({required this.programTitle});
+
+  final String programTitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return AlertDialog(
+      backgroundColor: AppColors.darkBrown,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        loc.cancelDialogTitle,
+        style: AppTextStyles.scheduleCalendarTitle,
+      ),
+      content: Text(
+        loc.cancelDialogContent(programTitle),
+        style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(
+            loc.cancelDialogBack,
+            style: AppTextStyles.button.copyWith(color: Colors.white54),
+          ),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(
+            loc.cancelDialogConfirm,
+            style: AppTextStyles.button.copyWith(color: AppColors.terracotta),
           ),
         ),
       ],

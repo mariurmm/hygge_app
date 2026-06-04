@@ -30,6 +30,14 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
             clearError: true,
           ),
         ));
+    on<_ScheduleErrorOccurred>(
+      (event, emit) => emit(
+        state.copyWith(
+          status: ScheduleStatus.failure,
+          error: event.error,
+        ),
+      ),
+    );
   }
 
   final ScheduleRepository _scheduleRepo;
@@ -40,14 +48,14 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     Emitter<ScheduleState> emit,
   ) async {
     emit(state.copyWith(status: ScheduleStatus.loading));
-    _subscribeUpcoming();
+    await _subscribeUpcoming();
   }
 
   Future<void> _onRefresh(
     ScheduleRefreshRequested event,
     Emitter<ScheduleState> emit,
   ) async {
-    _subscribeUpcoming();
+    await _subscribeUpcoming();
   }
 
   void _onDaySelected(
@@ -63,8 +71,8 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     ));
   }
 
-  void _subscribeUpcoming() {
-    _upcomingSub?.cancel();
+  Future<void> _subscribeUpcoming() async {
+    await _upcomingSub?.cancel();
     _upcomingSub = _scheduleRepo.watchUpcomingClasses().listen(
       (classes) {
         if (!isClosed) add(_UpcomingClassesUpdated(classes));
@@ -75,19 +83,14 @@ final class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
           error: e,
           stackTrace: st,
         );
-        if (!isClosed) {
-          emit(state.copyWith(
-            status: ScheduleStatus.failure,
-            error: e.toString(),
-          ));
-        }
+        if (!isClosed) add(_ScheduleErrorOccurred(e.toString()));
       },
     );
   }
 
   @override
-  Future<void> close() {
-    _upcomingSub?.cancel();
+  Future<void> close() async {
+    await _upcomingSub?.cancel();
     return super.close();
   }
 }

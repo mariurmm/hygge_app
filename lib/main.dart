@@ -11,7 +11,7 @@ import 'package:hygge_app/data/repositories/profile_about_repository.dart';
 import 'package:hygge_app/data/repositories/programs_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
+
 import 'package:hygge_app/data/repositories/user_repository.dart';
 import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/app/ui/app.dart';
@@ -52,9 +52,7 @@ Future<void> main() async {
         RepositoryProvider<FavouritesRepository>(
           create: (_) => getIt<FavouritesRepository>(),
         ),
-        RepositoryProvider<UpcomingLessonRepository>(
-          create: (_) => getIt<UpcomingLessonRepository>(),
-        ),
+
         RepositoryProvider<ProfileAboutRepository>(
           create: (_) => getIt<ProfileAboutRepository>(),
         ),

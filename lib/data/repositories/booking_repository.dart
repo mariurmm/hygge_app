@@ -121,7 +121,7 @@ class BookingRepository with RepositoryExecutorMixin {
           transaction.update(
             classRef,
             {
-              'currentParticipants': current + 1,
+              'currentParticipants': FieldValue.increment(1),
             },
           );
 
@@ -317,6 +317,34 @@ class BookingRepository with RepositoryExecutorMixin {
           .toList();
     },
   );
+
+  /// Creates a booking for a program lesson without checking class capacity.
+  /// Use this for lessons from the programs catalog (not schedule classes).
+  Future<BookingModel> bookLesson(
+    String userId,
+    String lessonId,
+    DateTime datetime,
+  ) =>
+      execute(
+        actionName: 'BookingRepository.bookLesson',
+        action: () async {
+          final bookingRef = _userBookings(userId).doc();
+          final booking = BookingModel(
+            id: bookingRef.id,
+            userId: userId,
+            classId: lessonId,
+            datetime: datetime,
+            status: BookingStatus.pending,
+            notificationSent: false,
+          );
+          await bookingRef.set(booking.toJson());
+          await _firestore
+              .collection('lessons')
+              .doc(lessonId)
+              .update({'currentParticipants': FieldValue.increment(1)});
+          return booking;
+        },
+      );
 
   Function _onStreamError(
     String actionName,

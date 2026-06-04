@@ -19,7 +19,10 @@ class AppConfigRepository with RepositoryExecutorMixin {
       execute<ContactInfoModel>(
         actionName: 'AppConfigRepository.getContactInfo',
         action: () async {
-          final doc = await _firestore.collection(_collection).doc(_document).get();
+          final doc = await _firestore
+              .collection(_collection)
+              .doc(_document)
+              .get();
 
           if (!doc.exists || doc.data() == null) {
             return ContactInfoModel.fallback;
