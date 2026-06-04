@@ -398,13 +398,13 @@
   "@scheduleLoadErrorDescription": {
     "description": "Error description when schedule loading fails"
   },
-  "scheduleEmptyTitle": "No sessions for this day",
+  "scheduleEmptyTitle": "No lessons for this day",
   "@scheduleEmptyTitle": {
-    "description": "Empty state title when there are no sessions for selected day"
+    "description": "Empty state title when there are no lessons for selected day"
   },
-  "scheduleEmptyDescription": "Choose another date or book a new session.",
+  "scheduleEmptyDescription": "Choose another date.",
   "@scheduleEmptyDescription": {
-    "description": "Empty state description when there are no sessions"
+    "description": "Empty state description when there are no lessons"
   },
   "masters": "Masters",
   "@masters": {

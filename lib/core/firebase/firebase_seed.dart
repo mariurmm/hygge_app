@@ -411,8 +411,8 @@ final class FirebaseSeed {
         uuid: 'tea_ceremony_arman_001_2026_05_24_1700',
         programId: 'tea_ceremony_arman_001',
         masterId: 'arman_ibrayev_001',
-        start: DateTime(2026, 6, 24, 17),
-        finish: DateTime(2026, 6, 24, 18, 30),
+        start: DateTime(2026, 6, 4, 19),
+        finish: DateTime(2026, 6, 4, 20, 30),
       ),
       _lesson(
         uuid: 'tea_ceremony_arman_001_2026_05_31_1700',
@@ -464,6 +464,7 @@ final class FirebaseSeed {
       required int durationMinutes,
       bool isIncludedInSubscription = true,
       double price = 0,
+      String programId = '',
     }) {
       final ref = _firestore.collection('classes').doc(id);
       batch.set(
@@ -478,6 +479,7 @@ final class FirebaseSeed {
           'currentParticipants': 0,
           'isIncludedInSubscription': isIncludedInSubscription,
           'price': price,
+          'programId': programId,
         },
         SetOptions(
           mergeFields: [
@@ -489,6 +491,7 @@ final class FirebaseSeed {
             'maxParticipants',
             'isIncludedInSubscription',
             'price',
+            'programId',
           ],
         ),
       );
@@ -503,6 +506,7 @@ final class FirebaseSeed {
       trainerId: 'aigerim_amantaeva_001',
       datetime: DateTime(2026, 6, 4, 8),
       durationMinutes: 60,
+      programId: 'hatha_yoga_aigerim_001',
     );
     addClass(
       id: 'class_hatha_2026_06_06_0800',
@@ -511,6 +515,7 @@ final class FirebaseSeed {
       trainerId: 'aigerim_amantaeva_001',
       datetime: DateTime(2026, 6, 6, 8),
       durationMinutes: 60,
+      programId: 'hatha_yoga_aigerim_001',
     );
     addClass(
       id: 'class_hatha_2026_06_09_0800',
@@ -519,6 +524,7 @@ final class FirebaseSeed {
       trainerId: 'aigerim_amantaeva_001',
       datetime: DateTime(2026, 6, 9, 8),
       durationMinutes: 60,
+      programId: 'hatha_yoga_aigerim_001',
     );
     addClass(
       id: 'class_hatha_2026_06_11_0800',
@@ -527,14 +533,16 @@ final class FirebaseSeed {
       trainerId: 'aigerim_amantaeva_001',
       datetime: DateTime(2026, 6, 11, 8),
       durationMinutes: 60,
+      programId: 'hatha_yoga_aigerim_001',
     );
     addClass(
       id: 'class_ashtanga_2026_06_05_1900',
       title: 'Аштанга-виньяса',
       type: 'Йога',
       trainerId: 'aigerim_amantaeva_001',
-      datetime: DateTime(2026, 6, 5, 19),
+      datetime: DateTime(2026, 6, 4, 19),
       durationMinutes: 75,
+      programId: 'ashtanga_aigerim_001',
     );
     addClass(
       id: 'class_ashtanga_2026_06_10_1900',
@@ -543,6 +551,7 @@ final class FirebaseSeed {
       trainerId: 'aigerim_amantaeva_001',
       datetime: DateTime(2026, 6, 10, 19),
       durationMinutes: 75,
+      programId: 'ashtanga_aigerim_001',
     );
     addClass(
       id: 'class_meditation_2026_06_04_0730',
@@ -551,6 +560,7 @@ final class FirebaseSeed {
       trainerId: 'dana_sadykova_001',
       datetime: DateTime(2026, 6, 4, 7, 30),
       durationMinutes: 45,
+      programId: 'morning_meditation_dana_001',
     );
     addClass(
       id: 'class_meditation_2026_06_07_0730',
@@ -559,6 +569,7 @@ final class FirebaseSeed {
       trainerId: 'dana_sadykova_001',
       datetime: DateTime(2026, 6, 7, 7, 30),
       durationMinutes: 45,
+      programId: 'morning_meditation_dana_001',
     );
     addClass(
       id: 'class_meditation_2026_06_11_0730',
@@ -567,6 +578,7 @@ final class FirebaseSeed {
       trainerId: 'dana_sadykova_001',
       datetime: DateTime(2026, 6, 11, 7, 30),
       durationMinutes: 45,
+      programId: 'morning_meditation_dana_001',
     );
     addClass(
       id: 'class_breathwork_2026_06_06_1830',
@@ -575,6 +587,7 @@ final class FirebaseSeed {
       trainerId: 'dana_sadykova_001',
       datetime: DateTime(2026, 6, 6, 18, 30),
       durationMinutes: 60,
+      programId: 'breathwork_dana_001',
     );
     addClass(
       id: 'class_breathwork_2026_06_10_1200',
@@ -583,6 +596,7 @@ final class FirebaseSeed {
       trainerId: 'dana_sadykova_001',
       datetime: DateTime(2026, 6, 10, 12),
       durationMinutes: 60,
+      programId: 'breathwork_dana_001',
     );
     addClass(
       id: 'class_outdoor_2026_06_07_0900',
@@ -591,6 +605,7 @@ final class FirebaseSeed {
       trainerId: 'arman_ibrayev_001',
       datetime: DateTime(2026, 6, 7, 9),
       durationMinutes: 90,
+      programId: 'outdoor_movement_arman_001',
     );
     addClass(
       id: 'class_outdoor_2026_06_14_0900',
@@ -599,6 +614,7 @@ final class FirebaseSeed {
       trainerId: 'arman_ibrayev_001',
       datetime: DateTime(2026, 6, 14, 9),
       durationMinutes: 90,
+      programId: 'outdoor_movement_arman_001',
     );
     addClass(
       id: 'class_tea_2026_06_08_1700',
@@ -609,16 +625,18 @@ final class FirebaseSeed {
       durationMinutes: 90,
       isIncludedInSubscription: false,
       price: 5000,
+      programId: 'tea_ceremony_arman_001',
     );
     addClass(
       id: 'class_tea_2026_06_15_1700',
       title: 'Чайная церемония',
       type: 'Церемония',
       trainerId: 'arman_ibrayev_001',
-      datetime: DateTime(2026, 6, 15, 17),
+      datetime: DateTime(2026, 6, 15, 19),
       durationMinutes: 90,
       isIncludedInSubscription: false,
       price: 5000,
+      programId: 'tea_ceremony_arman_001',
     );
   }
 }

@@ -145,11 +145,11 @@
   "@scheduleLoadErrorDescription": {
     "description": "Кесте жүктелмеген кездегі қате сипаттамасы"
   },
-  "scheduleEmptyTitle": "Бұл күнге жазбалар жоқ",
+  "scheduleEmptyTitle": "Бұл күнге сабақтар жоқ",
   "@scheduleEmptyTitle": {
     "description": "Таңдалған күнде сеанстар болмаған кездегі тақырып"
   },
-  "scheduleEmptyDescription": "Басқа күнді таңдаңыз немесе жаңа сеансқа жазылыңыз.",
+  "scheduleEmptyDescription": "Басқа күнді таңдаңыз.",
   "@scheduleEmptyDescription": {
     "description": "Сеанстар болмаған кездегі сипаттама"
   },

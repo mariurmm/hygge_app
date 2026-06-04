@@ -142,11 +142,11 @@
   "@scheduleLoadErrorDescription": {
     "description": "Error description when schedule loading fails"
   },
-  "scheduleEmptyTitle": "На этот день записей нет",
+  "scheduleEmptyTitle": "На этот день занятий нет",
   "@scheduleEmptyTitle": {
     "description": "Empty state title when no sessions for selected day"
   },
-  "scheduleEmptyDescription": "Выберите другую дату или запишитесь на новую практику.",
+  "scheduleEmptyDescription": "Выберите другую дату.",
   "@scheduleEmptyDescription": {
     "description": "Empty state description when no sessions"
   },
