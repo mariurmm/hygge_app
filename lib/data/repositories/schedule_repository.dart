@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 @LazySingleton()
 class ScheduleRepository with RepositoryExecutorMixin {
   ScheduleRepository({required FirebaseFirestore firestore})
-      : _firestore = firestore;
+    : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
 
@@ -53,56 +53,56 @@ class ScheduleRepository with RepositoryExecutorMixin {
   }
 
   Future<ClassModel?> getClass(String classId) => execute(
-        actionName: 'ScheduleRepository.getClass',
-        action: () async {
-          final doc = await _firestore
-              .collection(CollectionNames.classes)
-              .doc(classId)
-              .get();
+    actionName: 'ScheduleRepository.getClass',
+    action: () async {
+      final doc = await _firestore
+          .collection(CollectionNames.classes)
+          .doc(classId)
+          .get();
 
-          if (!doc.exists || doc.data() == null) return null;
-          return ClassModel.fromJson(doc.data()!, id: doc.id);
-        },
-      );
+      if (!doc.exists || doc.data() == null) return null;
+      return ClassModel.fromJson(doc.data()!, id: doc.id);
+    },
+  );
 
   Future<void> incrementParticipants(String classId) => execute(
-        actionName: 'ScheduleRepository.incrementParticipants',
-        action: () async {
-          final ref = _firestore.collection(CollectionNames.classes).doc(classId);
-          await _firestore.runTransaction((tx) async {
-            final snap = await tx.get(ref);
-            if (!snap.exists) throw Exception('Занятие не найдено: $classId');
+    actionName: 'ScheduleRepository.incrementParticipants',
+    action: () async {
+      final ref = _firestore.collection(CollectionNames.classes).doc(classId);
+      await _firestore.runTransaction((tx) async {
+        final snap = await tx.get(ref);
+        if (!snap.exists) throw Exception('Занятие не найдено: $classId');
 
-            final data = snap.data();
-            if (data == null) {
-              throw Exception('Document not found at ${snap.reference.path}');
-            }
+        final data = snap.data();
+        if (data == null) {
+          throw Exception('Document not found at ${snap.reference.path}');
+        }
 
-            final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
-            final max = (data['maxParticipants'] as num?)?.toInt() ?? 0;
-            if (current >= max) throw Exception('Нет мест на занятии');
+        final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
+        final max = (data['maxParticipants'] as num?)?.toInt() ?? 0;
+        if (current >= max) throw Exception('Нет мест на занятии');
 
-            tx.update(ref, {'currentParticipants': current + 1});
-          });
-        },
-      );
+        tx.update(ref, {'currentParticipants': current + 1});
+      });
+    },
+  );
 
   Future<void> decrementParticipants(String classId) => execute(
-        actionName: 'ScheduleRepository.decrementParticipants',
-        action: () async {
-          final ref = _firestore.collection(CollectionNames.classes).doc(classId);
-          await _firestore.runTransaction((tx) async {
-            final snap = await tx.get(ref);
-            if (!snap.exists) return;
+    actionName: 'ScheduleRepository.decrementParticipants',
+    action: () async {
+      final ref = _firestore.collection(CollectionNames.classes).doc(classId);
+      await _firestore.runTransaction((tx) async {
+        final snap = await tx.get(ref);
+        if (!snap.exists) return;
 
-            final data = snap.data();
-            if (data == null) return;
+        final data = snap.data();
+        if (data == null) return;
 
-            final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
-            tx.update(ref, {'currentParticipants': current > 0 ? current - 1 : 0});
-          });
-        },
-      );
+        final current = (data['currentParticipants'] as num?)?.toInt() ?? 0;
+        tx.update(ref, {'currentParticipants': current > 0 ? current - 1 : 0});
+      });
+    },
+  );
 
   // ── Helpers ──────────────────────────────────────────────────
 

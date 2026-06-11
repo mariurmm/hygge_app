@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
-import * as functions from "firebase-functions/v2";
-import { onSchedule } from "firebase-functions/v2/scheduler";
-import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+import { logger } from "firebase-functions/logger";
+import { onSchedule } from "firebase-functions/scheduler";
+import { onDocumentUpdated } from "firebase-functions/firestore";
 
 admin.initializeApp();
 
@@ -36,7 +36,7 @@ export const sendClassReminders = onSchedule(
       .get();
 
     if (classesSnap.empty) {
-      functions.logger.info("No upcoming classes in notification window");
+      logger.info("No upcoming classes in notification window");
       return;
     }
 
@@ -65,7 +65,7 @@ export const sendClassReminders = onSchedule(
         const fcmToken: string | undefined = userSnap.data()?.fcmToken;
 
         if (!fcmToken) {
-          functions.logger.warn(`No FCM token for user ${userId}`);
+          logger.warn(`No FCM token for user ${userId}`);
           continue;
         }
 
@@ -118,7 +118,7 @@ export const sendClassReminders = onSchedule(
           processed: false,
         });
 
-        functions.logger.info(
+        logger.info(
           `Notification sent to ${userId} for booking ${bookingId}`
         );
       }
@@ -160,7 +160,7 @@ export const processAutoConfirm = onSchedule(
       // Только если всё ещё pending (не ответил) — авто-подтверждаем
       if (status === "pending") {
         await _confirmBookingAndDeduct(userId, bookingId, bookingRef);
-        functions.logger.info(
+        logger.info(
           `Auto-confirmed booking ${bookingId} for user ${userId}`
         );
       }
@@ -195,13 +195,18 @@ export const onBookingStatusChanged = onDocumentUpdated(
         .doc(bookingId);
       await _confirmBookingAndDeduct(userId, bookingId, bookingRef);
     } else if (newStatus === "cancelled") {
-      // Пользователь ответил "Нет" — уменьшаем счётчик участников
+      // Уменьшаем счётчик участников
       const classId: string = after.classId;
       if (classId) {
         await _decrementParticipants(classId);
       }
-      functions.logger.info(
-        `Booking ${bookingId} cancelled by user ${userId}`
+      // Если бронь была подтверждена — возвращаем занятие в абонемент
+      const prevStatus: string = before.status;
+      if (prevStatus === "confirmed") {
+        await _restoreSession(userId);
+      }
+      logger.info(
+        `Booking ${bookingId} cancelled by user ${userId} (was ${prevStatus})`
       );
     }
   }
@@ -227,7 +232,7 @@ async function _confirmBookingAndDeduct(
     const subSnap = await tx.get(subRef);
 
     if (!subSnap.exists) {
-      functions.logger.warn(`No subscription for user ${userId}, confirming without deduct`);
+      logger.warn(`No subscription for user ${userId}, confirming without deduct`);
       tx.update(bookingRef, { status: "confirmed" });
       return;
     }
@@ -236,7 +241,7 @@ async function _confirmBookingAndDeduct(
     const total: number = subSnap.data()?.totalSessions ?? 0;
 
     if (used >= total) {
-      functions.logger.warn(`Subscription exhausted for user ${userId}`);
+      logger.warn(`Subscription exhausted for user ${userId}`);
       tx.update(bookingRef, { status: "confirmed" });
       return;
     }
@@ -255,6 +260,16 @@ async function _decrementParticipants(classId: string): Promise<void> {
     tx.update(classRef, {
       currentParticipants: current > 0 ? current - 1 : 0,
     });
+  });
+}
+
+async function _restoreSession(userId: string): Promise<void> {
+  const subRef = db.collection("subscriptions").doc(userId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(subRef);
+    if (!snap.exists) return;
+    const used: number = snap.data()?.usedSessions ?? 0;
+    tx.update(subRef, { usedSessions: used > 0 ? used - 1 : 0 });
   });
 }
 

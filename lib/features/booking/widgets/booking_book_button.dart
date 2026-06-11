@@ -37,6 +37,11 @@ class BookingBookButton extends StatelessWidget {
     }
 
     if (isBooked) {
+      final hoursUntilClass = classModel.startDate
+          .difference(DateTime.now())
+          .inHours;
+      final canCancel = hoursUntilClass > 24;
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -49,8 +54,19 @@ class BookingBookButton extends StatelessWidget {
           _CancelButton(
             label: loc.cancelBooking,
             isLoading: isLoading,
+            enabled: canCancel,
             onTap: onCancelTap,
           ),
+          if (!canCancel) ...[
+            const SizedBox(height: 8),
+            Text(
+              loc.cancelTooLate,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: Colors.white54,
+              ),
+            ),
+          ],
         ],
       );
     }
@@ -142,11 +158,13 @@ class _CancelButton extends StatelessWidget {
   const _CancelButton({
     required this.label,
     required this.isLoading,
+    required this.enabled,
     required this.onTap,
   });
 
   final String label;
   final bool isLoading;
+  final bool enabled;
   final VoidCallback onTap;
 
   @override
@@ -158,7 +176,7 @@ class _CancelButton extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: OutlinedButton(
-            onPressed: isLoading ? null : onTap,
+            onPressed: (isLoading || !enabled) ? null : onTap,
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.terracotta,
               side: BorderSide(

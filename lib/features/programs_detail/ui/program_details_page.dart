@@ -527,7 +527,6 @@ class _BottomActions extends StatelessWidget {
     required this.bookText,
     required this.alreadyBookedText,
     required this.comingSoonText,
-    super.key,
   });
 
   final ProgramModel program;

@@ -60,13 +60,15 @@ final class FirebaseSeed {
               'и мягкой телесной терапии. Работает с восстановлением внимания, '
               'регуляцией стресса и практиками внутреннего спокойствия.',
           'en':
-              'Dana Sadykova is a meditation, breathwork, and soft body therapy '
-              'instructor. Her work focuses on attention recovery, stress '
+              'Dana Sadykova is a meditation, breathwork, '
+              'and soft body therapy instructor. Her work '
+              'focuses on attention recovery, stress '
               'regulation, and inner calm practices.',
           'kk':
               'Дана Садықова — медитация, тыныс алу тәжірибелері және жұмсақ '
               'дене терапиясы бойынша нұсқаушы. Оның жұмысы зейінді қалпына '
-              'келтіруге, күйзелісті реттеуге және ішкі тыныштыққа бағытталған.',
+              'келтіруге, күйзелісті реттеуге және ішкі '
+              'тыныштыққа бағытталған.',
         },
         'avatarUrl':
             'https://res.cloudinary.com/dl04teduu/image/upload/PASTE_DANA_AVATAR_URL.jpg',

@@ -9,8 +9,8 @@ class NotificationRepository {
   NotificationRepository({
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
-  })  : _firestore = firestore,
-        _auth = auth;
+  }) : _firestore = firestore,
+       _auth = auth;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
@@ -20,8 +20,7 @@ class NotificationRepository {
   CollectionReference<Map<String, dynamic>> _userCollection(
     String uid,
     String collection,
-  ) =>
-      _firestore.collection('users').doc(uid).collection(collection);
+  ) => _firestore.collection('users').doc(uid).collection(collection);
 
   // ── Public API ────────────────────────────────────────────────
 
@@ -41,18 +40,20 @@ class NotificationRepository {
     final uid = _currentUserId;
     if (uid == null || id.isEmpty) return;
 
-    await _userCollection(uid, 'notifications')
-        .doc(id)
-        .set({'isRead': true}, SetOptions(merge: true));
+    await _userCollection(
+      uid,
+      'notifications',
+    ).doc(id).set({'isRead': true}, SetOptions(merge: true));
   }
 
   Future<void> markAllNotificationsAsRead() async {
     final uid = _currentUserId;
     if (uid == null) return;
 
-    final snapshot = await _userCollection(uid, 'notifications')
-        .where('isRead', isEqualTo: false)
-        .get();
+    final snapshot = await _userCollection(
+      uid,
+      'notifications',
+    ).where('isRead', isEqualTo: false).get();
 
     final batch = _firestore.batch();
     for (final doc in snapshot.docs) {

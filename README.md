@@ -170,6 +170,16 @@ fvm dart run build_runner watch --delete-conflicting-outputs
 
 ---
 
+## Localisation
+
+Run after modifying any `.arb` file in `lib/l10n/`:
+
+```bash
+fvm flutter gen-l10n
+```
+
+---
+
 ## Contributing
 
 1. Format before committing: `fvm dart format lib test`

@@ -120,8 +120,9 @@ class SubscriptionContent extends StatelessWidget {
                         loc.whatsAppNoLessonsLeft,
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            AppColors.primary.withValues(alpha: 0.85),
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.85,
+                        ),
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(

@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 @lazySingleton
 class WhatsAppService {
   WhatsAppService({required FirebaseFirestore firestore})
-      : _firestore = firestore;
+    : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
   String? _cachedPhone;
@@ -24,12 +24,8 @@ class WhatsAppService {
   Future<String?> _fetchPhone() async {
     if (_cachedPhone != null) return _cachedPhone;
     try {
-      final doc = await _firestore
-          .collection('config')
-          .doc('contacts')
-          .get();
-      _cachedPhone = doc.data()?['whatsAppPhone'] as String?;
-      return _cachedPhone;
+      final doc = await _firestore.collection('config').doc('contacts').get();
+      return _cachedPhone = doc.data()?['whatsAppPhone'] as String?;
     } on Object {
       return null;
     }

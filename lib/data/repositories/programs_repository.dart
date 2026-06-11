@@ -21,19 +21,18 @@ class ProgramsRepository with RepositoryExecutorMixin {
   Future<List<ProgramModel>> fetchPrograms({
     int? limit,
     String locale = LocalizedValue.defaultLocale,
-  }) =>
-      execute(
-        actionName: 'ProgramsRepository.fetchPrograms',
-        action: () async {
-          var query = _programs.where('isActive', isEqualTo: true);
-          if (limit != null) query = query.limit(limit);
+  }) => execute(
+    actionName: 'ProgramsRepository.fetchPrograms',
+    action: () async {
+      var query = _programs.where('isActive', isEqualTo: true);
+      if (limit != null) query = query.limit(limit);
 
-          final snapshot = await query.get();
-          return snapshot.docs
-              .map((doc) => _programFromDoc(doc, locale: locale))
-              .toList(growable: false);
-        },
-      );
+      final snapshot = await query.get();
+      return snapshot.docs
+          .map((doc) => _programFromDoc(doc, locale: locale))
+          .toList(growable: false);
+    },
+  );
 
   Stream<List<ProgramModel>> watchPrograms({
     int? limit,
@@ -42,49 +41,50 @@ class ProgramsRepository with RepositoryExecutorMixin {
     var query = _programs.where('isActive', isEqualTo: true);
     if (limit != null) query = query.limit(limit);
 
-    return query.snapshots().map((snapshot) {
-      return snapshot.docs
-          .map((doc) => _programFromDoc(doc, locale: locale))
-          .toList(growable: false);
-    }).handleError(_onStreamError('ProgramsRepository.watchPrograms'));
+    return query
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => _programFromDoc(doc, locale: locale))
+              .toList(growable: false);
+        })
+        .handleError(_onStreamError('ProgramsRepository.watchPrograms'));
   }
 
   Future<ProgramModel?> fetchProgramById(
     String programId, {
     String locale = LocalizedValue.defaultLocale,
-  }) =>
-      execute(
-        actionName: 'ProgramsRepository.fetchProgramById',
-        action: () async {
-          if (programId.trim().isEmpty) return null;
+  }) => execute(
+    actionName: 'ProgramsRepository.fetchProgramById',
+    action: () async {
+      if (programId.trim().isEmpty) return null;
 
-          final doc = await _programs.doc(programId).get();
-          if (!doc.exists || doc.data() == null) return null;
+      final doc = await _programs.doc(programId).get();
+      if (!doc.exists || doc.data() == null) return null;
 
-          return _programFromDoc(doc, locale: locale);
-        },
-      );
+      return _programFromDoc(doc, locale: locale);
+    },
+  );
 
   Future<List<ProgramModel>> fetchProgramsByMasterId(
     String masterId, {
     String locale = LocalizedValue.defaultLocale,
-  }) =>
-      execute(
-        actionName: 'ProgramsRepository.fetchProgramsByMasterId',
-        action: () async {
-          final normalizedMasterId = masterId.trim();
-          if (normalizedMasterId.isEmpty) return const <ProgramModel>[];
+  }) => execute(
+    actionName: 'ProgramsRepository.fetchProgramsByMasterId',
+    action: () async {
+      final normalizedMasterId = masterId.trim();
+      if (normalizedMasterId.isEmpty) return const <ProgramModel>[];
 
-          final snapshot = await _programs
-              .where('isActive', isEqualTo: true)
-              .where('masterId', isEqualTo: normalizedMasterId)
-              .get();
+      final snapshot = await _programs
+          .where('isActive', isEqualTo: true)
+          .where('masterId', isEqualTo: normalizedMasterId)
+          .get();
 
-          return snapshot.docs
-              .map((doc) => _programFromDoc(doc, locale: locale))
-              .toList(growable: false);
-        },
-      );
+      return snapshot.docs
+          .map((doc) => _programFromDoc(doc, locale: locale))
+          .toList(growable: false);
+    },
+  );
 
   // ── Helpers ──────────────────────────────────────────────────
 
