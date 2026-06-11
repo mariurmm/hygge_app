@@ -11,10 +11,17 @@ class SubscriptionRepository with RepositoryExecutorMixin {
 
   final FirebaseFirestore _firestore;
 
-  DocumentReference<Map<String, dynamic>> _doc(String userId) =>
-      _firestore.collection(CollectionNames.subscriptions).doc(userId);
+  DocumentReference<Map<String, dynamic>> _doc(
+    String userId,
+  ) => _firestore
+      .collection(
+        CollectionNames.subscriptions,
+      )
+      .doc(userId);
 
-  // ── Public API ────────────────────────────────────────────────
+  // ──────────────────────────────────────────────
+  // Public API
+  // ──────────────────────────────────────────────
 
   Stream<SubscriptionModel?> watchSubscription(String userId) {
     return _doc(userId)
@@ -60,6 +67,25 @@ class SubscriptionRepository with RepositoryExecutorMixin {
     },
   );
 
+  Future<void> createDemoSubscription(String userId) => execute(
+    actionName: 'SubscriptionRepository.createDemoSubscription',
+    action: () async {
+      await _doc(userId).set(
+        {
+          'userId': userId,
+          'totalSessions': 999,
+          'usedSessions': 0,
+          'isActive': true,
+          'purchaseDate': Timestamp.now(),
+          'expirationDate': Timestamp.fromDate(
+            DateTime.now().add(const Duration(days: 365)),
+          ),
+        },
+        SetOptions(merge: true),
+      );
+    },
+  );
+
   Future<void> saveFcmToken(String userId, String token) => execute(
     actionName: 'SubscriptionRepository.saveFcmToken',
     action: () async {
@@ -70,7 +96,9 @@ class SubscriptionRepository with RepositoryExecutorMixin {
     },
   );
 
-  // ── Helpers ──────────────────────────────────────────────────
+  // ──────────────────────────────────────────────
+  // Helpers
+  // ──────────────────────────────────────────────
 
   Function _onStreamError(String actionName) =>
       (Object error, StackTrace st) => logError(actionName, error, st);

@@ -398,13 +398,13 @@
   "@scheduleLoadErrorDescription": {
     "description": "Error description when schedule loading fails"
   },
-  "scheduleEmptyTitle": "No sessions for this day",
+  "scheduleEmptyTitle": "No lessons for this day",
   "@scheduleEmptyTitle": {
-    "description": "Empty state title when there are no sessions for selected day"
+    "description": "Empty state title when there are no lessons for selected day"
   },
-  "scheduleEmptyDescription": "Choose another date or book a new session.",
+  "scheduleEmptyDescription": "Choose another date.",
   "@scheduleEmptyDescription": {
-    "description": "Empty state description when there are no sessions"
+    "description": "Empty state description when there are no lessons"
   },
   "masters": "Masters",
   "@masters": {
@@ -451,9 +451,13 @@
   "@bookingError": { 
     "description": "Error message when booking fails"  
   },
-  "cancelBooking": "Cancel booking",  
-  "@cancelBooking": {  
-    "description": "Button text to cancel an existing booking"  
+  "cancelBooking": "Cancel booking",
+  "@cancelBooking": {
+    "description": "Button text to cancel an existing booking"
+  },
+  "cancelTooLate": "Cancellation not available less than 24 hours before class",
+  "@cancelTooLate": {
+    "description": "Cancel button label when cancellation window has passed"
   },
   "bookViaAdmin": "Contact admin to book",  
   "@bookViaAdmin": {    

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/core/utils/repository_executor.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/models/localized_value.dart';
 import 'package:hygge_app/data/models/program_model.dart';
 import 'package:injectable/injectable.dart';
@@ -15,6 +16,9 @@ class ProgramsRepository with RepositoryExecutorMixin {
 
   CollectionReference<Map<String, dynamic>> get _programs =>
       _firestore.collection('programs');
+
+  CollectionReference<Map<String, dynamic>> get _lessons =>
+      _firestore.collection('lessons');
 
   // ── Public API ────────────────────────────────────────────────
 
@@ -83,6 +87,37 @@ class ProgramsRepository with RepositoryExecutorMixin {
       return snapshot.docs
           .map((doc) => _programFromDoc(doc, locale: locale))
           .toList(growable: false);
+    },
+  );
+
+  Future<List<LessonModel>> fetchLessonsByProgramId(
+    String programId,
+  ) =>
+      execute(
+        actionName: 'ProgramsRepository.fetchLessonsByProgramId',
+        action: () async {
+          if (programId.isEmpty) return const <LessonModel>[];
+          final now = Timestamp.fromDate(DateTime.now());
+          final snapshot = await _lessons
+              .where('programId', isEqualTo: programId)
+              .where('startDate', isGreaterThanOrEqualTo: now)
+              .orderBy('startDate')
+              .get();
+          return snapshot.docs
+              .map(
+                (doc) => LessonModel.fromJson({...doc.data(), 'uuid': doc.id}),
+              )
+              .toList(growable: false);
+        },
+      );
+
+  Future<LessonModel?> fetchLessonById(String lessonId) => execute(
+    actionName: 'ProgramsRepository.fetchLessonById',
+    action: () async {
+      if (lessonId.isEmpty) return null;
+      final doc = await _lessons.doc(lessonId).get();
+      if (!doc.exists || doc.data() == null) return null;
+      return LessonModel.fromJson({...doc.data()!, 'uuid': doc.id});
     },
   );
 

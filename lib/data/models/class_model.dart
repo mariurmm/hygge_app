@@ -18,6 +18,9 @@ abstract class ClassModel with _$ClassModel {
     required int currentParticipants,
     required double price,
     required bool isIncludedInSubscription,
+    /// ID программы в коллекции Firestore `programs`.
+    /// Используется для открытия страницы деталей программы из расписания.
+    @Default('') String programId,
   }) = _ClassModel;
 
   const ClassModel._();
@@ -35,6 +38,7 @@ abstract class ClassModel with _$ClassModel {
       price: ParseUtils.parseDouble(json['price']),
       isIncludedInSubscription:
           json['isIncludedInSubscription'] as bool? ?? true,
+      programId: json['programId'] as String? ?? '',
     );
   }
 
@@ -69,6 +73,7 @@ abstract class ClassModel with _$ClassModel {
     currentParticipants: 0,
     price: 0,
     isIncludedInSubscription: true,
+    programId: '',
   );
 
   Map<String, dynamic> toJson() => {
@@ -82,5 +87,6 @@ abstract class ClassModel with _$ClassModel {
     'currentParticipants': currentParticipants,
     'price': price,
     'isIncludedInSubscription': isIncludedInSubscription,
+    'programId': programId,
   };
 }

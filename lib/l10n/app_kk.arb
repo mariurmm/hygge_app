@@ -145,11 +145,11 @@
   "@scheduleLoadErrorDescription": {
     "description": "Кесте жүктелмеген кездегі қате сипаттамасы"
   },
-  "scheduleEmptyTitle": "Бұл күнге жазбалар жоқ",
+  "scheduleEmptyTitle": "Бұл күнге сабақтар жоқ",
   "@scheduleEmptyTitle": {
     "description": "Таңдалған күнде сеанстар болмаған кездегі тақырып"
   },
-  "scheduleEmptyDescription": "Басқа күнді таңдаңыз немесе жаңа сеансқа жазылыңыз.",
+  "scheduleEmptyDescription": "Басқа күнді таңдаңыз.",
   "@scheduleEmptyDescription": {
     "description": "Сеанстар болмаған кездегі сипаттама"
   },
@@ -180,7 +180,8 @@
   "bookingSuccess": "Сәтті жазылдыңыз!",  
   "bookingCancelled": "Жазылым болдыртылды",  
   "bookingError": "Жазылу сәтсіз болды. Қайталап көріңіз.",  
-  "cancelBooking": "Жазылымды болдырмау",  
+  "cancelBooking": "Жазылымды болдырмау",
+  "cancelTooLate": "Сабаққа дейін 24 сағаттан аз уақыт қалса, жазылымды болдырмау мүмкін емес",
   "bookViaAdmin": "Әкімшіге хабарласыңыз",  
   "noSpots": "Орындар қалмады",  
   "classFull": "Сынып толы", 

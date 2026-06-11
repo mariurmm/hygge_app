@@ -7,7 +7,7 @@ import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/notification_repository.dart';
 import 'package:hygge_app/data/repositories/schedule_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
-import 'package:hygge_app/data/repositories/upcoming_lesson_repository.dart';
+
 import 'package:hygge_app/di/injection.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
 import 'package:hygge_app/features/app_shell/app_shell.dart';
@@ -60,11 +60,9 @@ class AppRouter {
                     )..add(const ScheduleStarted()),
                   ),
                   BlocProvider<BookingBloc>(
-                    create: (ctx) => BookingBloc(
+                    create: (_) => BookingBloc(
                       bookingRepo: bookingRepo,
                       subscriptionRepo: subscriptionRepo,
-                      upcomingLessonRepo: ctx.read<UpcomingLessonRepository>(),
-                      userId: userId,
                       whatsAppService: getIt<WhatsAppService>(),
                     ),
                   ),
@@ -75,7 +73,10 @@ class AppRouter {
                     )..add(const SubscriptionStarted()),
                   ),
                   BlocProvider<HomeCubit>(
-                    create: (ctx) => HomeCubit(upcomingRepo: ctx.read()),
+                    create: (_) => HomeCubit(
+                      bookingRepo: bookingRepo,
+                      userId: userId,
+                    ),
                   ),
                   BlocProvider<ProfileBloc>(
                     create: (ctx) => ProfileBloc(

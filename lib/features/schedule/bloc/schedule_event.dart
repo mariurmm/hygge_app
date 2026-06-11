@@ -38,3 +38,11 @@ final class _MonthClassesUpdated extends ScheduleEvent {
   @override
   List<Object?> get props => [classes];
 }
+
+final class _ScheduleErrorOccurred extends ScheduleEvent {
+  const _ScheduleErrorOccurred(this.error);
+  final String error;
+
+  @override
+  List<Object?> get props => [error];
+}

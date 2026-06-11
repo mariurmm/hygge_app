@@ -11,25 +11,33 @@ class BookingRepository with RepositoryExecutorMixin {
 
   final FirebaseFirestore _firestore;
 
-  CollectionReference<Map<String, dynamic>> _userBookings(String userId) =>
-      _firestore
-          .collection(CollectionNames.bookings)
-          .doc(userId)
-          .collection(CollectionNames.userBookings);
+  CollectionReference<Map<String, dynamic>> _userBookings(
+    String userId,
+  ) => _firestore
+      .collection(CollectionNames.bookings)
+      .doc(userId)
+      .collection(CollectionNames.userBookings);
 
-  // ── Public API ────────────────────────────────────────────────
-
-  Stream<List<BookingModel>> watchUserBookings(String userId) {
+  Stream<List<BookingModel>> watchUserBookings(
+    String userId,
+  ) {
     return _userBookings(userId)
         .orderBy('datetime')
         .snapshots()
         .map(
           (snap) => snap.docs
-              .map((doc) => BookingModel.fromJson(doc.data(), id: doc.id))
+              .map(
+                (doc) => BookingModel.fromJson(
+                  doc.data(),
+                  id: doc.id,
+                ),
+              )
               .toList(),
         )
         .handleError(
-          _onStreamError('BookingRepository.watchUserBookings'),
+          _onStreamError(
+            'BookingRepository.watchUserBookings',
+          ),
         );
   }
 
@@ -145,8 +153,43 @@ class BookingRepository with RepositoryExecutorMixin {
     },
   );
 
-  // ── Helpers ──────────────────────────────────────────────────
+  /// Creates a booking for a program lesson without checking class capacity.
+  /// Use this for lessons from the programs catalog (not schedule classes).
+  Future<BookingModel> bookLesson(
+    String userId,
+    String lessonId,
+    DateTime datetime,
+  ) =>
+      execute(
+        actionName: 'BookingRepository.bookLesson',
+        action: () async {
+          final bookingRef = _userBookings(userId).doc();
+          final booking = BookingModel(
+            id: bookingRef.id,
+            userId: userId,
+            classId: lessonId,
+            datetime: datetime,
+            status: BookingStatus.pending,
+            notificationSent: false,
+          );
+          await bookingRef.set(booking.toJson());
+          await _firestore
+              .collection('lessons')
+              .doc(lessonId)
+              .update({'currentParticipants': FieldValue.increment(1)});
+          return booking;
+        },
+      );
 
-  Function _onStreamError(String actionName) =>
-      (Object error, StackTrace st) => logError(actionName, error, st);
+  Function _onStreamError(
+    String actionName,
+  ) =>
+      (
+        Object error,
+        StackTrace st,
+      ) => logError(
+        actionName,
+        error,
+        st,
+      );
 }
