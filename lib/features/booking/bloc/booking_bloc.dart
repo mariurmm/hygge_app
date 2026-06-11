@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygge_app/core/services/whatsapp_service.dart';
+import 'package:hygge_app/core/utils/failure.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
 import 'package:hygge_app/data/models/class_model.dart';
@@ -135,6 +136,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           existingBooking: booking,
         ),
       );
+    } on ClassFullFailure {
+      emit(state.copyWith(status: BookingUiStatus.classFull));
     } on Object catch (e) {
       AppLogger.error('BOOKING ERROR', error: e);
       emit(
@@ -222,6 +225,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       }
 
       emit(state.copyWith(status: BookingUiStatus.success));
+    } on ClassFullFailure {
+      emit(state.copyWith(status: BookingUiStatus.classFull));
     } on Object catch (e) {
       AppLogger.error('BOOKING LESSON ERROR', error: e);
       emit(

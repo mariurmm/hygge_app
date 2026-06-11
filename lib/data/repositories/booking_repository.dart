@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hygge_app/core/services/collection_names.dart';
+import 'package:hygge_app/core/utils/failure.dart';
 import 'package:hygge_app/core/utils/repository_executor.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
 import 'package:injectable/injectable.dart';
@@ -66,16 +67,35 @@ class BookingRepository with RepositoryExecutorMixin {
   ) => execute(
     actionName: 'BookingRepository.createBooking',
     action: () async {
-      final ref = _userBookings(userId).doc();
+      final classRef = _firestore
+          .collection(CollectionNames.classes)
+          .doc(classId);
+      final bookingRef = _userBookings(userId).doc();
       final booking = BookingModel(
-        id: ref.id,
+        id: bookingRef.id,
         userId: userId,
         classId: classId,
         datetime: datetime,
         status: BookingStatus.pending,
         notificationSent: false,
       );
-      await ref.set(booking.toJson());
+
+      await _firestore.runTransaction((tx) async {
+        final classSnap = await tx.get(classRef);
+        if (classSnap.exists) {
+          final data = classSnap.data()!;
+          final current = (data['currentParticipants'] as int?) ?? 0;
+          final max = (data['maxParticipants'] as int?) ?? 0;
+          if (max > 0 && current >= max) {
+            throw ClassFullFailure(message: 'Class $classId is full');
+          }
+          tx.update(classRef, {
+            'currentParticipants': FieldValue.increment(1),
+          });
+        }
+        tx.set(bookingRef, booking.toJson());
+      });
+
       return booking;
     },
   );
@@ -153,33 +173,44 @@ class BookingRepository with RepositoryExecutorMixin {
     },
   );
 
-  /// Creates a booking for a program lesson without checking class capacity.
-  /// Use this for lessons from the programs catalog (not schedule classes).
   Future<BookingModel> bookLesson(
     String userId,
     String lessonId,
     DateTime datetime,
-  ) =>
-      execute(
-        actionName: 'BookingRepository.bookLesson',
-        action: () async {
-          final bookingRef = _userBookings(userId).doc();
-          final booking = BookingModel(
-            id: bookingRef.id,
-            userId: userId,
-            classId: lessonId,
-            datetime: datetime,
-            status: BookingStatus.pending,
-            notificationSent: false,
-          );
-          await bookingRef.set(booking.toJson());
-          await _firestore
-              .collection('lessons')
-              .doc(lessonId)
-              .update({'currentParticipants': FieldValue.increment(1)});
-          return booking;
-        },
+  ) => execute(
+    actionName: 'BookingRepository.bookLesson',
+    action: () async {
+      final lessonRef = _firestore.collection('lessons').doc(lessonId);
+      final bookingRef = _userBookings(userId).doc();
+      final booking = BookingModel(
+        id: bookingRef.id,
+        userId: userId,
+        classId: lessonId,
+        datetime: datetime,
+        status: BookingStatus.pending,
+        notificationSent: false,
       );
+
+      await _firestore.runTransaction((tx) async {
+        final lessonSnap = await tx.get(lessonRef);
+        if (lessonSnap.exists) {
+          final data = lessonSnap.data()!;
+          final current = (data['currentParticipants'] as int?) ?? 0;
+          final max = (data['maxParticipants'] as int?) ?? 0;
+          if (max > 0 && current >= max) {
+            throw ClassFullFailure(message: 'Lesson $lessonId is full');
+          }
+        }
+        tx
+          ..update(lessonRef, {
+            'currentParticipants': FieldValue.increment(1),
+          })
+          ..set(bookingRef, booking.toJson());
+      });
+
+      return booking;
+    },
+  );
 
   Function _onStreamError(
     String actionName,

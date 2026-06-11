@@ -74,3 +74,12 @@ class UnknownFailure extends Failure {
     super.stackTrace,
   });
 }
+
+class ClassFullFailure extends Failure {
+  const ClassFullFailure({
+    required super.message,
+    super.code,
+    super.cause,
+    super.stackTrace,
+  });
+}

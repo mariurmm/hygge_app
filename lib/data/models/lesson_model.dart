@@ -13,6 +13,8 @@ abstract class LessonModel with _$LessonModel {
     required DateTime endDate,
     @Default('') String trainerId,
     @Default(true) bool isBookable,
+    @Default(0) int currentParticipants,
+    @Default(0) int maxParticipants,
   }) = _LessonModel;
 
   const LessonModel._();
@@ -29,6 +31,9 @@ abstract class LessonModel with _$LessonModel {
         json['finishDate'] ?? json['endDate'] ?? json['availableTo'],
       ),
       isBookable: json['isBookable'] as bool? ?? true,
+      currentParticipants:
+          json['currentParticipants'] as int? ?? 0,
+      maxParticipants: json['maxParticipants'] as int? ?? 0,
     );
   }
 
@@ -76,6 +81,9 @@ abstract class LessonModel with _$LessonModel {
     return '${DateFormat('d MMM', locale).format(lessonDay)} $time';
   }
 
+  bool get isFull =>
+      maxParticipants > 0 && currentParticipants >= maxParticipants;
+
   Map<String, dynamic> toJson() {
     return {
       'uuid': id,
@@ -84,6 +92,8 @@ abstract class LessonModel with _$LessonModel {
       'startDate': startDate.toIso8601String(),
       'finishDate': endDate.toIso8601String(),
       'isBookable': isBookable,
+      'currentParticipants': currentParticipants,
+      'maxParticipants': maxParticipants,
     };
   }
 

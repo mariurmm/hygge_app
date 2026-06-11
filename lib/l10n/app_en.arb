@@ -612,7 +612,5 @@
   "programBooking": "Booking...",
   "programAlreadyBooked": "You are already booked",
   "programChooseDate": "Choose a class date",
-  "programNoDates": "There are no available dates for this program yet",
-
-  "cancelTooLate": "Cancellation is not available less than 24 hours before the class"
+  "programNoDates": "There are no available dates for this program yet"
 }

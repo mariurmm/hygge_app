@@ -580,8 +580,10 @@ class _BottomActions extends StatelessWidget {
                     final bookButton = SizedBox(
                       height: 54,
                       child: ElevatedButton(
-                        onPressed:
-                            isLoading || isBooked || selectedLesson.isEmpty
+                        onPressed: isLoading ||
+                                isBooked ||
+                                selectedLesson.isEmpty ||
+                                selectedLesson.isFull
                             ? null
                             : () => context.read<BookingBloc>().add(
                                 BookingBookLessonEvent(
@@ -615,7 +617,11 @@ class _BottomActions extends StatelessWidget {
                                 ),
                               )
                             : Text(
-                                isBooked ? alreadyBookedText : bookText,
+                                isBooked
+                                    ? alreadyBookedText
+                                    : selectedLesson.isFull
+                                        ? loc.noSpots
+                                        : bookText,
                                 style: AppTextStyles.button,
                               ),
                       ),

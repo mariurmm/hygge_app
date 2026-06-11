@@ -232,7 +232,5 @@
   "programBooking": "Запись...",
   "programAlreadyBooked": "Вы уже записаны",
   "programChooseDate": "Выберите дату занятия",
-  "programNoDates": "Для этой программы пока нет доступных дат",
-
-  "cancelTooLate": "Отмена невозможна менее чем за 24 часа до занятия"
+  "programNoDates": "Для этой программы пока нет доступных дат"
 }
