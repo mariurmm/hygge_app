@@ -73,7 +73,6 @@ abstract class ClassModel with _$ClassModel {
     currentParticipants: 0,
     price: 0,
     isIncludedInSubscription: true,
-    programId: '',
   );
 
   Map<String, dynamic> toJson() => {
