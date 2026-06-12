@@ -29,14 +29,23 @@ export const sendClassReminders = onSchedule(
     );
 
     // Получаем все занятия в ближайшем окне
+    // const classesSnap = await db
+    //   .collection("classes")
+    //   .where("datetime", ">=", windowStart)
+    //   .where("datetime", "<=", windowEnd)
+    //   .get();
+
+    // if (classesSnap.empty) {
+    //   logger.info("No upcoming classes in notification window");
+    //   return;
+    // }
+
     const classesSnap = await db
       .collection("classes")
-      .where("datetime", ">=", windowStart)
-      .where("datetime", "<=", windowEnd)
       .get();
 
     if (classesSnap.empty) {
-      logger.info("No upcoming classes in notification window");
+      logger.info("No classes found at all");
       return;
     }
 
@@ -47,14 +56,21 @@ export const sendClassReminders = onSchedule(
       const classTime: admin.firestore.Timestamp = classData.datetime;
 
       // Ищем все pending-брони на это занятие, которым ещё не отправлено уведомление
+      // const bookingsQuery = await db
+      //   .collectionGroup("userBookings")
+      //   .where("classId", "==", classId)
+      //   .where("status", "==", "pending")
+      //   .where("notificationSent", "==", false)
+      //   .get();
+
       const bookingsQuery = await db
         .collectionGroup("userBookings")
         .where("classId", "==", classId)
         .where("status", "==", "pending")
-        .where("notificationSent", "==", false)
         .get();
 
       for (const bookingDoc of bookingsQuery.docs) {
+         if (bookingDoc.data().notificationSent === true) continue; // testing
         // Путь: bookings/{userId}/userBookings/{bookingId}
         const pathParts = bookingDoc.ref.path.split("/");
         const userId = pathParts[1];

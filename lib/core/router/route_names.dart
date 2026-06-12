@@ -15,6 +15,7 @@ class RouteNames {
       '/homeShell'; // Роут для оболочки с BottomNavigationBar
   static const String notifications = '/home/notifications'; // Уведомления
   static const String subscription = '/home/subscription'; // Мой абонемент
+  static const String classDetail = '/home/class'; // Детали занятия
 
   // ── Имена (names) — используем в GoRoute(name: ...) ──────────
   static const String splashName = 'splash';
@@ -29,4 +30,5 @@ class RouteNames {
 
   static const String notificationsName = 'notifications';
   static const String subscriptionName = 'subscription';
+  static const String classDetailName = 'classDetail';
 }

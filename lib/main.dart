@@ -5,6 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hygge_app/core/router/app_router.dart';
+import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/services/firestore_service.dart';
 import 'package:hygge_app/core/utils/logger.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
@@ -39,6 +41,24 @@ Future<void> main() async {
   configureDependencies();
 
   await FirebaseMessaging.instance.requestPermission();
+
+  // Cold start: app was terminated when notification arrived.
+  final initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+  final coldClassId = initialMessage?.data['classId'] as String?;
+  if (coldClassId != null && coldClassId.isNotEmpty) {
+    AppRouter.pendingClassId = coldClassId;
+  }
+
+  // Background: user tapped notification while app was backgrounded.
+  FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    final classId = message.data['classId'] as String?;
+    if (classId == null || classId.isEmpty) return;
+    unawaited(
+      AppRouter.router.push('${RouteNames.classDetail}/$classId'),
+    );
+  });
+
   FirebaseMessaging.instance.onTokenRefresh.listen(
     (token) {
       final authRepo = getIt<AuthRepository>();
