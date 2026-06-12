@@ -33,9 +33,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<BookingBookLessonEvent>(_onBookLesson);
   }
 
-  /// Для дипломной демонстрации.
-  /// После защиты просто поменять на false.
-  static const bool demoMode = true;
+  static const bool demoMode = false;
 
   final BookingRepository _bookingRepo;
   final SubscriptionRepository _subscriptionRepo;
