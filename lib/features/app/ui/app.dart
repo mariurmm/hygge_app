@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hygge_app/core/constants/app_constants.dart';
 import 'package:hygge_app/core/router/app_router.dart';
+import 'package:hygge_app/core/router/route_names.dart';
 import 'package:hygge_app/core/theme/app_theme.dart';
 import 'package:hygge_app/data/repositories/auth_repository.dart';
 import 'package:hygge_app/data/repositories/favourites_repository.dart';
 import 'package:hygge_app/data/repositories/programs_repository.dart';
 import 'package:hygge_app/features/app/bloc/app_bloc.dart';
+import 'package:hygge_app/features/app/bloc/app_state.dart';
 import 'package:hygge_app/features/app/bloc/locale_cubit.dart';
 import 'package:hygge_app/features/favourites/bloc/favourites_bloc.dart';
 import 'package:hygge_app/features/programs/bloc/programs_bloc.dart';
@@ -88,6 +90,19 @@ class App extends StatelessWidget {
             listener: (context, state) {
               context.read<FavouritesBloc>().add(
                 FavouritesLessonsRegistered(state.allPrograms),
+              );
+            },
+          ),
+          BlocListener<AppBloc, AppState>(
+            listenWhen: (previous, current) =>
+                previous.status != AppStatus.authenticated &&
+                current.status == AppStatus.authenticated,
+            listener: (context, state) {
+              final classId = AppRouter.takePendingClassId();
+              if (classId == null) return;
+              unawaited(
+                AppRouter.router
+                    .push('${RouteNames.classDetail}/$classId'),
               );
             },
           ),
