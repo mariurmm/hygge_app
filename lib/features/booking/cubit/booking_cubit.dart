@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hygge_app/core/utils/failure.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
 import 'package:hygge_app/data/models/class_model.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
@@ -97,6 +98,8 @@ class BookingCubit extends Cubit<BookingCubitState> {
           existingBooking: booking,
         ),
       );
+    } on ClassFullFailure {
+      emit(state.copyWith(status: BookingCubitStatus.classFull));
     } on Object catch (e) {
       emit(
         state.copyWith(

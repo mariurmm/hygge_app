@@ -163,4 +163,44 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('shows_noSpots_whenClassIsFull', (tester) async {
+    final fullClass = ClassModel(
+      id: 'class-1',
+      title: 'Yoga',
+      type: 'Йога',
+      startDate: DateTime.now().add(const Duration(hours: 48)),
+      durationMinutes: 60,
+      trainerId: 't-1',
+      maxParticipants: 10,
+      currentParticipants: 10,
+      price: 0,
+      isIncludedInSubscription: true,
+    );
+
+    const idleState = BookingState();
+    whenListen(
+      mockBookingBloc,
+      Stream.value(idleState),
+      initialState: idleState,
+    );
+
+    await tester.pumpWidget(
+      _buildSubject(
+        bookingBloc: mockBookingBloc,
+        subscriptionBloc: mockSubscriptionBloc,
+        classModel: fullClass,
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Мест нет'), findsOneWidget);
+    final button = tester.widget<ElevatedButton>(
+      find.ancestor(
+        of: find.text('Мест нет'),
+        matching: find.byType(ElevatedButton),
+      ),
+    );
+    expect(button.onPressed, isNull);
+  });
 }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hygge_app/core/utils/failure.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 
@@ -45,6 +46,31 @@ void main() {
       expect(snap.data()?['classId'], classId);
       expect(snap.data()?['status'], 'pending');
     });
+
+    test('createBooking_throwsClassFullFailure_whenClassIsFull', () async {
+      await fakeFirestore
+          .collection('classes')
+          .doc(classId)
+          .set({'currentParticipants': 5, 'maxParticipants': 5});
+
+      await expectLater(
+        () => repo.createBooking(userId, classId, DateTime.now()),
+        throwsA(isA<ClassFullFailure>()),
+      );
+    });
+
+    test('createBooking_succeeds_whenOneSpotLeft', () async {
+      await fakeFirestore
+          .collection('classes')
+          .doc(classId)
+          .set({'currentParticipants': 4, 'maxParticipants': 5});
+
+      final booking = await repo.createBooking(userId, classId, DateTime.now());
+
+      expect(booking.userId, userId);
+      expect(booking.classId, classId);
+      expect(booking.status, BookingStatus.pending);
+    });
   });
 
   group('bookLesson', () {
@@ -75,6 +101,31 @@ void main() {
       final snap =
           await fakeFirestore.collection('lessons').doc(lessonId).get();
       expect(snap.data()?['currentParticipants'], 3);
+    });
+
+    test('bookLesson_throwsClassFullFailure_whenLessonIsFull', () async {
+      await fakeFirestore
+          .collection('lessons')
+          .doc(lessonId)
+          .set({'currentParticipants': 3, 'maxParticipants': 3});
+
+      await expectLater(
+        () => repo.bookLesson(userId, lessonId, DateTime.now()),
+        throwsA(isA<ClassFullFailure>()),
+      );
+    });
+
+    test('bookLesson_succeeds_whenOneSpotLeft', () async {
+      await fakeFirestore
+          .collection('lessons')
+          .doc(lessonId)
+          .set({'currentParticipants': 2, 'maxParticipants': 3});
+
+      final booking =
+          await repo.bookLesson(userId, lessonId, DateTime.now());
+
+      expect(booking.classId, lessonId);
+      expect(booking.status, BookingStatus.pending);
     });
   });
 

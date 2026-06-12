@@ -136,4 +136,43 @@ void main() {
     );
     expect(button.onPressed, isNull);
   });
+
+  testWidgets('shows_noSpots_whenLessonIsFull', (tester) async {
+    final fullLesson = LessonModel(
+      id: 'lesson-1',
+      programId: 'program-1',
+      startDate: DateTime.now().add(const Duration(hours: 48)),
+      endDate: DateTime.now().add(const Duration(hours: 49)),
+      currentParticipants: 5,
+      maxParticipants: 5,
+    );
+    final state = ProgramDetailsState(
+      status: ProgramDetailsStatus.loaded,
+      program: const ProgramModel(
+        id: 'program-1',
+        category: ProgramCategory.yoga,
+        title: 'Test Program',
+        text: 'Description',
+        price: 0,
+        trainerId: 't-1',
+      ),
+      lesson: fullLesson,
+      master: MasterModel.empty,
+    );
+    whenListen(programBloc, Stream.value(state), initialState: state);
+
+    await tester.pumpWidget(
+      _buildSubject(programBloc: programBloc, bookingBloc: bookingBloc),
+    );
+    await tester.pump();
+
+    expect(find.text('Мест нет'), findsOneWidget);
+    final button = tester.widget<ElevatedButton>(
+      find.ancestor(
+        of: find.text('Мест нет'),
+        matching: find.byType(ElevatedButton),
+      ),
+    );
+    expect(button.onPressed, isNull);
+  });
 }

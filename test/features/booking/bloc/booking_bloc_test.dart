@@ -5,6 +5,8 @@ import 'package:firebase_core_platform_interface/test.dart'
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hygge_app/core/services/whatsapp_service.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
+import 'package:hygge_app/data/models/class_model.dart';
+import 'package:hygge_app/data/models/lesson_model.dart';
 import 'package:hygge_app/data/repositories/booking_repository.dart';
 import 'package:hygge_app/data/repositories/subscription_repository.dart';
 import 'package:hygge_app/features/booking/bloc/booking_bloc.dart';
@@ -159,6 +161,76 @@ void main() {
         isA<BookingState>()
             .having((s) => s.status, 'status', BookingUiStatus.loading),
         const BookingState(status: BookingUiStatus.cancelled),
+      ],
+    );
+  });
+
+  // NOTE: BookingBloc reads uid from FirebaseAuth.instance.currentUser?.uid.
+  // In unit tests this is null → uid = '' → both _onBookClass and
+  // _onBookLesson return early with an error before reaching the repository.
+  // The ClassFullFailure-from-repository path is tested in
+  // booking_cubit_test.dart (BookingCubit accepts userId in its constructor).
+  group('booking flow', () {
+    blocTest<BookingBloc, BookingState>(
+      'bookClass_emitsLoadingThenError_whenUserNotAuthenticated',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        BookingBookClassEvent(
+          classModel: ClassModel(
+            id: 'class-1',
+            title: 'Yoga',
+            type: 'Йога',
+            startDate: DateTime.now().add(const Duration(hours: 48)),
+            durationMinutes: 60,
+            trainerId: 't-1',
+            maxParticipants: 10,
+            currentParticipants: 3,
+            price: 0,
+            isIncludedInSubscription: true,
+          ),
+          whatsAppMessage: '',
+        ),
+      ),
+      expect: () => [
+        isA<BookingState>().having(
+          (s) => s.status,
+          'status',
+          BookingUiStatus.loading,
+        ),
+        isA<BookingState>().having(
+          (s) => s.status,
+          'status',
+          BookingUiStatus.error,
+        ),
+      ],
+    );
+
+    blocTest<BookingBloc, BookingState>(
+      'bookLesson_emitsLoadingThenError_whenUserNotAuthenticated',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        BookingBookLessonEvent(
+          lesson: LessonModel(
+            id: 'lesson-1',
+            programId: 'program-1',
+            startDate: DateTime.now().add(const Duration(hours: 48)),
+            endDate: DateTime.now().add(const Duration(hours: 49)),
+          ),
+          programTitle: 'Test Program',
+          whatsAppMessage: '',
+        ),
+      ),
+      expect: () => [
+        isA<BookingState>().having(
+          (s) => s.status,
+          'status',
+          BookingUiStatus.loading,
+        ),
+        isA<BookingState>().having(
+          (s) => s.status,
+          'status',
+          BookingUiStatus.error,
+        ),
       ],
     );
   });

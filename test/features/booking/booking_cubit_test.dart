@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hygge_app/core/utils/failure.dart';
 import 'package:hygge_app/data/models/booking_model.dart';
 import 'package:hygge_app/data/models/class_model.dart';
 import 'package:hygge_app/data/models/subscription_model.dart';
@@ -308,6 +309,23 @@ void main() {
 
       expect(cubit.state.status, BookingCubitStatus.classFull);
     });
+
+    test(
+      'bookClass_emitsClassFull_whenRepositoryThrowsClassFullFailure',
+      () async {
+        // Non-full class so client-side isFull check passes;
+        // repo simulates race-condition and throws ClassFullFailure.
+        final cubit = BookingCubit(
+          bookingRepo: _ThrowingClassFullBookingRepository(),
+          subscriptionRepo: _FakeSubscriptionRepository(),
+          userId: 'user-1',
+        );
+
+        await cubit.bookClass(_classModel);
+
+        expect(cubit.state.status, BookingCubitStatus.classFull);
+      },
+    );
   });
 
   // ── seats logic ──────────────────────────────────────────────────────────
@@ -375,5 +393,21 @@ class _ThrowingBookingRepository extends _FakeBookingRepository {
     BookingStatus status,
   ) async {
     throw Exception('network error');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Заглушка, которая бросает ClassFullFailure при createBooking
+// (имитирует race-condition: место занято между client-check и транзакцией).
+// ---------------------------------------------------------------------------
+
+class _ThrowingClassFullBookingRepository extends _FakeBookingRepository {
+  @override
+  Future<BookingModel> createBooking(
+    String userId,
+    String classId,
+    DateTime datetime,
+  ) async {
+    throw ClassFullFailure(message: 'Class $classId is full');
   }
 }
